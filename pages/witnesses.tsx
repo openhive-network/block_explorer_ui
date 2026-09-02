@@ -7,7 +7,7 @@ import {
   pageTitle,
   SEO_LIST_CACHE_CONTROL,
 } from "@/utils/seo";
-import { seoText } from "@/utils/seoStrings";
+import { seoText } from "@/utils/seo/seoStrings";
 import { Loader2, ArrowRight, Heart, Search, Users } from "lucide-react";
 import Link from "next/link";
 import type { GetServerSideProps } from "next";

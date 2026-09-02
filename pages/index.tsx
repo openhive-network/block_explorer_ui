@@ -18,6 +18,18 @@ import {
   guestViewFromCookies,
   writeGuestView,
 } from "@/components/home/guest/guestViews";
+import Seo from "@/components/seo/Seo";
+import {
+  SeoMeta,
+  absoluteBaseUrl,
+  canonicalUrl,
+  clamp,
+  defaultOgImage,
+  webSiteJsonLd,
+  organizationJsonLd,
+  SEO_LIST_CACHE_CONTROL,
+} from "@/utils/seo";
+import { seoText } from "@/utils/seo/seoStrings";
 
 const GUEST_VIEWS: Record<GuestView, React.ComponentType> = {
   overview: StandardHome,
@@ -28,26 +40,17 @@ const GUEST_VIEWS: Record<GuestView, React.ComponentType> = {
 };
 
 interface HomeProps {
+  meta: SeoMeta;
   initialGuestView: GuestView;
 }
 
-// The guest view lives in a cookie so the choice is known before the first
-// client paint. Reading it after mount instead would paint the default view,
-// then tear down its whole data-fetching tree to mount the real one.
-// Note: this is not SSR-visible content — Layout returns null until the Hive
-// chain initialises on the client, so the served HTML carries no view at all.
-export const getServerSideProps: GetServerSideProps<HomeProps> = async ({
-  req,
-}) => ({
-  props: { initialGuestView: guestViewFromCookies(req.cookies) },
-});
-
-export default function Home({ initialGuestView }: HomeProps) {
+export default function Home({ meta, initialGuestView }: HomeProps) {
   const { isLoggedIn, isInitializing } = useAuth();
   const { t } = useI18n();
 
-  // Seeded from the cookie the server already read, so first paint is correct
-  // and hydration matches.
+  // Seeded from the cookie the server already read, so the first client paint is
+  // correct. Not in the served HTML — Layout gates on client-side chain init —
+  // so the win is no flash rather than SEO.
   const [guestView, setGuestView] = useState<GuestView>(
     initialGuestView ?? DEFAULT_GUEST_VIEW
   );
@@ -57,20 +60,22 @@ export default function Home({ initialGuestView }: HomeProps) {
     writeGuestView(view);
   };
 
-  if (isInitializing) {
-    return (
-      <div className="flex w-full items-center justify-center py-20">
-        <Loader2 className="h-10 w-10 animate-spin text-slate-400" />
-      </div>
-    );
-  }
-
-  // The modular dashboard is the signed-in home. StandardHome lives on only as
-  // the guest Overview view below.
-  if (isLoggedIn) return <WidgetIndex />;
-
   const GuestHome = GUEST_VIEWS[guestView] ?? StandardHome;
-  return (
+
+  // Meta is server-rendered and must emit whichever body is chosen, so every
+  // branch sits below it rather than returning early.
+  const body = isInitializing ? (
+    // Restoring a session needs a node round trip, and isLoggedIn is false until
+    // it lands. Rendering the guest home meanwhile would flash it — with its
+    // whole data-fetching tree — at someone who is signed in.
+    <div className="flex w-full items-center justify-center py-20">
+      <Loader2 className="h-10 w-10 animate-spin text-slate-400" />
+    </div>
+  ) : isLoggedIn ? (
+    // The modular dashboard is the signed-in home. StandardHome lives on only as
+    // the guest Overview view below.
+    <WidgetIndex />
+  ) : (
     <GuestViewProvider value={guestView} onChange={chooseGuestView}>
       {/* The other four draw their own; StandardHome is shared, so it gets one here */}
       {guestView === "overview" && (
@@ -86,4 +91,38 @@ export default function Home({ initialGuestView }: HomeProps) {
       <GuestHome />
     </GuestViewProvider>
   );
+
+  return (
+    <>
+      <Seo meta={meta} />
+      {body}
+    </>
+  );
 }
+
+// The guest view lives in a cookie so the choice is known before the first
+// client paint. Reading it after mount instead would paint the default view,
+// then tear down its whole data-fetching tree to mount the real one.
+export const getServerSideProps: GetServerSideProps<HomeProps> = async ({
+  req,
+  res,
+}) => {
+  res.setHeader("Cache-Control", SEO_LIST_CACHE_CONTROL);
+  const base = absoluteBaseUrl(req);
+  const description = clamp(
+    process.env.NEXT_PUBLIC_SITE_DESCRIPTION || seoText("seo.home.description")
+  );
+  return {
+    props: {
+      meta: {
+        title: seoText("seo.home.title"),
+        description,
+        canonical: canonicalUrl(req, "/"),
+        ogType: "website",
+        ogImage: defaultOgImage(base),
+        jsonLd: [webSiteJsonLd(base, description), organizationJsonLd(base)],
+      },
+      initialGuestView: guestViewFromCookies(req.cookies),
+    },
+  };
+};

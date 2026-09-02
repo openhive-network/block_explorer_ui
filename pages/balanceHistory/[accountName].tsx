@@ -1,6 +1,6 @@
 import type { GetServerSideProps } from "next";
 import { SeoMeta, noindexMeta, SEO_LIST_CACHE_CONTROL } from "@/utils/seo";
-import { seoText } from "@/utils/seoStrings";
+import { seoText } from "@/utils/seo/seoStrings";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";

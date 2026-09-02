@@ -14,7 +14,7 @@ import {
   pageTitle,
   SEO_LIST_CACHE_CONTROL,
 } from "@/utils/seo";
-import { seoText } from "@/utils/seoStrings";
+import { seoText } from "@/utils/seo/seoStrings";
 
 import BlocksTable from "@/components/blocks/BlocksTable";
 import NoResult from "@/components/NoResult";
