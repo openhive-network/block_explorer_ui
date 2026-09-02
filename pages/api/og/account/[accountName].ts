@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import { config } from "@/Config";
 import en from "@/i18n/en.json";
+import { fetchWithTimeout, rpc, restGet } from "@/utils/seo/serverRpc";
 import {
   buildAccountCardSvg,
   ACCOUNT_CARD_WIDTH,
@@ -12,25 +13,6 @@ import {
   buildAccountCardData,
   sumAuthorCurationVests,
 } from "@/components/account/accountCard/accountCardData";
-
-const RPC = config.nodeAddress;
-const REST = config.apiAddress.replace(/\/+$/, "");
-
-// A slow node/gateway must not hang the handler until the platform timeout —
-// every outbound fetch is bounded by an AbortController.
-const FETCH_TIMEOUT_MS = 4000;
-const fetchWithTimeout = async (
-  url: string,
-  opts: RequestInit = {}
-): Promise<Response> => {
-  const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), FETCH_TIMEOUT_MS);
-  try {
-    return await fetch(url, { ...opts, signal: ctrl.signal });
-  } finally {
-    clearTimeout(timer);
-  }
-};
 
 // The crawler-facing image is always English; resolve the same accountShareCard
 // keys the in-app card uses from en.json so labels stay in sync.
@@ -42,22 +24,6 @@ const t = (key: string, opts?: Record<string, unknown>): string => {
     }
   }
   return s;
-};
-
-const rpc = async (method: string, params: unknown): Promise<any> => {
-  const res = await fetchWithTimeout(RPC, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ jsonrpc: "2.0", method, params, id: 1 }),
-  });
-  const json = await res.json();
-  return json.result;
-};
-
-const restGet = async (route: string): Promise<any> => {
-  const res = await fetchWithTimeout(`${REST}${route}`);
-  if (!res.ok) throw new Error(`REST ${res.status} for ${route}`);
-  return res.json();
 };
 
 // Raw reputation (a large signed integer) -> the familiar 25..75+ display value.
