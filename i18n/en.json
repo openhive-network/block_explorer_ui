@@ -2235,6 +2235,7 @@
   "seo.longOperation.description": "The full body of a Hive blockchain operation.",
   "seo.balanceHistory.description": "Balance history for a Hive account.",
   "seo.block.title": "Block {{num}}",
+  "seo.block.hashTitle": "Block hash {{short}}",
   "seo.block.description": "Hive blockchain block {{num}} — operations, transactions, timestamp and the producing witness, on {{site}}.",
   "seo.block.datasetName": "Hive block {{num}}",
   "seo.tx.title": "Transaction {{short}}",
