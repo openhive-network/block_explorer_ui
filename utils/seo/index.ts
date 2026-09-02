@@ -138,6 +138,9 @@ export const pageTitle = (title?: string): string =>
     ? `${title} | ${siteConfig.name}`
     : siteConfig.name;
 
+// Keeps "block explorer" in the home title when the brand name does not already say it.
+export const siteNameSaysExplorer = /explorer/i.test(siteConfig.name);
+
 // Brand social profiles for the Organization `sameAs` (helps Google associate
 // the site with its accounts). Ops sets a comma-separated list of profile URLs
 // in NEXT_PUBLIC_SITE_SOCIAL_PROFILES (or REACT_APP_*); the X/Twitter handle in
