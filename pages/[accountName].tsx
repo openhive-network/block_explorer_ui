@@ -7,6 +7,7 @@ import {
   absoluteBaseUrl,
   canonicalUrl,
   clamp,
+  defaultOgImage,
   pageTitle,
   profilePageJsonLd,
   siteConfig,
@@ -15,6 +16,7 @@ import {
   SEO_LIST_CACHE_CONTROL,
 } from "@/utils/seo";
 import { isAccountName, queryStringOf } from "@/utils/seo/entityIds";
+import { rpcOrNull } from "@/utils/seo/serverRpc";
 import { seoText } from "@/utils/seo/seoStrings";
 import ErrorPage from "@/components/ErrorPage";
 import { cn } from "@/lib/utils";
@@ -30,6 +32,9 @@ import { useI18n } from "@/i18n/i18n";
 import useCommunity from "@/hooks/api/accountPage/useCommunity";
 import { useSettings } from "@/contexts/SettingsContext";
 import SidebarToggleButton from "@/components/SideBarToggleButton";
+
+// Meta copy only, so a slow node falls back to the bare id rather than holding the render.
+const COMMUNITY_LOOKUP_TIMEOUT_MS = 2500;
 
 export interface AccountSearchParams {
   accountName?: string | undefined;
@@ -288,18 +293,40 @@ export const getServerSideProps: GetServerSideProps<AccountPageProps> = async ({
   res.setHeader("Cache-Control", SEO_LIST_CACHE_CONTROL);
   const canonical = canonicalUrl({ headers: req.headers }, `/@${name}`);
 
-  // Communities (hive-*) don't get an account share card, but still get canonical.
+  // Resolve the real community name server-side: "@hive-167922" is not what anyone searches for.
+  // Only a resolved title makes it a community; a plain account that happens to
+  // start with "hive-" falls through and gets account copy.
   if (name.startsWith("hive-")) {
-    return {
-      props: {
-        meta: {
-          title: pageTitle(`@${name}`),
-          description: "",
-          canonical,
-          ogType: "website",
+    const details = await rpcOrNull<{ title?: string; about?: string }>(
+      "bridge.get_community",
+      { name },
+      COMMUNITY_LOOKUP_TIMEOUT_MS
+    );
+    // Chain-supplied text is owner-controlled, so collapse and cap it before use.
+    const oneLine = (s: string) => s.replace(/\s+/g, " ").trim();
+    const communityTitle = clamp(oneLine(details?.title || ""), 60);
+    if (communityTitle) {
+      const about = oneLine(details?.about || "");
+      return {
+        props: {
+          meta: {
+            title: pageTitle(
+              seoText("seo.community.title", { title: communityTitle })
+            ),
+            description: clamp(
+              about ||
+                seoText("seo.community.description", {
+                  name: communityTitle,
+                  site: siteConfig.name,
+                })
+            ),
+            canonical,
+            ogType: "website",
+            ogImage: defaultOgImage(absoluteBaseUrl({ headers: req.headers })),
+          },
         },
-      },
-    };
+      };
+    }
   }
 
   const title = pageTitle(`@${name}`);
