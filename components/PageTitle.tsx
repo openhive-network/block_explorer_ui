@@ -6,6 +6,8 @@ import { useI18n } from "@/i18n/i18n";
 
 interface TitleProps {
   titleKey: string;
+  // Interpolated into the title, for headings that name their entity.
+  titleValues?: Record<string, string | number>;
   // Applied to the wrapper, not the <h1>: pass layout only. Text and colour
   // classes here style the container and will not reach the heading.
   className?: string;
@@ -15,6 +17,7 @@ interface TitleProps {
 
 const PageTitle: React.FC<TitleProps> = ({
   titleKey,
+  titleValues,
   className = "",
   classic = false,
 }) => {
@@ -48,7 +51,7 @@ const PageTitle: React.FC<TitleProps> = ({
             classic ? "text-xl" : "text-xl sm:text-2xl"
           )}
         >
-          {t(titleKey)}
+          {t(titleKey, titleValues)}
         </h1>
         {InfoComponentContent && (
           <button

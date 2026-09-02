@@ -19,6 +19,7 @@ const GuestNetworkHome = () => {
   return (
     <>
       <GuestBoardHeader
+        headingLevel="h1"
         icon={Activity}
         accent="blue"
         eyebrow={t("guestHome.network.eyebrow")}

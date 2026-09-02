@@ -946,6 +946,7 @@
   "pageTitle.hiveWitnesses": "Hive 증인",
   "pageTitle.hiveBlocks": "Hive 블록",
   "pageTitle.blockDetails": "블록 {{num}}",
+  "pageTitle.blockDetails": "블록 {{num}}",
   "pageTitle.balanceHistory": "잔액 내역",
   "pageTitle.transactionDetails": "트랜잭션 상세 정보",
   "pageTitle.settings": "설정",

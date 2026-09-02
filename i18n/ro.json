@@ -946,6 +946,7 @@
   "pageTitle.hiveWitnesses": "Martori Hive",
   "pageTitle.hiveBlocks": "Blocuri Hive",
   "pageTitle.blockDetails": "Blocul {{num}}",
+  "pageTitle.blockDetails": "Blocul {{num}}",
   "pageTitle.balanceHistory": "Istoric Sold",
   "pageTitle.transactionDetails": "Detalii Tranzacție",
   "pageTitle.settings": "Setări",

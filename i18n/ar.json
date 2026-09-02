@@ -946,6 +946,7 @@
   "pageTitle.hiveWitnesses": "شهود Hive",
   "pageTitle.hiveBlocks": "بلوكات Hive",
   "pageTitle.blockDetails": "الكتلة {{num}}",
+  "pageTitle.blockDetails": "الكتلة {{num}}",
   "pageTitle.balanceHistory": "سجل الرصيد",
   "pageTitle.transactionDetails": "تفاصيل المعاملة",
   "pageTitle.settings": "الإعدادات",

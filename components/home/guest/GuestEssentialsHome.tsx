@@ -36,6 +36,7 @@ const GuestEssentialsHome = () => {
   return (
     <>
       <GuestBoardHeader
+        headingLevel="h1"
         icon={Zap}
         accent="slate"
         eyebrow={t("guestHome.essentials.eyebrow")}

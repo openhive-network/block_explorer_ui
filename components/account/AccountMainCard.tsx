@@ -60,6 +60,7 @@ import {
 import AccountShareCard from "@/components/account/AccountShareCard";
 import StatCard from "@/components/ui/StatCard";
 import HiveAvatar from "@/components/ui/HiveAvatar";
+import useMediaQuery from "@/hooks/common/useMediaQuery";
 
 interface AccountMainCardProps {
   accountDetails: Explorer.FormattedAccountDetails;
@@ -95,6 +96,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
   const router = useRouter();
   const { t, locale } = useI18n();
   const { settings } = useSettings();
+  const isMobile = useMediaQuery("(max-width: 768px)");
   const [isPropertiesHidden, setIsPropertiesHidden] =
     useState(!isInitiallyOpen);
   const [shareOpen, setShareOpen] = useState(false);
@@ -219,6 +221,8 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
   };
 
   const governanceHealthProps = getGovernanceHealthStatus();
+  // Exactly one H1 per layout; mobile gets it from MobileAccountNameCard. Tag only, preflight leaves headings unstyled.
+  const NameHeading = isMobile ? "h2" : "h1";
 
   return (
     <Card data-testid="account-details">
@@ -240,9 +244,12 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
             className="cursor-pointer border-b border-slate-200 dark:border-slate-700 hover:bg-rowHover transition-colors"
           >
             <div className="flex justify-between items-center w-full">
-              <h3 className="text-lg font-semibold" title={accountDetails.name}>
+              <NameHeading
+                className="text-lg font-semibold"
+                title={accountDetails.name}
+              >
                 {accountDetails.name}
-              </h3>
+              </NameHeading>
 
               <div className="flex items-center gap-x-3">
                 <Toggle

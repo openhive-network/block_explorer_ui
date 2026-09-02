@@ -27,6 +27,7 @@ import Hive from "@/types/Hive";
 import CommunitySubscribersDialog from "./CommunitySubscribersDialog";
 import { isImageWhitelisted } from "@/utils/ImageUtils";
 import HiveAvatar from "@/components/ui/HiveAvatar";
+import useMediaQuery from "@/hooks/common/useMediaQuery";
 
 const roleConfig = {
   owner: {
@@ -210,6 +211,9 @@ const CommunityMainCard: React.FC<CommunityMainCardProps> = ({
   changeLiveRefresh,
 }) => {
   const { t, locale } = useI18n();
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  // Exactly one H1 per layout; mobile gets it from MobileAccountNameCard.
+  const TitleHeading = isMobile ? "h2" : "h1";
   const {
     name,
     title,
@@ -287,7 +291,9 @@ const CommunityMainCard: React.FC<CommunityMainCardProps> = ({
                   />
                   <div>
                     <div className="flex items-center gap-3">
-                      <h2 className="text-2xl font-bold">{title}</h2>
+                      <TitleHeading className="text-2xl font-bold">
+                        {title}
+                      </TitleHeading>
                       <div className="bg-slate-200 text-slate-600 text-xs font-bold uppercase px-2 py-1 rounded-full dark:bg-slate-700 dark:text-slate-300">
                         {t("communityCard.community")}
                       </div>
@@ -300,7 +306,9 @@ const CommunityMainCard: React.FC<CommunityMainCardProps> = ({
               ) : (
                 <>
                   <div className="flex items-center gap-3">
-                    <h2 className="text-2xl font-bold">{title}</h2>
+                    <TitleHeading className="text-2xl font-bold">
+                      {title}
+                    </TitleHeading>
                     <div className="bg-slate-200 text-slate-600 text-xs font-bold uppercase px-2 py-1 rounded-full dark:bg-slate-700 dark:text-slate-300">
                       {t("communityCard.community")}
                     </div>

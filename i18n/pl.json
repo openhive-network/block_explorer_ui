@@ -946,6 +946,7 @@
   "pageTitle.hiveWitnesses": "Świadkowie Hive",
   "pageTitle.hiveBlocks": "Bloki Hive",
   "pageTitle.blockDetails": "Blok {{num}}",
+  "pageTitle.blockDetails": "Blok {{num}}",
   "pageTitle.balanceHistory": "Historia Salda",
   "pageTitle.transactionDetails": "Szczegóły Transakcji",
   "pageTitle.settings": "Ustawienia",

@@ -44,7 +44,8 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
   isInitiallyOpen,
 }) => {
   const { t } = useI18n();
-  const [isPropertiesHidden, setIsPropertiesHidden] = useState(!isInitiallyOpen);
+  const [isPropertiesHidden, setIsPropertiesHidden] =
+    useState(!isInitiallyOpen);
   const voters = [...initialVoters];
   const [votersForProxy, setVotersForProxy] = useState<any[]>([]);
   const [allProxies, setAllProxies] = useState<string[]>([]);
@@ -112,16 +113,15 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
 
   if (proxy != null && proxy.length > 0) {
     return (
-      <Card
-        data-testid="witness-votes-dropdown"
-        className="overflow-hidden"
-      >
+      <Card data-testid="witness-votes-dropdown" className="overflow-hidden">
         <CardHeader className="p-0">
           <div
             onClick={handlePropertiesVisibility}
             className="h-full flex justify-between items-center p-2 hover:bg-rowHover cursor-pointer px-4"
           >
-            <div className="text-lg">{t("accountWitnessVotesCard.witnessVotesProxy")}</div>
+            <div className="text-lg">
+              {t("accountWitnessVotesCard.witnessVotesProxy")}
+            </div>
             <div className="flex items-center space-x-2">
               <DataExport
                 data={prepareExportData(votersForProxy)}
@@ -134,30 +134,26 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
         </CardHeader>
         <CardContent hidden={isPropertiesHidden}>
           <div>
-            <Link
-              className="text-link"
-              href={`/@${accountName}`}
-            >
+            <Link className="text-link" href={`/@${accountName}`}>
               @{accountName}
             </Link>
             <span> {t("accountWitnessVotesCard.uses")} </span>
 
             {allProxies.map((proxyName, index) => (
               <span key={index}>
-                <Link
-                  className="text-link"
-                  href={`/@${proxyName}`}
-                >
+                <Link className="text-link" href={`/@${proxyName}`}>
                   @{proxyName}
                 </Link>
-                {index < allProxies.length - 1 && <span>, {t("accountWitnessVotesCard.whoUses")} </span>}
+                {index < allProxies.length - 1 && (
+                  <span>, {t("accountWitnessVotesCard.whoUses")} </span>
+                )}
               </span>
             ))}
 
             <span> {t("accountWitnessVotesCard.asVotingProxy")}</span>
             <br />
             <br />
-            <h1>
+            <h3>
               {t("accountWitnessVotesCard.votesOf")}{" "}
               <Link
                 className="text-link"
@@ -165,7 +161,7 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
               >
                 @{allProxies[allProxies.length - 1]}
               </Link>
-            </h1>
+            </h3>
             <Table>
               <TableBody className="text-sm">
                 {buildTableBody(votersForProxy, true)}
@@ -176,22 +172,18 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
       </Card>
     );
   } else if (!voters || !voters.length) return null;
-  voters.sort(
-    (a, b) => a.toLowerCase().localeCompare(b.toLowerCase())
-  );
+  voters.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
 
   return (
-    <Card
-      data-testid="witness-votes-dropdown"
-      className="overflow-hidden"
-    >
+    <Card data-testid="witness-votes-dropdown" className="overflow-hidden">
       <CardHeader className="p-0">
         <div
           onClick={handlePropertiesVisibility}
           className="h-full flex justify-between align-center p-2 hover:bg-rowHover cursor-pointer px-4"
         >
           <div className="text-lg">
-            {t("accountWitnessVotesCard.witnessVotes")} ({voters.length} / {config.maxWitnessVotes})
+            {t("accountWitnessVotesCard.witnessVotes")} ({voters.length} /{" "}
+            {config.maxWitnessVotes})
           </div>
           <div className="flex items-center space-x-2">
             <DataExport
