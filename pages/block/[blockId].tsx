@@ -429,6 +429,7 @@ export const getServerSideProps: GetServerSideProps<{
         canonical,
         ogType: "article",
         ogImage: defaultOgImage(absoluteBaseUrl(req)),
+        ogImageAlt: title,
         jsonLd: {
           "@context": "https://schema.org",
           "@type": "Dataset",

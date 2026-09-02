@@ -117,11 +117,16 @@ export const defaultOgImage = (base: string): string => {
 export const clamp = (s: string, n = 160): string =>
   s.length > n ? `${s.slice(0, n - 1).trimEnd()}…` : s;
 
+// Both generated share images render at this size; unfurlers need it declared.
+export const OG_IMAGE_WIDTH = 1200;
+export const OG_IMAGE_HEIGHT = 630;
+
 export interface SeoMeta {
   title: string;
   description: string;
   canonical: string;
   ogImage?: string | null;
+  ogImageAlt?: string;
   ogType?: string;
   noindex?: boolean;
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
@@ -261,6 +266,7 @@ export const listPageMeta = (
     canonical,
     ogType: "website",
     ogImage: defaultOgImage(absoluteBaseUrl(req)),
+    ogImageAlt: full,
     jsonLd: collectionPageJsonLd(canonical, full, desc),
   };
 };
