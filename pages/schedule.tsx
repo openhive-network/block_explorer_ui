@@ -4,7 +4,7 @@ import { Loader2 } from "lucide-react";
 
 import Seo from "@/components/seo/Seo";
 import { SeoMeta, listPageMeta, SEO_LIST_CACHE_CONTROL } from "@/utils/seo";
-import { seoText } from "@/utils/seoStrings";
+import { seoText } from "@/utils/seo/seoStrings";
 import {
   useHeadBlockNumber,
   useLiveHeadBlock,

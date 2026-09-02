@@ -5,7 +5,7 @@ import type { GetServerSideProps } from "next";
 import { Loader2 } from "lucide-react";
 
 import { SeoMeta, noindexMeta, SEO_LIST_CACHE_CONTROL } from "@/utils/seo";
-import { seoText } from "@/utils/seoStrings";
+import { seoText } from "@/utils/seo/seoStrings";
 
 import PageNotFound from "@/components/PageNotFound";
 import PostPageContent from "@/components/post/PostPageContent";

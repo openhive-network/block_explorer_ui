@@ -29,7 +29,7 @@ import {
   organizationJsonLd,
   SEO_LIST_CACHE_CONTROL,
 } from "@/utils/seo";
-import { seoText } from "@/utils/seoStrings";
+import { seoText } from "@/utils/seo/seoStrings";
 
 const GUEST_VIEWS: Record<GuestView, React.ComponentType> = {
   overview: StandardHome,

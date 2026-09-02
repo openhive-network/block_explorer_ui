@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/router";
 import type { GetServerSideProps } from "next";
 import { SeoMeta, noindexMeta, SEO_LIST_CACHE_CONTROL } from "@/utils/seo";
-import { seoText } from "@/utils/seoStrings";
+import { seoText } from "@/utils/seo/seoStrings";
 
 const EmptyTransactionPage: React.FC = () => {
   const router = useRouter();

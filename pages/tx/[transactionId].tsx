@@ -13,7 +13,7 @@ import {
   pageTitle,
   clamp,
 } from "@/utils/seo";
-import { seoText } from "@/utils/seoStrings";
+import { seoText } from "@/utils/seo/seoStrings";
 import Hive from "@/types/Hive";
 import { convertTransactionResponseToTableOperations } from "@/lib/utils";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";

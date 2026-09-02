@@ -1,7 +1,7 @@
 import React from "react";
 import type { GetServerSideProps } from "next";
 import { SeoMeta, listPageMeta, SEO_LIST_CACHE_CONTROL } from "@/utils/seo";
-import { seoText } from "@/utils/seoStrings";
+import { seoText } from "@/utils/seo/seoStrings";
 import ToolsLayout from "@/components/tools/ToolsLayout";
 import BadActorsTool from "@/components/tools/BadActorsTool";
 

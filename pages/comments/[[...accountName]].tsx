@@ -1,6 +1,6 @@
 import type { GetServerSideProps } from "next";
 import { SeoMeta, noindexMeta, SEO_LIST_CACHE_CONTROL } from "@/utils/seo";
-import { seoText } from "@/utils/seoStrings";
+import { seoText } from "@/utils/seo/seoStrings";
 import React, { useEffect } from "react";
 
 import CommentsSearch from "@/components/home/searches/CommentsSearch";

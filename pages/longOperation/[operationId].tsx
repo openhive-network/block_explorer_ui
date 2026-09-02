@@ -1,6 +1,6 @@
 import type { GetServerSideProps } from "next";
 import { SeoMeta, noindexMeta, SEO_LIST_CACHE_CONTROL } from "@/utils/seo";
-import { seoText } from "@/utils/seoStrings";
+import { seoText } from "@/utils/seo/seoStrings";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/router";
 

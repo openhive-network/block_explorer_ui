@@ -8,7 +8,7 @@ import {
   pageTitle,
   SEO_LIST_CACHE_CONTROL,
 } from "@/utils/seo";
-import { seoText } from "@/utils/seoStrings";
+import { seoText } from "@/utils/seo/seoStrings";
 import { useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@/i18n/i18n";
 import useProposals from "@/hooks/api/proposals/useProposals";

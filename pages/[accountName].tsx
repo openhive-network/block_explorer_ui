@@ -11,7 +11,7 @@ import {
   siteConfig,
   SeoMeta,
 } from "@/utils/seo";
-import { seoText } from "@/utils/seoStrings";
+import { seoText } from "@/utils/seo/seoStrings";
 
 import ErrorPage from "@/components/ErrorPage";
 import { cn } from "@/lib/utils";
