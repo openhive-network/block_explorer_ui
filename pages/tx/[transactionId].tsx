@@ -12,7 +12,14 @@ import {
   defaultOgImage,
   pageTitle,
   clamp,
+  notFoundMeta,
+  SEO_LIST_CACHE_CONTROL,
 } from "@/utils/seo";
+import {
+  normalizeTransactionId,
+  queryStringOf,
+  shortHex,
+} from "@/utils/seo/entityIds";
 import { seoText } from "@/utils/seo/seoStrings";
 import Hive from "@/types/Hive";
 import { convertTransactionResponseToTableOperations } from "@/lib/utils";
@@ -267,26 +274,42 @@ export default function Transaction({ meta }: { meta: SeoMeta }) {
 
 export const getServerSideProps: GetServerSideProps<{
   meta: SeoMeta;
-}> = async ({ req, params }) => {
+}> = async ({ req, res, params, resolvedUrl }) => {
   const raw = Array.isArray(params?.transactionId)
     ? params?.transactionId[0]
     : params?.transactionId;
-  const tx = String(raw || "").trim();
-  // Same soft-404 guard as /block: only a real 40-hex trx id is indexable.
-  const isTxId = /^[0-9a-f]{40}$/i.test(tx);
-  const shortTx = tx.length > 12 ? `${tx.slice(0, 12)}…` : tx;
-  const canonical = canonicalUrl(req, `/tx/${encodeURIComponent(tx)}`);
+  const { normalized, kind } = normalizeTransactionId(String(raw || "").trim());
+
+  // 404 via statusCode, not `notFound`: app/not-found.tsx would win and lose the localized UI.
+  if (kind === "invalid") {
+    res.statusCode = 404;
+    return { props: { meta: notFoundMeta(seoText("seo.notFound.title")) } };
+  }
+
+  // Hex case does not change the transaction, so only one spelling stays reachable.
+  if (normalized !== raw) {
+    return {
+      redirect: {
+        destination: `/tx/${normalized}${queryStringOf(resolvedUrl)}`,
+        permanent: true,
+      },
+    };
+  }
+
+  res.setHeader("Cache-Control", SEO_LIST_CACHE_CONTROL);
+  const shortTx = shortHex(normalized);
+  const canonical = canonicalUrl(req, `/tx/${normalized}`);
   const description = clamp(
     seoText("seo.tx.description", { short: shortTx, site: siteConfig.name })
   );
+  const title = pageTitle(seoText("seo.tx.title", { short: shortTx }));
   return {
     props: {
       meta: {
-        title: pageTitle(seoText("seo.tx.title", { short: shortTx })),
+        title,
         description,
         canonical,
         ogType: "article",
-        noindex: !isTxId,
         ogImage: defaultOgImage(absoluteBaseUrl(req)),
         jsonLd: {
           "@context": "https://schema.org",
