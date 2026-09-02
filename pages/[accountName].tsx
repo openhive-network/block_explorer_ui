@@ -7,12 +7,15 @@ import {
   absoluteBaseUrl,
   canonicalUrl,
   clamp,
+  pageTitle,
   profilePageJsonLd,
   siteConfig,
   SeoMeta,
+  notFoundMeta,
+  SEO_LIST_CACHE_CONTROL,
 } from "@/utils/seo";
+import { isAccountName, queryStringOf } from "@/utils/seo/entityIds";
 import { seoText } from "@/utils/seo/seoStrings";
-
 import ErrorPage from "@/components/ErrorPage";
 import { cn } from "@/lib/utils";
 import useMediaQuery from "@/hooks/common/useMediaQuery";
@@ -210,11 +213,7 @@ export default function Account() {
     <AccountTabsProvider>
       <Head>
         <title>
-          @
-          {communityDetails?.title
-            ? communityDetails?.title
-            : accountNameFromRoute}{" "}
-          - Hive Explorer
+          {pageTitle(`@${communityDetails?.title || accountNameFromRoute}`)}
         </title>
       </Head>
       <div className="grid grid-cols-1 md:grid-cols-3 text-white page-container gap-4">
@@ -255,36 +254,55 @@ export default function Account() {
 export const getServerSideProps: GetServerSideProps<AccountPageProps> = async ({
   params,
   req,
+  res,
+  resolvedUrl,
 }) => {
   const raw = Array.isArray(params?.accountName)
     ? params?.accountName[0]
     : params?.accountName;
-  const name = (raw || "").replace(/^@/, "").replace(/^%40/i, "");
-  // This route matches every unclaimed single-segment path, so the same guard the
-  // /block and /tx routes use applies here — and over a much broader input space.
-  // Anything that isn't a Hive account name is neither indexed nor echoed back
-  // into the title, so a crafted URL can't put attacker-chosen text under our
-  // brand in a search result or a link unfurl.
-  const isAccountRef = /^[a-z][a-z0-9.-]{2,15}$/.test(name);
-  const canonical = name
-    ? canonicalUrl({ headers: req.headers }, `/@${encodeURIComponent(name)}`)
-    : "";
-  const title = isAccountRef ? `@${name} - Hive Explorer` : "Hive Explorer";
+  const segment = String(raw || "");
+  const name = segment.replace(/^@/, "").replace(/^%40/i, "");
+  const qs = queryStringOf(resolvedUrl);
+
+  // Hive names are lowercase; a capitalised link is the same account, not a miss.
+  if (name !== name.toLowerCase() && isAccountName(name.toLowerCase())) {
+    return {
+      redirect: {
+        destination: `/@${name.toLowerCase()}${qs}`,
+        permanent: true,
+      },
+    };
+  }
+
+  // Catches every unclaimed single-segment path: a non-name is a 404, and its text never reaches our meta.
+  if (!isAccountName(name)) {
+    res.statusCode = 404;
+    return { props: { meta: notFoundMeta(seoText("seo.notFound.title")) } };
+  }
+
+  // /name and /@name are the same page; only the @ form is linked and indexed.
+  if (!segment.startsWith("@") && !/^%40/i.test(segment)) {
+    return { redirect: { destination: `/@${name}${qs}`, permanent: true } };
+  }
+
+  res.setHeader("Cache-Control", SEO_LIST_CACHE_CONTROL);
+  const canonical = canonicalUrl({ headers: req.headers }, `/@${name}`);
 
   // Communities (hive-*) don't get an account share card, but still get canonical.
-  if (!isAccountRef || name.startsWith("hive-")) {
+  if (name.startsWith("hive-")) {
     return {
       props: {
         meta: {
-          title,
+          title: pageTitle(`@${name}`),
           description: "",
           canonical,
           ogType: "website",
-          noindex: !isAccountRef,
         },
       },
     };
   }
+
+  const title = pageTitle(`@${name}`);
 
   // Same base as the canonical above: prefers the configured origin so a spoofed
   // Host can't redirect the share card. Only absolute bases are usable here.
