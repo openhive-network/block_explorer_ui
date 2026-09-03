@@ -417,6 +417,7 @@ namespace Hive {
     transaction_merkle_root!: string;
     virtual_supply!: number | string;
     witness_signature!: string;
+    transaction_ids?: string[];
   }
 
   export class GetBlockGlobalStateParams {
