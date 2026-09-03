@@ -24,8 +24,8 @@ export function AccountTabsProvider({ children }: { children: ReactNode }) {
     if (!router.isReady) return;
     const raw = router.query.activeTab;
     const tab = Array.isArray(raw) ? raw[0] : raw;
-    if (tab && tab !== activeTab) setActiveTab(tab);
-  }, [router.isReady, router.query.activeTab, activeTab]);
+    if (tab) setActiveTab((previous) => (previous === tab ? previous : tab));
+  }, [router.isReady, router.query.activeTab]);
 
   return (
     <TabsContext.Provider value={{ activeTab, setActiveTab }}>
