@@ -112,24 +112,9 @@ export default function Block({ meta }: { meta: SeoMeta }) {
   const { blockOperations: totalOperations, trxLoading: totalLoading } =
     useBlockOperations(blockId, undefined, paramsState.page || 1);
 
-  /* Calculating Maximum Transaction in Blog */
-  let maxTransactions = undefined;
-  if (
-    totalOperations?.operations_result &&
-    Array.isArray(totalOperations.operations_result)
-  ) {
-    maxTransactions = totalOperations.operations_result.reduce(
-      (max, operation) => {
-        if (typeof operation?.trx_in_block === "number") {
-          return Math.max(max, operation.trx_in_block);
-        } else {
-          return max;
-        }
-      },
-      0
-    );
-    maxTransactions += 1; // Add one since trx_in_block starts at 0 an not 1
-  }
+  // The block's own list, not the operations: a block whose only ops are virtual
+  // reported 1, and only one page of ops is loaded so later pages undercounted.
+  const transactionCount = rawBlockdata?.transaction_ids?.length;
 
   const { blockError, blockOperations, trxLoading } = useBlockOperations(
     blockId,
@@ -310,7 +295,7 @@ export default function Block({ meta }: { meta: SeoMeta }) {
             nonVirtualOperationsTypesCounters={
               nonVirtualOperationsTypesCounters
             }
-            trxOperationsLength={maxTransactions}
+            trxOperationsLength={transactionCount}
             blockDetails={blockDetails}
             enableRawVirtualOperations={enableRawVirtualOperations}
             handleEnableVirtualOperations={handleEnableVirtualOperations}
