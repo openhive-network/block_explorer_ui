@@ -8,6 +8,8 @@ import React, {
   useRef,
 } from "react";
 import { Client } from "@hiveio/dhive";
+import Router from "next/router";
+import { isInAppPath } from "@/utils/SafeUrl";
 import { config } from "@/Config";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import {
@@ -214,11 +216,13 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
             if (data.username) {
               sessionStorage.removeItem("hs_auth_nonce");
               const loginErr = await login(data.username, "hivesigner");
-              window.history.replaceState(
-                {},
-                document.title,
-                window.location.pathname
-              );
+              // Only ever an in-app path: it comes back through the redirect.
+              const returnTo = isInAppPath(state.origin) ? state.origin : "/";
+              try {
+                await Router.replace(returnTo);
+              } catch {
+                window.history.replaceState({}, document.title, returnTo);
+              }
               if (!loginErr) handledByHivesigner = true;
             }
           }

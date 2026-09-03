@@ -1,6 +1,17 @@
 import { ISmartSignerProvider, SmartSignerResponse } from "../types";
 import { config } from "@/Config";
 
+// Hivesigner returns to one fixed URL, so the starting page only survives inside the OAuth state.
+const MAX_RETURN_PATH = 300;
+
+const currentReturnPath = (): string => {
+  if (typeof window === "undefined") return "/";
+  const { pathname, search, hash } = window.location;
+  const full = `${pathname}${search}${hash}`;
+  // Account filters can make this long, and it all rides in a query parameter.
+  return full.length <= MAX_RETURN_PATH ? full : pathname;
+};
+
 // base64url (RFC 4648 §5) with `=` → `.` — UTF-8 encodes first for multi-byte safety
 function base64Url(str: string): string {
   let b64: string;
@@ -104,7 +115,7 @@ export const HivesignerProvider: ISmartSignerProvider = {
     const stateData = {
       method: "hivesigner",
       nonce: nonce,
-      origin: typeof window !== "undefined" ? window.location.pathname : "/",
+      origin: currentReturnPath(),
     };
 
     const state = encodeURIComponent(JSON.stringify(stateData));
