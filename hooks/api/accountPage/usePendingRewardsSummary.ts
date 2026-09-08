@@ -2,7 +2,6 @@ import { useMemo } from "react";
 
 import usePendingAuthorRewards from "./usePendingAuthorRewards";
 import usePendingCurationRewards from "./usePendingCurationRewards";
-import useAccountNextPayout from "./useAccountNextPayout";
 import { derivePendingRewards } from "@/utils/pendingRewards";
 
 const usePendingRewardsSummary = (accountName: string) => {
@@ -16,7 +15,6 @@ const usePendingRewardsSummary = (accountName: string) => {
     isPendingCurationRewardsLoading,
     isPendingCurationRewardsError,
   } = usePendingCurationRewards(accountName);
-  const { nextPayoutDate } = useAccountNextPayout(accountName);
 
   const derived = useMemo(
     () => derivePendingRewards(pendingAuthorRewards, pendingCurationRewards),
@@ -30,7 +28,6 @@ const usePendingRewardsSummary = (accountName: string) => {
     isAuthorError: isPendingAuthorRewardsError,
     isCurationLoading: isPendingCurationRewardsLoading,
     isCurationError: isPendingCurationRewardsError,
-    nextPayoutDate,
     ...derived,
   };
 };

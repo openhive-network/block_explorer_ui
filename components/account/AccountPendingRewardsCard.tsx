@@ -4,7 +4,6 @@ import {
   ArrowUp,
   Award,
   CircleDollarSign,
-  Clock,
   Hourglass,
   Loader2,
   PenLine,
@@ -22,12 +21,12 @@ import {
   TooltipTrigger,
 } from "@/components/ui/hybrid-tooltip";
 import { useI18n } from "@/i18n/i18n";
+import { useAuth } from "@/contexts/AuthContext";
 import Hive from "@/types/Hive";
 import usePendingRewardsSummary from "@/hooks/api/accountPage/usePendingRewardsSummary";
 import { naiAssetToFloat, formatNaiAsset } from "@/utils/Calculations";
-import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import Explorer from "@/types/Explorer";
-import { cn } from "@/lib/utils";
+import SegmentedToggle from "@/components/ui/SegmentedToggle";
 
 type AccountPendingRewardsCardProps = {
   accountName: string;
@@ -86,14 +85,6 @@ const RewardRow: React.FC<RewardRowProps> = ({
   );
 };
 
-const formatCountdown = (date: Date, soonLabel: string): string => {
-  const diff = date.getTime() - Date.now();
-  if (diff <= 0) return soonLabel;
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  return days > 0 ? `${days}d ${hours}h` : `${hours}h`;
-};
-
 const SectionSpinner = () => (
   <div className="flex justify-center items-center py-4">
     <Loader2 className="animate-spin h-5 w-5" />
@@ -105,7 +96,8 @@ const AccountPendingRewardsCard: React.FC<AccountPendingRewardsCardProps> = ({
   isInitiallyOpen,
   dynamicGlobalData,
 }) => {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
+  const { username, isInitializing } = useAuth();
   const [isHidden, setIsHidden] = useState(!isInitiallyOpen);
 
   // Re-sync when the wallet tab is expanded/collapsed, like the sibling cards.
@@ -121,7 +113,6 @@ const AccountPendingRewardsCard: React.FC<AccountPendingRewardsCardProps> = ({
     isAuthorError,
     isCurationLoading,
     isCurationError,
-    nextPayoutDate,
     grossHbd,
     authorTotalHbd,
     beneficiariesTotalHbd,
@@ -157,17 +148,17 @@ const AccountPendingRewardsCard: React.FC<AccountPendingRewardsCardProps> = ({
     const hbdValue = naiAssetToFloat(supply);
     if (currency === "HIVE" && feedPriceHbdPerHive) {
       const hive = hbdValue / feedPriceHbdPerHive;
-      return `${hive.toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 })} HIVE`;
+      return `${hive.toLocaleString(locale, { minimumFractionDigits: 3, maximumFractionDigits: 3 })} HIVE`;
     }
-    return formatNaiAsset(supply);
+    return formatNaiAsset(supply, locale);
   };
 
   const toDisplayRaw = (hbdValue: number): string => {
     if (currency === "HIVE" && feedPriceHbdPerHive) {
       const hive = hbdValue / feedPriceHbdPerHive;
-      return `${hive.toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 })} HIVE`;
+      return `${hive.toLocaleString(locale, { minimumFractionDigits: 3, maximumFractionDigits: 3 })} HIVE`;
     }
-    return `${hbdValue.toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 })} HBD`;
+    return `${hbdValue.toLocaleString(locale, { minimumFractionDigits: 3, maximumFractionDigits: 3 })} HBD`;
   };
 
   // Amount only (no currency word) — the unit is already shown on the row above.
@@ -176,7 +167,7 @@ const AccountPendingRewardsCard: React.FC<AccountPendingRewardsCardProps> = ({
       currency === "HIVE" && feedPriceHbdPerHive
         ? hbdValue / feedPriceHbdPerHive
         : hbdValue;
-    return v.toLocaleString(undefined, {
+    return v.toLocaleString(locale, {
       minimumFractionDigits: 3,
       maximumFractionDigits: 3,
     });
@@ -206,12 +197,23 @@ const AccountPendingRewardsCard: React.FC<AccountPendingRewardsCardProps> = ({
   };
 
   const bothLoaded = !isAuthorLoading && !isCurationLoading;
-  const showAllZero = bothLoaded && isAllZero;
-  const showHeadline = bothLoaded && !isAllZero;
+  // A combined total that silently drops a failed half understates it — show none.
+  const bothLoadedOk = bothLoaded && !isAuthorError && !isCurationError;
+  const showAllZero = bothLoadedOk && isAllZero;
+  const showHeadline = bothLoadedOk && !isAllZero;
+  // takeLabel can't be known until the session restores; rendering earlier
+  // prints the wrong label and then swaps it.
+  const showSummary = showHeadline && !isInitializing;
 
   const authorShareLabel = t("pendingRewardsCard.authorShare");
   const beneficiariesShareLabel = t("pendingRewardsCard.beneficiariesShare");
   const curatorsShareLabel = t("pendingRewardsCard.curatorsShare");
+
+  // Card is shared with the MyPendingRewards widget — address the viewer only when it's their own account.
+  const takeLabel =
+    !!username && username.toLowerCase() === accountName.toLowerCase()
+      ? t("pendingRewardsCard.yourTake")
+      : t("pendingRewardsCard.accountTake");
 
   const splitSegments = [
     {
@@ -265,26 +267,16 @@ const AccountPendingRewardsCard: React.FC<AccountPendingRewardsCardProps> = ({
 
           {feedPriceHbdPerHive && (
             <div className="flex justify-end px-4 pb-2">
-              <div className="inline-flex items-stretch rounded-full border border-navbar-border overflow-hidden">
-                {(["HBD", "HIVE"] as Currency[]).map((cur, idx) => (
-                  <button
-                    key={cur}
-                    type="button"
-                    onClick={() => setCurrency(cur)}
-                    className={cn(
-                      "px-2.5 py-1 text-xs font-medium transition-colors",
-                      idx === 0
-                        ? "rounded-s-full border-e border-navbar-border"
-                        : "rounded-e-full",
-                      currency === cur
-                        ? "bg-indigo-500 text-white"
-                        : "bg-theme hover:bg-gray-100 dark:hover:bg-gray-700"
-                    )}
-                  >
-                    {cur}
-                  </button>
-                ))}
-              </div>
+              <SegmentedToggle<Currency>
+                options={(["HBD", "HIVE"] as Currency[]).map((value) => ({
+                  value,
+                  label: value,
+                }))}
+                value={currency}
+                onChange={setCurrency}
+                ariaLabel={t("pendingRewardsCard.currencyToggle")}
+                variant="pill"
+              />
             </div>
           )}
         </CardHeader>
@@ -302,7 +294,7 @@ const AccountPendingRewardsCard: React.FC<AccountPendingRewardsCardProps> = ({
             <div className="space-y-3">
               {/* Author Rewards */}
               <div className="rounded-lg border border-teal-200 dark:border-teal-800 border-s-4 border-s-teal-400 bg-slate-50 dark:bg-slate-800/50 overflow-hidden">
-                <div className="flex justify-between items-center px-3 py-2 border-b border-teal-100 dark:border-teal-900/50">
+                <div className="flex flex-wrap gap-x-2 gap-y-1 justify-between items-center px-3 py-2 border-b border-teal-100 dark:border-teal-900/50">
                   <div className="flex items-center gap-1.5">
                     <PenLine className="h-3.5 w-3.5 text-teal-500" />
                     <span className="text-xs font-semibold uppercase tracking-wide text-teal-600 dark:text-teal-400">
@@ -318,7 +310,7 @@ const AccountPendingRewardsCard: React.FC<AccountPendingRewardsCardProps> = ({
                     )}
                     {author && (
                       <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-teal-100 text-teal-700 dark:bg-teal-900/50 dark:text-teal-300">
-                        {author.pending_post_count}{" "}
+                        {author.pending_post_count.toLocaleString(locale)}{" "}
                         {t("pendingRewardsCard.posts")}
                       </span>
                     )}
@@ -350,8 +342,11 @@ const AccountPendingRewardsCard: React.FC<AccountPendingRewardsCardProps> = ({
                                   />
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                  {s.label} {s.pct.toFixed(0)}% ·{" "}
-                                  {toDisplayRaw(s.value)}
+                                  {s.label}{" "}
+                                  {s.pct.toLocaleString(locale, {
+                                    maximumFractionDigits: 0,
+                                  })}
+                                  % · {toDisplayRaw(s.value)}
                                 </TooltipContent>
                               </Tooltip>
                             ))}
@@ -362,7 +357,11 @@ const AccountPendingRewardsCard: React.FC<AccountPendingRewardsCardProps> = ({
                                 key={s.label}
                                 className={`text-xs ${s.textClass}`}
                               >
-                                {s.label} {s.pct.toFixed(0)}%
+                                {s.label}{" "}
+                                {s.pct.toLocaleString(locale, {
+                                  maximumFractionDigits: 0,
+                                })}
+                                %
                               </span>
                             ))}
                           </div>
@@ -428,7 +427,7 @@ const AccountPendingRewardsCard: React.FC<AccountPendingRewardsCardProps> = ({
 
               {/* Curation Rewards */}
               <div className="rounded-lg border border-violet-200 dark:border-violet-800 border-s-4 border-s-violet-400 bg-slate-50 dark:bg-slate-800/50 overflow-hidden">
-                <div className="flex justify-between items-center px-3 py-2 border-b border-violet-100 dark:border-violet-900/50">
+                <div className="flex flex-wrap gap-x-2 gap-y-1 justify-between items-center px-3 py-2 border-b border-violet-100 dark:border-violet-900/50">
                   <div className="flex items-center gap-1.5">
                     <Star className="h-3.5 w-3.5 text-violet-500" />
                     <span className="text-xs font-semibold uppercase tracking-wide text-violet-600 dark:text-violet-400">
@@ -444,7 +443,7 @@ const AccountPendingRewardsCard: React.FC<AccountPendingRewardsCardProps> = ({
                     )}
                     {curation && (
                       <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-violet-100 text-violet-700 dark:bg-violet-900/50 dark:text-violet-300">
-                        {curation.pending_vote_count.toLocaleString()}{" "}
+                        {curation.pending_vote_count.toLocaleString(locale)}{" "}
                         {t("pendingRewardsCard.votes")}
                       </span>
                     )}
@@ -473,41 +472,18 @@ const AccountPendingRewardsCard: React.FC<AccountPendingRewardsCardProps> = ({
                 )}
               </div>
 
-              {/* Summary: Your Take + Next Payout (needs both responses) */}
-              {showHeadline && (
+              {/* Summary: take (needs both responses) */}
+              {showSummary && (
                 <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 overflow-hidden">
                   <RewardRow
                     icon={
                       <Wallet className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
                     }
-                    label={t("pendingRewardsCard.yourTake")}
+                    label={takeLabel}
                     value={toDisplayRaw(yourTakeHbd)}
                     highlight="green"
                   />
                   {renderSplit(yourTakeLiquidHbd, yourTakeHpHbd)}
-                  {nextPayoutDate && (
-                    <div className="flex justify-between items-center px-1.5 py-1 gap-2 border-t border-slate-200 dark:border-slate-700">
-                      <div className="flex items-center gap-1.5">
-                        <Clock className="h-3.5 w-3.5 text-slate-400 flex-shrink-0" />
-                        <span className="text-sm text-slate-500 dark:text-slate-400">
-                          {t("pendingRewardsCard.nextPayout")}
-                        </span>
-                      </div>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <span className="font-mono text-sm font-medium text-slate-700 dark:text-slate-200 cursor-help">
-                            {formatCountdown(
-                              nextPayoutDate,
-                              t("pendingRewardsCard.soon")
-                            )}
-                          </span>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          {formatAndDelocalizeTime(nextPayoutDate)}
-                        </TooltipContent>
-                      </Tooltip>
-                    </div>
-                  )}
                 </div>
               )}
 
