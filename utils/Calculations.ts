@@ -19,11 +19,14 @@ export const naiAssetToFloat = (asset: NaiAsset | undefined): number => {
   return isFinite(value) ? value : 0;
 };
 
-export const formatNaiAsset = (asset: NaiAsset | undefined): string => {
+export const formatNaiAsset = (
+  asset: NaiAsset | undefined,
+  locale?: string
+): string => {
   const precision = asset?.precision ?? 3;
   const value = naiAssetToFloat(asset);
   const symbol = asset ? (NAI_SYMBOL[asset.nai] ?? asset.nai) : "HBD";
-  return `${value.toLocaleString(undefined, {
+  return `${value.toLocaleString(locale, {
     minimumFractionDigits: precision,
     maximumFractionDigits: precision,
   })} ${symbol}`;

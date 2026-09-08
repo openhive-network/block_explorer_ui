@@ -1416,7 +1416,8 @@ namespace Hive {
   }
 
   export interface AccountPostSummary {
-    cashout_time: string;
+    // bridge names this payout_at, not cashout_time.
+    payout_at: string;
     pending_payout_value: string;
     depth: number;
     author: string;
