@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import useAccountDetails from "../api/accountPage/useAccountDetails";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
@@ -6,6 +7,8 @@ import Hive from "@/types/Hive";
 import { IHiveChainInterface } from "@hiveio/wax";
 import useAccountRecurrentTransfers from "../api/accountPage/useAccoutRecurrentTransfers";
 import useAccountBalances from "../api/accountPage/useAccountBalances";
+import useBlockChainProperties from "../api/common/useBlockChainProperties";
+import { calculatePendingSavingsInterest } from "@/utils/Calculations";
 
 export const VEST_HP_KEYS_MAP: Record<string, string> = {
   reward_vesting_balance: "vest_reward_vesting_balance",
@@ -39,6 +42,23 @@ const useConvertedAccountDetails = (
   const { recurrentTransfers } = useAccountRecurrentTransfers(
     accountName,
     liveDataEnabled
+  );
+  const { blockChainPropertiesData } = useBlockChainProperties();
+  const pendingSavingsInterest = useMemo(
+    () =>
+      calculatePendingSavingsInterest(hiveChain, {
+        savingsHbdSeconds: accountDetails?.savings_hbd_seconds,
+        savingsHbdBalanceSatoshis: Number(accountDetails?.hbd_saving_balance),
+        lastCompoundingDate: accountDetails?.savings_hbd_seconds_last_update,
+        interestRateBasisPoints: blockChainPropertiesData?.hbd_interest_rate,
+      }),
+    [
+      hiveChain,
+      accountDetails?.savings_hbd_seconds,
+      accountDetails?.hbd_saving_balance,
+      accountDetails?.savings_hbd_seconds_last_update,
+      blockChainPropertiesData?.hbd_interest_rate,
+    ]
   );
 
   if (!dynamicGlobalData || !hiveChain)
@@ -171,6 +191,11 @@ const useConvertedAccountDetails = (
   // Put values for display
   const accountDetailsForFormat = {
     ...accountDetails,
+    // Deliberately kept out of `dollars`: it is unpaid, so folding it into the
+    // account total would restate every account's worth.
+    ...(pendingSavingsInterest && {
+      pending_hbd_savings_interest: pendingSavingsInterest,
+    }),
     ...vests,
     ...balanceApiFormatted,
     balance: hiveChain.hive(accountDetails.balance),

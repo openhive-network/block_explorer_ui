@@ -3,6 +3,7 @@ import { IHiveChainInterface } from "@hiveio/wax";
 import Hive from "@/types/Hive";
 import Explorer from "@/types/Explorer";
 import { formatNumber } from "@/lib/utils";
+import { parseDisplayOrChainDate } from "./TimeUtils";
 
 type NaiAsset = { nai: string; amount: string; precision: number };
 
@@ -124,4 +125,57 @@ export const computeVestingRatios = (
     vestsPerHive: totalVests / totalHive,
     hivePerVests: totalHive / totalVests,
   };
+};
+
+export interface PendingSavingsInterestInput {
+  savingsHbdSeconds?: string | number | null;
+  savingsHbdBalanceSatoshis?: number | null;
+  lastCompoundingDate?: string | null;
+  interestRateBasisPoints?: number | null;
+}
+
+// Interest that HBD savings has accrued but not yet been paid. The chain only
+// credits it when a savings operation touches the account, so this is money the
+// balance does not show. Delegates the arithmetic to wax's estimateHbdInterest
+// so it can never drift from the chain's own pay_savings_interest.
+export const calculatePendingSavingsInterest = (
+  hiveChain: IHiveChainInterface | null | undefined,
+  input: PendingSavingsInterestInput,
+  now: Date = new Date()
+): NaiAsset | null => {
+  const {
+    savingsHbdSeconds,
+    savingsHbdBalanceSatoshis,
+    lastCompoundingDate,
+    interestRateBasisPoints,
+  } = input;
+  if (!hiveChain || !interestRateBasisPoints) return null;
+
+  // Accepts both the raw chain shape and the display shape, so the caller is
+  // free to format this field without silently breaking the maths.
+  const lastUpdate = parseDisplayOrChainDate(lastCompoundingDate);
+  if (!lastUpdate) return null;
+
+  const balance = Number(savingsHbdBalanceSatoshis ?? 0);
+  const seconds = String(savingsHbdSeconds ?? "0");
+  if (!Number.isFinite(balance) || (!balance && seconds === "0")) return null;
+
+  // wax asserts on a backwards interval, and the browser clock can trail the
+  // chain, so never let "now" fall behind the last compounding date.
+  const effectiveNow = now.getTime() > lastUpdate.getTime() ? now : lastUpdate;
+
+  try {
+    return hiveChain.estimateHbdInterest(
+      seconds,
+      hiveChain.hbdSatoshis(balance),
+      lastUpdate,
+      effectiveNow,
+      interestRateBasisPoints
+    );
+  } catch (error) {
+    // A throw here means bad inputs or a changed wax signature, not "no
+    // interest" - surface it instead of hiding it behind a missing row.
+    console.error("Failed to estimate pending HBD savings interest", error);
+    return null;
+  }
 };
