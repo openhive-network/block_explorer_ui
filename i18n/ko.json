@@ -649,6 +649,7 @@
   "votersDialog.proxiedVests": "프록시된 VESTS",
   "votersDialog.accountHp": "계정 HP",
   "votersDialog.proxiedHp": "프록시된 HP",
+  "votersDialog.totalVoterPower": "총 투표자 파워",
   "votersDialog.voterWeight": "투표자 가중치",
   "votersChart.topVotersWeight": "상위 투표자 가중치 분포",
   "votersChart.weight": "가중치",

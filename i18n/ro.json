@@ -649,6 +649,7 @@
   "votersDialog.proxiedVests": "VESTS prin Proxy",
   "votersDialog.accountHp": "HP Cont",
   "votersDialog.proxiedHp": "HP prin Proxy",
+  "votersDialog.totalVoterPower": "Puterea totală a votanților",
   "votersDialog.voterWeight": "Greutate Votant",
   "votersChart.topVotersWeight": "Distribuția Greutății Votanților de Top",
   "votersChart.weight": "Greutate",

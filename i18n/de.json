@@ -649,6 +649,7 @@
   "votersDialog.proxiedVests": "Geproxyte VESTS",
   "votersDialog.accountHp": "Konto-HP",
   "votersDialog.proxiedHp": "Geproxytes HP",
+  "votersDialog.totalVoterPower": "Gesamte Wählerstimmkraft",
   "votersDialog.voterWeight": "Wählergewicht",
   "votersChart.topVotersWeight": "Gewichtsverteilung der Top-Wähler",
   "votersChart.weight": "Gewicht",
