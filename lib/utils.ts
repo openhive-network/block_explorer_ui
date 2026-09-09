@@ -103,6 +103,22 @@ export const formatNumber = (
 };
 
 /**
+ * Group-separate a whole-number counter that the chain reports as a string.
+ * These are uint128 values (hbd_seconds and friends), so going through Number
+ * would silently round anything past 2^53 into wrong digits.
+ * @param rawInteger digits as returned by the API
+ * @returns Grouped string, or the input unchanged when it is not an integer
+ */
+export const formatIntegerString = (
+  rawInteger: string | number | null | undefined,
+  locale?: string
+): string => {
+  const raw = String(rawInteger ?? "").trim();
+  if (!/^-?\d+$/.test(raw)) return raw;
+  return BigInt(raw).toLocaleString(locale);
+};
+
+/**
  * Properly format percentage values
  * @param numberToFormat raw percentage from Hive backend.
  * @returns Formatted string with % at the end
