@@ -26,6 +26,10 @@ export type ExplorerNodeApi = {
       { account: string },
       { delegations: Hive.VestingDelegations[] }
     >;
+    find_withdraw_vesting_routes: TWaxApiRequest<
+      { account: string; order: "by_withdraw_route" | "by_destination" },
+      Hive.WithdrawVestingRoutesResponse
+    >;
     get_witness_schedule: TWaxApiRequest<
       { id: number; include_future: boolean },
       Hive.WitnessesSchedule
@@ -273,6 +277,14 @@ class FetchingService {
       accounts,
       delayed_votes_active,
     });
+  }
+
+  async getWithdrawRoutes(
+    accountName: string
+  ): Promise<Hive.WithdrawVestingRoutesResponse> {
+    return await this.extendedHiveChain!.api.database_api.find_withdraw_vesting_routes(
+      { account: accountName, order: "by_withdraw_route" }
+    );
   }
 
   async getAccOpTypes(accountName: string): Promise<number[]> {
