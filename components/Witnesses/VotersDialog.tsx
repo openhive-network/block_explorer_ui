@@ -206,6 +206,10 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
 
   const totalAccountVests = Number(witnessDetails?.vests);
 
+  const totalVoterPower = witnessDetails?.vests
+    ? fetchHivePower(witnessDetails.vests, isHP) || null
+    : null;
+
   const calculateVoterWeight = useCallback(
     (voterVests: number): number => {
       return totalAccountVests > 0 ? (voterVests / totalAccountVests) * 100 : 0;
@@ -326,11 +330,29 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                   </div>
                 </div>
 
-                <div className="flex justify-between items-center w-full mb-2 px-2">
-                  <DataCountMessage
-                    count={witnessVoters.total_votes}
-                    dataType={t("votersDialog.voters")}
-                  />
+                <div className="flex flex-wrap justify-between items-center gap-2 w-full mb-2 px-2">
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                    <DataCountMessage
+                      count={witnessVoters.total_votes}
+                      dataType={t("votersDialog.voters")}
+                    />
+                    {totalVoterPower && (
+                      <>
+                        <div className="hidden sm:block w-px h-4 bg-navbar-border" />
+                        <span
+                          className="text-sm text-text"
+                          data-testid="voters-dialog-total-voting-power"
+                        >
+                          <span className="opacity-70">
+                            {t("votersDialog.totalVoterPower")}
+                          </span>{" "}
+                          <strong className="font-semibold">
+                            {totalVoterPower}
+                          </strong>
+                        </span>
+                      </>
+                    )}
+                  </div>
                   <div className="flex items-center gap-4">
                     <div className="flex items-center">
                       <label className="mr-2 text-sm">
