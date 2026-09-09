@@ -52,6 +52,8 @@ import useConvertedVestingShares from "@/hooks/common/useConvertedVestingShares"
 import useProxyPower from "@/hooks/api/accountPage/useProxyPower";
 import AccountProxyPowerCard from "./AccountProxyPowerCard"; // <-- 1. Import the new card
 import AccountPendingRewardsCard from "./AccountPendingRewardsCard";
+import AccountWithdrawRoutesCard from "./AccountWithdrawRoutesCard";
+import useAccountWithdrawRoutes from "@/hooks/api/accountPage/useAccountWithdrawRoutes";
 
 interface AccountDetailsSectionProps {
   accountName: string;
@@ -125,6 +127,11 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
 
   const { accountProxyPower } = useProxyPower(accountName, 1);
 
+  const { withdrawRoutes } = useAccountWithdrawRoutes(
+    accountName,
+    liveDataEnabled
+  );
+
   const hasDelegationsContent = useMemo(() => {
     const hasOutgoingVesting =
       outgoingVestingDelegations && outgoingVestingDelegations.length > 0;
@@ -135,13 +142,18 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
     const hasIncomingRc =
       incomingRcDelegations && incomingRcDelegations.length > 0;
     return (
-      hasOutgoingVesting || hasIncomingVesting || hasOutgoingRc || hasIncomingRc
+      hasOutgoingVesting ||
+      hasIncomingVesting ||
+      hasOutgoingRc ||
+      hasIncomingRc ||
+      !!withdrawRoutes?.length
     );
   }, [
     outgoingVestingDelegations,
     incomingVestingDelegations,
     outgoingRcDelegations,
     incomingRcDelegations,
+    withdrawRoutes,
   ]);
 
   const hasGovernanceContent = useMemo(() => {
@@ -258,6 +270,11 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
       />
       <AccountIncomingRcDelegationsCard
         delegations={incomingRcDelegations}
+        isInitiallyOpen={isInitiallyOpen}
+        accountName={accountName}
+      />
+      <AccountWithdrawRoutesCard
+        routes={withdrawRoutes}
         isInitiallyOpen={isInitiallyOpen}
         accountName={accountName}
       />
@@ -531,6 +548,11 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
                   />
                   <AccountIncomingRcDelegationsCard
                     delegations={incomingRcDelegations}
+                    isInitiallyOpen={tabExpandedStates.delegations}
+                    accountName={accountName}
+                  />
+                  <AccountWithdrawRoutesCard
+                    routes={withdrawRoutes}
                     isInitiallyOpen={tabExpandedStates.delegations}
                     accountName={accountName}
                   />
