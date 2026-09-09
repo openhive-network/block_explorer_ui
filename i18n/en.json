@@ -649,6 +649,7 @@
   "votersDialog.proxiedVests": "Proxied VESTS",
   "votersDialog.accountHp": "Account HP",
   "votersDialog.proxiedHp": "Proxied HP",
+  "votersDialog.totalVoterPower": "Total Voter Power",
   "votersDialog.voterWeight": "Voter Weight",
   "votersChart.topVotersWeight": "Top Voters Weight Distribution",
   "votersChart.weight": "Weight",

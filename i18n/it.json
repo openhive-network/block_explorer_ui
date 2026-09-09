@@ -649,6 +649,7 @@
   "votersDialog.proxiedVests": "VESTS Delegati",
   "votersDialog.accountHp": "HP dell'Account",
   "votersDialog.proxiedHp": "HP Delegati",
+  "votersDialog.totalVoterPower": "Potere totale dei votanti",
   "votersDialog.voterWeight": "Peso del Votante",
   "votersChart.topVotersWeight": "Distribuzione Peso Top Votanti",
   "votersChart.weight": "Peso",

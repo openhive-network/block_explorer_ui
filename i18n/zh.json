@@ -649,6 +649,7 @@
   "votersDialog.proxiedVests": "代理VESTS",
   "votersDialog.accountHp": "账户HP",
   "votersDialog.proxiedHp": "代理HP",
+  "votersDialog.totalVoterPower": "投票者总投票权",
   "votersDialog.voterWeight": "投票者权重",
   "votersChart.topVotersWeight": "顶级投票者权重分布",
   "votersChart.weight": "权重",

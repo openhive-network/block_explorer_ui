@@ -649,6 +649,7 @@
   "votersDialog.proxiedVests": "代理VESTS",
   "votersDialog.accountHp": "アカウントHP",
   "votersDialog.proxiedHp": "代理HP",
+  "votersDialog.totalVoterPower": "投票者の総投票力",
   "votersDialog.voterWeight": "投票者ウェイト",
   "votersChart.topVotersWeight": "トップ投票者のウェイト分布",
   "votersChart.weight": "ウェイト",
