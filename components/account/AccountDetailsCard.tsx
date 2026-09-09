@@ -1,12 +1,20 @@
 import Link from "next/link";
 import { ReactNode, useState, Fragment } from "react";
-import { ArrowDown, ArrowUp } from "lucide-react";
+import { ArrowDown, ArrowUp, HelpCircle } from "lucide-react";
 
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableCell, TableRow } from "../ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/hybrid-tooltip";
 import CopyToKeyboard from "../CopyToKeyboard";
 import VestsTooltip from "../VestsTooltip";
 import useElementWidth from "@/hooks/common/useElementWidth";
+import { formatIntegerString } from "@/lib/utils";
+import { useI18n } from "@/i18n/i18n";
 
 type AccountDetailsCardProps = {
   header: string;
@@ -37,17 +45,28 @@ const EXCLUDE_KEYS = [
   "follower_count",
   "following_count",
   "post_count",
+  "savings_hbd_seconds",
+  "savings_hbd_seconds_last_update",
+  "savings_hbd_last_interest_payment",
+  "pending_hbd_savings_interest",
 ];
 
 const LINK_KEYS = ["recovery_account", "reset_account"];
 const URL_KEYS = ["url"];
 const COPY_KEYS = ["signing_key"];
+const NUMERIC_STRING_KEYS = ["hbd_seconds"];
+const TOOLTIP_KEYS: Record<string, string> = {
+  hbd_seconds: "accountDetailsSection.liquidHbdInterestTooltip",
+  hbd_seconds_last_update: "accountDetailsSection.liquidHbdInterestTooltip",
+  hbd_last_interest_payment: "accountDetailsSection.liquidHbdInterestTooltip",
+};
 
 const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
   header,
   userDetails,
   isInitiallyOpen,
 }) => {
+  const { t } = useI18n();
   const [isPropertiesHidden, setIsPropertiesHidden] =
     useState(!isInitiallyOpen);
   const [containerRef, containerWidth] = useElementWidth<HTMLDivElement>();
@@ -99,7 +118,11 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
           </Link>
         </div>
       );
-    } else if (typeof userDetails[key] === "number") {
+    }
+    if (NUMERIC_STRING_KEYS.includes(key)) {
+      return formatIntegerString(userDetails[key]);
+    }
+    if (typeof userDetails[key] === "number") {
       const numberProperty = userDetails[key] as number;
       return numberProperty.toLocaleString();
     } else if (typeof userDetails[key] === "string") {
@@ -117,7 +140,27 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
         return (
           <Fragment key={index}>
             <TableRow>
-              <TableCell className="whitespace-nowrap">{key}</TableCell>
+              <TableCell className="whitespace-nowrap">
+                {TOOLTIP_KEYS[key] ? (
+                  <span className="flex items-center gap-1.5">
+                    {key}
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span className="cursor-help text-gray-400 dark:text-gray-500">
+                          <HelpCircle className="h-3 w-3" />
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="max-w-[260px] whitespace-normal">
+                          {t(TOOLTIP_KEYS[key])}
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </span>
+                ) : (
+                  key
+                )}
+              </TableCell>
               <TableCell
                 className={
                   Array.isArray(userDetails[key])
@@ -154,9 +197,11 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
         data-testid="card-content"
         hidden={isPropertiesHidden}
       >
-        <Table noOverflow={true}>
-          <TableBody className="text-sm">{buildTableBody(keys)}</TableBody>
-        </Table>
+        <TooltipProvider>
+          <Table noOverflow={true}>
+            <TableBody className="text-sm">{buildTableBody(keys)}</TableBody>
+          </Table>
+        </TooltipProvider>
       </CardContent>
     </Card>
   );
