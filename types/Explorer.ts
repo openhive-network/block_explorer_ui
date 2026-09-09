@@ -291,6 +291,8 @@ declare module Explorer {
     | "vesting_balance"
     | "last_account_recovery"
     | "created"
+    | "hbd_seconds_last_update"
+    | "hbd_last_interest_payment"
   > {
     balance: string;
     saving_balance: string;
@@ -335,6 +337,14 @@ declare module Explorer {
     escrow_pending_count: string;
     open_orders_hbd_count: string;
     open_orders_hive_count: string;
+    // Optional: absent on nodes that predate these fields, and omitted when the
+    // chain still holds the 1970 epoch sentinel.
+    hbd_seconds_last_update?: string;
+    hbd_last_interest_payment?: string;
+    savings_hbd_seconds: string;
+    savings_hbd_seconds_last_update: string;
+    savings_hbd_last_interest_payment: string;
+    pending_hbd_savings_interest?: string;
   }
 
   interface BalanceHistoryForTable {

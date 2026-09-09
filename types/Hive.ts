@@ -545,8 +545,27 @@ namespace Hive {
     witnesses_voted_for!: number;
     ops_count!: number;
     is_witness!: boolean;
+    pending_claimed_accounts!: number;
+    // Liquid-HBD interest bookkeeping. Frozen for every account since HF25
+    // (June 2021) ended interest on liquid HBD; kept for historical reference.
+    // Optional: older hafbe deployments do not return these at all.
+    hbd_seconds?: string;
+    hbd_seconds_last_update?: Date;
+    hbd_last_interest_payment?: Date;
     governanceTs!: any;
     governance_vote_expiration_ts!: Date;
+  }
+
+  export class WithdrawVestingRoute {
+    id!: number;
+    from_account!: string;
+    to_account!: string;
+    percent!: number;
+    auto_vest!: boolean;
+  }
+
+  export class WithdrawVestingRoutesResponse {
+    routes!: WithdrawVestingRoute[];
   }
 
   export class GetAccountAuthoritiesParams {
