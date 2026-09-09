@@ -27,7 +27,7 @@ const AccountWithdrawRoutesCard: React.FC<AccountWithdrawRoutesCardProps> = ({
   isInitiallyOpen,
   accountName,
 }) => {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [isPropertiesHidden, setIsPropertiesHidden] =
     useState(!isInitiallyOpen);
 
@@ -48,7 +48,10 @@ const AccountWithdrawRoutesCard: React.FC<AccountWithdrawRoutesCardProps> = ({
     routes.map((route, index) => ({
       [t("common.order")]: index + 1,
       [t("accountWithdrawRoutesCard.destination")]: route.to_account,
-      [t("accountWithdrawRoutesCard.percent")]: formatPercent(route.percent),
+      [t("accountWithdrawRoutesCard.percent")]: formatPercent(
+        route.percent,
+        locale
+      ),
       [t("accountWithdrawRoutesCard.autoPowerUp")]: autoVestLabel(
         route.auto_vest
       ),
@@ -109,7 +112,7 @@ const AccountWithdrawRoutesCard: React.FC<AccountWithdrawRoutesCardProps> = ({
                     </Link>
                   </TableCell>
                   <TableCell className="text-right">
-                    {formatPercent(route.percent)}
+                    {formatPercent(route.percent, locale)}
                   </TableCell>
                   <TableCell className="text-right">
                     {autoVestLabel(route.auto_vest)}

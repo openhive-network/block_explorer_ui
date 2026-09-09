@@ -66,7 +66,7 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
   userDetails,
   isInitiallyOpen,
 }) => {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [isPropertiesHidden, setIsPropertiesHidden] =
     useState(!isInitiallyOpen);
   const [containerRef, containerWidth] = useElementWidth<HTMLDivElement>();
@@ -120,7 +120,7 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
       );
     }
     if (NUMERIC_STRING_KEYS.includes(key)) {
-      return formatIntegerString(userDetails[key]);
+      return formatIntegerString(userDetails[key], locale);
     }
     if (typeof userDetails[key] === "number") {
       const numberProperty = userDetails[key] as number;
