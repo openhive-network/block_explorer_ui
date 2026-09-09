@@ -139,16 +139,23 @@ export const prepareAccountBalanceReport = (
   };
 
   const addHpRow = (metricKey: FinancialKey, sign: "" | "+" | "-" = "") => {
-    const formattedVests = financialSummary.formatted.vests[metricKey as keyof typeof userDetails.vests] || "";
+    const formattedVests =
+      financialSummary.formatted.vests[
+        metricKey as keyof typeof userDetails.vests
+      ] || "";
 
-    const notes = metricKey.startsWith("reward_") ? t("accountBalanceCardExport.unclaimedRewardNote") : "";
+    const notes = metricKey.startsWith("reward_")
+      ? t("accountBalanceCardExport.unclaimedRewardNote")
+      : "";
 
     reportData.push({
       ...baseRow,
       [headers.metric]: t(cardNameMapKeys.get(metricKey)!),
       [headers.value]: `${sign}${userDetails[metricKey]}`,
       [headers.vestsValue]: formattedVests,
-      [headers.valueUSD]: asCsvString(financialSummary.formatted.dollars[metricKey]),
+      [headers.valueUSD]: asCsvString(
+        financialSummary.formatted.dollars[metricKey]
+      ),
       [headers.notes]: notes,
     });
   };
@@ -201,7 +208,7 @@ export const prepareAccountBalanceReport = (
       [headers.metric]: t(cardNameMapKeys.get(metricKey)!),
       [headers.value]: displayValue,
       [headers.valueUSD]: asCsvString(
-        financialSummary.formatted.dollars[metricKey as FinancialKey],
+        financialSummary.formatted.dollars[metricKey as FinancialKey]
       ),
       [headers.notes]: notes,
     });
@@ -235,7 +242,13 @@ export const prepareAccountBalanceReport = (
         metricKey.includes("conversion_pending") ||
         metricKey.includes("open_orders") ||
         metricKey.includes("escrow")) &&
-      numericValue=== 0
+      numericValue === 0
+    ) {
+      return;
+    }
+    if (
+      metricKey === "pending_hbd_savings_interest" &&
+      (!userDetails[metricKey] || numericValue === 0)
     ) {
       return;
     }
@@ -246,6 +259,9 @@ export const prepareAccountBalanceReport = (
     if (metricKey === "hbd_saving_balance" && hbdInterestApr) {
       notes = `${hbdInterestApr} APR (${t("accountBalanceCard.hbdAprTooltip")})`;
     }
+    if (metricKey === "pending_hbd_savings_interest") {
+      notes = t("accountBalanceCard.pendingInterestTooltip");
+    }
 
     const displayValue = `${userDetails[metricKey]}${getCountSuffix(metricKey)}`;
 
@@ -254,7 +270,7 @@ export const prepareAccountBalanceReport = (
       [headers.metric]: t(cardNameMapKeys.get(metricKey)!),
       [headers.value]: displayValue,
       [headers.valueUSD]: asCsvString(
-        financialSummary.formatted.dollars[metricKey as FinancialKey],
+        financialSummary.formatted.dollars[metricKey as FinancialKey]
       ),
       [headers.notes]: notes,
     });

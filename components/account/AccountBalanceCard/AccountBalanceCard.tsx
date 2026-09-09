@@ -31,6 +31,12 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "../../ui/tooltip";
+import {
+  Tooltip as HybridTooltip,
+  TooltipProvider as HybridTooltipProvider,
+  TooltipTrigger as HybridTooltipTrigger,
+  TooltipContent as HybridTooltipContent,
+} from "@/components/ui/hybrid-tooltip";
 import { AccountBalanceCardChart } from "./AccountBalanceCardChart";
 import { prepareAccountBalanceReport } from "./AccountBalanceCardExport";
 import DataExport from "../../DataExport";
@@ -74,6 +80,7 @@ export const cardNameMapKeys = new Map<
   ["escrow_pending_amount_hbd", "accountBalanceCard.escrow"],
   ["savings_pending_amount_hive", "accountBalanceCard.pendingSavings"],
   ["savings_pending_amount_hbd", "accountBalanceCard.pendingSavings"],
+  ["pending_hbd_savings_interest", "accountBalanceCard.pendingInterest"],
 ]);
 
 /** Defines the structure for each asset section (HP, HIVE, HBD) in the wallet. */
@@ -114,6 +121,7 @@ export const ASSET_CONFIG = [
     fields: [
       "hbd_balance",
       "hbd_saving_balance",
+      "pending_hbd_savings_interest",
       "savings_pending_amount_hbd",
       "reward_hbd_balance",
       "open_orders_hbd_amount",
@@ -138,7 +146,7 @@ const useFinancialSummary = (userDetails: Explorer.FormattedAccountDetails) => {
     const totalValueRaw = grabNumericValue(dollars.account_value);
     const stakedValueRaw = grabNumericValue(dollars.vesting_shares);
     const poweringDownValueRaw = grabNumericValue(
-      dollars.vesting_withdraw_rate,
+      dollars.vesting_withdraw_rate
     );
     const liquidValueRaw =
       grabNumericValue(dollars.balance) + grabNumericValue(dollars.hbd_balance);
@@ -217,7 +225,7 @@ const useFinancialSummary = (userDetails: Explorer.FormattedAccountDetails) => {
           changeHBDToDollarsDisplay(value);
         return acc;
       },
-      {} as Record<keyof typeof userDetails.dollars, string>,
+      {} as Record<keyof typeof userDetails.dollars, string>
     );
 
     return {
@@ -329,12 +337,44 @@ const HbdAprTooltip = ({ hbdInterestApr, isLoading, t }: any) => (
   </Tooltip>
 );
 
+/**
+ * Explains why the pending savings interest is not part of the balance yet.
+ * Uses the hybrid tooltip so the explanation is reachable by tap: this is the
+ * only row showing money the account does not hold, so a hover-only tooltip
+ * would leave touch users with an unexplained figure.
+ */
+const PendingInterestTooltip = ({ lastPayment, t }: any) => (
+  <HybridTooltipProvider>
+    <HybridTooltip>
+      <HybridTooltipTrigger asChild>
+        <span
+          tabIndex={0}
+          className="flex items-center cursor-help text-slate-400 dark:text-slate-500"
+        >
+          <HelpCircle className="h-3 w-3" />
+        </span>
+      </HybridTooltipTrigger>
+      <HybridTooltipContent>
+        <p className="max-w-[260px] whitespace-normal">
+          {t("accountBalanceCard.pendingInterestTooltip")}
+          {lastPayment ? (
+            <span className="block mt-1">
+              {t("accountBalanceCard.pendingInterestLastPaid")} {lastPayment}
+            </span>
+          ) : null}
+        </p>
+      </HybridTooltipContent>
+    </HybridTooltip>
+  </HybridTooltipProvider>
+);
+
 /** Renders a single label-value row within an asset section. */
 const DetailRow = ({
   fieldKey,
   label,
   value,
   dollarValue,
+  note,
   icon,
   labelSuffix,
   className = "",
@@ -351,7 +391,7 @@ const DetailRow = ({
       {
         "hover:cursor-pointer": !!onClick,
       },
-      className,
+      className
     )}
   >
     <div className="flex items-center gap-1.5">
@@ -360,7 +400,7 @@ const DetailRow = ({
         className={cn(
           "text-sm",
           { "dark:text-slate-100": isHighlighted },
-          labelClassName,
+          labelClassName
         )}
       >
         {label}
@@ -372,12 +412,13 @@ const DetailRow = ({
         className={cn(
           "font-mono text-sm text-slate-800 dark:text-slate-200",
           { "dark:text-slate-100": isHighlighted },
-          valueClassName,
+          valueClassName
         )}
       >
         {value}
       </div>
       <div className="text-xs text-slate-500">{dollarValue}</div>
+      {note ? <div className="text-xs text-slate-500">{note}</div> : null}
     </div>
   </div>
 );
@@ -402,72 +443,71 @@ const AssetSection = ({
     useBlockChainProperties();
 
   const renderValue = (
-  key: keyof Explorer.FormattedAccountDetails,
-  sign: "" | "+" | "-" = ""
-) => {
-  const rawVal = userDetails[key];
+    key: keyof Explorer.FormattedAccountDetails,
+    sign: "" | "+" | "-" = ""
+  ) => {
+    const rawVal = userDetails[key];
 
-  // 1. Determine the count and the specific tooltip message
-  let countSuffix = null;
-  let tooltipMsg = "";
+    // 1. Determine the count and the specific tooltip message
+    let countSuffix = null;
+    let tooltipMsg = "";
 
-  if (key === "open_orders_hive_amount") {
-    countSuffix = userDetails.open_orders_hive_count;
-    tooltipMsg = t("accountBalanceCard.countTooltipOpenOrdersHive"); // "Number of open orders in HIVE"
-  } else if (key === "open_orders_hbd_amount") {
-    countSuffix = userDetails.open_orders_hbd_count;
-    tooltipMsg = t("accountBalanceCard.countTooltipOpenOrdersHBD"); // "Number of open orders in HBD"
-  } else if (key === "conversion_pending_amount_hive") {
-    countSuffix = userDetails.conversion_pending_count_hive;
-    tooltipMsg = t("accountBalanceCard.countTooltipConversionHive"); // "Number of pending HIVE conversions"
-  } else if (key === "conversion_pending_amount_hbd") {
-    countSuffix = userDetails.conversion_pending_count_hbd;
-    tooltipMsg = t("accountBalanceCard.countTooltipConversionHBD"); // "Number of pending HBD conversions"
-  } else if (key.includes("escrow_pending_amount")) {
-    countSuffix = userDetails.escrow_pending_count;
-    tooltipMsg = t("accountBalanceCard.countTooltipEscrow"); // "Number of escrow orders"
-  }
+    if (key === "open_orders_hive_amount") {
+      countSuffix = userDetails.open_orders_hive_count;
+      tooltipMsg = t("accountBalanceCard.countTooltipOpenOrdersHive"); // "Number of open orders in HIVE"
+    } else if (key === "open_orders_hbd_amount") {
+      countSuffix = userDetails.open_orders_hbd_count;
+      tooltipMsg = t("accountBalanceCard.countTooltipOpenOrdersHBD"); // "Number of open orders in HBD"
+    } else if (key === "conversion_pending_amount_hive") {
+      countSuffix = userDetails.conversion_pending_count_hive;
+      tooltipMsg = t("accountBalanceCard.countTooltipConversionHive"); // "Number of pending HIVE conversions"
+    } else if (key === "conversion_pending_amount_hbd") {
+      countSuffix = userDetails.conversion_pending_count_hbd;
+      tooltipMsg = t("accountBalanceCard.countTooltipConversionHBD"); // "Number of pending HBD conversions"
+    } else if (key.includes("escrow_pending_amount")) {
+      countSuffix = userDetails.escrow_pending_count;
+      tooltipMsg = t("accountBalanceCard.countTooltipEscrow"); // "Number of escrow orders"
+    }
 
-  // 2. Render the count display with the superscript Info icon and Tooltip
-  const countDisplay =
-    countSuffix !== null && countSuffix !== undefined && countSuffix !== 0 ? (
-      <span className="inline-flex items-center ml-1 text-xs opacity-70">
-        (
-        {countSuffix}
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <sup className="ml-0.5 cursor-help" >
-              <Info size={10} strokeWidth={3} color="#0ea5e9" />
-            </sup>
-          </TooltipTrigger>
-          <TooltipContent side="top" align="end" sideOffset={5}>
-            <p className="text-xs" >{tooltipMsg}</p>
-          </TooltipContent>
-        </Tooltip>
-        )
-      </span>
-    ) : null;
+    // 2. Render the count display with the superscript Info icon and Tooltip
+    const countDisplay =
+      countSuffix !== null && countSuffix !== undefined && countSuffix !== 0 ? (
+        <span className="inline-flex items-center ml-1 text-xs opacity-70">
+          ({countSuffix}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <sup className="ml-0.5 cursor-help">
+                <Info size={10} strokeWidth={3} color="#0ea5e9" />
+              </sup>
+            </TooltipTrigger>
+            <TooltipContent side="top" align="end" sideOffset={5}>
+              <p className="text-xs">{tooltipMsg}</p>
+            </TooltipContent>
+          </Tooltip>
+          )
+        </span>
+      ) : null;
 
     if (key in userDetails.vests) {
-    const vestKey = key as keyof Explorer.AccountDetailsVests;
+      const vestKey = key as keyof Explorer.AccountDetailsVests;
+      return (
+        <span className="flex items-center justify-end">
+          <VestsTooltip
+            tooltipTrigger={`${sign}${String(rawVal)}`}
+            tooltipContent={String(userDetails.vests[vestKey])}
+          />
+          {countDisplay}
+        </span>
+      );
+    }
     return (
       <span className="flex items-center justify-end">
-        <VestsTooltip
-          tooltipTrigger={`${sign}${String(rawVal)}`}
-          tooltipContent={String(userDetails.vests[vestKey])}
-        />
+        {sign}
+        {String(rawVal)}
         {countDisplay}
       </span>
     );
-  }
-  return (
-    <span className="flex items-center justify-end">
-      {sign}
-      {String(rawVal)}
-      {countDisplay}
-    </span>
-  );
-};
+  };
 
   const hpDetails = [
     {
@@ -504,7 +544,16 @@ const AssetSection = ({
     f.includes("escrow_pending") ||
     f.includes("savings_pending");
 
-  const regularFields = asset.fields.filter((f: string) => !isSpecialField(f));
+  // Dropped when there is nothing to show: either no value at all, or leftover
+  // savings_hbd_seconds on a zeroed balance, which rounds to "0.000 HBD" and
+  // can never grow.
+  const regularFields = asset.fields.filter(
+    (f: string) =>
+      !isSpecialField(f) &&
+      (f !== "pending_hbd_savings_interest" ||
+        (!!userDetails.pending_hbd_savings_interest &&
+          grabNumericValue(userDetails.pending_hbd_savings_interest) > 0))
+  );
 
   const specialFields = asset.fields.filter((f: string) => isSpecialField(f));
 
@@ -586,16 +635,32 @@ const AssetSection = ({
               })
             : regularFields.map(
                 (field: keyof Explorer.FormattedAccountDetails) => {
-                  const numericValue = grabNumericValue(userDetails[field]);
+                  // Unpaid, so it is deliberately absent from the section total
+                  // and from `dollars`. Indented under the savings balance it
+                  // accrues on, and muted, so it does not read as a summand.
+                  const isPendingInterest =
+                    field === "pending_hbd_savings_interest";
+                  const mutedClass = isPendingInterest
+                    ? "text-slate-500 dark:text-slate-400"
+                    : undefined;
                   return (
                     <DetailRow
                       key={field}
                       fieldKey={field}
-                      className={getHighlightClass(field)}
+                      className={cn(getHighlightClass(field), {
+                        "ps-4": isPendingInterest,
+                      })}
                       isHighlighted={!!getHighlightClass(field)}
                       label={t(cardNameMapKeys.get(field)!)}
+                      labelClassName={mutedClass}
+                      valueClassName={mutedClass}
                       value={renderValue(field)}
                       dollarValue={financialSummary.formatted.dollars[field]}
+                      note={
+                        isPendingInterest
+                          ? t("accountBalanceCard.pendingInterestNotPaid")
+                          : undefined
+                      }
                       labelSuffix={
                         field === "hbd_saving_balance" && hbdApr ? (
                           <HbdAprTooltip
@@ -603,11 +668,18 @@ const AssetSection = ({
                             isLoading={isLoadingApr}
                             t={t}
                           />
+                        ) : field === "pending_hbd_savings_interest" ? (
+                          <PendingInterestTooltip
+                            lastPayment={
+                              userDetails.savings_hbd_last_interest_payment
+                            }
+                            t={t}
+                          />
                         ) : null
                       }
                     />
                   );
-                },
+                }
               )}
 
           {specialFields.length > 0 && (
@@ -628,7 +700,7 @@ const AssetSection = ({
                     field === "vesting_withdraw_rate" && numericValue > 0;
 
                   let icon = null;
-                 
+
                   if (isPoweringDown) {
                     icon = <TrendingDown size={16} color="#f43f5e" />;
                   } else if (hasClaimableAmount) {
@@ -670,7 +742,7 @@ const AssetSection = ({
                       dollarValue={financialSummary.formatted.dollars[field]}
                     />
                   );
-                },
+                }
               )}
             </div>
           )}
@@ -690,7 +762,7 @@ type AccountBalanceCardProps = {
   isInitiallyOpen: boolean;
   onChangeTab?: (
     tab: TabKey,
-    context?: { type?: "incoming" | "outgoing" },
+    context?: { type?: "incoming" | "outgoing" }
   ) => void;
 };
 
@@ -720,7 +792,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
 
   const areAllOpen = useMemo(
     () => ASSET_CONFIG.every((asset) => !!openSections[asset.key]),
-    [openSections],
+    [openSections]
   );
 
   const chartSegments = useMemo(() => {
@@ -832,7 +904,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
         label: t("accountBalanceCard.powerDown"),
         value: financialSummary.raw.poweringDownValue,
         displayValue: formatDisplayValue(
-          financialSummary.raw.poweringDownValue,
+          financialSummary.raw.poweringDownValue
         ),
         percent: poweringDownPct,
         color: "#f43f5e", // Rose color
@@ -898,7 +970,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
       financialSummary,
       chartSegments,
       hbdInterestApr,
-      t,
+      t
     );
   }, [userDetails, financialSummary, chartSegments, hbdInterestApr, t]);
 
