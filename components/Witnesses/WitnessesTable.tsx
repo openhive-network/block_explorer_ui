@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/tooltip";
 import CopyButton from "@/components/ui/CopyButton";
 import { convertVestsToHP } from "@/utils/Calculations";
+import { relocalizeAmount } from "@/utils/localeAmount";
 import { config } from "@/Config";
 import Hive from "@/types/Hive";
 import { IHiveChainInterface } from "@hiveio/wax";
@@ -160,7 +161,7 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
     TABLE_CELL_CONFIGS.map((cellConfig, index) => {
       const isRightAligned = !!cellConfig.isRightAligned;
       const isUnsortable = !!cellConfig.isUnsortable;
-      const className = "text-center !bg-navbar py-2";
+      const className = "text-center !bg-navbar py-2 whitespace-nowrap";
       const buttonClassName = `w-full flex items-center ${
         isRightAligned ? "justify-end text-right" : "justify-start text-left"
       } ${cellConfig.displayKey === "witnesses.version" ? "pr-2" : ""}`;
@@ -226,7 +227,9 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
               }
             )}
           >
-            <TableCell stickyLeft>{singleWitness.rank}</TableCell>
+            <TableCell stickyLeft>
+              {singleWitness.rank?.toLocaleString(locale)}
+            </TableCell>
             <TableCell
               stickyLeft
               className="flex items-center space-x-2 py-4 whitespace-nowrap"
@@ -280,13 +283,16 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
                         {hiveChain &&
                         totalVestingFundHive &&
                         totalVestingShares ? (
-                          formatHp(
-                            convertVestsToHP(
-                              hiveChain,
-                              singleWitness.vests,
-                              totalVestingFundHive,
-                              totalVestingShares
-                            )
+                          relocalizeAmount(
+                            formatHp(
+                              convertVestsToHP(
+                                hiveChain,
+                                singleWitness.vests,
+                                totalVestingFundHive,
+                                totalVestingShares
+                              )
+                            ),
+                            locale
                           )
                         ) : (
                           <Loader2 className="dark:text-white animate-spin mt-1 h-2 w-2" />
@@ -296,7 +302,10 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
                     <TooltipContent className="text-left">
                       <p>
                         {t("common.vests")}:{" "}
-                        {formatNumber(singleWitness.vests || 0, true)}
+                        {relocalizeAmount(
+                          formatNumber(singleWitness.vests || 0, true),
+                          locale
+                        )}
                       </p>
                     </TooltipContent>
                   </Tooltip>
@@ -318,13 +327,16 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
                           {hiveChain &&
                           totalVestingFundHive &&
                           totalVestingShares ? (
-                            formatHp(
-                              convertVestsToHP(
-                                hiveChain,
-                                singleWitness.votes_daily_change,
-                                totalVestingFundHive,
-                                totalVestingShares
-                              )
+                            relocalizeAmount(
+                              formatHp(
+                                convertVestsToHP(
+                                  hiveChain,
+                                  singleWitness.votes_daily_change,
+                                  totalVestingFundHive,
+                                  totalVestingShares
+                                )
+                              ),
+                              locale
                             )
                           ) : (
                             <Loader2 className="dark:text-white animate-spin mt-1 h-2 w-2" />
@@ -333,9 +345,12 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
                       </TooltipTrigger>
                       <TooltipContent className="text-left">
                         {t("common.vestsChange")}:{" "}
-                        {formatNumber(
-                          singleWitness.votes_daily_change || 0,
-                          true
+                        {relocalizeAmount(
+                          formatNumber(
+                            singleWitness.votes_daily_change || 0,
+                            true
+                          ),
+                          locale
                         )}
                       </TooltipContent>
                     </Tooltip>
@@ -351,7 +366,7 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
             <TableCell className="text-right relative">
               <div className="flex flex-col items-end justify-center pr-2">
                 <div className="flex flex-col items-end">
-                  <span>{singleWitness.voters_num.toLocaleString()}</span>
+                  <span>{singleWitness.voters_num.toLocaleString(locale)}</span>
                   {singleWitness.voters_num_daily_change !== 0 && (
                     <span
                       className={cn(
@@ -362,7 +377,9 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
                       )}
                     >
                       {singleWitness.voters_num_daily_change > 0 ? "+" : ""}
-                      {singleWitness.voters_num_daily_change.toLocaleString()}
+                      {singleWitness.voters_num_daily_change.toLocaleString(
+                        locale
+                      )}
                     </span>
                   )}
                 </div>
@@ -377,7 +394,7 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
             </TableCell>
             <TableCell className="text-right">
               {singleWitness.missed_blocks
-                ? singleWitness.missed_blocks.toLocaleString()
+                ? singleWitness.missed_blocks.toLocaleString(locale)
                 : "--"}
             </TableCell>
             <TableCell className="text-right whitespace-nowrap">
@@ -389,7 +406,9 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
                       singleWitness.trxId ? `?trxId=${singleWitness.trxId}` : ""
                     }`}
                   >
-                    {singleWitness.last_confirmed_block_num.toLocaleString()}
+                    {singleWitness.last_confirmed_block_num.toLocaleString(
+                      locale
+                    )}
                   </Link>
                   <CopyButton
                     text={String(singleWitness.last_confirmed_block_num)}
@@ -402,17 +421,17 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
             </TableCell>
             <TableCell className="text-right">
               {singleWitness.block_size
-                ? singleWitness.block_size.toLocaleString()
+                ? singleWitness.block_size.toLocaleString(locale)
                 : "--"}
             </TableCell>
             <TableCell className="text-right">
               {singleWitness.hbd_interest_rate
-                ? formatPercent(singleWitness.hbd_interest_rate)
+                ? formatPercent(singleWitness.hbd_interest_rate, locale)
                 : "0%"}
             </TableCell>
             <TableCell className="text-right">
               {singleWitness.price_feed
-                ? singleWitness.price_feed.toLocaleString()
+                ? singleWitness.price_feed.toLocaleString(locale)
                 : "0"}
             </TableCell>
             <TableCell className="text-right">
@@ -438,7 +457,9 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
             </TableCell>
             <TableCell className="text-right">
               {singleWitness.account_creation_fee
-                ? (singleWitness.account_creation_fee / 1000).toLocaleString()
+                ? (singleWitness.account_creation_fee / 1000).toLocaleString(
+                    locale
+                  )
                 : "--"}
             </TableCell>
             <TableCell className="text-right">
