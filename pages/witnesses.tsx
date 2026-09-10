@@ -15,8 +15,16 @@ import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
-import { cn } from "@/lib/utils";
+import { cn, formatHp, formatNumber, formatPercent } from "@/lib/utils";
+import { convertVestsToHP } from "@/utils/Calculations";
+import { relocalizeAmount } from "@/utils/localeAmount";
 import useWitnesses from "@/hooks/api/common/useWitnesses";
+import useLatestWitnessVersion from "@/hooks/api/common/useLatestWitnessVersion";
+import CustomPagination from "@/components/CustomPagination";
+import JumpToPage from "@/components/JumpToPage";
+import DataCountMessage from "@/components/DataCountMessage";
+import DataExport from "@/components/DataExport";
+import { Card } from "@/components/ui/card";
 import useWitnessVoteChain from "@/hooks/api/common/useWitnessVoteChain";
 import { useAuth } from "@/contexts/AuthContext";
 import VoterFilterBanner from "@/components/Witnesses/VoterFilterBanner";
@@ -135,12 +143,22 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
   const [isVotersOpen, setIsVotersOpen] = useState<boolean>(false);
   const [isVotesHistoryOpen, setIsVotesHistoryOpen] = useState<boolean>(false);
   const [voterSearch, setVoterSearch] = useState<string>("");
+  // Picking a suggestion calls onChange then submits the form in the same tick,
+  // so a handler reading state would still see the typed prefix. The ref is
+  // current immediately.
+  const voterSearchRef = React.useRef("");
+
+  const handleVoterSearchChange = (value: string) => {
+    voterSearchRef.current = value;
+    setVoterSearch(value);
+  };
 
   const handleVoterSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const name = voterSearch.trim().replace(/^@/, "");
+    const name = voterSearchRef.current.trim().replace(/^@/, "");
     if (!name) return;
     router.push(`/witnesses?voter=${encodeURIComponent(name)}`);
+    voterSearchRef.current = "";
     setVoterSearch("");
   };
   const [sort, setSort] = useState<{
@@ -151,15 +169,57 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
     isOrderAscending: true,
   });
 
+  const [page, setPage] = useState(1);
+  const pageSize = config.witnessesPerPages.witnesses;
+  const initedPageFromUrl = React.useRef(false);
+
+  // Hydrate the page from the URL once, so a deep link or refresh lands on the
+  // same page.
+  useEffect(() => {
+    if (!router.isReady || initedPageFromUrl.current) return;
+    initedPageFromUrl.current = true;
+    const raw = router.query.page;
+    const parsed = typeof raw === "string" ? Number(raw) : NaN;
+    if (Number.isInteger(parsed) && parsed > 0) setPage(parsed);
+  }, [router.isReady, router.query]);
+
+  // Switching voter (or back to the full list) is a different list entirely, so
+  // the page number from the previous view shouldn't carry over.
+  const previousVoter = React.useRef<string | null>(null);
+  useEffect(() => {
+    if (!router.isReady) return;
+    const current = voterFilter ?? "";
+    if (previousVoter.current !== null && previousVoter.current !== current) {
+      setPage(1);
+    }
+    previousVoter.current = current;
+  }, [router.isReady, voterFilter]);
+
+  // Mirror it back so the page is shareable and survives back/forward.
+  useEffect(() => {
+    if (!router.isReady || !initedPageFromUrl.current) return;
+    const query: Record<string, string> = {};
+    // Voter-filtered view shows every vote at once, so a page number there
+    // would describe nothing.
+    if (voterFilter) query.voter = voterFilter;
+    else if (page > 1) query.page = String(page);
+    router.replace({ pathname: "/witnesses", query }, undefined, {
+      shallow: true,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, voterFilter]);
+
   // When filtering by voter, fetch a larger window so lower-ranked
   // witnesses can still resolve.
   const { witnessesData, isWitnessDataLoading } = useWitnesses(
-    voterFilter ? 1000 : config.witnessesPerPages.witnesses,
+    voterFilter ? config.votedWitnessesLimit : pageSize,
     voterFilter ? SORT_KEY_BY_CELL["rank"] : sort.orderBy,
-    voterFilter ? "asc" : sort.isOrderAscending ? "asc" : "desc"
+    voterFilter ? "asc" : sort.isOrderAscending ? "asc" : "desc",
+    true,
+    voterFilter ? 1 : page
   );
 
-  const [latestVersion, setLatestVersion] = useState<string | null>(null);
+  const { latestVersion } = useLatestWitnessVersion();
 
   const { hiveChain } = useHiveChainContext();
   const { dynamicGlobalData } = useDynamicGlobal() as any;
@@ -264,22 +324,57 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
     });
   }, [filteredWitnesses, voterFilter, sort]);
 
-  useEffect(() => {
-    if (witnessesData?.witnesses) {
-      const versions = new Set<string>();
-      witnessesData.witnesses.forEach((witness: any) => {
-        versions.add(witness.version);
-      });
-      const sortedVersions = Array.from(versions).sort((a, b) =>
-        b.localeCompare(a, undefined, { numeric: true })
-      );
-      setLatestVersion(sortedVersions[0] || null);
-    }
-  }, [witnessesData]);
+  // Exports the page on screen — the same rows, in the same order, as the table.
+  // Vests are converted to HP so the file reads like the table rather than raw
+  // chain units.
+  const toHp = (vests: string | number) =>
+    hiveChain && totalVestingFundHive && totalVestingShares
+      ? relocalizeAmount(
+          formatHp(
+            convertVestsToHP(
+              hiveChain,
+              String(vests ?? "0"),
+              totalVestingFundHive,
+              totalVestingShares
+            )
+          ),
+          locale
+        )
+      : String(vests ?? "");
+
+  const num = (value: number | string | undefined) =>
+    Number(value ?? 0).toLocaleString(locale);
+
+  const prepareExportData = () =>
+    sortedFilteredWitnesses.map((witness: any) => ({
+      [t("common.rank")]: num(witness.rank),
+      [t("common.name")]: witness.witness_name,
+      [t("witnesses.votes")]: toHp(witness.vests),
+      [t("common.vests")]: relocalizeAmount(
+        formatNumber(witness.vests || 0, true),
+        locale
+      ),
+      [t("witnesses.votesChange")]: toHp(witness.votes_daily_change),
+      [t("common.vestsChange")]: relocalizeAmount(
+        formatNumber(witness.votes_daily_change || 0, true),
+        locale
+      ),
+      [t("witnesses.voters")]: num(witness.voters_num),
+      [t("witnesses.votersChange")]: num(witness.voters_num_daily_change),
+      [t("witnesses.missedblocks")]: num(witness.missed_blocks),
+      [t("witnesses.blocksize")]: num(witness.block_size),
+      [t("witnesses.apr")]: formatPercent(witness.hbd_interest_rate, locale),
+      [t("witnesses.pricefeed")]: num(witness.price_feed),
+      [t("witnesses.feedage")]: witness.feed_updated_at,
+      [t("witnesses.version")]: witness.version,
+    }));
 
   const handleSortBy = (clickedSortKey: string) => {
     if (!clickedSortKey || !SORT_KEY_BY_CELL[clickedSortKey]) return;
     const apiFieldForSort = SORT_KEY_BY_CELL[clickedSortKey];
+    // The server re-orders the whole list, so the old page number no longer
+    // points at anything the user was looking at.
+    setPage(1);
     setSort((prevSort) => ({
       orderBy: apiFieldForSort,
       isOrderAscending:
@@ -304,56 +399,61 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
   return (
     <>
       <Seo meta={meta} title={seoTitle} />
-      <div className="page-container rounded bg-white dark:bg-theme text-gray-800 dark:text-gray-200 font-sans antialiased">
-        <div className="my-4">
+      <div className="page-container">
+        <div>
           <main className="flex-1">
-            <div className="flex flex-col md:flex-row md:justify-between md:items-start bg-theme gap-3">
-              <PageTitle titleKey="pageTitle.hiveWitnesses" className="py-4" />
+            <Card className="w-full rounded shadow-md py-2">
+              <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-3">
+                <PageTitle
+                  titleKey="pageTitle.hiveWitnesses"
+                  className="py-4"
+                />
 
-              <div className="flex items-center justify-end gap-2 mb-2 me-4 md:mb-0 md:mt-2.5 md:ms-4 md:justify-start flex-shrink-0">
-                {/* Unified voter-lookup control: quick shortcuts + autocomplete search */}
-                {isLoggedIn && (
-                  <div className="inline-flex items-stretch rounded-full border border-navbar-border bg-secondary/20 hover:bg-secondary/30 transition-colors">
-                    {voterFilter !== username && username && (
-                      <Link
-                        href={`/witnesses?voter=${username}`}
-                        className="inline-flex items-center gap-1.5 px-3 rounded-l-full text-xs font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 border-r border-navbar-border transition-colors whitespace-nowrap"
+                <div className="flex items-center justify-end gap-2 mb-2 me-4 md:mb-0 md:mt-2.5 md:ms-4 md:justify-start flex-shrink-0">
+                  {/* Unified voter-lookup control: quick shortcuts + autocomplete search */}
+                  {isLoggedIn && (
+                    <div className="inline-flex items-stretch rounded-full border border-navbar-border bg-secondary/20 hover:bg-secondary/30 transition-colors">
+                      {voterFilter !== username && username && (
+                        <Link
+                          href={`/witnesses?voter=${username}`}
+                          className="inline-flex items-center gap-1.5 px-3 rounded-l-full text-xs font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 border-r border-navbar-border transition-colors whitespace-nowrap"
+                        >
+                          <Heart
+                            className="h-3.5 w-3.5"
+                            fill="#ef4444"
+                            stroke="#dc2626"
+                          />
+                          {t("witnesses.myVotes")}
+                        </Link>
+                      )}
+                      {voterFilter && (
+                        <Link
+                          href="/witnesses"
+                          className="inline-flex items-center gap-1.5 px-3 rounded-l-full text-xs font-semibold text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 border-r border-navbar-border transition-colors whitespace-nowrap"
+                        >
+                          <Users className="h-3.5 w-3.5" />
+                          {t("witnesses.allWitnesses")}
+                        </Link>
+                      )}
+                      <form
+                        onSubmit={handleVoterSearchSubmit}
+                        className="flex items-center pl-2.5 pr-1 rounded-full"
                       >
-                        <Heart
-                          className="h-3.5 w-3.5"
-                          fill="#ef4444"
-                          stroke="#dc2626"
+                        <Search className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+                        <AutocompleteInput
+                          value={voterSearch}
+                          onChange={handleVoterSearchChange}
+                          placeholder={t("witnesses.searchVoterPlaceholder")}
+                          inputType="account_name"
+                          className="!w-44 [&_input]:border-0 [&_input]:bg-transparent [&_input]:h-8 [&_input]:text-xs [&_input]:py-0 [&_input]:px-2 [&_input]:shadow-none [&_input]:focus-visible:ring-0"
                         />
-                        {t("witnesses.myVotes")}
-                      </Link>
-                    )}
-                    {voterFilter && (
-                      <Link
-                        href="/witnesses"
-                        className="inline-flex items-center gap-1.5 px-3 rounded-l-full text-xs font-semibold text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 border-r border-navbar-border transition-colors whitespace-nowrap"
-                      >
-                        <Users className="h-3.5 w-3.5" />
-                        {t("witnesses.allWitnesses")}
-                      </Link>
-                    )}
-                    <form
-                      onSubmit={handleVoterSearchSubmit}
-                      className="flex items-center pl-2.5 pr-1 rounded-full"
-                    >
-                      <Search className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
-                      <AutocompleteInput
-                        value={voterSearch}
-                        onChange={setVoterSearch}
-                        placeholder={t("witnesses.searchVoterPlaceholder")}
-                        inputType="account_name"
-                        className="!w-44 [&_input]:border-0 [&_input]:bg-transparent [&_input]:h-8 [&_input]:text-xs [&_input]:py-0 [&_input]:px-2 [&_input]:shadow-none [&_input]:focus-visible:ring-0"
-                      />
-                    </form>
-                  </div>
-                )}
-                <WitnessScheduleIcon />
+                      </form>
+                    </div>
+                  )}
+                  <WitnessScheduleIcon />
+                </div>
               </div>
-            </div>
+            </Card>
 
             {isLoggedIn && (
               <VoterFilterBanner
@@ -387,26 +487,70 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
                   liveDataEnabled={false}
                 />
 
-                <WitnessesTable
-                  witnesses={sortedFilteredWitnesses}
-                  sort={sort}
-                  onSortBy={handleSortBy}
-                  showVoteColumn={showVoteColumn}
-                  latestVersion={latestVersion}
-                  hiveChain={hiveChain}
-                  totalVestingFundHive={totalVestingFundHive}
-                  totalVestingShares={totalVestingShares}
-                  onOpenVoters={(name) => {
-                    setVoterAccount(name);
-                    setIsVotersOpen(true);
-                  }}
-                  onOpenVotesHistory={(name) => {
-                    setVoterAccount(name);
-                    setIsVotesHistoryOpen(true);
-                  }}
-                  onVoteChange={handleVoteChange}
-                  compareSelection={compareSelection}
-                />
+                {!voterFilter && !!witnessesData.total_witnesses && (
+                  <div className="flex justify-center w-full mt-4">
+                    <div className="flex w-full justify-center items-center flex-wrap bg-theme">
+                      <div className="flex items-center justify-center w-full md:ml-auto md:w-3/4">
+                        <CustomPagination
+                          currentPage={page}
+                          onPageChange={setPage}
+                          pageSize={pageSize}
+                          totalCount={witnessesData.total_witnesses}
+                        />
+                      </div>
+                      <div className="flex items-center mt-2 md:ml-auto w-full md:w-auto justify-center md:justify-end mb-2">
+                        <JumpToPage
+                          currentPage={page}
+                          onPageChange={setPage}
+                          totalCount={witnessesData.total_witnesses}
+                          pageSize={pageSize}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div className="table-toolbar w-full flex flex-wrap items-center gap-4">
+                  {!voterFilter && !!witnessesData.total_witnesses && (
+                    <DataCountMessage
+                      count={witnessesData.total_witnesses}
+                      dataType="witnesses.dataType"
+                    />
+                  )}
+                  <div className="ml-auto flex items-center gap-x-4">
+                    <DataExport
+                      data={prepareExportData()}
+                      filename={`${t("witnesses.exportFileName")}_${
+                        voterFilter
+                          ? voterFilter
+                          : `${t("common.page")}_${page}`
+                      }.csv`}
+                    />
+                  </div>
+                </div>
+
+                <Card className="w-full rounded">
+                  <WitnessesTable
+                    witnesses={sortedFilteredWitnesses}
+                    sort={sort}
+                    onSortBy={handleSortBy}
+                    showVoteColumn={showVoteColumn}
+                    latestVersion={latestVersion}
+                    hiveChain={hiveChain}
+                    totalVestingFundHive={totalVestingFundHive}
+                    totalVestingShares={totalVestingShares}
+                    onOpenVoters={(name) => {
+                      setVoterAccount(name);
+                      setIsVotersOpen(true);
+                    }}
+                    onOpenVotesHistory={(name) => {
+                      setVoterAccount(name);
+                      setIsVotesHistoryOpen(true);
+                    }}
+                    onVoteChange={handleVoteChange}
+                    compareSelection={compareSelection}
+                  />
+                </Card>
               </>
             ) : voterFilter ? (
               <div className="flex flex-col items-center gap-4">
