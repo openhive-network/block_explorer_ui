@@ -335,13 +335,13 @@ class FetchingService {
 
   async getWitnesses(
     limit: number,
-    offset: number,
+    page: number,
     sort: string,
     direction: "asc" | "desc"
   ): Promise<Hive.WitnessesResponse> {
     return await this.extendedHiveChain!.restApi["hafbe-api"].witnesses({
       "page-size": limit,
-      offset,
+      page,
       sort,
       direction,
     });
