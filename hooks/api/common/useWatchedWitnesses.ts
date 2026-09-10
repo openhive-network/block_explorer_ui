@@ -15,14 +15,15 @@ export interface WatchedWitnessHealth {
 
 /**
  * Health snapshot for a fixed set of witnesses (e.g. the user's votes).
- * Reuses the bulk `useWitnesses(1000)` cache to avoid N per-witness calls.
+ * Reuses one bulk fetch rather than N per-witness calls; the window is bounded
+ * by config.votedWitnessesLimit, which covers every witness that has any votes.
  */
 const useWatchedWitnesses = (
   names: string[]
 ): { witnesses: WatchedWitnessHealth[]; isLoading: boolean } => {
   const enabled = names.length > 0;
   const { witnessesData, isWitnessDataLoading } = useWitnesses(
-    1000,
+    config.votedWitnessesLimit,
     "rank",
     "asc",
     enabled

@@ -30,9 +30,10 @@ export const config = {
   proposalVotesSize: 500,
   blockPagePaginationSize: 2000, // Temporary 2000 until cache problem solved
   witnessesPerPages: {
-    witnesses: 200,
+    witnesses: 50,
     home: 20,
   },
+  votedWitnessesLimit: 400,
   topHolders: {
     totalCount: 2000, // Total number of top holders
     pageSize: 100, // Page size for pagination
