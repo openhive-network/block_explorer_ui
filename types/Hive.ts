@@ -125,7 +125,7 @@ namespace Hive {
 
   export class GetWitnessesParams {
     "page-size"!: number;
-    offset!: number;
+    page!: number;
     sort!: string;
     direction!: Hive.Direction;
   }
