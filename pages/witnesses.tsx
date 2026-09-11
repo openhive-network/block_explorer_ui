@@ -219,7 +219,13 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
     voterFilter ? 1 : page
   );
 
-  const { latestVersion } = useLatestWitnessVersion();
+  const { latestVersion, totalWitnesses } = useLatestWitnessVersion();
+
+  useEffect(() => {
+    if (!totalWitnesses || voterFilter) return;
+    const lastPage = Math.max(1, Math.ceil(totalWitnesses / pageSize));
+    if (page > lastPage) setPage(lastPage);
+  }, [totalWitnesses, page, pageSize, voterFilter]);
 
   const { hiveChain } = useHiveChainContext();
   const { dynamicGlobalData } = useDynamicGlobal() as any;

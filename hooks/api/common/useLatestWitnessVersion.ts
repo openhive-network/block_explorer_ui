@@ -16,13 +16,20 @@ const useLatestWitnessVersion = (enabled: boolean = true) => {
         "version",
         "desc"
       );
-      return response?.witnesses?.[0]?.version ?? null;
+      return {
+        version: response?.witnesses?.[0]?.version ?? null,
+        totalWitnesses: response?.total_witnesses ?? 0,
+      };
     },
     refetchOnWindowFocus: false,
     enabled,
   });
 
-  return { latestVersion: latestVersion ?? null, isLatestVersionLoading };
+  return {
+    latestVersion: latestVersion?.version ?? null,
+    totalWitnesses: latestVersion?.totalWitnesses ?? 0,
+    isLatestVersionLoading,
+  };
 };
 
 export default useLatestWitnessVersion;
