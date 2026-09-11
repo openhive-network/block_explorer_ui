@@ -33,6 +33,12 @@ export const config = {
     witnesses: 100,
     home: 20,
   },
+  // Assumption, not a guarantee. Rank is ordered by vote weight, and the lowest
+  // ranked witness holding any votes measured 371 on 2026-09-10, so 400 covers
+  // the voted set with only ~26 rows of margin. A voted witness ranked past 400
+  // would render as rank 0 / inactive / blank version. Re-check the margin if
+  // the voted set grows, and replace this with the server-side voter filter as
+  // soon as the API offers one.
   votedWitnessesLimit: 400,
   topHolders: {
     totalCount: 2000, // Total number of top holders
