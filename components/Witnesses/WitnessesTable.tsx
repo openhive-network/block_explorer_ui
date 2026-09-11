@@ -120,9 +120,9 @@ const renderSortArrow = (
     return <ChevronsUpDown size={15} className="ml-1" />;
   }
   return isOrderAscending ? (
-    <ChevronDown size={15} className="ml-1" />
-  ) : (
     <ChevronUp size={15} className="ml-1" />
+  ) : (
+    <ChevronDown size={15} className="ml-1" />
   );
 };
 
