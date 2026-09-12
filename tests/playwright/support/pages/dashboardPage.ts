@@ -15,6 +15,7 @@ export class DashboardPage {
   readonly confirmDialogConfirm: Locator;
   readonly confirmDialogCancel: Locator;
   readonly grid: Locator;
+  readonly gridWrapper: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -29,6 +30,7 @@ export class DashboardPage {
     this.confirmDialogConfirm = page.getByTestId("confirm-dialog-confirm");
     this.confirmDialogCancel = page.getByTestId("confirm-dialog-cancel");
     this.grid = page.locator(".react-grid-layout").first();
+    this.gridWrapper = page.getByTestId("dashboard-grid").first();
   }
 
   boardTab(boardKey: string): Locator {
@@ -53,19 +55,37 @@ export class DashboardPage {
   /**
    * On a fresh profile the seeding pass places one widget per render, so the
    * board keeps growing for a moment after it first paints. Interacting during
-   * that churn loses clicks, so wait until the count holds steady.
+   * that churn loses clicks, so wait until seeding stops adding widgets.
+   *
+   * The stop signal is the authoritative placed-widget count (data-widget-count,
+   * mirrored from useDashboard's `widgets`), not the raw react-grid-item count:
+   * the attribute changes only while seeding places widgets and seeding
+   * deterministically terminates, whereas the DOM item count can keep shifting
+   * as widgets re-measure their height and the grid re-lays-out — which on a
+   * slow CI browser could keep two consecutive samples from ever matching. Once
+   * that count holds for a poll (seeding done) we additionally require the grid
+   * to have rendered exactly that many items, so a caller snapshotting
+   * widgetCount() right after reads the final total, not a mid-mount value.
+   * Bounded by the poll timeout, so it can never spin indefinitely.
    */
   async waitForSeedingToSettle() {
     let previous = -1;
     await expect
       .poll(
         async () => {
-          const current = await this.widgetCount();
-          const settled = current === previous && current > 0;
-          previous = current;
+          const target = Number(
+            await this.gridWrapper.getAttribute("data-widget-count")
+          );
+          const rendered = await this.widgetCount();
+          // Seeding has stopped growing the count (target held for a poll) and
+          // the grid has caught up to it, so widgetCount() is now the final
+          // total — callers that snapshot it right after won't read a low value.
+          const settled =
+            target > 0 && target === previous && rendered === target;
+          previous = target;
           return settled;
         },
-        { timeout: 30000, intervals: [400] }
+        { timeout: 30000, intervals: [200] }
       )
       .toBe(true);
   }
