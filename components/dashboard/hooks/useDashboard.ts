@@ -567,14 +567,6 @@ export function useDashboard() {
       // Template ids are deterministic, so an adopted board shares them. Writing
       // a preview's measurement into My board would resize the real widget.
       if (templateViewRef.current) {
-        // Skip an unchanged height. A ResizeObserver can re-fire at the same
-        // size, and rebuilding templateView every time re-renders the whole
-        // board in a loop — which keeps detaching the preview bar's controls
-        // mid-interaction (a flaky "element detached" on the adopt button).
-        const currentH = templateViewRef.current.masterLayout.find(
-          (item) => item.i === widgetId
-        )?.h;
-        if (currentH === newH) return;
         setTemplateView((prev) =>
           prev
             ? {
@@ -590,8 +582,6 @@ export function useDashboard() {
       // Only the breakpoint that was measured: a masthead is a stacked card on a
       // phone and a single row on desktop, so one height cannot serve both.
       const bp = currentBreakpointRef.current;
-      // Same guard for My board: an unchanged height must not churn state.
-      if (runtimeHeightsRef.current[bp]?.[widgetId] === newH) return;
       runtimeHeightsRef.current = {
         ...runtimeHeightsRef.current,
         [bp]: { ...runtimeHeightsRef.current[bp], [widgetId]: newH },
