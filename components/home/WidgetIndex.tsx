@@ -429,26 +429,37 @@ const WidgetIndex = () => {
         onConfirm={handleResetLayoutAndUndo}
       />
 
-      <ResponsiveGridLayout
-        className="layout page-container"
-        style={{ direction: "ltr" }}
-        layouts={layouts}
-        breakpoints={{ lg: 1024, md: 768, sm: 640, xs: 0 }}
-        cols={{ xl: 12, lg: 12, md: 10, sm: 6, xs: 4 }}
-        rowHeight={50}
-        margin={[8, 2]}
-        containerPadding={[2, 0]}
-        onLayoutChange={onLayoutChange}
-        onBreakpointChange={onBreakpointChange}
-        compactType="vertical"
-        isDraggable={finalIsEditMode}
-        isResizable={finalIsEditMode}
-        resizeHandles={
-          finalIsEditMode ? ["s", "w", "e", "n", "sw", "nw", "se", "ne"] : []
-        }
+      {/* data-widget-count mirrors the authoritative placed-widget count so tests
+          can wait on seeding finishing (see WIDGET_SEEDS) without polling the
+          react-grid-layout DOM, whose item count churns as widgets re-measure.
+          display:contents keeps this wrapper out of layout so the grid's own box
+          (and WidthProvider's measurement) is unchanged. */}
+      <div
+        data-testid="dashboard-grid"
+        data-widget-count={widgets.length}
+        style={{ display: "contents" }}
       >
-        {widgetElements}
-      </ResponsiveGridLayout>
+        <ResponsiveGridLayout
+          className="layout page-container"
+          style={{ direction: "ltr" }}
+          layouts={layouts}
+          breakpoints={{ lg: 1024, md: 768, sm: 640, xs: 0 }}
+          cols={{ xl: 12, lg: 12, md: 10, sm: 6, xs: 4 }}
+          rowHeight={50}
+          margin={[8, 2]}
+          containerPadding={[2, 0]}
+          onLayoutChange={onLayoutChange}
+          onBreakpointChange={onBreakpointChange}
+          compactType="vertical"
+          isDraggable={finalIsEditMode}
+          isResizable={finalIsEditMode}
+          resizeHandles={
+            finalIsEditMode ? ["s", "w", "e", "n", "sw", "nw", "se", "ne"] : []
+          }
+        >
+          {widgetElements}
+        </ResponsiveGridLayout>
+      </div>
 
       <WidgetLibrary
         isOpen={isLibraryOpen}
