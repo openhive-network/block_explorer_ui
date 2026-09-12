@@ -429,14 +429,19 @@ const WidgetIndex = () => {
         onConfirm={handleResetLayoutAndUndo}
       />
 
-      {/* data-widget-count mirrors the authoritative placed-widget count so tests
-          can wait on seeding finishing (see WIDGET_SEEDS) without polling the
-          react-grid-layout DOM, whose item count churns as widgets re-measure.
+      {/* data-widget-count lets tests wait on seeding finishing (see WIDGET_SEEDS)
+          by reading a plain React value instead of polling the react-grid-layout
+          DOM, whose item-count query is unreliable while widgets re-measure and
+          the grid re-lays-out. It counts only registered widgets, matching the
+          grid one-for-one: an unknown type renders no item (see the null return
+          below), so counting it would make the two diverge forever.
           display:contents keeps this wrapper out of layout so the grid's own box
           (and WidthProvider's measurement) is unchanged. */}
       <div
         data-testid="dashboard-grid"
-        data-widget-count={widgets.length}
+        data-widget-count={
+          widgets.filter((w) => WIDGET_REGISTRY[w.type]).length
+        }
         style={{ display: "contents" }}
       >
         <ResponsiveGridLayout

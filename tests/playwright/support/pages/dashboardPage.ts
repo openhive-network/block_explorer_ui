@@ -58,15 +58,16 @@ export class DashboardPage {
    * that churn loses clicks, so wait until seeding stops adding widgets.
    *
    * The stop signal is the authoritative placed-widget count (data-widget-count,
-   * mirrored from useDashboard's `widgets`), not the raw react-grid-item count:
-   * the attribute changes only while seeding places widgets and seeding
-   * deterministically terminates, whereas the DOM item count can keep shifting
-   * as widgets re-measure their height and the grid re-lays-out — which on a
-   * slow CI browser could keep two consecutive samples from ever matching. Once
-   * that count holds for a poll (seeding done) we additionally require the grid
-   * to have rendered exactly that many items, so a caller snapshotting
-   * widgetCount() right after reads the final total, not a mid-mount value.
-   * Bounded by the poll timeout, so it can never spin indefinitely.
+   * mirrored from useDashboard's `widgets`), not the rendered react-grid-item
+   * count. widgets.length is monotonic during seeding and settles quickly, but
+   * the DOM item-count *query* is unreliable while the grid re-lays-out under
+   * the widgets' height re-measurement, so on a slow CI browser two consecutive
+   * samples of it could fail to match within the window and time the poll out.
+   * We hold on the attribute instead (both counts only include registered
+   * widgets, so they converge one-for-one) and, once it has held for a poll,
+   * also require the grid to have rendered that many items — so a caller that
+   * snapshots widgetCount() right after reads the settled total, not a
+   * mid-mount value. Bounded by the poll timeout, so it can never spin forever.
    */
   async waitForSeedingToSettle() {
     let previous = -1;
@@ -77,15 +78,12 @@ export class DashboardPage {
             await this.gridWrapper.getAttribute("data-widget-count")
           );
           const rendered = await this.widgetCount();
-          // Seeding has stopped growing the count (target held for a poll) and
-          // the grid has caught up to it, so widgetCount() is now the final
-          // total — callers that snapshot it right after won't read a low value.
           const settled =
             target > 0 && target === previous && rendered === target;
           previous = target;
           return settled;
         },
-        { timeout: 30000, intervals: [200] }
+        { timeout: 30000, intervals: [400] }
       )
       .toBe(true);
   }
