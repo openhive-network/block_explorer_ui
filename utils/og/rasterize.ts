@@ -2,35 +2,20 @@ import fs from "fs";
 import path from "path";
 import { initWasm, Resvg } from "@resvg/resvg-wasm";
 
-// Social platforms (X, Telegram, Discord, Facebook, LinkedIn) reject SVG for
-// og:image, so the share cards must always be delivered as raster. resvg runs
-// as WebAssembly rather than a native binding, so it behaves identically in
-// local dev and in the Alpine standalone image.
+// Platforms reject SVG og:image, so cards are always rasterized. resvg runs as
+// WebAssembly, so it behaves the same in dev and in the Alpine standalone image.
 
 const FONT_FAMILY = "DejaVu Sans";
 
-// public/ is copied wholesale into the standalone bundle (copy:public), so the
-// build-time copy there is the one that reliably survives into the container;
-// the node_modules lookups cover `next dev`.
+// Plain paths, not require.resolve: webpack would try to bundle the .wasm and fail.
+// public/ ships inside the standalone bundle; node_modules covers `next dev`.
 const wasmPath = (): string => {
   const candidates = [
-    () => path.join(process.cwd(), "public/og/resvg.wasm"),
-    () => require.resolve("@resvg/resvg-wasm/index_bg.wasm"),
-    () =>
-      path.join(
-        path.dirname(require.resolve("@resvg/resvg-wasm")),
-        "index_bg.wasm"
-      ),
-    () =>
-      path.join(process.cwd(), "node_modules/@resvg/resvg-wasm/index_bg.wasm"),
+    path.join(process.cwd(), "public/og/resvg.wasm"),
+    path.join(process.cwd(), "node_modules/@resvg/resvg-wasm/index_bg.wasm"),
   ];
-  for (const resolve of candidates) {
-    try {
-      const resolved = resolve();
-      if (fs.existsSync(resolved)) return resolved;
-    } catch {
-      /* try the next candidate */
-    }
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate)) return candidate;
   }
   throw new Error("resvg wasm binary not found");
 };
