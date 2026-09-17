@@ -30,6 +30,10 @@ const nextConfig = {
   publicRuntimeConfig: {
     basePath: basePath,
   },
+  // The OG routes read the resvg wasm with fs, which tracing cannot detect.
+  outputFileTracingIncludes: {
+    "/api/og/**": ["./node_modules/@resvg/resvg-wasm/index_bg.wasm"],
+  },
   images: {
     remotePatterns: [
       {

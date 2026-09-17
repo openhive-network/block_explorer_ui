@@ -51,6 +51,3 @@ public/__ENV.js
 /.claude/
 /skills-lock.json
 /docs/superpowers/
-
-# generated at build time from node_modules (see copy:ogwasm)
-public/og/resvg.wasm

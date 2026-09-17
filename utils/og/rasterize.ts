@@ -7,18 +7,10 @@ import { initWasm, Resvg } from "@resvg/resvg-wasm";
 
 const FONT_FAMILY = "DejaVu Sans";
 
-// Plain paths, not require.resolve: webpack would try to bundle the .wasm and fail.
-// public/ ships inside the standalone bundle; node_modules covers `next dev`.
-const wasmPath = (): string => {
-  const candidates = [
-    path.join(process.cwd(), "public/og/resvg.wasm"),
-    path.join(process.cwd(), "node_modules/@resvg/resvg-wasm/index_bg.wasm"),
-  ];
-  for (const candidate of candidates) {
-    if (fs.existsSync(candidate)) return candidate;
-  }
-  throw new Error("resvg wasm binary not found");
-};
+// A plain path, not require.resolve, which webpack would try to bundle and fail.
+// outputFileTracingIncludes in next.config.js ships the file in standalone builds.
+const wasmPath = (): string =>
+  path.join(process.cwd(), "node_modules/@resvg/resvg-wasm/index_bg.wasm");
 
 // The font is bundled rather than taken from the host so the card renders the
 // same everywhere; DejaVu Sans covers the Latin text plus ★ (U+2605) and → (U+2192).
