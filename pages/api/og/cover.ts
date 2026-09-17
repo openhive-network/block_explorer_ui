@@ -2,11 +2,12 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import fs from "fs";
 import path from "path";
 import { siteConfig, escapeXml } from "@/utils/seo";
+import { svgToPng, fallbackPng } from "@/utils/og/rasterize";
 
 // Default Open Graph share image (1200x630) for pages without their own (the
-// account card supplies its own via /api/og/account). PNG where sharp is
-// available (production), SVG otherwise (local Windows dev). Wired via
-// utils/seo defaultOgImage; override with NEXT_PUBLIC_DEFAULT_OG_IMAGE.
+// account card supplies its own via /api/og/account). Always served as PNG —
+// social platforms reject SVG. Wired via utils/seo defaultOgImage; override
+// with NEXT_PUBLIC_DEFAULT_OG_IMAGE.
 const W = 1200;
 const H = 630;
 const FONT = "Arial, Helvetica, sans-serif";
@@ -189,15 +190,17 @@ export default async function handler(
     "public, max-age=86400, s-maxage=604800, stale-while-revalidate=604800"
   );
   try {
-    const sharp = (await import("sharp")).default;
-    const png = await sharp(Buffer.from(svg), { density: 96 })
-      .resize(W, H)
-      .png()
-      .toBuffer();
+    const png = await svgToPng(svg, W);
     res.setHeader("Content-Type", "image/png");
     res.status(200).send(png);
-  } catch {
-    res.setHeader("Content-Type", "image/svg+xml");
-    res.status(200).send(svg);
+  } catch (error) {
+    console.error("OG cover rasterization failed", error);
+    const fallback = fallbackPng();
+    if (!fallback) {
+      res.status(500).end("Failed to render cover");
+      return;
+    }
+    res.setHeader("Content-Type", "image/png");
+    res.status(200).send(fallback);
   }
 }
