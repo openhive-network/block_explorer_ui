@@ -25,6 +25,57 @@ describe("svgToPng", () => {
   }, 30000);
 });
 
+// Next gives each OG route its own copy of rasterize.ts but one shared,
+// process-global resvg-wasm; this loads such a copy.
+const realResvg = jest.requireActual("@resvg/resvg-wasm");
+const loadRouteCopy = (resvg = realResvg) => {
+  let mod: typeof import("@/utils/og/rasterize");
+  jest.isolateModules(() => {
+    jest.doMock("@resvg/resvg-wasm", () => resvg);
+    mod = require("@/utils/og/rasterize");
+  });
+  return mod!;
+};
+
+describe("svgToPng memory", () => {
+  // resvg-wasm never garbage-collects a Resvg, so every render must free it.
+  it("frees the renderer and the rendered image", async () => {
+    const freed: string[] = [];
+    class TrackedResvg extends realResvg.Resvg {
+      free() {
+        freed.push("renderer");
+        super.free();
+      }
+      render() {
+        const image = super.render();
+        const freeImage = image.free.bind(image);
+        image.free = () => {
+          freed.push("image");
+          freeImage();
+        };
+        return image;
+      }
+    }
+
+    const route = loadRouteCopy({ ...realResvg, Resvg: TrackedResvg });
+    await route.svgToPng(sampleSvg, 1200);
+
+    expect(freed.sort()).toEqual(["image", "renderer"]);
+  }, 30000);
+});
+
+describe("svgToPng across route bundles", () => {
+  it("renders from a second route after the first initialized resvg", async () => {
+    const coverRoute = loadRouteCopy();
+    const accountRoute = loadRouteCopy();
+
+    await coverRoute.svgToPng(sampleSvg, 1200);
+    const out = await accountRoute.svgToPng(sampleSvg, 1200);
+
+    expect(Array.from(out.subarray(0, 8))).toEqual(PNG_MAGIC);
+  }, 30000);
+});
+
 describe("/api/og/cover route", () => {
   const mockRes = () => {
     const headers: Record<string, string> = {};
