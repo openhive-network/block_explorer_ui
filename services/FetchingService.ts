@@ -30,6 +30,18 @@ export type ExplorerNodeApi = {
       { account: string; order: "by_withdraw_route" | "by_destination" },
       Hive.WithdrawVestingRoutesResponse
     >;
+    find_limit_orders: TWaxApiRequest<
+      { account: string },
+      { orders: Hive.OpenOrder[] }
+    >;
+    find_hbd_conversion_requests: TWaxApiRequest<
+      { account: string },
+      { requests: Hive.HbdConversionRequest[] }
+    >;
+    find_collateralized_conversion_requests: TWaxApiRequest<
+      { account: string },
+      { requests: Hive.CollateralizedConversionRequest[] }
+    >;
     get_witness_schedule: TWaxApiRequest<
       { id: number; include_future: boolean },
       Hive.WitnessesSchedule
@@ -285,6 +297,34 @@ class FetchingService {
     return await this.extendedHiveChain!.api.database_api.find_withdraw_vesting_routes(
       { account: accountName, order: "by_withdraw_route" }
     );
+  }
+
+  async getOpenOrders(accountName: string): Promise<Hive.OpenOrder[]> {
+    const { orders } =
+      await this.extendedHiveChain!.api.database_api.find_limit_orders({
+        account: accountName,
+      });
+    return orders;
+  }
+
+  async getHbdConversionRequests(
+    accountName: string
+  ): Promise<Hive.HbdConversionRequest[]> {
+    const { requests } =
+      await this.extendedHiveChain!.api.database_api.find_hbd_conversion_requests(
+        { account: accountName }
+      );
+    return requests;
+  }
+
+  async getCollateralizedConversionRequests(
+    accountName: string
+  ): Promise<Hive.CollateralizedConversionRequest[]> {
+    const { requests } =
+      await this.extendedHiveChain!.api.database_api.find_collateralized_conversion_requests(
+        { account: accountName }
+      );
+    return requests;
   }
 
   async getAccOpTypes(accountName: string): Promise<number[]> {

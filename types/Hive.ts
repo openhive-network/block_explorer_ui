@@ -710,6 +710,33 @@ namespace Hive {
     quote!: Supply;
   }
 
+  export class OpenOrder {
+    id!: number;
+    created!: string;
+    expiration!: string;
+    seller!: string;
+    orderid!: number;
+    for_sale!: number;
+    sell_price!: { base: Supply; quote: Supply };
+  }
+
+  export class HbdConversionRequest {
+    id!: number;
+    owner!: string;
+    requestid!: number;
+    amount!: Supply;
+    conversion_date!: string;
+  }
+
+  export class CollateralizedConversionRequest {
+    id!: number;
+    owner!: string;
+    requestid!: number;
+    collateral_amount!: Supply;
+    converted_amount!: Supply;
+    conversion_date!: string;
+  }
+
   export class RewardFunds {
     id!: number;
     name!: string;

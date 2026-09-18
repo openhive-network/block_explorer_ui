@@ -150,6 +150,8 @@ const Providers: React.FC<{ children: ReactNode; seo?: SeoMeta }> = ({
               // (search) opt back in via meta.showErrorToast.
               return;
             }
+            // Queries whose UI already renders the error inline opt out of the toast.
+            if (query.meta?.suppressErrorToast === true) return;
             toast.error("Error occured", {
               description: `${(error as Error).message}`,
               style: {
