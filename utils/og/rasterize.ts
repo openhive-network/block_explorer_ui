@@ -18,16 +18,22 @@ const fontPath = (): string =>
   path.join(process.cwd(), "public/fonts/DejaVuSans.ttf");
 
 let fontBuffer: Buffer | null = null;
-let wasmReady: Promise<void> | null = null;
+
+// initWasm is process-global and throws if called twice, but Next bundles each
+// route with its own copy of this module, so the init is shared via globalThis.
+const g = globalThis as unknown as { __ogResvgReady?: Promise<void> | null };
 
 const ensureReady = async (): Promise<void> => {
-  if (!wasmReady) {
-    wasmReady = initWasm(fs.readFileSync(wasmPath())).catch((error) => {
-      wasmReady = null;
+  if (!g.__ogResvgReady) {
+    g.__ogResvgReady = initWasm(fs.readFileSync(wasmPath())).catch((error) => {
+      if (String(error?.message ?? error).includes("Already initialized")) {
+        return;
+      }
+      g.__ogResvgReady = null;
       throw error;
     });
   }
-  await wasmReady;
+  await g.__ogResvgReady;
   if (!fontBuffer) fontBuffer = fs.readFileSync(fontPath());
 };
 
@@ -41,7 +47,17 @@ export const svgToPng = async (svg: string, width: number): Promise<Buffer> => {
     },
     fitTo: { mode: "width", value: width },
   });
-  return Buffer.from(renderer.render().asPng());
+  // resvg-wasm never garbage-collects a Resvg, so its wasm memory is freed here.
+  try {
+    const image = renderer.render();
+    try {
+      return Buffer.from(image.asPng());
+    } finally {
+      image.free();
+    }
+  } finally {
+    renderer.free();
+  }
 };
 
 // Last-resort raster so a rasterizer failure still yields a card rather than an
