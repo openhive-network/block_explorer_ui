@@ -1,7 +1,8 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useId } from "react";
 import Image from "next/image";
 import {
   ArrowUp,
+  ChevronRight,
   ChevronUp,
   ChevronsUpDown,
   Clock7Icon,
@@ -39,6 +40,8 @@ import {
 } from "@/components/ui/hybrid-tooltip";
 import { AccountBalanceCardChart } from "./AccountBalanceCardChart";
 import { prepareAccountBalanceReport } from "./AccountBalanceCardExport";
+import OpenOrdersDialog from "./OpenOrdersDialog";
+import ConversionRequestsDialog from "./ConversionRequestsDialog";
 import DataExport from "../../DataExport";
 import VestsTooltip from "../../VestsTooltip";
 
@@ -51,6 +54,17 @@ import {
   grabNumericValue,
 } from "@/utils/StringUtils";
 import { TabKey } from "../AccountDetailsSection";
+import { PendingAssetSymbol } from "@/utils/accountPendingItems";
+
+const OPEN_ORDER_FIELDS: Record<string, PendingAssetSymbol> = {
+  open_orders_hive_amount: "HIVE",
+  open_orders_hbd_amount: "HBD",
+};
+
+const CONVERSION_FIELDS: Record<string, PendingAssetSymbol> = {
+  conversion_pending_amount_hive: "HIVE",
+  conversion_pending_amount_hbd: "HBD",
+};
 
 // ====================================================================
 // SECTION: Static Configurations
@@ -382,46 +396,92 @@ const DetailRow = ({
   labelClassName = "text-slate-600 dark:text-slate-400",
   isHighlighted,
   onClick,
-}: any) => (
-  <div
-    onClick={onClick}
-    key={fieldKey}
-    className={cn(
-      "flex flex-wrap justify-between items-baseline px-1 rounded-md transition-colors gap-x-2",
-      {
-        "hover:cursor-pointer": !!onClick,
-      },
-      className
-    )}
-  >
-    <div className="flex items-center gap-1.5">
-      {icon}
-      <span
-        className={cn(
-          "text-sm",
-          { "dark:text-slate-100": isHighlighted },
-          labelClassName
-        )}
-      >
-        {label}
-      </span>
-      {labelSuffix}
-    </div>
-    <div className="flex-grow text-right">
-      <div
-        className={cn(
-          "font-mono text-sm text-slate-800 dark:text-slate-200",
-          { "dark:text-slate-100": isHighlighted },
-          valueClassName
-        )}
-      >
-        {value}
+  actionLabel,
+  actionAriaLabel,
+  actionTooltip,
+}: any) => {
+  const isAction = !!onClick && !!actionLabel;
+  const valueId = useId();
+  const actionPill = (
+    <span className="inline-flex h-4 shrink-0 items-center gap-0.5 rounded-full border border-navbar-border bg-theme text-text px-1.5 text-[10px] font-medium leading-none transition-colors group-hover:border-indigo-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-300">
+      {actionLabel}
+      <ChevronRight size={10} className="rtl:rotate-180" />
+    </span>
+  );
+  return (
+    <div
+      onClick={onClick}
+      key={fieldKey}
+      role={isAction ? "button" : undefined}
+      tabIndex={isAction ? 0 : undefined}
+      aria-label={isAction ? actionAriaLabel : undefined}
+      aria-describedby={isAction ? valueId : undefined}
+      aria-haspopup={isAction ? "dialog" : undefined}
+      onKeyDown={
+        isAction
+          ? (event: React.KeyboardEvent) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                onClick();
+              }
+            }
+          : undefined
+      }
+      className={cn(
+        "flex justify-between items-baseline px-1 rounded-md transition-colors gap-x-2",
+        // Action rows keep the amount on the first line; a long label wraps instead.
+        isAction ? "flex-nowrap" : "flex-wrap",
+        {
+          "hover:cursor-pointer": !!onClick,
+          "group hover:bg-slate-100 active:bg-slate-200 dark:hover:bg-slate-800/60 dark:active:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500":
+            isAction,
+        },
+        className
+      )}
+    >
+      <div className={cn("flex items-center gap-1.5", { "min-w-0": isAction })}>
+        {icon}
+        <span
+          className={cn(
+            "text-sm",
+            { "dark:text-slate-100": isHighlighted },
+            labelClassName
+          )}
+        >
+          {label}
+        </span>
+        {labelSuffix}
+        {isAction &&
+          (actionTooltip ? (
+            <Tooltip>
+              <TooltipTrigger asChild>{actionPill}</TooltipTrigger>
+              <TooltipContent side="top" sideOffset={5}>
+                <p className="text-xs">{actionTooltip}</p>
+              </TooltipContent>
+            </Tooltip>
+          ) : (
+            actionPill
+          ))}
       </div>
-      <div className="text-xs text-slate-500">{dollarValue}</div>
-      {note ? <div className="text-xs text-slate-500">{note}</div> : null}
+      <div
+        id={isAction ? valueId : undefined}
+        className={cn("flex-grow text-right", { "shrink-0": isAction })}
+      >
+        <div
+          className={cn(
+            "font-mono text-sm text-slate-800 dark:text-slate-200",
+            { "dark:text-slate-100": isHighlighted },
+            valueClassName
+          )}
+        >
+          {value}
+        </div>
+        <div className="text-xs text-slate-500">{dollarValue}</div>
+        {note ? <div className="text-xs text-slate-500">{note}</div> : null}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 /**
  * Represents a full collapsible section for a single asset (HP, HIVE, or HBD).
@@ -438,40 +498,56 @@ const AssetSection = ({
   t,
   activeSegmentKey,
   onChangeTab,
+  onOpenPendingItems,
 }: any) => {
   const { blockChainPropertiesDataLoading: isLoadingApr } =
     useBlockChainProperties();
+  const { locale } = useI18n();
+
+  const countFor = (key: keyof Explorer.FormattedAccountDetails) => {
+    if (key === "open_orders_hive_amount") {
+      return {
+        countSuffix: userDetails.open_orders_hive_count,
+        tooltipMsg: t("accountBalanceCard.countTooltipOpenOrdersHive"),
+      };
+    } else if (key === "open_orders_hbd_amount") {
+      return {
+        countSuffix: userDetails.open_orders_hbd_count,
+        tooltipMsg: t("accountBalanceCard.countTooltipOpenOrdersHBD"),
+      };
+    } else if (key === "conversion_pending_amount_hive") {
+      return {
+        countSuffix: userDetails.conversion_pending_count_hive,
+        tooltipMsg: t("accountBalanceCard.countTooltipConversionHive"),
+      };
+    } else if (key === "conversion_pending_amount_hbd") {
+      return {
+        countSuffix: userDetails.conversion_pending_count_hbd,
+        tooltipMsg: t("accountBalanceCard.countTooltipConversionHBD"),
+      };
+    } else if (key.includes("escrow_pending_amount")) {
+      return {
+        countSuffix: userDetails.escrow_pending_count,
+        tooltipMsg: t("accountBalanceCard.countTooltipEscrow"),
+      };
+    }
+    return { countSuffix: null, tooltipMsg: "" };
+  };
 
   const renderValue = (
     key: keyof Explorer.FormattedAccountDetails,
-    sign: "" | "+" | "-" = ""
+    sign: "" | "+" | "-" = "",
+    hideCount = false
   ) => {
     const rawVal = userDetails[key];
+    const { countSuffix, tooltipMsg } = countFor(key);
 
-    // 1. Determine the count and the specific tooltip message
-    let countSuffix = null;
-    let tooltipMsg = "";
-
-    if (key === "open_orders_hive_amount") {
-      countSuffix = userDetails.open_orders_hive_count;
-      tooltipMsg = t("accountBalanceCard.countTooltipOpenOrdersHive"); // "Number of open orders in HIVE"
-    } else if (key === "open_orders_hbd_amount") {
-      countSuffix = userDetails.open_orders_hbd_count;
-      tooltipMsg = t("accountBalanceCard.countTooltipOpenOrdersHBD"); // "Number of open orders in HBD"
-    } else if (key === "conversion_pending_amount_hive") {
-      countSuffix = userDetails.conversion_pending_count_hive;
-      tooltipMsg = t("accountBalanceCard.countTooltipConversionHive"); // "Number of pending HIVE conversions"
-    } else if (key === "conversion_pending_amount_hbd") {
-      countSuffix = userDetails.conversion_pending_count_hbd;
-      tooltipMsg = t("accountBalanceCard.countTooltipConversionHBD"); // "Number of pending HBD conversions"
-    } else if (key.includes("escrow_pending_amount")) {
-      countSuffix = userDetails.escrow_pending_count;
-      tooltipMsg = t("accountBalanceCard.countTooltipEscrow"); // "Number of escrow orders"
-    }
-
-    // 2. Render the count display with the superscript Info icon and Tooltip
+    // Drill-down rows show their count in the row pill instead.
     const countDisplay =
-      countSuffix !== null && countSuffix !== undefined && countSuffix !== 0 ? (
+      !hideCount &&
+      countSuffix !== null &&
+      countSuffix !== undefined &&
+      countSuffix !== 0 ? (
         <span className="inline-flex items-center ml-1 text-xs opacity-70">
           ({countSuffix}
           <Tooltip>
@@ -719,9 +795,42 @@ const AssetSection = ({
                     hasClaimableAmount &&
                     !getHighlightClass(field) &&
                     !activeSegmentKey;
+                  const drillDownSymbol =
+                    OPEN_ORDER_FIELDS[field] ?? CONVERSION_FIELDS[field];
+                  const hasDrillDown = !!drillDownSymbol;
+                  const { countSuffix, tooltipMsg } = countFor(field);
+                  const itemCount = Number(countSuffix) || 0;
+                  // The HIVE and HBD rows open the same dialog, so the symbol tells them apart.
+                  const dialogTitle = `${t(
+                    field in OPEN_ORDER_FIELDS
+                      ? "accountOpenOrdersDialog.title"
+                      : "accountConversionsDialog.title"
+                  )} ${drillDownSymbol}`;
 
                   return (
                     <DetailRow
+                      onClick={
+                        hasDrillDown ? () => onOpenPendingItems(field) : null
+                      }
+                      actionLabel={
+                        hasDrillDown
+                          ? itemCount
+                            ? itemCount.toLocaleString(locale)
+                            : t("accountBalanceCard.view")
+                          : undefined
+                      }
+                      actionTooltip={
+                        hasDrillDown && itemCount ? tooltipMsg : undefined
+                      }
+                      actionAriaLabel={
+                        hasDrillDown
+                          ? itemCount
+                            ? `${dialogTitle} (${itemCount.toLocaleString(
+                                locale
+                              )})`
+                            : dialogTitle
+                          : undefined
+                      }
                       key={field}
                       fieldKey={field}
                       className={cn(getHighlightClass(field), {
@@ -738,7 +847,7 @@ const AssetSection = ({
                           : "text-slate-600 dark:text-slate-400"
                       }
                       icon={icon}
-                      value={renderValue(field)}
+                      value={renderValue(field, "", hasDrillDown)}
                       dollarValue={financialSummary.formatted.dollars[field]}
                     />
                   );
@@ -780,6 +889,19 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
     hp: false,
   });
   const [activeSegmentKey, setActiveSegmentKey] = useState<string | null>(null);
+  const [isOpenOrdersOpen, setIsOpenOrdersOpen] = useState(false);
+  const [openOrdersSymbol, setOpenOrdersSymbol] =
+    useState<PendingAssetSymbol>("HIVE");
+  const [isConversionsOpen, setIsConversionsOpen] = useState(false);
+
+  const handleOpenPendingItems = useCallback((field: string) => {
+    if (field in OPEN_ORDER_FIELDS) {
+      setOpenOrdersSymbol(OPEN_ORDER_FIELDS[field]);
+      setIsOpenOrdersOpen(true);
+    } else if (field in CONVERSION_FIELDS) {
+      setIsConversionsOpen(true);
+    }
+  }, []);
 
   const { blockChainPropertiesData } = useBlockChainProperties();
   const financialSummary = useFinancialSummary(userDetails);
@@ -1055,6 +1177,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
             {ASSET_CONFIG.map((asset) => (
               <AssetSection
                 onChangeTab={onChangeTab}
+                onOpenPendingItems={handleOpenPendingItems}
                 key={asset.key}
                 asset={asset}
                 isOpen={!!openSections[asset.key]}
@@ -1072,6 +1195,18 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
           </CardContent>
         )}
       </Card>
+      <OpenOrdersDialog
+        accountName={userDetails.name}
+        isOpen={isOpenOrdersOpen}
+        onOpenChange={setIsOpenOrdersOpen}
+        symbol={openOrdersSymbol}
+        onSymbolChange={setOpenOrdersSymbol}
+      />
+      <ConversionRequestsDialog
+        accountName={userDetails.name}
+        isOpen={isConversionsOpen}
+        onOpenChange={setIsConversionsOpen}
+      />
     </TooltipProvider>
   );
 };
