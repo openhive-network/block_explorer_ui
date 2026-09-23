@@ -288,9 +288,11 @@ const BlocksSearch = ({
     <>
       <Card
         className={cn(
-          "mb-4 overflow-hidden transition-all duration-500 ease-in max-h-0 opacity-0",
+          // Collapsed it keeps no bottom margin: a hidden card is height-zero
+          // but its margin is not, and it was padding the gap below the title.
+          "mb-0 overflow-hidden transition-all duration-500 ease-in max-h-0 opacity-0",
           {
-            "max-h-fit opacity-100 overflow-visible": isVisible,
+            "mb-4 max-h-fit opacity-100 overflow-visible": isVisible,
           }
         )}
       >

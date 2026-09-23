@@ -18,8 +18,8 @@ const BlockSearchResults = () => {
   const { t } = useI18n();
   const TABLE_CELLS = [
     t("common.block"),
+    t("common.date"),
     t("blocksPage.producer"),
-    t("blocksPage.time"),
     t("common.transactions"),
     "",
   ];

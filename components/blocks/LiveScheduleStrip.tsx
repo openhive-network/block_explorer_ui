@@ -3,10 +3,21 @@ import Link from "next/link";
 import { Radio } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/hybrid-tooltip";
+import LiveBeacon from "@/components/ui/LiveBeacon";
 import useNextScheduledWitness from "@/hooks/api/blocks/useNextScheduledWitness";
 import useHeadBlock from "@/hooks/api/homePage/useHeadBlock";
 import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
 import { isFollowingHead } from "@/utils/nextScheduledWitness";
+import {
+  JUST_ARRIVED_ACCENT,
+  JUST_ARRIVED_SURFACE,
+} from "@/utils/liveHighlight";
 import { useI18n } from "@/i18n/i18n";
 
 interface LiveScheduleStripProps {
@@ -80,13 +91,32 @@ const LiveScheduleStrip: React.FC<LiveScheduleStripProps> = ({
       <span className="flex items-center gap-1.5 text-explorer-light-gray dark:text-gray-300">
         {t("blocksPage.liveSchedule.lastProducedBlock")}
         {blockNumber ? (
-          <Link
-            href={`/block/${blockNumber}`}
-            className="font-medium tabular-nums text-link"
-            data-testid="last-produced-block"
-          >
-            {blockNumber.toLocaleString(locale)}
-          </Link>
+          // The same object as a row that just landed, shrunk to inline size:
+          // seeing it here and in the table is what explains the colour.
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link
+                  href={`/block/${blockNumber}`}
+                  className={cn(
+                    "flex items-center gap-1.5 rounded-sm border-s-2 px-1.5 py-0.5",
+                    "font-medium tabular-nums text-link",
+                    JUST_ARRIVED_SURFACE,
+                    JUST_ARRIVED_ACCENT
+                  )}
+                  data-testid="last-produced-block"
+                >
+                  <LiveBeacon
+                    label={t("blocksPage.liveSchedule.justArrived")}
+                  />
+                  {blockNumber.toLocaleString(locale)}
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent className="bg-theme text-text max-w-xs p-2 text-xs font-normal">
+                {t("blocksPage.liveSchedule.arrivalHint")}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         ) : (
           <span className="text-explorer-light-gray">-</span>
         )}
