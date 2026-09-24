@@ -64,12 +64,17 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
       </button>
 
       {/* Grid rows animate to the body's real height, with no guessed max. */}
+      {/* `invisible`, not just clipped — the body stays mounted, so without it
+          the collapsed children keep their place in the tab order. Visibility
+          is in the transition, so it only takes effect once the section has
+          finished closing, and returns the instant it reopens. */}
       <div
+        aria-hidden={!isOpen}
         className={cn(
           "grid",
           animate &&
-            "transition-[grid-template-rows] duration-300 ease-out motion-reduce:transition-none",
-          isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+            "transition-[grid-template-rows,visibility] duration-300 ease-out motion-reduce:transition-none",
+          isOpen ? "grid-rows-[1fr]" : "invisible grid-rows-[0fr]"
         )}
       >
         <div className="overflow-hidden">

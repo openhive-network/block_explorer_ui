@@ -60,7 +60,13 @@ const StatCard = ({
         <Tooltip>
           <TooltipTrigger asChild>{cardDiv}</TooltipTrigger>
           <TooltipPortal>
-            <TooltipContent side="top" sideOffset={2} className="ml-32">
+            <TooltipContent
+              side="top"
+              align="start"
+              sideOffset={2}
+              collisionPadding={8}
+              className="max-w-[240px] text-center text-[11px]"
+            >
               {tooltipContent}
             </TooltipContent>
           </TooltipPortal>
