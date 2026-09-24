@@ -64,10 +64,6 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
       </button>
 
       {/* Grid rows animate to the body's real height, with no guessed max. */}
-      {/* `invisible`, not just clipped — the body stays mounted, so without it
-          the collapsed children keep their place in the tab order. Visibility
-          is in the transition, so it only takes effect once the section has
-          finished closing, and returns the instant it reopens. */}
       <div
         aria-hidden={!isOpen}
         className={cn(
