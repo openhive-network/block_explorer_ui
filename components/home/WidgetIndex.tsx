@@ -83,6 +83,7 @@ const WidgetIndex = () => {
     handleWidgetStateChange,
     handleToggleCollapse,
     setRuntimeWidgetHeight,
+    currentBreakpoint,
   } = useDashboard();
 
   const isOwnBoard = activeBoardKey === MY_BOARD_KEY;
@@ -208,6 +209,35 @@ const WidgetIndex = () => {
   ]);
 
   const contentRefs = useRef(new Map<string, HTMLDivElement>());
+  const measuredPxRef = useRef(new Map<string, number>());
+  const [rowMatchPx, setRowMatchPx] = useState<Record<string, number>>({});
+
+  const recomputeRowMatch = useCallback(() => {
+    const items = layouts[currentBreakpoint] ?? [];
+    const typeOf = new Map(widgets.map((w) => [w.i, w.type]));
+    const next: Record<string, number> = {};
+    for (const item of items) {
+      if (!WIDGET_REGISTRY[typeOf.get(item.i) ?? ""]?.matchRowHeight) continue;
+      let px = 0;
+      for (const other of items) {
+        const config = WIDGET_REGISTRY[typeOf.get(other.i) ?? ""];
+        if (
+          other.i === item.i ||
+          !config?.dynamicHeight ||
+          config.matchRowHeight
+        )
+          continue;
+        if (Math.abs(other.y - item.y) > 0.5) continue;
+        px = Math.max(px, measuredPxRef.current.get(other.i) ?? 0);
+      }
+      if (px) next[item.i] = px;
+    }
+    setRowMatchPx((prev) =>
+      JSON.stringify(prev) === JSON.stringify(next) ? prev : next
+    );
+  }, [layouts, currentBreakpoint, widgets]);
+
+  useEffect(recomputeRowMatch, [recomputeRowMatch]);
   const widgetStatesRef = useRef(widgetStates);
   useEffect(() => {
     widgetStatesRef.current = widgetStates;
@@ -231,6 +261,7 @@ const WidgetIndex = () => {
         if (finalIsEditMode) return;
         if (widgetStatesRef.current[widget.i]?.isCollapsed) return;
         const contentPx = entry.contentRect.height;
+        measuredPxRef.current.set(widget.i, contentPx);
         const contentH = (contentPx + MARGIN_Y) / (ROW_HEIGHT + MARGIN_Y);
         const targetH = Math.max(contentH, floor);
         setRuntimeWidgetHeight(widget.i, Math.ceil(targetH * 10) / 10);
@@ -338,7 +369,16 @@ const WidgetIndex = () => {
                 if (el) contentRefs.current.set(widget.i, el);
                 else contentRefs.current.delete(widget.i);
               }}
-              className="w-full overflow-hidden"
+              className={cn(
+                "w-full overflow-hidden",
+                widgetConfig.matchRowHeight &&
+                  "flex flex-col [&>*]:mb-0 [&>*]:flex-1"
+              )}
+              style={
+                widgetConfig.matchRowHeight && rowMatchPx[widget.i]
+                  ? { minHeight: rowMatchPx[widget.i] }
+                  : undefined
+              }
             >
               {rendered}
             </div>
@@ -359,6 +399,7 @@ const WidgetIndex = () => {
     handleRemoveWidget,
     handleToggleCollapse,
     handleWidgetStateChange,
+    rowMatchPx,
   ]);
 
   const handleRestorePreviousBoard = () => {

@@ -623,6 +623,7 @@ export function useDashboard() {
     myBoardWidgetCount: widgets.length,
     finalIsEditMode,
     isLargeScreen: isEditableBreakpoint,
+    currentBreakpoint,
     setIsEditMode,
     setIsLibraryOpen,
     viewBoard,

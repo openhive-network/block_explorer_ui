@@ -56,6 +56,10 @@ export const WIDGET_NODE_SUPPORT: Record<string, WidgetNodeSupport> = {
     app: "haf-stats-api",
     endpoint: "haf-stats-api:top-custom-json",
   },
+  "witness-missed-blocks": {
+    app: "haf-stats-api",
+    endpoint: "haf-stats-api:witness-missed-blocks",
+  },
 
   // haf-stats-api account analytics — proactive app probe + reactive per endpoint.
   "my-content-activity": {
