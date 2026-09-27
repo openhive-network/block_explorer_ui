@@ -289,6 +289,12 @@ export const extendedRest = {
       responseArray: true,
       urlPath: "network/top-accounts",
     },
+    witnessMissedBlocks: {
+      params: Hive.WitnessMissedBlocksParams,
+      result: Hive.WitnessMissedBlocksResponse,
+      responseArray: true,
+      urlPath: "witnesses/missed-blocks",
+    },
     networkRcUtilization: {
       params: Hive.NetworkRcUtilizationParams,
       result: Hive.NetworkRcUtilizationResponse,

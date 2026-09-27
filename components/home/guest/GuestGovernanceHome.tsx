@@ -3,6 +3,7 @@ import TopWitnessesCard from "@/components/home/TopWitnessesCard";
 import NetworkVotingActivityCard from "@/components/home/NetworkVotingActivityCard";
 import NetworkHpDistributionCard from "@/components/home/NetworkHpDistributionCard";
 import WitnessScheduleWidget from "@/components/dashboard/widgets/data/WitnessScheduleWidget";
+import WitnessMissedBlocksCard from "@/components/home/WitnessMissedBlocksCard";
 import NodeSupportGate from "@/components/dashboard/ui/NodeSupportGate";
 import GuestBoardHeader from "./GuestBoardHeader";
 import GuestSectionTitle from "./GuestSectionTitle";
@@ -35,12 +36,17 @@ const GuestGovernanceHome = () => {
           hint={t("guestHome.governance.hintProducing")}
         />
         <div className="mb-3 grid grid-cols-12 items-stretch gap-3">
-          <div className="col-span-12 flex flex-col lg:col-span-8 [&>*]:mb-0 [&>*]:h-full">
+          <div className="col-span-12 flex flex-col lg:col-span-5 [&>*]:mb-0 [&>*]:h-full">
             <NodeSupportGate widgetId="witness-schedule">
               <WitnessScheduleWidget />
             </NodeSupportGate>
           </div>
-          <div className="col-span-12 flex flex-col lg:col-span-4 [&>*]:mb-0 [&>*]:h-full">
+          <div className="col-span-12 flex flex-col md:col-span-6 lg:col-span-3 [&>*]:mb-0 [&>*]:h-full">
+            <NodeSupportGate widgetId="witness-missed-blocks">
+              <WitnessMissedBlocksCard />
+            </NodeSupportGate>
+          </div>
+          <div className="col-span-12 flex flex-col md:col-span-6 lg:col-span-4 [&>*]:mb-0 [&>*]:h-full">
             <NodeSupportGate widgetId="top-witnesses">
               <TopWitnessesCard
                 witnessesData={witnessesData}
