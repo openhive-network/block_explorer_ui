@@ -15,6 +15,10 @@ export const config = {
       ? env("HIVE_FRONTEND_ADDRESS")
       : "https://hive.blog"
   }`,
+  // Where "Create account" sends visitors without a Hive account.
+  signupUrl: `${
+    env("SIGNUP_URL") ? env("SIGNUP_URL") : "https://signup.hive.io"
+  }`,
   baseMomentTimeFormat: "YYYY/MM/DD HH:mm:ss UTC",
   momentLocaleDateFormat: "MMM D, YYYY",
   gitHash: process.env.NEXT_PUBLIC_COMMIT_HASH,

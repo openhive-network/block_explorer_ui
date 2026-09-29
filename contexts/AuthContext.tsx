@@ -42,6 +42,9 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Device-level, not per user: it is read before anyone is signed in.
+export const LAST_USERNAME_KEY = "hivescan_last_username";
+
 export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
@@ -55,6 +58,11 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
   useEffect(() => {
     methodRef.current = method;
   }, [method]);
+
+  const usernameRef = useRef(username);
+  useEffect(() => {
+    usernameRef.current = username;
+  }, [username]);
 
   const hasInitialized = useRef(false);
 
@@ -124,6 +132,7 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
                 method: authMethod,
               })
             );
+            localStorage.setItem(LAST_USERNAME_KEY, user);
           }
           return null;
         } else {
@@ -137,6 +146,13 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
     []
   );
 
+  const clearSessionState = useCallback(() => {
+    setUsername(null);
+    setAvatar(null);
+    setMethod(null);
+    setAccessToken(null);
+  }, []);
+
   const logout = useCallback(async () => {
     // Clear server-side session cookies (hivescan_auth, hivescan_session, hivescan_csrf)
     try {
@@ -146,10 +162,7 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
     }
 
     // 2. Clear all local state
-    setUsername(null);
-    setAvatar(null);
-    setMethod(null);
-    setAccessToken(null);
+    clearSessionState();
 
     if (typeof window !== "undefined") {
       localStorage.removeItem("hivescan_user");
@@ -163,7 +176,28 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
         );
       }
     }
-  }, []);
+  }, [clearSessionState]);
+
+  // Another tab logged in, out, or switched account: follow it. The event never
+  // fires in the tab that made the change.
+  useEffect(() => {
+    const onStorage = (event: StorageEvent) => {
+      if (event.key !== "hivescan_user" && event.key !== null) return;
+      const saved = localStorage.getItem("hivescan_user");
+      if (!saved) {
+        clearSessionState();
+        return;
+      }
+      try {
+        const { username: user, method: authMethod } = JSON.parse(saved);
+        if (user && user !== usernameRef.current) login(user, authMethod);
+      } catch {
+        // Malformed entry: leave the current session alone.
+      }
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, [login, clearSessionState]);
 
   useEffect(() => {
     if (hasInitialized.current) return;

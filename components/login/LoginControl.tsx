@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth, LAST_USERNAME_KEY } from "@/contexts/AuthContext";
 import { SmartSigner } from "@/lib/smart-signer";
 import { useI18n } from "@/i18n/i18n";
 import { LogInIcon, Loader2 } from "lucide-react";
@@ -32,6 +32,17 @@ const LoginControl: React.FC<LoginControlProps> = ({ isMobile }) => {
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Pre-fill whoever last signed in on this device.
+  useEffect(() => {
+    if (!modalOpen) return;
+    try {
+      const last = localStorage.getItem(LAST_USERNAME_KEY);
+      if (last) setInputUsername((prev) => prev || last);
+    } catch {
+      // Storage blocked: leave the field empty.
+    }
+  }, [modalOpen]);
 
   // Gated controls elsewhere in the app ask for the dialog rather than owning it.
   useEffect(() => {

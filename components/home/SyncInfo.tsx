@@ -1,7 +1,10 @@
 import { useState } from "react";
 
 import { cn } from "@/lib/utils";
-import { convertUTCDateToLocalDate } from "@/utils/TimeUtils";
+import {
+  convertUTCDateToLocalDate,
+  formatShortDuration,
+} from "@/utils/TimeUtils";
 import useBlockchainSyncInfo from "@/hooks/common/useBlockchainSyncInfo";
 import {
   Dialog,
@@ -30,6 +33,8 @@ interface SyncInfoProps {
   className?: string;
 }
 
+const BLOCK_SECONDS = 3;
+
 export const getBlockDifference = (
   hiveBlockNumber: number | undefined,
   explorerBlockNumber: number | undefined
@@ -48,12 +53,17 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
     explorerTime,
     hiveBlockTime,
     loading: syncLoading,
-  } = useBlockchainSyncInfo();
+  } = useBlockchainSyncInfo(dialogOpen);
 
   const blockDifference = getBlockDifference(
     hiveBlockNumber,
     explorerBlockNumber
   );
+  const outOfSyncLabel = `${blockDifference.toLocaleString(locale)} ${t(
+    "syncInfo.blocksOutOfSync"
+  )} · ${t("syncInfo.timeBehind", {
+    duration: formatShortDuration(blockDifference * BLOCK_SECONDS, locale),
+  })}`;
 
   const differenceColorText =
     blockDifference > 20
@@ -106,10 +116,7 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
                       />
                     </TooltipTrigger>
                     <TooltipContent className="bg-theme text-text">
-                      <p>
-                        {blockDifference.toLocaleString(locale)}{" "}
-                        {t("syncInfo.blocksOutOfSync")}
-                      </p>
+                      <p>{outOfSyncLabel}</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -155,9 +162,7 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
           <span className="h-2 w-2 shrink-0 rounded-full bg-current" />
           {blockDifference === 0
             ? t("syncInfo.explorerSynced")
-            : `${blockDifference.toLocaleString(locale)} ${t(
-                "syncInfo.blocksOutOfSync"
-              )}`}
+            : outOfSyncLabel}
         </div>
 
         <dl className="divide-y divide-gray-200 text-sm dark:divide-gray-700">

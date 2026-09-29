@@ -49,8 +49,9 @@ const LiveInfoWidget: React.FC<LiveInfoWidgetProps> = ({
   }, [blockDetails?.created_at, blockchainDate]);
 
   useEffect(() => {
-    if (!blockDetails?.block_num || !settings.liveData) return;
+    if (!blockDetails?.block_num) return;
     setLiveBlockNumber(blockDetails.block_num);
+    if (!settings.liveData) return;
     const intervalId = setInterval(() => {
       setLiveBlockNumber((prev) => (prev ? prev + 1 : blockDetails.block_num));
     }, intervalTime);

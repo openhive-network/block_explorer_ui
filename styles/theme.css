@@ -151,6 +151,13 @@ body {
   background-color: var(--background-start-rgb);
 }
 
+/* Keep the page scrollbar while a modal is open so nothing shifts; wheel and
+   touch scrolling outside the modal are still blocked by the scroll lock. */
+html body[data-scroll-locked] {
+  overflow: visible !important;
+  margin-right: 0 !important;
+}
+
 pre {
   white-space: pre-wrap;
   /* Since CSS 2.1 */
@@ -394,7 +401,8 @@ pre {
   flex-direction: column;
 }
 
-.data-box:hover {
+.data-box:hover,
+.data-box-lifted {
   background-color: var(--color-row-hover);
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
   /* Elevated shadow */

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useId } from "react";
+import React, { useState, useMemo, useCallback, useId, useEffect } from "react";
 import Image from "next/image";
 import {
   ArrowUp,
@@ -869,6 +869,8 @@ type AccountBalanceCardProps = {
   header: string;
   userDetails: Explorer.FormattedAccountDetails;
   isInitiallyOpen: boolean;
+  // Opens every row and lifts the card, e.g. when "My wallet" lands here.
+  focus?: boolean;
   onChangeTab?: (
     tab: TabKey,
     context?: { type?: "incoming" | "outgoing" }
@@ -879,6 +881,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
   header,
   userDetails,
   isInitiallyOpen,
+  focus = false,
   onChangeTab,
 }) => {
   const { t } = useI18n();
@@ -889,6 +892,12 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
     hp: false,
   });
   const [activeSegmentKey, setActiveSegmentKey] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!focus) return;
+    setIsCardHidden(false);
+    setOpenSections({ hive: true, hbd: true, hp: true });
+  }, [focus]);
   const [isOpenOrdersOpen, setIsOpenOrdersOpen] = useState(false);
   const [openOrdersSymbol, setOpenOrdersSymbol] =
     useState<PendingAssetSymbol>("HIVE");
@@ -1100,7 +1109,10 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
     <TooltipProvider>
       <Card
         data-testid="account-balance-card"
-        className="bg-theme shadow-lg dark:shadow-slate-900/50"
+        className={cn(
+          "bg-theme shadow-lg dark:shadow-slate-900/50",
+          focus && "data-box-lifted"
+        )}
       >
         <CardHeader className="p-3">
           {/* Card Header and top-right controls (Export, Expand/Collapse) */}

@@ -1,5 +1,6 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
 
 import { config } from "@/Config";
 import useWitnessDetails from "@/hooks/api/common/useWitnessDetails";
@@ -175,6 +176,8 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
     useState(false);
 
   const [activeTab, setActiveTab] = useState<TabKey>("wallet");
+  const router = useRouter();
+  const focusWallet = router.query.section === "wallet";
   const [activeDelegationType, setActiveDelegationType] = useState<
     "incoming" | "outgoing" | null
   >(null);
@@ -195,6 +198,21 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
     governance: false,
     profile: false,
   });
+
+  // "My wallet" in the user menu links here with ?section=wallet.
+  useEffect(() => {
+    if (!focusWallet) return;
+    setActiveTab("wallet");
+    setTabExpandedStates((prev) => ({ ...prev, wallet: true }));
+    const id = setTimeout(
+      () =>
+        document
+          .getElementById("account-wallet")
+          ?.scrollIntoView({ behavior: "smooth", block: "start" }),
+      300
+    );
+    return () => clearTimeout(id);
+  }, [focusWallet, accountName]);
 
   const handleTabToggleAll = (tab: keyof typeof tabExpandedStates) => {
     setTabExpandedStates((prev) => ({ ...prev, [tab]: !prev[tab] }));
@@ -367,7 +385,10 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
       )}
 
       {settings.accountPageView === "tabbed" ? (
-        <div className="bg-explorer-slate rounded-lg border border-slate-200 dark:border-slate-800 p-3 mt-4">
+        <div
+          id="account-wallet"
+          className="bg-explorer-slate rounded-lg border border-slate-200 dark:border-slate-800 p-3 mt-4"
+        >
           <Tabs
             value={activeTab}
             onValueChange={(val) => changeTab(val as TabKey)}
@@ -449,6 +470,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
                   header={t("accountDetailsSection.wallet")}
                   userDetails={accountDetails}
                   isInitiallyOpen={tabExpandedStates.wallet}
+                  focus={focusWallet}
                   onChangeTab={changeTab}
                 />
                 <AccountPendingRewardsCard
@@ -676,12 +698,17 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
           </Tabs>
         </div>
       ) : (
-        <div className="bg-explorer-slate rounded-lg border border-slate-200 dark:border-slate-800 p-3 mt-4">
+        <div
+          id="account-wallet"
+          className="bg-explorer-slate rounded-lg border border-slate-200 dark:border-slate-800 p-3 mt-4"
+        >
           <div className="space-y-4">
             <AccountBalanceCard
+              key={focusWallet ? "wallet-focus" : "wallet"}
               header={t("accountDetailsSection.wallet")}
               userDetails={accountDetails}
-              isInitiallyOpen={false}
+              isInitiallyOpen={focusWallet}
+              focus={focusWallet}
               onChangeTab={changeTab}
             />
             <AccountPendingRewardsCard
