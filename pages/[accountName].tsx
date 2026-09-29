@@ -98,6 +98,13 @@ export default function Account() {
     setIsDesktopAccountDetailsCollapsed,
   ] = useState(false);
 
+  // "My wallet" lands here with ?section=wallet: bring the account panel into view.
+  useEffect(() => {
+    if (router.query.section !== "wallet") return;
+    if (isMobile) setShowMobileAccountDetails(true);
+    else setIsDesktopAccountDetailsCollapsed(false);
+  }, [router.query.section, isMobile]);
+
   // Collapse the sidebar on Analytics for full width; restore on leave, but only
   // if we auto-collapsed it (don't override a manual collapse).
   const autoCollapsedSidebarRef = useRef(false);
