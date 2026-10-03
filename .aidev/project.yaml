@@ -1,0 +1,79 @@
+# Profile for hive/block_explorer_ui, written by `aidev project scaffold` (#13561).
+#
+# Schema reference: docs/architecture/project-profile.md
+# Onboarding procedure: the `onboard-external-project` skill.
+# Guide: docs/operations/onboarding-an-external-project.md
+#
+# The generator writes a starting point, not a governed answer: every
+# binding below is the command a maintainer said this project runs, and it
+# is reviewed and edited like any other declaration.
+version: 2
+project: block-explorer-ui
+
+gitlab:
+  host: "gitlab.syncad.com"
+  path: "hive/block_explorer_ui"
+  id: 415
+
+# A single-branch topology: this is both what work integrates into and what
+# ships. `stable` is omitted rather than declared equal to it — declaring
+# them equal is a typo, omitting one is a topology. Add `stable:` when this
+# project genuinely promotes to a second branch.
+# AIDEV integrates into its own branch; people merge it into develop through
+# merge requests (as in hive/denser and hive/healthchecker-component), so
+# `stable` is omitted and `aidev release` never moves develop or master.
+branches:
+  integration: "aidev/integration"
+
+# How this project's suites execute (#13892): one kind, stated once.
+environment:
+  kind: "container"
+  image: "registry.gitlab.syncad.com/hive/block_explorer_ui/aidev-tests@sha256:8587c0c22769280a51c3c79a7bfd40468dc42b70774e1a23a2a46d52be79df42"
+  inputs: ["pnpm-lock.yaml"]
+
+issues:
+  intake_label: todo
+  taxonomy: ".aidev/labels.yaml"
+  decompose:
+    # `never` is where an external project starts: nothing marks work
+    # approved on this project's behalf until there is a track record.
+    auto_todo: never
+  # Reports about this project's work are filed against this project.
+  watcher_reports: self
+
+# Verification slots. Each binding is what this project genuinely runs for
+# that slot — never one selection repeated under seven names, which makes
+# seven gates report on the same evidence while claiming to check seven
+# different things.
+verification:
+  quick:
+    adapter: command
+    args: [".aidev/run-checks.sh", "quick", "lint", "typecheck", "unit"]
+    artifacts: ["test-results/aidev-quick/"]
+  full:
+    adapter: command
+    args: [".aidev/run-checks.sh", "full", "lint", "typecheck", "unit", "build"]
+    artifacts: ["test-results/aidev-full/"]
+  baseline:
+    adapter: command
+    args: [".aidev/run-checks.sh", "baseline", "unit"]
+    artifacts: ["test-results/aidev-baseline/"]
+  canary:
+    adapter: command
+    args: [".aidev/run-checks.sh", "canary", "lint", "typecheck", "unit", "build"]
+    artifacts: ["test-results/aidev-canary/"]
+  static:
+    adapter: command
+    args: [".aidev/run-checks.sh", "static", "lint", "typecheck"]
+    artifacts: ["test-results/aidev-static/"]
+  coverage:
+    adapter: command
+    args: [".aidev/run-checks.sh", "coverage", "unit"]
+    artifacts: ["test-results/aidev-coverage/"]
+  system:
+    adapter: command
+    args: [".aidev/run-checks.sh", "system", "build"]
+    artifacts: ["test-results/aidev-system/"]
+
+# Capability grants for target-side code. Empty until this project needs one.
+capabilities: []

@@ -47,6 +47,15 @@ scripts/            # Build and deployment scripts
 docker/             # Docker configuration
 ```
 
+## Working in an AIDEV workflow
+When AIDEV runs you on an issue, no one is there to answer questions. GitLab CI doesn't run for AIDEV branches; the checks below are the verification.
+
+- **Check your change:** run `aidev test run --slot quick` once, after your last edit. It runs `next lint`, `tsc --noEmit` and the Jest unit tests. `--slot full` adds `next build`.
+- **Iterate:** `.aidev/run-checks.sh dev unit` (or `lint` / `typecheck` / `build`) runs one step.
+- **Package manager:** pnpm 10.15 (`pnpm-lock.yaml`), not npm.
+- **Dependencies:** a change to `pnpm-lock.yaml`, `.npmrc` or `packageManager` needs a new test image. Run `.aidev/runtime/build.sh --push` and put the printed reference in `.aidev/project.yaml` `environment.image` in the same commit (see `.aidev/README.md`).
+- **The Playwright e2e tests** hit the live API and are not part of the AIDEV slots yet. Don't rely on them to verify a change.
+
 ## Development Commands
 
 ```bash
