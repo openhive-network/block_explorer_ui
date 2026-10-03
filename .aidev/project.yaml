@@ -28,7 +28,7 @@ branches:
 # How this project's suites execute (#13892): one kind, stated once.
 environment:
   kind: "container"
-  image: "registry.gitlab.syncad.com/hive/block_explorer_ui/aidev-tests@sha256:8587c0c22769280a51c3c79a7bfd40468dc42b70774e1a23a2a46d52be79df42"
+  image: "registry.gitlab.syncad.com/hive/block_explorer_ui/aidev-tests@sha256:d22c4db150e85e5684e25c18b3dd64fe4507d3675f6562bd3291eae3ce027ef5"
   inputs: ["pnpm-lock.yaml"]
 
 issues:
@@ -60,7 +60,8 @@ verification:
     artifacts: ["test-results/aidev-baseline/"]
   canary:
     adapter: command
-    args: [".aidev/run-checks.sh", "canary", "lint", "typecheck", "unit", "build"]
+    args:
+      [".aidev/run-checks.sh", "canary", "lint", "typecheck", "unit", "build"]
     artifacts: ["test-results/aidev-canary/"]
   static:
     adapter: command
