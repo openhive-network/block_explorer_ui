@@ -40,7 +40,7 @@
     "@radix-ui/react-tooltip": "^1.0.7",
     "@tanstack/react-query": "^4.29.25",
     "@tanstack/react-query-devtools": "^4.29.25",
-    "@types/node": "20.4.2",
+    "@types/node": "^24",
     "@types/react": "19.1.8",
     "@types/react-dom": "19.1.6",
     "autoprefixer": "10.4.14",
@@ -99,7 +99,7 @@
     "shx": "^0.3.4"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=24"
   },
   "overrides": {
     "@types/react": "19.1.8",

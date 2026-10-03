@@ -21,7 +21,7 @@ Web-based GUI for exploring Hive blockchain data. Features include:
 - **Blockchain**: @hiveio/wax 2.0.1, @hiveio/hb-healthchecker-component
 - **Charts**: ECharts 5.6.0, Recharts 2.9.2
 - **Testing**: Playwright 1.57.0 (Chromium, Firefox, WebKit)
-- **Runtime**: Node.js 18.20.0+
+- **Runtime**: Node.js 24.21.0+
 
 ## Directory Structure
 
