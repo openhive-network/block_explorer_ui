@@ -4,7 +4,7 @@ This project is a GUI for the Block Explorer. You can use it to go through block
 
 ## Getting Started
 
-To run the application you have to install Node JS (18.20.0 or higher is preferable). Then after getting the repo use:
+To run the application you have to install Node JS (24.21.0 or higher is preferable). Then after getting the repo use:
 
 ```bash
 npm install

@@ -29,7 +29,7 @@ The Playwright e2e suite (`tests/playwright`, live API) is not bound yet.
 
 ## The test runtime image (`runtime/`)
 
-The suites run in a container with `--network none` and your uid. It carries Node 18.20
+The suites run in a container with `--network none` and your uid. It carries Node 24.21
 (as CI and the Dockerfile), pnpm (package.json `packageManager`, through corepack) and a
 pnpm store from `pnpm fetch`. `pnpm-deps.sh` installs `node_modules` offline from it.
 
