@@ -15,8 +15,8 @@ importers:
         specifier: ^1.3.6
         version: 1.3.6
       '@hiveio/healthchecker-component':
-        specifier: 2.0.1
-        version: 2.0.1(@hiveio/wax@2.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwindcss@3.4.17)
+        specifier: 2.0.2
+        version: 2.0.2(@hiveio/wax@2.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwindcss@3.4.17)
       '@hiveio/wax':
         specifier: 2.0.1
         version: 2.0.1
@@ -507,10 +507,11 @@ packages:
   '@hiveio/dhive@1.3.6':
     resolution: {integrity: sha512-d+uNzuIArqoI30IKGpV93JRU/p3LPUY3pmrQqmNb8Iiowd5KxCZ4LIT8gIFQw16OoGKuQ2tY3LXkUBxNb1gWhQ==, tarball: https://registry.npmjs.org/@hiveio/dhive/-/dhive-1.3.6.tgz}
 
-  '@hiveio/healthchecker-component@2.0.1':
-    resolution: {integrity: sha1-rj3zM2guujASWLMyBfrtCkQXGxo=, tarball: https://gitlab.syncad.com/api/v4/projects/520/packages/npm/@hiveio/healthchecker-component/-/@hiveio/healthchecker-component-2.0.1.tgz}
+  '@hiveio/healthchecker-component@2.0.2':
+    resolution: {integrity: sha1-2JU1Bvzt0AB/bgJni9v1V2fGwX8=, tarball: https://gitlab.syncad.com/api/v4/projects/520/packages/npm/@hiveio/healthchecker-component/-/@hiveio/healthchecker-component-2.0.2.tgz}
+    engines: {node: '>=24'}
     peerDependencies:
-      '@hiveio/wax': 1.28.6-rc10-stable.260317114454
+      '@hiveio/wax': '>=1.28.6-rc10-stable.260317114454 <1.29.0 || ^2.0.0'
       react: ^18.2.0 || ^19.0.0
       react-dom: ^18.2.0 || ^19.0.0
       tailwindcss: ^3.4.12
@@ -5388,7 +5389,7 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@hiveio/healthchecker-component@2.0.1(@hiveio/wax@2.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwindcss@3.4.17)':
+  '@hiveio/healthchecker-component@2.0.2(@hiveio/wax@2.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwindcss@3.4.17)':
     dependencies:
       '@hiveio/wax': 2.0.1
       react: 18.3.1
