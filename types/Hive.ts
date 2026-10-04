@@ -1348,6 +1348,7 @@ namespace Hive {
     page!: number;
     "min-balance"?: number;
     "max-balance"?: number;
+    "page-size"?: number;
   }
 
   export class TopHoldersResponse {

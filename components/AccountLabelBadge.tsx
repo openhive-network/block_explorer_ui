@@ -48,9 +48,10 @@ const FALLBACK_TEXT_KEY: Partial<Record<AccountLabelType, string>> = {
 
 interface Props {
   label: ResolvedAccountLabel | null;
+  compactOnMobile?: boolean;
 }
 
-const AccountLabelBadge: React.FC<Props> = ({ label }) => {
+const AccountLabelBadge: React.FC<Props> = ({ label, compactOnMobile }) => {
   const { t } = useI18n();
   if (!label) return null;
   const text =
@@ -66,11 +67,11 @@ const AccountLabelBadge: React.FC<Props> = ({ label }) => {
           <span
             className={cn(
               "inline-flex items-center gap-1 whitespace-nowrap rounded-full border py-0.5 text-[10px] font-semibold leading-none",
-              iconOnly ? "px-1" : "px-1.5",
+              iconOnly ? "px-1" : compactOnMobile ? "px-1 sm:px-1.5" : "px-1.5",
               COLOR_BY_TYPE[label.type],
               isInactive && "opacity-70"
             )}
-            aria-label={iconOnly ? text : undefined}
+            aria-label={iconOnly || compactOnMobile ? text : undefined}
             data-testid="account-label-badge"
             data-label-type={label.type}
             data-label-status={label.status}
@@ -80,6 +81,7 @@ const AccountLabelBadge: React.FC<Props> = ({ label }) => {
               <span
                 className={cn(
                   "max-w-[7rem] truncate",
+                  compactOnMobile && "hidden sm:inline",
                   isInactive && "line-through"
                 )}
               >
@@ -93,7 +95,11 @@ const AccountLabelBadge: React.FC<Props> = ({ label }) => {
             side="top"
             className="max-w-[240px] text-center text-[11px]"
           >
-            {iconOnly && <span className="block font-bold">{text}</span>}
+            {(iconOnly || compactOnMobile) && (
+              <span className={cn("block font-bold", !iconOnly && "sm:hidden")}>
+                {text}
+              </span>
+            )}
             {t(isInactive ? "accountLabel.inactiveInfo" : label.tooltipKey)}
           </TooltipContent>
         </TooltipPortal>

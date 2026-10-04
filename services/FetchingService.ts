@@ -1052,7 +1052,8 @@ class FetchingService {
     balanceType: "balance" | "savings_balance",
     page: number,
     minBalance?: number,
-    maxBalance?: number
+    maxBalance?: number,
+    pageSize?: number
   ): Promise<Hive.TopHoldersResponse> {
     return await this.extendedHiveChain!.restApi["balance-api"].topHolders({
       "coin-type": coinType,
@@ -1060,6 +1061,7 @@ class FetchingService {
       page,
       ...(minBalance !== undefined ? { "min-balance": minBalance } : {}),
       ...(maxBalance !== undefined ? { "max-balance": maxBalance } : {}),
+      ...(pageSize !== undefined ? { "page-size": pageSize } : {}),
     });
   }
 

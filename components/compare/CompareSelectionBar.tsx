@@ -23,22 +23,20 @@ const CompareSelectionBar: React.FC<CompareSelectionBarProps> = ({
     if (ready) router.push(`/tools/compare?a=${selected[0]}&b=${selected[1]}`);
   };
 
-  // The end-padding keeps the pill clear of the floating scroll-to-top button.
+  // On phones the pill sits above the floating scroll-to-top button.
   return (
-    <div className="fixed inset-x-0 bottom-4 z-50 flex justify-center ps-3 pe-16 sm:pe-3">
-      <div className="flex max-w-full items-center gap-2 rounded-full border border-slate-200 bg-theme px-3 py-2 shadow-lg dark:border-slate-700">
+    <div className="fixed inset-x-0 bottom-[68px] z-50 flex justify-center px-3 sm:bottom-4">
+      <div className="flex w-full max-w-full items-center gap-2 rounded-full border border-slate-200 bg-theme px-3 py-2 shadow-lg dark:border-slate-700 sm:w-auto">
         <span className="hidden flex-shrink-0 text-xs font-semibold text-slate-500 dark:text-slate-400 sm:inline">
           {t("compare.select.title")}
         </span>
-        <div className="flex min-w-0 items-center gap-1.5">
+        <div className="flex min-w-0 flex-1 items-center gap-1.5">
           {selected.map((acc) => (
             <span
               key={acc}
               className="inline-flex min-w-0 items-center gap-1 rounded-full bg-slate-100 py-1 pe-1 ps-2.5 text-xs font-semibold text-slate-700 dark:bg-slate-800 dark:text-slate-200"
             >
-              <span className="max-w-[80px] truncate sm:max-w-[140px]">
-                @{acc}
-              </span>
+              <span className="truncate sm:max-w-[140px]">@{acc}</span>
               <button
                 type="button"
                 onClick={() => remove(acc)}
@@ -59,10 +57,11 @@ const CompareSelectionBar: React.FC<CompareSelectionBarProps> = ({
           type="button"
           onClick={go}
           disabled={!ready}
+          aria-label={t("compare.entry.button")}
           className="inline-flex flex-shrink-0 items-center gap-1 rounded-full bg-indigo-500 px-3 py-1 text-xs font-bold text-white transition-colors hover:bg-indigo-600 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <ArrowLeftRight className="h-3.5 w-3.5" />
-          {t("compare.entry.button")}
+          <span className="hidden sm:inline">{t("compare.entry.button")}</span>
         </button>
         <button
           type="button"

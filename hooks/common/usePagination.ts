@@ -85,9 +85,10 @@ export const usePagination: (
     }
 
     if (shouldShowLeftDots && shouldShowRightDots) {
+      // One extra page each side keeps the bar as wide as it is at the ends.
       let middleRange = range({
-        start: leftSiblingIndex,
-        end: rightSiblingIndex,
+        start: leftSiblingIndex - 1,
+        end: rightSiblingIndex + 1,
       });
 
       //Comment out if DOTS will be required
@@ -95,6 +96,12 @@ export const usePagination: (
 
       return [...middleRange];
     }
+
+    // Too few pages for either side to be cut: show the leading window.
+    return range({
+      start: 1,
+      end: Math.min(3 + 2 * siblingCount, totalPageCount),
+    });
   }, [totalCount, pageSize, siblingCount, currentPage]);
 
   return isMirrored ? [...(paginationRange || [])].reverse() : paginationRange;

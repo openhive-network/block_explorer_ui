@@ -3,6 +3,13 @@ import fetchingService from "@/services/FetchingService";
 import Hive from "@/types/Hive";
 import { CoinType, BalanceType } from "@/hooks/api/common/useTopHolders";
 
+// Past 2^53 the parsed balance can round above the real one and match nobody.
+const floatBelow = (n: number) => {
+  let step = 1;
+  while (n - step === n) step *= 2;
+  return n - step;
+};
+
 // Competition rank = 1 + accounts holding strictly more. min-balance is
 // inclusive, so query balance+1 (then +1); VESTS whales past 2^53 fall back to =.
 const useTopHolderRank = (
@@ -20,7 +27,7 @@ const useTopHolderRank = (
       ? undefined
       : strictlyAbove
         ? balanceRaw + 1
-        : balanceRaw;
+        : floatBelow(balanceRaw);
 
   const { data: rankData } = useQuery<Hive.TopHoldersResponse>({
     queryKey: ["topHolderRank", coinType, effBalanceType, rankMinBalance],

@@ -19,6 +19,8 @@ interface Props {
   coinType: CoinType;
   balanceType: BalanceType;
   totalSupplyRaw: number | null;
+  supplyDisplay: number | null; // total supply in the displayed unit
+  unitLabel: string;
   baseRaw: number | null; // circulating balance-type denominator (excl. treasury/burn)
 }
 
@@ -26,6 +28,8 @@ const TopHoldersConcentrationStrip: React.FC<Props> = ({
   coinType,
   balanceType,
   totalSupplyRaw,
+  supplyDisplay,
+  unitLabel,
   baseRaw,
 }) => {
   const { t, locale } = useI18n();
@@ -63,13 +67,11 @@ const TopHoldersConcentrationStrip: React.FC<Props> = ({
   if (
     isLoading ||
     totalSupplyRaw === null ||
+    supplyDisplay === null ||
     baseRaw === null ||
     !holders.length
   )
     return null;
-
-  const supplyDisplay =
-    coinType === "VESTS" ? totalSupplyRaw / 1e6 : totalSupplyRaw / 1000;
 
   const items: {
     key: string;
@@ -85,7 +87,7 @@ const TopHoldersConcentrationStrip: React.FC<Props> = ({
       key: "supply",
       label: t("topHolders.totalSupply"),
       value: formatCompact(supplyDisplay, locale),
-      sub: coinType,
+      sub: unitLabel,
       icon: <Database className="h-4 w-4" />,
       iconClass: "bg-indigo-500/15 text-indigo-600 dark:text-indigo-400",
       hero: true,
@@ -100,7 +102,7 @@ const TopHoldersConcentrationStrip: React.FC<Props> = ({
           href={`/@${stats.largestAccount}`}
           className="text-link hover:underline"
         >
-          @{stats.largestAccount}
+          <bdi>@{stats.largestAccount}</bdi>
         </Link>
       ) : null,
       icon: <Crown className="h-4 w-4" />,
