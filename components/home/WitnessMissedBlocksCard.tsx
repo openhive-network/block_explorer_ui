@@ -52,8 +52,16 @@ const WitnessMissedBlocksCard: React.FC = () => {
 
   const [now, setNow] = useState(currentMinute);
   useEffect(() => {
-    const id = setInterval(() => setNow(currentMinute()), REFRESH_MS);
-    return () => clearInterval(id);
+    // A hidden tab skips the refresh and catches up when it is shown again.
+    const tick = () => {
+      if (!document.hidden) setNow(currentMinute());
+    };
+    const id = setInterval(tick, REFRESH_MS);
+    document.addEventListener("visibilitychange", tick);
+    return () => {
+      clearInterval(id);
+      document.removeEventListener("visibilitychange", tick);
+    };
   }, []);
 
   const rangeWindow = useMemo(() => rangeToWindow(range, now), [range, now]);

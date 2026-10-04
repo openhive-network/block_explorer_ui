@@ -3,7 +3,7 @@ import Link from "next/link";
 import TimeAgo from "timeago-react";
 import { Download, Loader2 } from "lucide-react";
 
-import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
+import { formatAndDelocalizeTime, parseChainDate } from "@/utils/TimeUtils";
 
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import ReportDialogHeader from "@/components/ui/ReportDialogHeader";
@@ -503,68 +503,69 @@ const WitnessMissedBlocksFullChartDialog: React.FC<
                   </p>
                 ) : (
                   <div className="flex flex-col divide-y divide-navbar-border">
-                    {rows.map((row) => (
-                      <div
-                        key={row.producer}
-                        className="flex items-center gap-2 py-1.5"
-                      >
-                        <HiveAvatar
-                          accountName={row.producer}
-                          size={22}
-                          alt={row.producer}
-                          className="shrink-0 rounded-full"
-                        />
-                        <div className="flex min-w-0 flex-grow flex-col">
-                          <Link
-                            href={"/@" + row.producer}
-                            className="truncate text-link text-sm"
-                          >
-                            {row.producer}
-                          </Link>
-                          <span className="flex flex-wrap items-center gap-x-1 text-[10px] leading-tight text-gray-500">
-                            {row.isActive && (
-                              <span className="sm:hidden">{activeBadge}</span>
-                            )}
-                            {row.lastMissedBlock > 0 && (
-                              <>
-                                {t("witnessMissedBlocksCard.lastMissed")}
-                                <Link
-                                  href={"/block/" + row.lastMissedBlock}
-                                  className="text-link tabular-nums"
-                                >
-                                  {row.lastMissedBlock.toLocaleString(locale)}
-                                </Link>
-                                <TimeAgo
-                                  locale={locale}
-                                  datetime={
-                                    new Date(
-                                      formatAndDelocalizeTime(row.lastMissedAt)
-                                    )
-                                  }
-                                />
-                              </>
-                            )}
-                            <span className="tabular-nums sm:hidden">
-                              · {produced(row)}
+                    {rows.map((row) => {
+                      const lastMissedDate = parseChainDate(row.lastMissedAt);
+                      return (
+                        <div
+                          key={row.producer}
+                          className="flex items-center gap-2 py-1.5"
+                        >
+                          <HiveAvatar
+                            accountName={row.producer}
+                            size={22}
+                            alt={row.producer}
+                            className="shrink-0 rounded-full"
+                          />
+                          <div className="flex min-w-0 flex-grow flex-col">
+                            <Link
+                              href={"/@" + row.producer}
+                              className="truncate text-link text-sm"
+                            >
+                              {row.producer}
+                            </Link>
+                            <span className="flex flex-wrap items-center gap-x-1 text-[10px] leading-tight text-gray-500">
+                              {row.isActive && (
+                                <span className="sm:hidden">{activeBadge}</span>
+                              )}
+                              {row.lastMissedBlock > 0 && (
+                                <>
+                                  {t("witnessMissedBlocksCard.lastMissed")}
+                                  <Link
+                                    href={"/block/" + row.lastMissedBlock}
+                                    className="text-link tabular-nums"
+                                  >
+                                    {row.lastMissedBlock.toLocaleString(locale)}
+                                  </Link>
+                                  {lastMissedDate && (
+                                    <TimeAgo
+                                      locale={locale}
+                                      datetime={lastMissedDate}
+                                    />
+                                  )}
+                                </>
+                              )}
+                              <span className="tabular-nums sm:hidden">
+                                · {produced(row)}
+                              </span>
                             </span>
+                          </div>
+                          {row.isActive && (
+                            <span className="hidden shrink-0 sm:inline">
+                              {activeBadge}
+                            </span>
+                          )}
+                          <span className="hidden w-20 shrink-0 text-end text-[10px] tabular-nums text-gray-500 sm:inline">
+                            {produced(row)}
+                          </span>
+                          <span className="w-14 shrink-0 text-end text-sm font-semibold tabular-nums">
+                            {row.missedCount.toLocaleString(locale)}
+                          </span>
+                          <span className="w-14 shrink-0 text-end text-xs tabular-nums text-gray-500">
+                            {formatMissRate(row.rate, locale)}
                           </span>
                         </div>
-                        {row.isActive && (
-                          <span className="hidden shrink-0 sm:inline">
-                            {activeBadge}
-                          </span>
-                        )}
-                        <span className="hidden w-20 shrink-0 text-end text-[10px] tabular-nums text-gray-500 sm:inline">
-                          {produced(row)}
-                        </span>
-                        <span className="w-14 shrink-0 text-end text-sm font-semibold tabular-nums">
-                          {row.missedCount.toLocaleString(locale)}
-                        </span>
-                        <span className="w-14 shrink-0 text-end text-xs tabular-nums text-gray-500">
-                          {formatMissRate(row.rate, locale)}
-                        </span>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </div>
