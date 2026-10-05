@@ -2,7 +2,12 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 import { ChevronRight, ChevronLeft, Minimize2, Maximize2 } from "lucide-react";
 import { useI18n } from "@/i18n/i18n";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./tooltip";
 
 function getDisplayName(Tag: React.ElementType) {
   return typeof Tag === "string"
@@ -105,7 +110,7 @@ const Table = React.forwardRef<HTMLTableElement, TableProps>(
     const [isCompact, setIsCompact] = React.useState(false);
 
     const handleToggleCompact = () => {
-      setIsCompact(prev => !prev);
+      setIsCompact((prev) => !prev);
     };
 
     const [showLeftArrow, setShowLeftArrow] = React.useState(false);
@@ -192,10 +197,15 @@ const Table = React.forwardRef<HTMLTableElement, TableProps>(
 
     return (
       <TableContext.Provider value={{ showLeftArrow, showRightArrow }}>
-        <div className={cn("transition-all duration-300 ease-in-out", isCompact ? "w-4/5 mx-auto" : "w-full")}>
+        <div
+          className={cn(
+            "transition-all duration-300 ease-in-out",
+            isCompact ? "w-4/5 mx-auto" : "w-full"
+          )}
+        >
           <div className="relative">
             {enableCompactToggle && (
-              <div className="absolute -top-10 right-0 z-10 mt-10">
+              <div className="absolute -top-10 end-0 z-10 mt-10">
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -203,18 +213,32 @@ const Table = React.forwardRef<HTMLTableElement, TableProps>(
                         onClick={handleToggleCompact}
                         className="p-1.5 rounded-md hover:bg-muted"
                       >
-                        {isCompact ? <Maximize2 className="h-4 w-4" /> : <Minimize2 className="h-4 w-4" />}
+                        {isCompact ? (
+                          <Maximize2 className="h-4 w-4" />
+                        ) : (
+                          <Minimize2 className="h-4 w-4" />
+                        )}
                       </button>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>{isCompact ? t("table.switchToFullView") : t("table.switchToCompactView")}</p>
+                      <p>
+                        {isCompact
+                          ? t("table.switchToFullView")
+                          : t("table.switchToCompactView")}
+                      </p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
               </div>
             )}
 
-            <div className={cn("w-full", noOverflow ? "overflow-hidden" : "overflow-auto")} ref={tableRef}>
+            <div
+              className={cn(
+                "w-full",
+                noOverflow ? "overflow-hidden" : "overflow-auto"
+              )}
+              ref={tableRef}
+            >
               <table
                 ref={ref}
                 className={cn(
@@ -227,15 +251,19 @@ const Table = React.forwardRef<HTMLTableElement, TableProps>(
               </table>
             </div>
 
-           {enableMobileScrollArrows && showLeftArrow && (
+            {enableMobileScrollArrows && showLeftArrow && (
               <div
-                className={cn(arrowCommonStyle, arrowConditionalStyle, prevArrowPosition)}
-                style={isDialog ? { top: '10vh' } :  { top: '45vh' }}
+                className={cn(
+                  arrowCommonStyle,
+                  arrowConditionalStyle,
+                  prevArrowPosition
+                )}
+                style={isDialog ? { top: "10vh" } : { top: "45vh" }}
                 onClick={() => {
-                tableRef.current?.scrollBy({
-                  left: isRTL ? 100 : -100,
-                  behavior: "smooth",
-                });
+                  tableRef.current?.scrollBy({
+                    left: isRTL ? 100 : -100,
+                    behavior: "smooth",
+                  });
                 }}
               >
                 <PrevArrowIcon size={20} />
@@ -244,13 +272,17 @@ const Table = React.forwardRef<HTMLTableElement, TableProps>(
 
             {enableMobileScrollArrows && showRightArrow && (
               <div
-                className={cn(arrowCommonStyle, arrowConditionalStyle, nextArrowPosition)}
-                style={isDialog ? { top: '10vh' } :  { top: '45vh' }}
+                className={cn(
+                  arrowCommonStyle,
+                  arrowConditionalStyle,
+                  nextArrowPosition
+                )}
+                style={isDialog ? { top: "10vh" } : { top: "45vh" }}
                 onClick={() => {
-                tableRef.current?.scrollBy({ 
-                  left: isRTL ? -100 : 100,
-                  behavior: "smooth" 
-                });
+                  tableRef.current?.scrollBy({
+                    left: isRTL ? -100 : 100,
+                    behavior: "smooth",
+                  });
                 }}
               >
                 <NextArrowIcon size={20} />
@@ -269,11 +301,7 @@ const TableHeader = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
 >(({ className, ...props }, ref) => (
-  <thead
-    ref={ref}
-    className={cn("text-sm", className)}
-    {...props}
-  />
+  <thead ref={ref} className={cn("text-sm", className)} {...props} />
 ));
 TableHeader.displayName = "TableHeader";
 

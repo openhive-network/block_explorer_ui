@@ -51,7 +51,6 @@ interface Props {
   addLabel?: boolean;
   onClick?: (e: MouseEvent<HTMLInputElement>) => void;
   onBlur?: (e: FocusEvent<HTMLInputElement>) => void;
-  expand?: boolean;
   cleanup?: boolean;
 }
 
@@ -67,7 +66,6 @@ const AutoCompleteInput: React.FC<Props> = ({
   addLabel = false,
   onClick,
   onBlur,
-  expand = false,
   cleanup = false,
 }) => {
   const { t } = useI18n();
@@ -269,14 +267,7 @@ const AutoCompleteInput: React.FC<Props> = ({
   const hasOptions = isOpen && inputTypeData?.input_type !== "invalid_input";
 
   return (
-    <div
-      ref={wrapRef}
-      className={cn(
-        "relative",
-        { "w-1/2": expand && inputFocus, "w-1/3": !expand },
-        className
-      )}
-    >
+    <div ref={wrapRef} className={cn("relative w-1/3", className)}>
       <div className="flex items-center pr-2 z-50">
         <Input
           ref={inputRef}
@@ -310,7 +301,7 @@ const AutoCompleteInput: React.FC<Props> = ({
       </div>
 
       {isOpen && (
-        <div className="absolute z-50 mt-1 w-full min-w-[15rem]">
+        <div className="absolute z-50 mt-1 w-max min-w-full max-w-[min(24rem,calc(100vw-2rem))]">
           {renderOptions(inputTypeData)}
         </div>
       )}

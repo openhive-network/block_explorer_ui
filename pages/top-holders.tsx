@@ -19,6 +19,8 @@ import {
   TableHead,
 } from "@/components/ui/table";
 import PageTitle from "@/components/PageTitle";
+import FilterChipsBar from "@/components/ui/FilterChipsBar";
+import type { NotFoundReason } from "@/components/AccountLocator";
 import ErrorMessage from "@/components/ErrorMessage";
 import NoResult from "@/components/NoResult";
 import FilterSectionToggle from "@/components/account/FilterSectionToggle";
@@ -30,7 +32,7 @@ import useTopHolders, {
   BalanceType,
 } from "@/hooks/api/common/useTopHolders";
 import { config } from "@/Config";
-import { Loader2, X, Info } from "lucide-react";
+import { Loader2, Info } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -158,7 +160,10 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
   const [searchTarget, setSearchTarget] = useState<string | null>(null);
   const [searchNonce, setSearchNonce] = useState(0);
   const [searchError, setSearchError] = useState<string | null>(null);
+  const [searchErrorReason, setSearchErrorReason] =
+    useState<NotFoundReason>("noBalance");
   const [foundAccount, setFoundAccount] = useState<string | null>(null);
+  const [jumpNonce, setJumpNonce] = useState(0);
   const foundAccountRef = useRef<string | null>(null);
   const accountSearchRef = useRef("");
   const foundRowRef = useRef<HTMLTableRowElement>(null);
@@ -200,7 +205,15 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
   useEffect(() => {
     if (!router.isReady || initedFromUrl.current) return;
     initedFromUrl.current = true;
-    const { coin, balance, min, max, unit: qUnit, page: qPage } = router.query;
+    const {
+      coin,
+      balance,
+      min,
+      max,
+      unit: qUnit,
+      page: qPage,
+      account: qAccount,
+    } = router.query;
     const num = (v: unknown): number | undefined => {
       if (typeof v !== "string" || v === "") return undefined;
       const n = Number(v);
@@ -227,6 +240,14 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
     }
     const p = num(qPage);
     if (p !== undefined && p > 0) setPage(p);
+    // Deep link from a profile badge: locate and highlight that account.
+    if (typeof qAccount === "string" && qAccount.trim()) {
+      const acct = qAccount.trim().toLowerCase().replace(/^@/, "");
+      setAccountSearch(acct);
+      accountSearchRef.current = acct;
+      setSearchTarget(acct);
+      setSearchNonce((n) => n + 1);
+    }
   }, [router.isReady, router.query]);
 
   // Mirror the active filters back into the URL (shareable / back-forward).
@@ -239,11 +260,22 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
     if (maxBalance !== undefined) query.max = String(maxBalance);
     if (coinType === "VESTS") query.unit = unit;
     if (page > 1) query.page = String(page);
+    const account = searchTarget ?? foundAccount;
+    if (account) query.account = account;
     router.replace({ pathname: "/top-holders", query }, undefined, {
       shallow: true,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [coinType, balanceType, minBalance, maxBalance, unit, page]);
+  }, [
+    coinType,
+    balanceType,
+    minBalance,
+    maxBalance,
+    unit,
+    page,
+    searchTarget,
+    foundAccount,
+  ]);
 
   const formatRawBalance = (value: string, coin: CoinType): string => {
     if (!hiveChain) return value;
@@ -270,6 +302,13 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
 
   const currentUnitLabel =
     coinType === "VESTS" ? (unit === "hp" ? "HP" : "VESTS") : coinType;
+
+  const balanceLabel =
+    coinType === "VESTS"
+      ? t("topHolders.balanceStaked")
+      : balanceType === "savings_balance"
+        ? t("topHolders.balanceSavings")
+        : t("topHolders.balanceLiquid");
 
   // Display-unit amount → raw smallest unit (VESTS ×1e6, HIVE/HBD ×1e3).
   const displayToRaw = (amount: number): number => {
@@ -350,6 +389,13 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
     clearSelection();
   };
 
+  // The panel's Clear returns to the default view, coin and balance type included.
+  const clearAllFilters = () => {
+    clearFilter();
+    setCoinType("HIVE");
+    setBalanceType("balance");
+  };
+
   const handleJumpToRank = (rank: number, account?: string) => {
     setMinBalance(undefined);
     setMaxBalance(undefined);
@@ -357,12 +403,16 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
     setMaxInput("");
     setPage(Math.max(1, Math.ceil(rank / pageSize)));
     if (account) {
+      setAccountSearch(account);
+      accountSearchRef.current = account;
       setFoundAccount(account);
       foundAccountRef.current = account;
       scrollPending.current = true;
+      setJumpNonce((n) => n + 1);
     }
   };
 
+  // Also re-runs on a jump within the page already shown, where data doesn't change.
   useEffect(() => {
     if (scrollPending.current && foundRowRef.current) {
       foundRowRef.current.scrollIntoView({
@@ -371,7 +421,7 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
       });
       scrollPending.current = false;
     }
-  }, [holdersData]);
+  }, [holdersData, jumpNonce]);
 
   const onAccountSearchChange = (v: string) => {
     setAccountSearch(v);
@@ -498,10 +548,14 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
         [t("topHolders.rank")]:
           holder.rank > 0 ? holder.rank : index + 1 + (page - 1) * pageSize,
         [t("topHolders.account")]: holder.account,
-        [t("topHolders.shareOfSupply")]: formatSharePct(
-          totalSupplyRaw ? (Number(holder.value) || 0) / totalSupplyRaw : 0,
-          locale
-        ),
+        [t("topHolders.shareOfSupply")]: isSystemAccount(holder.account)
+          ? "—"
+          : formatSharePct(
+              circulatingBaseRaw
+                ? Math.min(1, (Number(holder.value) || 0) / circulatingBaseRaw)
+                : 0,
+              locale
+            ),
         [balanceType === "savings_balance"
           ? t("topHolders.savings")
           : t("topHolders.balance")]: displayValue,
@@ -510,7 +564,7 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
 
   const exportFileName = `${t(
     "topHolders.export"
-  )}_${coinType.toLowerCase()}.csv`;
+  )}_${currentUnitLabel.toLowerCase()}.csv`;
 
   const HolderRow = ({
     rank,
@@ -543,24 +597,32 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
         }`}
         data-testid="top-holders-table-row"
       >
-        <TableCell>{displayRank}</TableCell>
-        <TableCell className="text-link">
-          <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
-            <HiveAvatar
-              accountName={account}
-              size={30}
-              alt={`${account}'s profile`}
-              className="flex-shrink-0 rounded-full"
-            />
-            <Link className="text-link" href={`/@${account}`}>
-              {account}
-            </Link>
-            {label && <AccountLabelBadge label={label} />}
-            {isYou && (
-              <span className="inline-flex items-center rounded-full border border-violet-200 bg-violet-100 px-1.5 py-0.5 text-[10px] font-semibold text-violet-700 dark:border-violet-800 dark:bg-violet-950 dark:text-violet-300">
-                {t("topHolders.you")}
-              </span>
-            )}
+        <TableCell className="px-2 sm:px-4">
+          {displayRank.toLocaleString(locale)}
+        </TableCell>
+        <TableCell className="px-2 text-link sm:px-4">
+          <div className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1 sm:gap-x-2">
+            <div className="flex min-w-0 items-center gap-x-1.5 sm:gap-x-2">
+              <HiveAvatar
+                accountName={account}
+                size={30}
+                alt={`${account}'s profile`}
+                className="flex-shrink-0 rounded-full"
+              />
+              <Link className="break-all text-link" href={`/@${account}`}>
+                {account}
+              </Link>
+              {(label || isYou) && (
+                <span className="flex flex-shrink-0 -translate-y-2 items-center gap-1 sm:translate-y-0">
+                  {label && <AccountLabelBadge label={label} compactOnMobile />}
+                  {isYou && (
+                    <span className="inline-flex items-center rounded-full border border-violet-200 bg-violet-100 px-1.5 py-0.5 text-[10px] font-semibold text-violet-700 dark:border-violet-800 dark:bg-violet-950 dark:text-violet-300">
+                      {t("topHolders.you")}
+                    </span>
+                  )}
+                </span>
+              )}
+            </div>
             {!isSystemAccount(account) && (
               <CompareSelectToggle
                 account={account}
@@ -571,7 +633,7 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
             )}
           </div>
         </TableCell>
-        <TableCell className="hidden sm:table-cell text-right tabular-nums text-xs text-gray-500 dark:text-gray-400">
+        <TableCell className="hidden sm:table-cell text-end tabular-nums text-xs text-gray-500 dark:text-gray-400">
           {isSystemAccount(account) ? (
             <span className="inline-flex items-center justify-end gap-1">
               —
@@ -599,7 +661,7 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
             formatSharePct(share, locale)
           )}
         </TableCell>
-        <TableCell className="text-right tabular-nums">
+        <TableCell className="text-end tabular-nums">
           <div>{formatBalance(value, coinType)}</div>
           <div className="text-xs font-normal text-gray-500 dark:text-gray-400 sm:hidden">
             {isSystemAccount(account) ? "—" : formatSharePct(share, locale)}
@@ -611,10 +673,12 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
 
   const TableHeaderRow = () => (
     <TableHeader>
-      <TableRow className="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-left">
-        <TableHead>{t("topHolders.rank")}</TableHead>
-        <TableHead>{t("topHolders.account")}</TableHead>
-        <TableHead className="hidden sm:table-cell text-right">
+      <TableRow className="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-start">
+        <TableHead className="px-2 sm:px-4">{t("topHolders.rank")}</TableHead>
+        <TableHead className="px-2 sm:px-4">
+          {t("topHolders.account")}
+        </TableHead>
+        <TableHead className="hidden sm:table-cell text-end">
           <span className="inline-flex items-center justify-end gap-1">
             {t("topHolders.shareOfSupply")}
             <TooltipProvider>
@@ -636,7 +700,7 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
             </TooltipProvider>
           </span>
         </TableHead>
-        <TableHead className="text-right pr-6">
+        <TableHead className="text-end pe-6">
           {balanceType === "savings_balance"
             ? t("topHolders.savings")
             : t("topHolders.balance")}
@@ -651,8 +715,17 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
       <div className="page-container">
         <Card className="w-full rounded shadow-md py-2">
           <div className="flex flex-row items-start justify-between w-full relative gap-3">
-            <div className="flex flex-col md:flex-row justify-between items-start">
-              <PageTitle titleKey="pageTitle.topHolders" className="py-4" />
+            <div className="flex flex-col items-start">
+              <PageTitle
+                titleKey="pageTitle.topHolders"
+                className="pb-1 pt-4"
+              />
+              <p
+                className="px-6 pb-3 text-sm text-gray-500 dark:text-gray-400"
+                data-testid="top-holders-view"
+              >
+                {currentUnitLabel} · {balanceLabel}
+              </p>
             </div>
             <div className="flex flex-shrink-0 items-center gap-2 mt-3.5 pe-6">
               <FilterSectionToggle
@@ -687,12 +760,25 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
                   inputClassName="!rounded !border !border-solid !border-gray-300 !bg-white dark:!border-gray-600 dark:!bg-gray-800"
                 />
               </div>
-              <Button type="submit" className="rounded">
+              <Button
+                type="submit"
+                className="rounded"
+                disabled={!!searchTarget}
+              >
+                {searchTarget && (
+                  <Loader2 className="me-2 h-4 w-4 animate-spin" />
+                )}
                 {t("topHolders.find")}
               </Button>
               {searchError && (
                 <span className="pb-2 text-xs text-red-500">
-                  {t("topHolders.accountNotFound", { account: searchError })}
+                  {searchErrorReason === "missing"
+                    ? t("topHolders.accountMissing", { account: searchError })
+                    : searchErrorReason === "error"
+                      ? t("common.errorLoadingData")
+                      : t("topHolders.accountNotFound", {
+                          account: searchError,
+                        })}
                 </span>
               )}
             </form>
@@ -715,7 +801,9 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
                   <SelectContent>
                     <SelectItem value="HIVE">HIVE</SelectItem>
                     <SelectItem value="HBD">HBD</SelectItem>
-                    <SelectItem value="VESTS">VESTS</SelectItem>
+                    <SelectItem value="VESTS">
+                      {unit === "hp" ? "HP" : "VESTS"}
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -789,7 +877,7 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
                 </Button>
                 <Button
                   variant="outline"
-                  onClick={clearFilter}
+                  onClick={clearAllFilters}
                   data-testid="clear-filters"
                   className="rounded"
                 >
@@ -836,7 +924,7 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
 
         {searchTarget && (
           <AccountLocator
-            key={`${searchTarget}-${searchNonce}`}
+            key={`${searchTarget}-${searchNonce}-${coinType}-${balanceType}`}
             account={searchTarget}
             coinType={coinType}
             balanceType={balanceType}
@@ -844,46 +932,71 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
               handleJumpToRank(rank, searchTarget);
               setSearchTarget(null);
             }}
-            onNotFound={() => {
+            onNotFound={(reason) => {
+              setSearchErrorReason(reason);
               setSearchError(searchTarget);
               setFoundAccount(null);
               foundAccountRef.current = null;
               setSearchTarget(null);
+              setIsFiltersVisible(true);
             }}
           />
         )}
+        <FilterChipsBar
+          sticky
+          className="mt-2 bg-transparent pb-0"
+          onExpand={() => setIsFiltersVisible(true)}
+          isLoading={!!searchTarget}
+          chips={[
+            {
+              key: "coin",
+              label: t("activeFilters.coin", { value: currentUnitLabel }),
+              onRemove:
+                coinType === "HIVE"
+                  ? undefined
+                  : () => {
+                      setCoinType("HIVE");
+                      setMinBalance(undefined);
+                      setMaxBalance(undefined);
+                      setPage(1);
+                    },
+            },
+            {
+              key: "balance",
+              label: balanceLabel,
+              onRemove:
+                balanceType === "savings_balance"
+                  ? () => {
+                      setBalanceType("balance");
+                      setPage(1);
+                    }
+                  : undefined,
+            },
+            ...(filterActive
+              ? [{ key: "range", label: rangeLabel(), onRemove: clearFilter }]
+              : []),
+          ]}
+        />
         <TopHoldersConcentrationStrip
           coinType={coinType}
           balanceType={balanceType}
           totalSupplyRaw={totalSupplyRaw}
+          supplyDisplay={
+            totalSupplyRaw !== null &&
+            (coinType !== "VESTS" || unit !== "hp" || vestingRatios)
+              ? rawToDisplay(totalSupplyRaw)
+              : null
+          }
+          unitLabel={currentUnitLabel}
           baseRaw={circulatingBaseRaw}
         />
-
-        {filterActive && (
-          <div
-            className="mt-3 flex items-center justify-between gap-2 rounded-md border border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-950/40 px-3 py-2 text-sm"
-            data-testid="top-holders-filter-banner"
-          >
-            <span className="font-medium text-indigo-700 dark:text-indigo-300">
-              {t("topHolders.filteredBanner", { range: rangeLabel() })}
-            </span>
-            <button
-              type="button"
-              onClick={clearFilter}
-              className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs font-medium text-indigo-700 hover:bg-indigo-100 dark:text-indigo-300 dark:hover:bg-indigo-900"
-            >
-              {t("common.clear")}
-              <X className="h-3.5 w-3.5" />
-            </button>
-          </div>
-        )}
 
         <div className="flex justify-center w-full mt-4 ">
           <div
             className="flex w-full justify-center items-center flex-wrap bg-theme"
             data-testid="account-top-bar"
           >
-            <div className="flex items-center justify-center w-full md:ml-auto md:w-3/4">
+            <div className="flex items-center justify-center w-full md:ms-auto md:w-3/4">
               <CustomPagination
                 currentPage={page}
                 onPageChange={setPage}
@@ -891,7 +1004,7 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
                 totalCount={totalCount}
               />
             </div>
-            <div className="flex items-center mt-2 md:ml-auto w-full md:w-auto justify-center md:justify-end mb-2">
+            <div className="flex items-center mt-2 md:ms-auto w-full md:w-auto justify-center md:justify-end mb-2">
               <JumpToPage
                 currentPage={page}
                 onPageChange={setPage}
@@ -913,10 +1026,15 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
           <TopHolderYouBadge
             coinType={coinType}
             balanceType={balanceType}
-            onJump={(rank) => handleJumpToRank(rank, username ?? undefined)}
+            onJump={() => {
+              if (!username) return;
+              setSearchError(null);
+              setSearchTarget(username);
+              setSearchNonce((n) => n + 1);
+            }}
           />
 
-          <div className="ml-auto flex items-center gap-x-4">
+          <div className="ms-auto flex items-center gap-x-4">
             {coinType === "VESTS" && (
               <SegmentedToggle
                 ariaLabel={`${t("common.vests")} / ${t("common.hp")}`}
@@ -936,7 +1054,7 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
         <Card className="w-full rounded">
           {isTopHoldersLoading && (
             <div className="flex justify-center items-center">
-              <Loader2 className="animate-spin mt-1 h-16 w-10 ml-10 dark:text-white" />
+              <Loader2 className="animate-spin mt-1 h-16 w-10 ms-10 dark:text-white" />
             </div>
           )}
           {!isTopHoldersLoading && isTopHoldersError && (
@@ -971,7 +1089,7 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
             )}
         </Card>
 
-        <div className="fixed bottom-[10px] right-0 flex flex-col items-end justify-end px-3 md:px-12">
+        <div className="fixed bottom-[10px] end-0 flex flex-col items-end justify-end px-3 md:px-12">
           <ScrollTopButton />
         </div>
 

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/i18n/i18n";
+import RecentlyViewedList from "./RecentlyViewedList";
 import {
   Users,
   Vote,
@@ -106,6 +107,7 @@ export function ExploreMenu() {
           align="end"
         >
           <div className="flex flex-col gap-0.5">
+            <RecentlyViewedList onNavigate={() => setIsOpen(false)} />
             <SectionLabel>{t("navbar.explore")}</SectionLabel>
             <ExploreListItem
               href="/blocks"

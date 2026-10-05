@@ -79,7 +79,7 @@ const DataExport: React.FC<DataExportProps> = ({
       event?.preventDefault();
       event?.stopPropagation();
     }
-    
+
     if (!data || data.length === 0 || isExporting) {
       return;
     }
@@ -87,7 +87,9 @@ const DataExport: React.FC<DataExportProps> = ({
     setIsExporting(true);
     try {
       // Determine which columns to use based on the new prop
-      const columnsToExport = skipColumnSelection ? allColumns : selectedColumns;
+      const columnsToExport = skipColumnSelection
+        ? allColumns
+        : selectedColumns;
 
       // Filter the data to only include the selected columns
       const filteredData = data.map((item) => {
@@ -99,9 +101,9 @@ const DataExport: React.FC<DataExportProps> = ({
         });
         return newItem;
       });
-      
+
       if (filteredData.length === 0 || columnsToExport.length === 0) {
-         throw new Error("No data to export after filtering.");
+        throw new Error("No data to export after filtering.");
       }
 
       const csvData = await new Promise<string>((resolve, reject) => {
@@ -118,7 +120,9 @@ const DataExport: React.FC<DataExportProps> = ({
         );
       });
 
-      const blob = new Blob(["\uFEFF" + csvData], { type: "text/csv;charset=utf-8;" });
+      const blob = new Blob(["\uFEFF" + csvData], {
+        type: "text/csv;charset=utf-8;",
+      });
       const url = URL.createObjectURL(blob);
       const downloadLink = document.createElement("a");
       downloadLink.href = url;
@@ -140,7 +144,7 @@ const DataExport: React.FC<DataExportProps> = ({
       downloadLink.click();
       document.body.removeChild(downloadLink);
       URL.revokeObjectURL(url);
-      
+
       // Only close the dialog if it was open in the first place
       if (!skipColumnSelection) {
         setOpen(false);
@@ -172,7 +176,7 @@ const DataExport: React.FC<DataExportProps> = ({
   const DefaultTrigger = (
     <div
       className={cn(
-        "bg-buttonBg border-gray-300 shadow-sm hover:bg-buttonHover flex items-center space-x-1 max-w-fit h-8 p-2 rounded cursor-pointer outline-none",
+        "bg-buttonBg border-gray-300 shadow-sm hover:bg-buttonHover flex items-center gap-1 max-w-fit h-8 p-2 rounded cursor-pointer outline-none",
         className,
         { "cursor-not-allowed opacity-50": data.length === 0 }
       )}
@@ -181,7 +185,7 @@ const DataExport: React.FC<DataExportProps> = ({
       <span>{t(title)}</span>
     </div>
   );
-  
+
   // Use the provided children as the trigger, or fall back to the default
   const Trigger = children || DefaultTrigger;
 
@@ -192,8 +196,13 @@ const DataExport: React.FC<DataExportProps> = ({
     const isDisabled = isExporting || data.length === 0;
 
     const triggerContent = isExporting ? (
-      <div className={cn("flex items-center justify-center p-1 w-6 h-6", className)}>
-         <Loader2 className="h-4 w-4 animate-spin" />
+      <div
+        className={cn(
+          "flex items-center justify-center p-1 w-6 h-6",
+          className
+        )}
+      >
+        <Loader2 className="h-4 w-4 animate-spin" />
       </div>
     ) : children ? (
       <>{children}</>
@@ -216,7 +225,8 @@ const DataExport: React.FC<DataExportProps> = ({
       <div
         onClick={isDisabled ? undefined : handleExport}
         onKeyDown={(e) => {
-          if ((e.key === "Enter" || e.key === " ") && !isDisabled) handleExport();
+          if ((e.key === "Enter" || e.key === " ") && !isDisabled)
+            handleExport();
         }}
         role="button"
         tabIndex={isDisabled ? -1 : 0}
@@ -234,8 +244,8 @@ const DataExport: React.FC<DataExportProps> = ({
       <DialogTrigger asChild disabled={data.length === 0}>
         {Trigger}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] flex flex-col align-center overflow-auto px-0 pt-10">
-        <DialogHeader className="pb-0">
+      <DialogContent className="sm:max-w-[425px] max-h-[90vh] flex flex-col overflow-hidden px-0 pt-10">
+        <DialogHeader className="pb-0 shrink-0 sm:text-start">
           <div className="px-2">
             <DialogTitle className="flex pb-1">
               {t("dataExport.selectColumns")}
@@ -244,7 +254,7 @@ const DataExport: React.FC<DataExportProps> = ({
               {t("dataExport.chooseColumns")}
             </DialogDescription>
           </div>
-          <div className="flex justify-end space-x-2 px-2 pt-2">
+          <div className="flex justify-end gap-2 px-2 pt-2">
             <Button
               variant="ghost"
               size="sm"
@@ -268,9 +278,9 @@ const DataExport: React.FC<DataExportProps> = ({
             {noDataMessage}
           </div>
         ) : (
-          <div className="grid gap-4 py-4 px-2 overflow-auto">
+          <div className="grid content-start gap-4 py-4 px-2 min-h-0 flex-1 overflow-y-auto">
             {allColumns.map((column) => (
-              <div key={column} className="flex items-center space-x-2">
+              <div key={column} className="flex items-center gap-2">
                 <Input
                   type="checkbox"
                   id={column}
@@ -288,19 +298,16 @@ const DataExport: React.FC<DataExportProps> = ({
             ))}
           </div>
         )}
-        <DialogFooter>
+        <DialogFooter className="shrink-0 gap-2 px-2 sm:space-x-0">
           <Button
             type="submit"
             onClick={handleExport}
             disabled={
-                    isExporting ||
-                    isExportButtonDisabled ||
-                    noDataMessage !== null
+              isExporting || isExportButtonDisabled || noDataMessage !== null
             }
-            className="mr-2"
           >
             {isExporting ? (
-              <Loader2 className="animate-spin h-4 w-4 mr-2" />
+              <Loader2 className="animate-spin h-4 w-4 me-2" />
             ) : null}
             {isExporting ? t("dataExport.exporting") : t("common.export")}
           </Button>

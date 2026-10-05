@@ -496,7 +496,7 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
                 {!voterFilter && !!witnessesData.total_witnesses && (
                   <div className="flex justify-center w-full mt-4">
                     <div className="flex w-full justify-center items-center flex-wrap bg-theme">
-                      <div className="flex items-center justify-center w-full md:ml-auto md:w-3/4">
+                      <div className="flex items-center justify-center w-full md:ms-auto md:w-3/4">
                         <CustomPagination
                           currentPage={page}
                           onPageChange={setPage}
@@ -504,7 +504,7 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
                           totalCount={witnessesData.total_witnesses}
                         />
                       </div>
-                      <div className="flex items-center mt-2 md:ml-auto w-full md:w-auto justify-center md:justify-end mb-2">
+                      <div className="flex items-center mt-2 md:ms-auto w-full md:w-auto justify-center md:justify-end mb-2">
                         <JumpToPage
                           currentPage={page}
                           onPageChange={setPage}
@@ -523,7 +523,7 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
                       dataType="witnesses.dataType"
                     />
                   )}
-                  <div className="ml-auto flex items-center gap-x-4">
+                  <div className="ms-auto flex items-center gap-x-4">
                     <DataExport
                       data={prepareExportData()}
                       filename={`${t("witnesses.exportFileName")}_${
@@ -583,7 +583,7 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
             )}
           </main>
         </div>
-        <div className="fixed bottom-[10px] right-0 flex flex-col items-end justify-end px-3 md:px-12">
+        <div className="fixed bottom-[10px] end-0 flex flex-col items-end justify-end px-3 md:px-12">
           <ScrollTopButton />
         </div>
 

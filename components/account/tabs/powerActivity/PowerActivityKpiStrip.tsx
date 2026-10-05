@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import KpiTile from "@/components/ui/KpiTile";
 import { useI18n } from "@/i18n/i18n";
 import {
   VESTING_COLORS,
@@ -95,29 +96,5 @@ const PowerActivityKpiStrip: React.FC<PowerActivityKpiStripProps> = ({
     </div>
   );
 };
-
-const KpiTile: React.FC<{
-  label: string;
-  value: React.ReactNode;
-  sub?: string;
-  icon?: React.ReactNode;
-  valueClassName?: string;
-}> = ({ label, value, sub, icon, valueClassName }) => (
-  <div className="rounded-md border border-gray-200 dark:border-gray-700 bg-theme px-3 py-2 shadow-sm">
-    <div className="text-[11px] text-gray-500 dark:text-gray-400 mb-0.5 flex items-center gap-1 uppercase tracking-wide">
-      {icon}
-      <span>{label}</span>
-    </div>
-    <div
-      className={cn(
-        "text-sm font-semibold leading-tight whitespace-nowrap",
-        valueClassName
-      )}
-    >
-      {value}
-    </div>
-    {sub && <div className="text-[10px] text-gray-400 mt-0.5">{sub}</div>}
-  </div>
-);
 
 export default PowerActivityKpiStrip;

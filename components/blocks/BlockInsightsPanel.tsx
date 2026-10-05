@@ -21,6 +21,7 @@ interface BlockInsightsPanelProps {
   rows: BlockStatsRow[];
   slotDeltas: SlotDelta[];
   missedProducersByBlock?: Record<number, string[]>;
+  missedOperationByBlock?: Record<number, string>;
   paramsState: any;
   className?: string;
 }
@@ -29,6 +30,7 @@ const BlockInsightsPanel: React.FC<BlockInsightsPanelProps> = ({
   rows,
   slotDeltas,
   missedProducersByBlock,
+  missedOperationByBlock,
   paramsState,
   className,
 }) => {
@@ -63,7 +65,10 @@ const BlockInsightsPanel: React.FC<BlockInsightsPanelProps> = ({
       testId="block-insights"
     >
       <RangeInsightsBar rows={rows} paramsState={paramsState} />
-      <SlotHealthStrip deltas={slotDeltas} />
+      <SlotHealthStrip
+        deltas={slotDeltas}
+        missedOperationByBlock={missedOperationByBlock}
+      />
       <ProducerShareCard
         rows={rows}
         missedProducersByBlock={missedProducersByBlock}

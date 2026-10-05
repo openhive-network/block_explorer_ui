@@ -14,6 +14,9 @@ import { useI18n } from "@/i18n/i18n";
 
 interface SlotHealthStripProps {
   deltas: SlotDelta[];
+  // producer_missed operation per gap block, so a missed cell can open the
+  // operation that recorded the miss rather than the top of the block.
+  missedOperationByBlock?: Record<number, string>;
   className?: string;
 }
 
@@ -28,10 +31,21 @@ const cellClass = (delta: SlotDelta): string => {
 
 const SlotHealthStrip: React.FC<SlotHealthStripProps> = ({
   deltas,
+  missedOperationByBlock,
   className,
 }) => {
   const { t, locale } = useI18n();
   const router = useRouter();
+
+  // A healthy cell has no operation to point at, so it opens the block itself.
+  const blockHref = (delta: SlotDelta) => {
+    const operationId = delta.missedSlots
+      ? missedOperationByBlock?.[delta.blockNum]
+      : undefined;
+    return operationId
+      ? `/block/${delta.blockNum}?opId=${encodeURIComponent(operationId)}`
+      : `/block/${delta.blockNum}`;
+  };
 
   const contiguous = isContiguousRange(deltas);
 
@@ -82,7 +96,7 @@ const SlotHealthStrip: React.FC<SlotHealthStripProps> = ({
                   type="button"
                   data-testid="slot-health-cell"
                   aria-label={`${t("common.block")} ${delta.blockNum}`}
-                  onClick={() => router.push(`/block/${delta.blockNum}`)}
+                  onClick={() => router.push(blockHref(delta))}
                   className={cn(
                     "block h-full min-w-[2px] flex-1 border-y-[5px] border-transparent bg-clip-content focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500",
                     cellClass(delta)

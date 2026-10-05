@@ -2,6 +2,7 @@ import React from "react";
 import {
   Tooltip,
   TooltipContent,
+  TooltipPortal,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
@@ -58,7 +59,17 @@ const StatCard = ({
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>{cardDiv}</TooltipTrigger>
-          <TooltipContent>{tooltipContent}</TooltipContent>
+          <TooltipPortal>
+            <TooltipContent
+              side="top"
+              align="start"
+              sideOffset={2}
+              collisionPadding={8}
+              className="max-w-[240px] text-center text-[11px]"
+            >
+              {tooltipContent}
+            </TooltipContent>
+          </TooltipPortal>
         </Tooltip>
       </TooltipProvider>
     );

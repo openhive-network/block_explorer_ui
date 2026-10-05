@@ -358,7 +358,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                           <Tooltip key={coinType}>
                             <TooltipTrigger asChild>
                               <NextLink
-                                href="/top-holders"
+                                href={`/top-holders?coin=${coinType}&account=${accountName}`}
                                 className={cn(
                                   "flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold transition-colors",
                                   topHolderBadgeColors[coinType]

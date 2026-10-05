@@ -88,3 +88,28 @@ export const formatBlockchainTime = (value?: string | Date | null): string => {
     date.toISOString().replace("T", " ").replaceAll("-", "/").split(".")[0]
   } UTC`;
 };
+
+// "1d 4h", "3h 20m", "45s": the two largest non-zero units, localised by Intl.
+export const formatShortDuration = (
+  seconds: number,
+  locale: string
+): string => {
+  const units: [Intl.NumberFormatOptions["unit"], number][] = [
+    ["day", Math.floor(seconds / 86400)],
+    ["hour", Math.floor((seconds % 86400) / 3600)],
+    ["minute", Math.floor((seconds % 3600) / 60)],
+    ["second", Math.floor(seconds % 60)],
+  ];
+  const first = units.findIndex(([, value]) => value > 0);
+  return units
+    .slice(first, first + 2)
+    .filter(([, value]) => value > 0)
+    .map(([unit, value]) =>
+      new Intl.NumberFormat(locale, {
+        style: "unit",
+        unit,
+        unitDisplay: "narrow",
+      }).format(value)
+    )
+    .join(" ");
+};

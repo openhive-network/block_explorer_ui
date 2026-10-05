@@ -28,13 +28,23 @@ const useMissedProducersInRange = (gapBlocks: number[]) => {
   });
 
   const missedProducersByBlock: Record<number, string[]> = {};
+  // A block can record several misses; the first is enough to open the block
+  // at the right operation, and the rest sit next to it on that page.
+  const missedOperationByBlock: Record<number, string> = {};
+
   gapBlocks.forEach((blockNum, index) => {
-    const producers = results[index]?.data;
-    if (producers?.length) missedProducersByBlock[blockNum] = producers;
+    const missed = results[index]?.data;
+    if (!missed?.length) return;
+
+    missedProducersByBlock[blockNum] = missed.map((entry) => entry.producer);
+
+    const operationId = missed.find((entry) => entry.operationId)?.operationId;
+    if (operationId) missedOperationByBlock[blockNum] = operationId;
   });
 
   return {
     missedProducersByBlock,
+    missedOperationByBlock,
     isMissedProducersLoading: results.some((result) => result.isLoading),
   };
 };

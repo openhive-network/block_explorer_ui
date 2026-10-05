@@ -47,6 +47,12 @@ import {
   OP_BUCKET_ORDER,
 } from "@/utils/operationBuckets";
 import { computeSlotDeltas, type SlotDelta } from "@/utils/slotGaps";
+import {
+  JUST_ARRIVED_ACCENT,
+  JUST_ARRIVED_MS,
+  JUST_ARRIVED_SURFACE,
+} from "@/utils/liveHighlight";
+import LiveBeacon from "../ui/LiveBeacon";
 import { useI18n } from "@/i18n/i18n";
 
 // Column indexes carrying a magnitude, per table mode. Full table:
@@ -262,7 +268,10 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
     });
   };
 
-  const prepareExportData = () => {
+  // Rebuilt only when the rows change. Inline in JSX this ran on every render —
+  // ~17 translation lookups plus two allocations per row, repeated for every
+  // live tick and every row expansion.
+  const exportData = useMemo(() => {
     if (!rows) return [];
 
     return rows.map((block, index) => {
@@ -299,12 +308,12 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
         ),
       };
     });
-  };
+  }, [rows, slotDeltas, showSlotColumns, t]);
 
   return (
     <>
       {totalCount > config.standardPaginationSize ? (
-        <div className="flex flex-wrap justify-between items-center bg-theme px-5 sticky z-20 top-[3.2rem] md:top-[4rem]">
+        <div className="flex flex-wrap justify-between items-center bg-theme sticky z-20 top-[3.2rem] md:top-[4rem]">
           {isMainPageTable ? (
             <div className="flex justify-center w-full md:w-auto md:justify-start bg-theme">
               <Link href={allBlocksPageLink ?? "/blocks"} target="_blank">
@@ -376,7 +385,7 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
           dataType={t("common.blocks")}
         />
         <DataExport
-          data={prepareExportData()}
+          data={exportData}
           filename={`${t("blocksTable.exportFilenamePrefix")}.csv`}
           className="mb-2"
         />
@@ -433,14 +442,12 @@ const TableRowComponent: React.FC<TableRowComponentProps> = ({
       setIsNewRow(true); // Make sure we use the state variable
       // A wash rather than a flood, and not green: green is the slot-health
       // status colour here, and a new block is not a claim about its health.
-      // Opaque, not an alpha tint: the sticky first cell uses bg-inherit, so a
-      // translucent row colour gets painted twice and that cell reads darker.
-      setBgColor("bg-sky-100 dark:bg-sky-900");
+      setBgColor(JUST_ARRIVED_SURFACE);
 
       const timer = setTimeout(() => {
         setIsNewRow(false);
         setBgColor("bg-theme"); // Revert to the base background color
-      }, 2200); // 2 seconds
+      }, JUST_ARRIVED_MS);
 
       return () => clearTimeout(timer);
     } else {
@@ -451,7 +458,7 @@ const TableRowComponent: React.FC<TableRowComponentProps> = ({
 
   // Always reserve the edge so the row does not shift when it lights up.
   const newRowAccent = isNewRow
-    ? "border-s-4 border-s-sky-500 dark:border-s-sky-400"
+    ? `border-s-4 ${JUST_ARRIVED_ACCENT}`
     : "border-s-4 border-s-transparent";
 
   return (
@@ -461,6 +468,11 @@ const TableRowComponent: React.FC<TableRowComponentProps> = ({
       >
         <TableCell className="whitespace-nowrap sticky start-0 z-10 bg-inherit p-4">
           <div className="flex items-center space-x-2">
+            {/* Rendered on every row so the number never shifts as it fades. */}
+            <LiveBeacon
+              label={t("blocksPage.liveSchedule.justArrived")}
+              isVisible={isNewRow}
+            />
             <Link href={`/block/${row.block_num}`} className="text-link">
               {row.block_num.toLocaleString(appLocale)}
             </Link>
@@ -469,6 +481,23 @@ const TableRowComponent: React.FC<TableRowComponentProps> = ({
               tooltipText={t("common.copyBlockNumber")}
             />
           </div>
+        </TableCell>
+        <TableCell className="whitespace-nowrap py-3 px-4">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div>
+                  <TimeAgo
+                    locale={appLocale}
+                    datetime={new Date(formatAndDelocalizeTime(row.created_at))}
+                  />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent className="bg-theme text-text p-3">
+                {formatAndDelocalizeTime(row.created_at)}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </TableCell>
         <TableCell className="whitespace-nowrap py-3 px-4">
           <Link className="text-link" href={`@${row.producer_account}`}>
@@ -505,24 +534,6 @@ const TableRowComponent: React.FC<TableRowComponentProps> = ({
             </TableCell>
           </>
         ) : null}
-
-        <TableCell className="whitespace-nowrap py-3 px-4">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div>
-                  <TimeAgo
-                    locale={appLocale}
-                    datetime={new Date(formatAndDelocalizeTime(row.created_at))}
-                  />
-                </div>
-              </TooltipTrigger>
-              <TooltipContent className="bg-theme text-text p-3">
-                {formatAndDelocalizeTime(row.created_at)}
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </TableCell>
         {!isMainPageTable && showSlotTiming ? (
           <TableCell className="whitespace-nowrap py-3 px-4">
             {delta?.deltaSeconds === null || delta === undefined ? (

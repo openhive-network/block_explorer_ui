@@ -4,6 +4,7 @@ import Explorer from "@/types/Explorer";
 import {
   GetDynamicGlobalPropertiesResponse,
   IHiveChainInterface,
+  IWaxChainExtendibleOptions,
   TWaxRestExtended,
   TWaxApiRequest,
   TWaxExtended,
@@ -29,6 +30,18 @@ export type ExplorerNodeApi = {
     find_withdraw_vesting_routes: TWaxApiRequest<
       { account: string; order: "by_withdraw_route" | "by_destination" },
       Hive.WithdrawVestingRoutesResponse
+    >;
+    find_limit_orders: TWaxApiRequest<
+      { account: string },
+      { orders: Hive.OpenOrder[] }
+    >;
+    find_hbd_conversion_requests: TWaxApiRequest<
+      { account: string },
+      { requests: Hive.HbdConversionRequest[] }
+    >;
+    find_collateralized_conversion_requests: TWaxApiRequest<
+      { account: string },
+      { requests: Hive.CollateralizedConversionRequest[] }
     >;
     get_witness_schedule: TWaxApiRequest<
       { id: number; include_future: boolean },
@@ -143,6 +156,10 @@ class FetchingService {
   private extendedHiveChain:
     | TWaxExtended<ExplorerNodeApi, TWaxRestExtended<typeof extendedRest>>
     | undefined = undefined;
+  // Same chain, same endpoints, longer abort budget. Used only by block-search.
+  private blockSearchHiveChain:
+    | TWaxExtended<ExplorerNodeApi, TWaxRestExtended<typeof extendedRest>>
+    | undefined = undefined;
 
   public setApiUrl(newUrl: string) {
     this.apiUrl = newUrl;
@@ -152,16 +169,35 @@ class FetchingService {
     this.nodeUrl = newUrl;
   }
 
+  // extendConfig copies the chain with one option changed. Its type demands the
+  // whole option set, but it merges field by field at runtime
+  // (`config.apiTimeout ?? this.apiTimeout`), so a single override is enough.
+  private buildChain(
+    hiveChain: IHiveChainInterface | null,
+    apiTimeout?: number
+  ) {
+    const base = apiTimeout
+      ? hiveChain?.extendConfig({
+          apiTimeout,
+        } as unknown as IWaxChainExtendibleOptions)
+      : hiveChain;
+
+    const extended = base?.extend<ExplorerNodeApi>().extendRest(extendedRest);
+    if (extended && this.nodeUrl) {
+      extended.endpointUrl = this.nodeUrl;
+    }
+    if (extended && this.apiUrl) {
+      extended.restApi.endpointUrl = this.apiUrl;
+    }
+    return extended;
+  }
+
   public setHiveChain(hiveChain: IHiveChainInterface | null) {
-    this.extendedHiveChain = hiveChain
-      ?.extend<ExplorerNodeApi>()
-      .extendRest(extendedRest);
-    if (this.extendedHiveChain && this.nodeUrl) {
-      this.extendedHiveChain.endpointUrl = this.nodeUrl;
-    }
-    if (this.extendedHiveChain && this.apiUrl) {
-      this.extendedHiveChain.restApi.endpointUrl = this.apiUrl;
-    }
+    this.extendedHiveChain = this.buildChain(hiveChain);
+    this.blockSearchHiveChain = this.buildChain(
+      hiveChain,
+      config.blockSearchTimeout
+    );
   }
 
   // Wrap a REST call so a definitive missing-endpoint 404 surfaces as a typed
@@ -285,6 +321,34 @@ class FetchingService {
     return await this.extendedHiveChain!.api.database_api.find_withdraw_vesting_routes(
       { account: accountName, order: "by_withdraw_route" }
     );
+  }
+
+  async getOpenOrders(accountName: string): Promise<Hive.OpenOrder[]> {
+    const { orders } =
+      await this.extendedHiveChain!.api.database_api.find_limit_orders({
+        account: accountName,
+      });
+    return orders;
+  }
+
+  async getHbdConversionRequests(
+    accountName: string
+  ): Promise<Hive.HbdConversionRequest[]> {
+    const { requests } =
+      await this.extendedHiveChain!.api.database_api.find_hbd_conversion_requests(
+        { account: accountName }
+      );
+    return requests;
+  }
+
+  async getCollateralizedConversionRequests(
+    accountName: string
+  ): Promise<Hive.CollateralizedConversionRequest[]> {
+    const { requests } =
+      await this.extendedHiveChain!.api.database_api.find_collateralized_conversion_requests(
+        { account: accountName }
+      );
+    return requests;
   }
 
   async getAccOpTypes(accountName: string): Promise<number[]> {
@@ -465,7 +529,7 @@ class FetchingService {
       "from-block": blockSearchProps.fromBlock || blockSearchProps.startDate,
       "to-block": blockSearchProps.toBlock || blockSearchProps.endDate,
     };
-    return await this.extendedHiveChain!.restApi["hafbe-api"].blockSearch(
+    return await this.blockSearchHiveChain!.restApi["hafbe-api"].blockSearch(
       requestParams
     );
   }
@@ -502,14 +566,18 @@ class FetchingService {
   }
 
   // The chain records a missed slot in the block that follows it.
+  // Carries the operation id alongside the name so a missed slot can link to
+  // the producer_missed operation itself, not just the block that recorded it.
   async getMissedProducersInBlock(
     blockNumber: number,
     opTypeId: number
-  ): Promise<string[]> {
+  ): Promise<Explorer.MissedProducer[]> {
     const response = await this.getOpsByBlock(blockNumber, [opTypeId]);
-    return (response?.operations_result ?? [])
-      .map((operation) => operation?.op?.value?.producer)
-      .filter((producer): producer is string => !!producer);
+    return (response?.operations_result ?? []).flatMap((operation) => {
+      const producer = operation?.op?.value?.producer;
+      if (!producer) return [];
+      return [{ producer, operationId: operation?.operation_id }];
+    });
   }
 
   async getWitnessVotesHistory(
@@ -984,7 +1052,8 @@ class FetchingService {
     balanceType: "balance" | "savings_balance",
     page: number,
     minBalance?: number,
-    maxBalance?: number
+    maxBalance?: number,
+    pageSize?: number
   ): Promise<Hive.TopHoldersResponse> {
     return await this.extendedHiveChain!.restApi["balance-api"].topHolders({
       "coin-type": coinType,
@@ -992,6 +1061,7 @@ class FetchingService {
       page,
       ...(minBalance !== undefined ? { "min-balance": minBalance } : {}),
       ...(maxBalance !== undefined ? { "max-balance": maxBalance } : {}),
+      ...(pageSize !== undefined ? { "page-size": pageSize } : {}),
     });
   }
 

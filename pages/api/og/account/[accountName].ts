@@ -7,8 +7,8 @@ import { fetchWithTimeout, rpc, restGet } from "@/utils/seo/serverRpc";
 import {
   buildAccountCardSvg,
   ACCOUNT_CARD_WIDTH,
-  ACCOUNT_CARD_HEIGHT,
 } from "@/components/account/accountCard/accountCardSvg";
+import { svgToPng, fallbackPng } from "@/utils/og/rasterize";
 import {
   buildAccountCardData,
   sumAuthorCurationVests,
@@ -281,18 +281,18 @@ export default async function handler(
     );
 
     try {
-      const sharp = (await import("sharp")).default;
-      const png = await sharp(Buffer.from(svg), { density: 96 })
-        .resize(ACCOUNT_CARD_WIDTH, ACCOUNT_CARD_HEIGHT)
-        .png()
-        .toBuffer();
+      const png = await svgToPng(svg, ACCOUNT_CARD_WIDTH);
       res.setHeader("Content-Type", "image/png");
       res.status(200).send(png);
-    } catch {
-      // sharp unavailable (e.g. local Windows dev) — serve the SVG so the card
-      // is still viewable; production has sharp and returns a PNG.
-      res.setHeader("Content-Type", "image/svg+xml");
-      res.status(200).send(svg);
+    } catch (error) {
+      console.error("OG account card rasterization failed", error);
+      const fallback = fallbackPng();
+      if (!fallback) {
+        res.status(500).end("Failed to render card");
+        return;
+      }
+      res.setHeader("Content-Type", "image/png");
+      res.status(200).send(fallback);
     }
   } catch {
     res.status(500).end("Failed to render card");

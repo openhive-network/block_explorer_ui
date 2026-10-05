@@ -66,7 +66,7 @@ const JumpToPage = ({
 
   return (
     <form
-      className="flex"
+      className="me-2 flex items-center gap-1.5"
       onSubmit={handleJumpToPage}
     >
       <Input
@@ -77,15 +77,15 @@ const JumpToPage = ({
         onChange={onInputChange}
         onBlur={handleBlur}
         onKeyDown={handleOnKeyDown}
-        className="w-0 min-w-[72px] p-1 pl-2 py-2 text-gray-900 border border-gray-300 rounded sm:text-xs bg-gray-50 focus:bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-theme dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:focus:bg-gray-700"
+        className="h-7 w-16 rounded border border-navbar-border bg-theme px-2 py-0 text-xs tabular-nums text-text focus:border-indigo-500 focus:ring-indigo-500 sm:h-8 sm:text-[13px]"
         data-testid="input-goto-page"
       />
       <Button
-        className="mx-2 hover:bg-buttonHover"
+        className="h-7 rounded px-2.5 text-xs hover:bg-buttonHover sm:h-8 sm:text-[13px]"
         type="submit"
         data-testid="button-goto-page"
       >
-      {t("common.go")}
+        {t("common.go")}
       </Button>
     </form>
   );

@@ -49,7 +49,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ open, onChange, className }) => {
             "account_name",
           ]}
           className={cn(
-            "bg-theme border-b transition-width duration-300 ease-in-out",
+            "bg-theme border-b w-auto",
             { "w-full": isMobile },
             className
           )}
@@ -57,23 +57,16 @@ const SearchBar: React.FC<SearchBarProps> = ({ open, onChange, className }) => {
           onBlur={handleBlur}
           linkResult={true}
           addLabel={true}
-          expand={isMobile === false}
           cleanup={true}
         />
       )}
       {!isAutocompleteVisible && (
-        <Button
-          onClick={handleToggle}
-          className="md:hidden px-2 py-1 h-[36px]"
-        >
+        <Button onClick={handleToggle} className="md:hidden px-2 py-1 h-[36px]">
           <Search />
         </Button>
       )}
       {isAutocompleteVisible && (
-        <X
-          onClick={handleToggle}
-          className="md:hidden"
-        />
+        <X onClick={handleToggle} className="md:hidden" />
       )}
     </>
   );

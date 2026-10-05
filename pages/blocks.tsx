@@ -110,20 +110,24 @@ const BlocksPage = ({ meta }: { meta: SeoMeta }) => {
       : null,
   } as any;
 
-  const { blocksSearchData, blocksSearchDataError, blocksSearchDataLoading } =
-    useAllBlocksSearch(
-      props,
-      pageNum,
-      //router.query.history?.length == 2 means that we are the very first page where history=[]
-      liveDataEnabled &&
-        firstBlock &&
-        (!paramsState.toBlock || router.query.history?.length == 2)
-        ? undefined
-        : paramsState.toBlock
-          ? paramsState.toBlock
-          : paramsState.firstBlock,
-      liveDataEnabled
-    );
+  const {
+    blocksSearchData,
+    blocksSearchDataError,
+    blocksSearchDataLoading,
+    blocksSearchShowingPrevious,
+  } = useAllBlocksSearch(
+    props,
+    pageNum,
+    //router.query.history?.length == 2 means that we are the very first page where history=[]
+    liveDataEnabled &&
+      firstBlock &&
+      (!paramsState.toBlock || router.query.history?.length == 2)
+      ? undefined
+      : paramsState.toBlock
+        ? paramsState.toBlock
+        : paramsState.firstBlock,
+    liveDataEnabled
+  );
 
   // Handlers
   const handleFiltersVisibility = () => {
@@ -236,14 +240,15 @@ const BlocksPage = ({ meta }: { meta: SeoMeta }) => {
         : [],
     [slotDeltas, showSlotTiming]
   );
-  const { missedProducersByBlock } = useMissedProducersInRange(gapBlocks);
+  const { missedProducersByBlock, missedOperationByBlock } =
+    useMissedProducersInRange(gapBlocks);
 
   const TABLE_CELLS = [
     t("common.block"),
+    t("common.date"),
     t("blocksPage.producer"),
     t("blocksPage.prevHash"),
     t("blocksPage.hash"),
-    t("blocksPage.time"),
     ...(showSlotTiming ? [t("blocksPage.slotDelta")] : []),
     t("blocksPage.rewardVests"),
     t("common.transactions"),
@@ -339,8 +344,8 @@ const BlocksPage = ({ meta }: { meta: SeoMeta }) => {
           rows={tableRows}
           slotDeltas={slotDeltas}
           missedProducersByBlock={missedProducersByBlock}
+          missedOperationByBlock={missedOperationByBlock}
           paramsState={paramsState}
-          className="mt-4"
         />
 
         {showLiveStrip ? (
@@ -377,17 +382,27 @@ const BlocksPage = ({ meta }: { meta: SeoMeta }) => {
         ) : blocksSearchData?.blocks_result &&
           blocksSearchData?.blocks_result.length > 0 ? (
           <>
-            <BlocksTable
-              rows={tableRows}
-              paramsState={paramsState}
-              TABLE_CELLS={TABLE_CELLS}
-              currentPage={pageNum || blocksSearchData.total_pages}
-              totalCount={blocksSearchData.total_blocks}
-              onPageChange={handlePageChange}
-              showSlotTiming={showSlotTiming}
-              slotDeltas={slotDeltas}
-              missedProducersByBlock={missedProducersByBlock}
-            />
+            {/* The rows stay put while the next page loads, so without this the
+                page looks frozen for however long the search takes. */}
+            <div
+              className={cn(
+                "transition-opacity duration-200",
+                blocksSearchShowingPrevious && "opacity-50"
+              )}
+              aria-busy={blocksSearchShowingPrevious}
+            >
+              <BlocksTable
+                rows={tableRows}
+                paramsState={paramsState}
+                TABLE_CELLS={TABLE_CELLS}
+                currentPage={pageNum || blocksSearchData.total_pages}
+                totalCount={blocksSearchData.total_blocks}
+                onPageChange={handlePageChange}
+                showSlotTiming={showSlotTiming}
+                slotDeltas={slotDeltas}
+                missedProducersByBlock={missedProducersByBlock}
+              />
+            </div>
           </>
         ) : !blocksSearchDataLoading ? (
           <NoResult />

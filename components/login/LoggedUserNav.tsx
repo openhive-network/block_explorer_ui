@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
 import { useI18n } from "@/i18n/i18n";
@@ -17,9 +18,12 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import useManabars from "@/hooks/api/accountPage/useManabars";
+import useUnclaimedRewards from "@/hooks/api/common/useUnclaimedRewards";
 import { useSettings } from "@/contexts/SettingsContext";
 import RadialProgress from "@/components/RadialProgress";
 import { Progress } from "@/components/ui/progress";
+import { secondsUntilFull } from "@/utils/manaRecharge";
+import { formatShortDuration } from "@/utils/TimeUtils";
 import { useWorkspaceSync } from "@/hooks/api/useWorkspaceSync";
 import { buildBundle, hasLocalChanges } from "@/utils/workspaceSync";
 import { diffBundles } from "@/utils/workspaceDiff";
@@ -44,28 +48,49 @@ const UserNavItem = ({
   href,
   title,
   closeMenu,
+  shallow = false,
+  badge,
 }: {
   href: string;
   title: string;
   closeMenu: () => void;
+  shallow?: boolean;
+  badge?: React.ReactNode;
 }) => (
   <Link
     href={href}
+    shallow={shallow}
+    scroll={!shallow}
     className="group flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium hover:bg-secondary/60 text-text transition-all active:scale-[0.98]"
     onClick={closeMenu}
   >
     <span>{title}</span>
+    {badge}
   </Link>
 );
 
 const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
   const { username, logout, method } = useAuth();
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
+  const fullIn = (percent: number) => {
+    const seconds = secondsUntilFull(percent);
+    return seconds === 0
+      ? t("auth.manaFull")
+      : t("auth.manaFullIn", {
+          duration: formatShortDuration(seconds, locale),
+        });
+  };
   const { settings } = useSettings();
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
+  // Already on this profile: only the query changes, so skip the server round-trip.
+  const isOnOwnProfile =
+    router.pathname === "/[accountName]" &&
+    router.query.accountName === `@${username}`;
   const menuRef = useRef<HTMLDivElement>(null);
 
   const { manabarsData } = useManabars(username || "", true);
+  const { hasUnclaimedRewards } = useUnclaimedRewards(username);
   const { syncStatus, syncWorkspace, lastBundleBytes } = useWorkspaceSync();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [isUnsynced, setIsUnsynced] = useState(false);
@@ -143,14 +168,22 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
       {/* Trigger */}
       <button
         onClick={() => setIsOpen(!isOpen)}
+        aria-label={
+          hasUnclaimedRewards ? t("auth.unclaimedRewards") : undefined
+        }
         className="flex items-center gap-2 rounded-full border border-navbar-border bg-secondary/20 p-1 pr-3 hover:bg-secondary/40 transition-all outline-none"
       >
-        <HiveAvatar
-          accountName={username}
-          alt="avatar"
-          size={28}
-          className="w-7 h-7 border border-border/50"
-        />
+        <span className="relative shrink-0">
+          <HiveAvatar
+            accountName={username}
+            alt="avatar"
+            size={28}
+            className="w-7 h-7 border border-border/50"
+          />
+          {hasUnclaimedRewards && (
+            <span className="absolute -end-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-amber-500 ring-2 ring-theme" />
+          )}
+        </span>
         {!isMobile && (
           <span className="text-xs font-bold text-text">{username}</span>
         )}
@@ -225,7 +258,6 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
                       label: "Upvote",
                       value: manabarsData.upvote.percentageValue,
                       color: "#00c040",
-                      showTooltip: false,
                       current: "",
                       max: "",
                     },
@@ -233,7 +265,6 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
                       label: "Downvote",
                       value: manabarsData.downvote.percentageValue,
                       color: "#c01000",
-                      showTooltip: false,
                       current: "",
                       max: "",
                     },
@@ -241,37 +272,37 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
                       label: "RC",
                       value: manabarsData.rc.percentageValue,
                       color: "#cecafa",
-                      showTooltip: true,
                       current: manabarsData.rc.current,
                       max: manabarsData.rc.max,
                     },
-                  ].map(
-                    ({ label, value, color, showTooltip, current, max }) => (
-                      <div key={label}>
-                        <p className="mb-1 text-[10px] font-medium text-gray-500 dark:text-gray-400">
-                          {label}
-                        </p>
-                        {showTooltip ? (
-                          <TooltipProvider>
-                            <Tooltip delayDuration={100}>
-                              <TooltipTrigger asChild>
-                                <div className="cursor-help">
-                                  <Progress value={value} color={color} />
-                                </div>
-                              </TooltipTrigger>
-                              <TooltipPortal>
-                                <TooltipContent className="bg-slate-900 text-white border-none text-[11px] py-1 px-2">
+                  ].map(({ label, value, color, current, max }) => (
+                    <div key={label}>
+                      <p className="mb-1 text-[10px] font-medium text-gray-500 dark:text-gray-400">
+                        {label}
+                      </p>
+                      <TooltipProvider>
+                        <Tooltip delayDuration={100}>
+                          <TooltipTrigger asChild>
+                            <div className="cursor-help">
+                              <Progress value={value} color={color} />
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipPortal>
+                            <TooltipContent className="bg-slate-900 text-white border-none text-[11px] py-1 px-2">
+                              {current && (
+                                <span className="block text-white">
                                   {current} / {max}
-                                </TooltipContent>
-                              </TooltipPortal>
-                            </Tooltip>
-                          </TooltipProvider>
-                        ) : (
-                          <Progress value={value} color={color} />
-                        )}
-                      </div>
-                    )
-                  )}
+                                </span>
+                              )}
+                              <span className="block text-white">
+                                {fullIn(value)}
+                              </span>
+                            </TooltipContent>
+                          </TooltipPortal>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                  ))}
                 </div>
               ) : (
                 <div className="grid grid-cols-3 justify-items-center gap-1">
@@ -283,6 +314,11 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
                     color="text-green-500"
                     percentageClassName="text-[9px]"
                     labelClassName="text-[8px]"
+                    tooltipContent={
+                      <p className="text-sm">
+                        {fullIn(manabarsData.upvote.percentageValue)}
+                      </p>
+                    }
                   />
                   <RadialProgress
                     size={46}
@@ -292,6 +328,11 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
                     color="text-red-500"
                     percentageClassName="text-[9px]"
                     labelClassName="text-[8px]"
+                    tooltipContent={
+                      <p className="text-sm">
+                        {fullIn(manabarsData.downvote.percentageValue)}
+                      </p>
+                    }
                   />
                   <RadialProgress
                     size={46}
@@ -302,9 +343,14 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
                     percentageClassName="text-[9px]"
                     labelClassName="text-[8px]"
                     tooltipContent={
-                      <p className="text-sm">
-                        {manabarsData.rc.current} / {manabarsData.rc.max}
-                      </p>
+                      <>
+                        <p className="text-sm">
+                          {manabarsData.rc.current} / {manabarsData.rc.max}
+                        </p>
+                        <p className="text-sm">
+                          {fullIn(manabarsData.rc.percentageValue)}
+                        </p>
+                      </>
                     }
                   />
                 </div>
@@ -318,6 +364,22 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
               href={`/@${username}`}
               title={t("auth.myProfile")}
               closeMenu={() => setIsOpen(false)}
+            />
+            <UserNavItem
+              href={`/@${username}?section=wallet`}
+              title={t("auth.myWallet")}
+              closeMenu={() => setIsOpen(false)}
+              shallow={isOnOwnProfile}
+              badge={
+                hasUnclaimedRewards && (
+                  <span className="ms-auto flex items-center gap-1.5 text-[11px] font-medium text-amber-600 dark:text-amber-400">
+                    <span className="h-2 w-2 rounded-full bg-amber-500" />
+                    <span className="text-current">
+                      {t("auth.unclaimedRewards")}
+                    </span>
+                  </span>
+                )
+              }
             />
             <UserNavItem
               href={`/proposals?voter=${username}&status=all`}

@@ -218,6 +218,13 @@ declare module Explorer {
     operationId?: string;
   }
 
+  // A witness the chain recorded as skipping a slot, with the operation that
+  // recorded it so the UI can link straight to it.
+  interface MissedProducer {
+    producer: string;
+    operationId?: string;
+  }
+
   class ExtendedOperationTypePattern extends Hive.OperationPattern {
     isDisabled?: boolean;
   }

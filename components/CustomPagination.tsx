@@ -1,16 +1,13 @@
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { usePagination } from "../hooks/common/usePagination";
 import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-  PaginationLatest,
-  PaginationFirst,
-} from "./ui/pagination";
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from "lucide-react";
+import { Pagination, PaginationContent, PaginationItem } from "./ui/pagination";
 import { useI18n } from "../i18n/i18n";
 
 interface CustomPaginationProps {
@@ -36,13 +33,40 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
   handleLatestPage,
   handleFirstPage,
 }) => {
-  const { dir } = useI18n();
-  const isRTL = dir === "rtl";
+  const { locale } = useI18n();
+  const [wrapper, setWrapper] = useState<HTMLDivElement | null>(null);
+  const [width, setWidth] = useState(0);
+  useEffect(() => {
+    if (!wrapper) return;
+    const observer = new ResizeObserver(([entry]) =>
+      setWidth(entry.contentRect.width)
+    );
+    observer.observe(wrapper);
+    return () => observer.disconnect();
+  }, [wrapper]);
+
+  const [isPhone, setIsPhone] = useState(false);
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 639px)");
+    const update = () => setIsPhone(query.matches);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+
+  // On phones, show as many page numbers as fit on one line.
+  let fittedSiblingCount = siblingCount;
+  if (isPhone && width > 0) {
+    const digits = String(Math.ceil(totalCount / pageSize)).length;
+    const numberWidth = Math.max(28, digits * 7 + 12) + 4;
+    const slots = Math.floor((width - 16 - 4 * 32) / numberWidth);
+    fittedSiblingCount = Math.min(2, Math.max(0, Math.floor((slots - 3) / 2)));
+  }
 
   const paginationRange = usePagination({
     currentPage,
     totalCount,
-    siblingCount,
+    siblingCount: fittedSiblingCount,
     pageSize,
     isMirrored,
   });
@@ -87,112 +111,98 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
     }
   };
 
-  const arrowStyle =
-    "cursor-pointer border transition-colors duration-200 hover:border-explorer-dark-gray dark:border-explorer-bg-start dark:hover:border-white";
+  const buttonStyle =
+    "inline-flex h-7 min-w-7 items-center justify-center rounded px-1.5 text-xs tabular-nums text-text transition-colors hover:bg-rowHover disabled:pointer-events-none disabled:opacity-40 sm:h-8 sm:min-w-8 sm:text-[13px]";
+  const arrowStyle = cn(buttonStyle, "border border-navbar-border px-0");
+  const iconStyle = "h-3.5 w-3.5 rtl:rotate-180";
 
-  const activePageStyle = "font-bold border border-black dark:border-white";
-
-  const totalPages = Math.ceil(totalCount / pageSize);
-
-  let iconPaddingClass = "";
-  let pageItemPaddingClass = "";
-
-  if (totalPages > 10 && totalPages < 100) {
-    iconPaddingClass = "p-1.5 md:p-2.5 m-0";
-    pageItemPaddingClass = "px-1.5 md:px-2.5";
-  } else if (totalPages > 100 && totalPages < 1000) {
-    iconPaddingClass = "p-0.5 md:p-2.5 m-0";
-    pageItemPaddingClass = "px-1 md:px-2";
-  } else if (totalPages >= 1000) {
-    iconPaddingClass = "p-0.5 md:p-1 m-0";
-    pageItemPaddingClass = "px-[0.5px] md:px-1.5";
-  } else {
-    iconPaddingClass = "p-2";
-    pageItemPaddingClass = "px-3";
-  }
-
-  const PrevIcon = isRTL ? PaginationNext : PaginationPrevious;
-  const NextIcon = isRTL ? PaginationPrevious : PaginationNext;
-  const LatestIcon = isRTL ? PaginationFirst : PaginationLatest;
-  const FirstIcon = isRTL ? PaginationLatest : PaginationFirst;
+  const hasPages = paginationRange.length > 1;
+  const atStart =
+    !hasPages || (isMirrored ? currentPage === maxPage : currentPage === 1);
+  const atEnd =
+    !hasPages || (isMirrored ? currentPage === 1 : currentPage === maxPage);
 
   return (
-    <Pagination
-      className={cn("bg-theme p-2 flex items-center justify-center", className)}
-    >
-      <PaginationContent className="flex-wrap justify-center md:gap-x-1">
-        {paginationRange.length > 1 &&
-          (isMirrored ? currentPage !== maxPage : currentPage !== 1) && (
-            <>
-              <PaginationItem
-                onClick={isMirrored ? onLastPage : onFirstPage}
-                className={cn(arrowStyle, "flex items-center justify-center")}
-              >
-                <LatestIcon className={iconPaddingClass} />
-              </PaginationItem>
-
-              <PaginationItem
-                onClick={isMirrored ? onNext : onPrevious}
-                className={cn(arrowStyle, "flex items-center justify-center")}
-              >
-                <PrevIcon className={iconPaddingClass} />
-              </PaginationItem>
-            </>
-          )}
-        {paginationRange.map(
-          (pageNumber: number | string, i: number) => {
-            // Comment out only DOTS if we need them in future
-
-            // if (pageNumber === DOTS) {
-            //   return (
-            //     <PaginationItem key={i}>
-            //       <PaginationEllipsis />
-            //     </PaginationItem>
-            //   );
-            // } else {
+    <div ref={setWrapper} className="w-full">
+      <Pagination
+        className={cn(
+          "bg-theme p-1.5 flex items-center justify-center",
+          className
+        )}
+      >
+        <PaginationContent className="justify-center gap-1">
+          <PaginationItem>
+            <button
+              type="button"
+              aria-label={isMirrored ? "Go to last page" : "Go to first page"}
+              disabled={atStart}
+              onClick={isMirrored ? onLastPage : onFirstPage}
+              className={arrowStyle}
+            >
+              <ChevronsLeft className={iconStyle} />
+            </button>
+          </PaginationItem>
+          <PaginationItem>
+            <button
+              type="button"
+              aria-label={
+                isMirrored ? "Go to next page" : "Go to previous page"
+              }
+              disabled={atStart}
+              onClick={isMirrored ? onNext : onPrevious}
+              className={arrowStyle}
+            >
+              <ChevronLeft className={iconStyle} />
+            </button>
+          </PaginationItem>
+          {paginationRange.map((pageNumber: number | string) => {
+            const isActive = currentPage === pageNumber;
             return (
-              <PaginationItem
-                key={i}
-                className={cn(
-                  pageItemPaddingClass,
-                  "py-1.5 cursor-pointer hover:bg-explorer-extra-light-gray text-[6px]",
-                  {
-                    [activePageStyle]: currentPage === pageNumber,
-                  }
-                )}
-                onClick={() => onPageChange(Number(pageNumber))}
-              >
-                <PaginationLink
-                  className={cn("h-fit", {
-                    "font-bold": currentPage === pageNumber,
-                  })}
+              <PaginationItem key={pageNumber}>
+                <button
+                  type="button"
+                  aria-current={isActive ? "page" : undefined}
+                  onClick={() => onPageChange(Number(pageNumber))}
+                  className={cn(
+                    buttonStyle,
+                    isActive &&
+                      "bg-indigo-500 font-semibold text-white hover:bg-indigo-500"
+                  )}
                 >
-                  {pageNumber}
-                </PaginationLink>
+                  {Number(pageNumber).toLocaleString(locale, {
+                    useGrouping: false,
+                  })}
+                </button>
               </PaginationItem>
             );
-          }
-          // }
-        )}
-        {paginationRange.length > 1 &&
-          (isMirrored ? currentPage !== 1 : currentPage !== maxPage) && (
-            <>
-              <PaginationItem
-                onClick={isMirrored ? onPrevious : onNext}
-                className={cn(arrowStyle, "flex items-center justify-center")}
-              >
-                <NextIcon className={iconPaddingClass} />
-              </PaginationItem>
-              <PaginationItem
-                onClick={isMirrored ? onFirstPage : onLastPage}
-                className={cn(arrowStyle, "flex items-center justify-center")}
-              >
-                <FirstIcon className={iconPaddingClass} />
-              </PaginationItem>
-            </>
-          )}
-      </PaginationContent>
-    </Pagination>
+          })}
+          <PaginationItem>
+            <button
+              type="button"
+              aria-label={
+                isMirrored ? "Go to previous page" : "Go to next page"
+              }
+              disabled={atEnd}
+              onClick={isMirrored ? onPrevious : onNext}
+              className={arrowStyle}
+            >
+              <ChevronRight className={iconStyle} />
+            </button>
+          </PaginationItem>
+          <PaginationItem>
+            <button
+              type="button"
+              aria-label={isMirrored ? "Go to first page" : "Go to last page"}
+              disabled={atEnd}
+              onClick={isMirrored ? onFirstPage : onLastPage}
+              className={arrowStyle}
+            >
+              <ChevronsRight className={iconStyle} />
+            </button>
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
+    </div>
   );
 };
 

@@ -15,6 +15,10 @@ export const config = {
       ? env("HIVE_FRONTEND_ADDRESS")
       : "https://hive.blog"
   }`,
+  // Where "Create account" sends visitors without a Hive account.
+  signupUrl: `${
+    env("SIGNUP_URL") ? env("SIGNUP_URL") : "https://signup.hive.io"
+  }`,
   baseMomentTimeFormat: "YYYY/MM/DD HH:mm:ss UTC",
   momentLocaleDateFormat: "MMM D, YYYY",
   gitHash: process.env.NEXT_PUBLIC_COMMIT_HASH,
@@ -54,6 +58,11 @@ export const config = {
   // A block search plus a fetch per hit, so it runs on a slower clock than the
   // schedule rows it annotates.
   missedProducersRefreshInterval: 15000,
+  // Wax aborts API calls after 2s. Account-filtered block-search measured
+  // 0.5-2.0s against a healthy node, so it failed intermittently on nothing
+  // worse than a slow page. Only that one call gets this longer budget; every
+  // other request keeps wax's global default.
+  blockSearchTimeout: 10000,
   accountRefreshInterval: 20000,
   // Authored content and its payouts move over hours, not seconds. Polling
   // these at the account interval is all cost and no freshness.

@@ -14,12 +14,20 @@ const useAllBlocksSearch = (
     data: blocksSearchData,
     isFetching: blocksSearchDataLoading,
     isError: blocksSearchDataError,
+    isPreviousData: blocksSearchShowingPrevious,
     refetch: refetchBlockSearchData,
   } = useQuery({
     queryKey: ["blockSearch", allBlockSearchProps, page, liveDataEnabled],
     queryFn: () => fetchAllBlocks(allBlockSearchProps, page, toBlock),
     refetchOnWindowFocus: false,
     refetchInterval: liveDataEnabled ? config.mainRefreshInterval : false,
+    // Paging keeps the current rows on screen instead of blanking to a spinner.
+    // This search runs on a longer timeout than the rest of the app, so the
+    // wait it covers can be seconds long.
+    keepPreviousData: true,
+    // A call that outlives config.blockSearchTimeout is not a blip worth
+    // doubling the wait for; surface it instead of retrying.
+    retry: false,
     // User-initiated search: surface errors via toast even on the home route.
     meta: { showErrorToast: true },
   });
@@ -40,6 +48,7 @@ const useAllBlocksSearch = (
     blocksSearchData,
     blocksSearchDataLoading,
     blocksSearchDataError,
+    blocksSearchShowingPrevious,
     refetchBlockSearchData,
   };
 };

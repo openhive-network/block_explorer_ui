@@ -28,12 +28,15 @@ import ThemeToggle from "./ThemeToggle";
 import LanguageSelector from "./home/LanguageSelector";
 import { useI18n } from "@/i18n/i18n";
 import { ExploreMenu } from "./ExploreMenu";
+import RecentlyViewedList from "./RecentlyViewedList";
+import { useRecordRecentViews } from "@/hooks/common/useRecentlyViewed";
 import { getImageSrc } from "@/utils/PathUtils";
 import LoginControl from "./login/LoginControl";
 
 export default function Navbar() {
   const { t } = useI18n();
   const isMobile = useMediaQuery("(max-width: 768px)");
+  useRecordRecentViews();
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchBarOpen, setSearchBarOpen] = useState(false);
 
@@ -146,6 +149,7 @@ export default function Navbar() {
                 </div>
                 {exploreOpen && (
                   <div className="mt-2 pl-4 space-y-0.5">
+                    <RecentlyViewedList onNavigate={() => setMenuOpen(false)} />
                     <p className="px-2 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                       {t("navbar.explore")}
                     </p>
@@ -284,7 +288,7 @@ export default function Navbar() {
                     </div>
                   </Link>
                 </div>
-                <div className="flex items-center gap-x-2 w-auto justify-end">
+                <div className="flex items-center gap-x-2 w-auto justify-end [&>*:not(:first-child)]:shrink-0">
                   <SearchBar open={true} className=" justify-end" />
                   <DataView />
                   <LanguageSelector />
