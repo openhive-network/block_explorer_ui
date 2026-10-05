@@ -22,6 +22,7 @@ import NetworkGrowthCard from "@/components/home/NetworkGrowthCard";
 import NetworkVotingActivityCard from "@/components/home/NetworkVotingActivityCard";
 import DailyActiveUsersCard from "@/components/home/DailyActiveUsersCard";
 import AccountRetentionFunnelCard from "@/components/home/AccountRetentionFunnelCard";
+import NetworkAuthorRetentionCard from "@/components/home/NetworkAuthorRetentionCard";
 import NetworkOpMixCard from "@/components/home/NetworkOpMixCard";
 import NetworkRcUtilizationCard from "@/components/home/NetworkRcUtilizationCard";
 import NetworkContentVolumeCard from "@/components/home/NetworkContentVolumeCard";
@@ -93,6 +94,9 @@ const StandardHome = () => {
           </NodeSupportGate>
           <NodeSupportGate widgetId="account-retention-funnel">
             <AccountRetentionFunnelCard />
+          </NodeSupportGate>
+          <NodeSupportGate widgetId="network-author-retention">
+            <NetworkAuthorRetentionCard />
           </NodeSupportGate>
           <NodeSupportGate widgetId="op-mix">
             <NetworkOpMixCard />

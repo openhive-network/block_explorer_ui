@@ -61,8 +61,7 @@ const BalanceKpiStrip: React.FC<BalanceKpiStripProps> = ({
         displayDecimals = config.precisions.hivePower;
         dollarValue = currentNumeric * lastHivePrice;
       } else {
-        currentNumeric =
-          last.balance / Math.pow(10, config.precisions.vests);
+        currentNumeric = last.balance / Math.pow(10, config.precisions.vests);
         const firstVests =
           first.balance / Math.pow(10, config.precisions.vests);
         changeNumeric = currentNumeric - firstVests;
@@ -73,8 +72,7 @@ const BalanceKpiStrip: React.FC<BalanceKpiStripProps> = ({
         dollarValue = grabNumericValue(lastHpStr) * lastHivePrice;
       }
     } else {
-      currentNumeric =
-        last.balance / Math.pow(10, config.precisions.hivePower);
+      currentNumeric = last.balance / Math.pow(10, config.precisions.hivePower);
       const firstValue =
         first.balance / Math.pow(10, config.precisions.hivePower);
       changeNumeric = currentNumeric - firstValue;
