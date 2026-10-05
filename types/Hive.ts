@@ -1655,6 +1655,33 @@ namespace Hive {
     op_count!: number;
   }
 
+  export type WitnessMissedBlocksOrder = "missed" | "rate" | "last_missed";
+
+  export class WitnessMissedBlocksParams {
+    from_date?: string | Date | number;
+    to_date?: string | Date | number;
+    from_block?: number;
+    to_block?: number;
+    // Not `producer`: that name collides with a response column.
+    witness?: string;
+    // Set: a chain-wide time series with producer null.
+    granularity?: string;
+    order_by?: string;
+    limit_count?: number;
+  }
+
+  export class WitnessMissedBlocksResponse {
+    period!: string | null;
+    producer!: string | null;
+    missed_count!: number;
+    produced_count!: number;
+    rate!: number;
+    first_missed_block!: number;
+    last_missed_block!: number;
+    first_missed_at!: string;
+    last_missed_at!: string;
+  }
+
   export class NetworkRcUtilizationParams {
     from_date?: string | Date | number;
     to_date?: string | Date | number;

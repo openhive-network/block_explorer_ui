@@ -56,16 +56,16 @@ const CardHeaderWithLink: React.FC<CardHeaderWithLinkProps> = ({
   return (
     <CardHeader
       className={cn(
-        "flex flex-row items-center justify-between gap-2 border-b px-3 py-2",
+        "flex flex-row flex-wrap items-center justify-between gap-2 border-b px-3 py-2",
         className
       )}
     >
-      <CardTitle className="min-w-0 truncate text-start text-base font-semibold">
+      <CardTitle className="w-auto max-w-full shrink-0 break-words text-start text-base font-semibold">
         {title}
       </CardTitle>
 
       {(actions || seeMore) && (
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="ms-auto flex shrink-0 items-center gap-2">
           {actions}
           {seeMore}
         </div>

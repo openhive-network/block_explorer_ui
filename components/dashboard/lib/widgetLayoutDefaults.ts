@@ -16,6 +16,7 @@ export const WIDGET_LAYOUT_DEFAULTS: Record<string, WidgetLayoutDefault> = {
   "top-witnesses": { w: 2.95, h: 13, minW: 2, minH: 6 },
   "top-communities": { w: 2.95, h: 5.8, minW: 2, minH: 3 },
   "top-accounts": { w: 3, h: 11, minW: 2, minH: 11 },
+  "witness-missed-blocks": { w: 3, h: 9, minW: 2, minH: 6 },
   "tx-stats": { w: 6, h: 5, minW: 3, minH: 4 },
   "transfer-volume": { w: 6, h: 5, minW: 3, minH: 4 },
   tvl: { w: 6, h: 3, minW: 3, minH: 3 },

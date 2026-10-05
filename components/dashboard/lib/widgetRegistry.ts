@@ -30,6 +30,7 @@ import SearchesSection from "@/components/home/SearchesSection";
 import TopCommunitiesCard from "@/components/home/TopCommunitiesCard";
 import TopWitnessesCard from "@/components/home/TopWitnessesCard";
 import NetworkTopAccountsCard from "@/components/home/NetworkTopAccountsCard";
+import WitnessMissedBlocksCard from "@/components/home/WitnessMissedBlocksCard";
 import TransactionStatisticsCard from "@/components/home/TransactionStatisticsCard";
 import TransferVolumeCard from "@/components/home/TransferVolumeCard";
 import TotalValueLockedCard from "@/components/home/TotalValueLockedCard";
@@ -85,6 +86,8 @@ export interface WidgetConfig {
   collapsible?: boolean;
   initialCollapsed?: boolean;
   dynamicHeight?: boolean;
+  // Stretches to the tallest dynamic-height widget sharing its row.
+  matchRowHeight?: boolean;
   // Mastheads are added at row 0 full-width, not appended at the bottom.
   placement?: "masthead";
   getProps?: (
@@ -234,6 +237,15 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     component: NetworkTopAccountsCard,
     defaultLayout: WIDGET_LAYOUT_DEFAULTS["top-accounts"],
     dynamicHeight: true,
+  },
+  "witness-missed-blocks": {
+    id: "witness-missed-blocks",
+    name: "widgets.witnessMissedBlocksName",
+    category: "chain" as const,
+    component: WitnessMissedBlocksCard,
+    defaultLayout: WIDGET_LAYOUT_DEFAULTS["witness-missed-blocks"],
+    dynamicHeight: true,
+    matchRowHeight: true,
   },
   "tx-stats": {
     id: "tx-stats",

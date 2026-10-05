@@ -58,7 +58,8 @@ const governance: BoardTemplate = {
       "boards.governance.hintWitnessSet",
       "teal"
     ),
-    { type: "witness-schedule", x: 3, y: 3.4, w: 6, h: 9 },
+    { type: "witness-schedule", x: 3, y: 3.4, w: 3, h: 9 },
+    { type: "witness-missed-blocks", x: 6, y: 3.4, w: 3, h: 9 },
     { type: "top-witnesses", x: 3, y: 12.4, w: 6, h: 13 },
     {
       type: "note",

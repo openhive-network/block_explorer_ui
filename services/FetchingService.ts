@@ -1367,6 +1367,16 @@ class FetchingService {
     );
   }
 
+  async getWitnessMissedBlocks(
+    params: Hive.WitnessMissedBlocksParams
+  ): Promise<Hive.WitnessMissedBlocksResponse[]> {
+    return this.withNodeSupport("haf-stats-api:witness-missed-blocks", () =>
+      this.extendedHiveChain!.restApi["haf-stats-api"].witnessMissedBlocks(
+        params
+      )
+    );
+  }
+
   async getAccountDappFootprint(
     account: string,
     fromDate?: string | Date | number,

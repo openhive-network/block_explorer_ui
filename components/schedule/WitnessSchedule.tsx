@@ -8,6 +8,7 @@ import {
   TooltipContent,
 } from "../ui/hybrid-tooltip";
 import PageTitle from "../PageTitle";
+import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
 import { useI18n } from "../../i18n/i18n";
 import { cn } from "@/lib/utils";
 import useWitnessVoteChain from "@/hooks/api/common/useWitnessVoteChain";
@@ -28,6 +29,8 @@ interface WitnessScheduleProps {
   nextShuffleBlockNumber: number | string;
   blocksLeftBeforeRefetch: number | string;
   roundStartBlock: number | null;
+  // "card" swaps the page title for the standard home-card header.
+  variant?: "page" | "card";
 }
 
 const WitnessSchedule: React.FC<WitnessScheduleProps> = ({
@@ -36,7 +39,9 @@ const WitnessSchedule: React.FC<WitnessScheduleProps> = ({
   nextShuffleBlockNumber,
   blocksLeftBeforeRefetch,
   roundStartBlock,
+  variant = "page",
 }) => {
+  const isCard = variant === "card";
   const { t, locale } = useI18n();
   const { username } = useAuth();
   const { witnessVotes } = useWitnessVoteChain(username ?? "");
@@ -57,11 +62,28 @@ const WitnessSchedule: React.FC<WitnessScheduleProps> = ({
   );
 
   return (
-    <div className="bg-theme rounded-xl shadow-lg w-full p-4">
-      <div className="mb-3">
-        <PageTitle titleKey={t("witnessSchedule.title")} classic />
+    <div
+      className={cn(
+        "bg-theme rounded-xl shadow-lg w-full",
+        isCard ? "px-2 pb-3" : "p-4"
+      )}
+    >
+      {isCard && (
+        <CardHeaderWithLink
+          title={t("witnessSchedule.title")}
+          href="/schedule"
+          className="-mx-2 mb-2"
+        />
+      )}
+      <div className={isCard ? "mb-2 px-1" : "mb-3"}>
+        {!isCard && <PageTitle titleKey={t("witnessSchedule.title")} classic />}
 
-        <p className="text-sm text-gray-500 dark:text-gray-400">
+        <p
+          className={cn(
+            "text-gray-500 dark:text-gray-400",
+            isCard ? "text-[11px]" : "text-sm"
+          )}
+        >
           {t("witnessSchedule.nextShuffle")}:{" "}
           {Number(nextShuffleBlockNumber).toLocaleString(locale)}{" "}
           <span className="text-green-500">

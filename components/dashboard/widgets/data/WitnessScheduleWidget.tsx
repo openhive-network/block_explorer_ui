@@ -80,6 +80,7 @@ const WitnessScheduleWidget: React.FC<WitnessScheduleWidgetProps> = ({
         nextShuffleBlockNumber={nextShuffleBlockNumber}
         blocksLeftBeforeRefetch={blocksLeftBeforeRefetch}
         roundStartBlock={earliestBlockInRound}
+        variant="card"
       />
     </div>
   );
