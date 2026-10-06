@@ -73,7 +73,7 @@ export default function Navbar() {
             </div>
             <div
               className={cn(
-                "fixed top-0 right-0 p-5 w-full h-full translate-x-full duration-500 z-50",
+                "fixed top-0 right-0 p-5 w-full h-full overflow-y-auto overscroll-contain translate-x-full duration-500 z-50",
                 { "translate-x-0": menuOpen }
               )}
               style={{

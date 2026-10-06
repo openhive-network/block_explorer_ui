@@ -3,6 +3,10 @@ export interface TieGroupPage {
   rows: { rank: number; account: string }[];
 }
 
+// Raw balances are parsed to doubles; past 2^53 adding 1 no longer changes the
+// value, so "balance + 1" bounds stop being strict. Callers must branch on this.
+export const isSafeForPlusOne = (n: number) => n + 1 > n;
+
 // The API's largest page; keeps the search to a few requests for big groups.
 export const TIE_PAGE_SIZE = 1000;
 

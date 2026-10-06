@@ -87,14 +87,14 @@ const ReportSearchRanges: React.FC<ReportSearchRangesProps> = ({
 
   // Match SegmentedToggle (size "md") so all pills in a report line up.
   const pill =
-    "px-3.5 py-1.5 text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-400";
+    "px-2 py-1.5 text-sm font-medium sm:px-3.5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-400";
   const pillActive = "bg-indigo-500 text-white";
   const pillIdle = "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300";
 
   return (
     <div
       className={cn(
-        "inline-flex flex-shrink-0 overflow-hidden rounded border border-gray-200 font-medium dark:border-gray-700",
+        "inline-flex max-w-full flex-shrink-0 flex-wrap overflow-hidden rounded border border-gray-200 font-medium dark:border-gray-700",
         className
       )}
       role="group"

@@ -139,6 +139,44 @@ const getCirculatingBaseRaw = (
   return systemBalance < total ? total - systemBalance : total;
 };
 
+interface FindAccountInputProps {
+  value: string;
+  syncNonce: number;
+  onChange: (value: string) => void;
+  placeholder: string;
+}
+
+// Owns the typed text so a keystroke re-renders this input, not the whole page
+// and its holders table. The page pushes a value in by bumping syncNonce.
+const FindAccountInput: React.FC<FindAccountInputProps> = ({
+  value,
+  syncNonce,
+  onChange,
+  placeholder,
+}) => {
+  const [text, setText] = useState(value);
+  const seenNonce = useRef(syncNonce);
+  useEffect(() => {
+    if (seenNonce.current === syncNonce) return;
+    seenNonce.current = syncNonce;
+    setText(value);
+  }, [syncNonce, value]);
+
+  return (
+    <AutoCompleteInput
+      value={text}
+      onChange={(v) => {
+        setText(v);
+        onChange(v);
+      }}
+      placeholder={placeholder}
+      inputType="account_name"
+      className="w-full"
+      inputClassName="!rounded !border !border-solid !border-gray-300 !bg-white dark:!border-gray-600 dark:!bg-gray-800"
+    />
+  );
+};
+
 export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
   const { t, locale } = useI18n();
   const router = useRouter();
@@ -156,7 +194,7 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
   const prefilledInputs = useRef(false);
   const [minInput, setMinInput] = useState("");
   const [maxInput, setMaxInput] = useState("");
-  const [accountSearch, setAccountSearch] = useState("");
+  const [searchSync, setSearchSync] = useState(0);
   const [searchTarget, setSearchTarget] = useState<string | null>(null);
   const [searchNonce, setSearchNonce] = useState(0);
   const [searchError, setSearchError] = useState<string | null>(null);
@@ -166,6 +204,10 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
   const [jumpNonce, setJumpNonce] = useState(0);
   const foundAccountRef = useRef<string | null>(null);
   const accountSearchRef = useRef("");
+  const prefillAccountSearch = (value: string) => {
+    accountSearchRef.current = value;
+    setSearchSync((n) => n + 1);
+  };
   const foundRowRef = useRef<HTMLTableRowElement>(null);
   const scrollPending = useRef(false);
   const [rangeError, setRangeError] = useState<string | null>(null);
@@ -243,8 +285,7 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
     // Deep link from a profile badge: locate and highlight that account.
     if (typeof qAccount === "string" && qAccount.trim()) {
       const acct = qAccount.trim().toLowerCase().replace(/^@/, "");
-      setAccountSearch(acct);
-      accountSearchRef.current = acct;
+      prefillAccountSearch(acct);
       setSearchTarget(acct);
       setSearchNonce((n) => n + 1);
     }
@@ -354,6 +395,9 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
   };
 
   const applyRange = () => {
+    // HP amounts can't be converted until the vesting ratio has loaded.
+    if (coinType === "VESTS" && unit === "hp" && !vestingRatios?.vestsPerHive)
+      return;
     const parse = (s: string): number | undefined | "invalid" => {
       const v = s.trim();
       if (v === "") return undefined;
@@ -383,8 +427,7 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
     setMaxBalance(undefined);
     setMinInput("");
     setMaxInput("");
-    setAccountSearch("");
-    accountSearchRef.current = "";
+    prefillAccountSearch("");
     setPage(1);
     clearSelection();
   };
@@ -403,8 +446,7 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
     setMaxInput("");
     setPage(Math.max(1, Math.ceil(rank / pageSize)));
     if (account) {
-      setAccountSearch(account);
-      accountSearchRef.current = account;
+      prefillAccountSearch(account);
       setFoundAccount(account);
       foundAccountRef.current = account;
       scrollPending.current = true;
@@ -424,7 +466,6 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
   }, [holdersData, jumpNonce]);
 
   const onAccountSearchChange = (v: string) => {
-    setAccountSearch(v);
     accountSearchRef.current = v;
     if (searchError) setSearchError(null);
     if (v.trim() === "") {
@@ -566,7 +607,9 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
     "topHolders.export"
   )}_${currentUnitLabel.toLowerCase()}.csv`;
 
-  const HolderRow = ({
+  // Called as plain functions, not components: an inline component gets a new
+  // identity each render, which remounts every row on any state change.
+  const renderHolderRow = ({
     rank,
     account,
     value,
@@ -578,6 +621,7 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
     index: number;
   }) => {
     const displayRank = rank > 0 ? rank : index + 1 + (page - 1) * pageSize;
+    // Approximate: Number() rounds raw VESTS past 2^53, on both sides of the ratio.
     const raw = Number(value) || 0;
     const share = circulatingBaseRaw
       ? Math.min(1, raw / circulatingBaseRaw)
@@ -671,7 +715,7 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
     );
   };
 
-  const TableHeaderRow = () => (
+  const renderTableHeader = () => (
     <TableHeader>
       <TableRow className="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-start">
         <TableHead className="px-2 sm:px-4">{t("topHolders.rank")}</TableHead>
@@ -751,13 +795,11 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
             >
               <div className="flex w-full flex-col gap-y-2 sm:w-[260px]">
                 <Label className="text-xs">{t("topHolders.findAccount")}</Label>
-                <AutoCompleteInput
-                  value={accountSearch}
+                <FindAccountInput
+                  value={accountSearchRef.current}
+                  syncNonce={searchSync}
                   onChange={onAccountSearchChange}
                   placeholder={t("topHolders.findAccountPlaceholder")}
-                  inputType="account_name"
-                  className="w-full"
-                  inputClassName="!rounded !border !border-solid !border-gray-300 !bg-white dark:!border-gray-600 dark:!bg-gray-800"
                 />
               </div>
               <Button
@@ -1073,17 +1115,16 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
                 enableMobileScrollArrows
                 enableCompactToggle
               >
-                <TableHeaderRow />
+                {renderTableHeader()}
                 <TableBody data-testid="table-body">
-                  {holdersData.map((holder, index) => (
-                    <HolderRow
-                      key={holder.account}
-                      rank={holder.rank}
-                      account={holder.account}
-                      value={holder.value}
-                      index={index}
-                    />
-                  ))}
+                  {holdersData.map((holder, index) =>
+                    renderHolderRow({
+                      rank: holder.rank,
+                      account: holder.account,
+                      value: holder.value,
+                      index,
+                    })
+                  )}
                 </TableBody>
               </Table>
             )}
