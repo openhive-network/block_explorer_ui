@@ -293,7 +293,7 @@ const PowerActivityTable: React.FC<PowerActivityTableProps> = ({
           count={totalOperations}
           dataType="common.operations"
         />
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 ms-auto">
           <div
             className="inline-flex items-stretch rounded-full border border-navbar-border overflow-hidden text-xs"
             role="group"
