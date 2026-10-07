@@ -190,7 +190,7 @@ const AccountProxyPowerCard: React.FC<AccountProxyPowerCardProps> = ({
         </div>
       </CardHeader>
       <CardContent hidden={isPropertiesHidden} className="p-0">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 p-3">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-2 p-3">
           <KpiTile
             icon={<Zap size={14} className="text-explorer-orange" />}
             label={
@@ -265,7 +265,7 @@ const AccountProxyPowerCard: React.FC<AccountProxyPowerCardProps> = ({
           <TableHeader>
             <TableRow>
               <TableCell
-                className="cursor-pointer w-28 p-1"
+                className="cursor-pointer w-28 p-1 ps-4"
                 onClick={() => sortBy("account")}
               >
                 <span className="flex items-center whitespace-nowrap">
@@ -282,7 +282,7 @@ const AccountProxyPowerCard: React.FC<AccountProxyPowerCardProps> = ({
                 </span>
               </TableCell>
               <TableCell
-                className="cursor-pointer text-right p-1"
+                className="cursor-pointer text-right p-1 pe-4"
                 onClick={() => sortBy("proxied_vests")}
               >
                 <span className="flex items-center justify-end whitespace-nowrap">
@@ -296,7 +296,7 @@ const AccountProxyPowerCard: React.FC<AccountProxyPowerCardProps> = ({
             {accountProxyPower.map((proxy) => (
               <Fragment key={proxy.account}>
                 <TableRow className="text-sm">
-                  <TableCell className="w-28 p-1">
+                  <TableCell className="w-28 p-1 ps-4">
                     <Link className="text-link" href={`/@${proxy.account}`}>
                       {proxy.account}
                     </Link>
@@ -304,7 +304,7 @@ const AccountProxyPowerCard: React.FC<AccountProxyPowerCardProps> = ({
                   <TableCell className="p-1 w-28">
                     {formatAndDelocalizeTime(proxy.proxy_date)}
                   </TableCell>
-                  <TableCell className="text-right whitespace-nowrap p-1">
+                  <TableCell className="text-right p-1 pe-4">
                     {isHP ? (
                       <>
                         {hiveChain && dynamicGlobalData?.headBlockDetails && (
@@ -340,12 +340,14 @@ const KpiTile: React.FC<{
   sub?: string;
   icon?: React.ReactNode;
 }> = ({ label, value, sub, icon }) => (
-  <div className="rounded-md border border-gray-200 dark:border-gray-700 bg-theme px-3 py-2 shadow-sm">
+  <div className="min-w-0 rounded-md border border-gray-200 dark:border-gray-700 bg-theme px-3 py-2 shadow-sm">
     <div className="text-[11px] text-gray-500 dark:text-gray-400 mb-0.5 flex items-center gap-1 uppercase tracking-wide">
       {icon}
       <span>{label}</span>
     </div>
-    <div className="text-sm font-semibold leading-tight">{value}</div>
+    <div className="text-sm font-semibold leading-tight break-words">
+      {value}
+    </div>
     {sub && (
       <div className="text-[10px] text-gray-400 mt-0.5 break-words">{sub}</div>
     )}
