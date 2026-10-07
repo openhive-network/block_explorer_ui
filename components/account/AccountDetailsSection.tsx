@@ -716,6 +716,11 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
               isInitiallyOpen={false}
               dynamicGlobalData={dynamicGlobalData}
             />
+            <AccountHpActivityCard
+              header={t("accountDetailsSection.hpActivity")}
+              userDetails={accountDetails}
+              isInitiallyOpen={false}
+            />
             <AccountBalanceHistoryCard
               header={t("accountDetailsSection.balanceHistory")}
               userDetails={accountDetails}
