@@ -243,11 +243,9 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
 
   const isCommunity = !!communityDetails;
 
-  const CollapsibleCards = ({
-    isInitiallyOpen,
-  }: {
-    isInitiallyOpen: boolean;
-  }) => (
+  // A plain render function: as a component declared here it would be a new
+  // type on every render and remount every card, losing their open state.
+  const renderCollapsibleCards = (isInitiallyOpen: boolean) => (
     <div className="space-y-4">
       <AccountRecurrentTransfersCard
         direction="outgoing"
@@ -752,7 +750,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
             </TooltipProvider>
           </div>
           <div key={areAllCardsOpen ? "open" : "closed"} className="space-y-4">
-            <CollapsibleCards isInitiallyOpen={areAllCardsOpen} />
+            {renderCollapsibleCards(areAllCardsOpen)}
           </div>
         </div>
       )}
