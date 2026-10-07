@@ -778,6 +778,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
       />
       <AccountFollowingDialog
         accountName={accountName}
+        totalCount={accountDetails.following_count}
         isFollowingOpen={isAccountFollowingModalOpen}
         changeFollowingDialogue={handleOpenAccountFollowingModal}
       />

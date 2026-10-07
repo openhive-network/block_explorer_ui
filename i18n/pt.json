@@ -1372,7 +1372,6 @@
   "accountFollowersDialog.followersDataType": "Seguidores",
   "accountFollowersDialog.noResultsFound": "Nenhum seguidor encontrado que corresponda à sua pesquisa.",
   "accountFollowersDialog.followerHeader": "Seguidor",
-  "accountFollowingDialog.title": "Contas seguidas por",
   "accountFollowingDialog.searchPlaceholder": "Pesquisar contas...",
   "accountFollowingDialog.followingDataType": "Seguindo",
   "accountFollowingDialog.noResultsFound": "Nenhuma conta encontrada que corresponda à sua pesquisa.",

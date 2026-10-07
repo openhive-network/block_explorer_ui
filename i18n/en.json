@@ -1372,7 +1372,6 @@
   "accountFollowersDialog.followersDataType": "Followers",
   "accountFollowersDialog.noResultsFound": "No followers found matching your search.",
   "accountFollowersDialog.followerHeader": "Follower",
-  "accountFollowingDialog.title": "Accounts followed by",
   "accountFollowingDialog.searchPlaceholder": "Search accounts...",
   "accountFollowingDialog.followingDataType": "Following",
   "accountFollowingDialog.noResultsFound": "No accounts found matching your search.",

@@ -70,7 +70,10 @@ export type ExplorerNodeApi = {
       Hive.AccountFollower[]
     >;
     get_accounts: TWaxApiRequest<unknown[], FindAccountsResponse[]>;
-    get_following: TWaxApiRequest<{ account: string }, Hive.AccountFollowing>;
+    get_following: TWaxApiRequest<
+      { account: string; start: string; limit: number },
+      Hive.AccountFollowing[]
+    >;
     list_proposals: TWaxApiRequest<
       [
         start: (string | number)[],
@@ -939,11 +942,20 @@ class FetchingService {
 
     return allFollowers;
   }
-  async getAccountFollowing(account: string): Promise<Hive.AccountFollowing> {
-    const params = { account };
-    return await this.extendedHiveChain!.api.condenser_api.get_following(
-      params
-    );
+  // One alphabetical batch; `start` is the last name of the previous batch.
+  async getAccountFollowPage(
+    type: "followers" | "following",
+    account: string,
+    start: string,
+    limit: number
+  ): Promise<string[]> {
+    const api = this.extendedHiveChain!.api.condenser_api;
+    const params = { account, start, limit };
+    const names =
+      type === "followers"
+        ? (await api.get_followers(params)).map((row) => row.follower)
+        : (await api.get_following(params)).map((row) => row.following);
+    return names[0] === start ? names.slice(1) : names;
   }
 
   async getCommunityDetails(name: string): Promise<Hive.CommunityDetails> {

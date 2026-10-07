@@ -1372,7 +1372,6 @@
   "accountFollowersDialog.followersDataType": "متابعون",
   "accountFollowersDialog.noResultsFound": "لم يتم العثور على متابعين يطابقون بحثك.",
   "accountFollowersDialog.followerHeader": "متابع",
-  "accountFollowingDialog.title": "الحسابات التي يتابعها",
   "accountFollowingDialog.searchPlaceholder": "ابحث في الحسابات...",
   "accountFollowingDialog.followingDataType": "يتابع",
   "accountFollowingDialog.noResultsFound": "لم يتم العثور على حسابات تطابق بحثك.",

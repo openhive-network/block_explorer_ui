@@ -1372,7 +1372,6 @@
   "accountFollowersDialog.followersDataType": "粉丝",
   "accountFollowersDialog.noResultsFound": "未找到与您的搜索匹配的粉丝。",
   "accountFollowersDialog.followerHeader": "粉丝",
-  "accountFollowingDialog.title": "关注的帐户",
   "accountFollowingDialog.searchPlaceholder": "搜索帐户...",
   "accountFollowingDialog.followingDataType": "关注中",
   "accountFollowingDialog.noResultsFound": "未找到与您的搜索匹配的帐户。",

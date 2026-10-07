@@ -1372,7 +1372,6 @@
   "accountFollowersDialog.followersDataType": "フォロワー",
   "accountFollowersDialog.noResultsFound": "検索に一致するフォロワーが見つかりませんでした。",
   "accountFollowersDialog.followerHeader": "フォロワー",
-  "accountFollowingDialog.title": "がフォローしているアカウント",
   "accountFollowingDialog.searchPlaceholder": "アカウントを検索...",
   "accountFollowingDialog.followingDataType": "フォロー中",
   "accountFollowingDialog.noResultsFound": "検索に一致するアカウントが見つかりませんでした。",
