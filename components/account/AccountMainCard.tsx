@@ -453,42 +453,41 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
           )}
         </>
       )}
+      {isForCommunity && (
+        <div
+          onClick={handlePropertiesVisibility}
+          className={cn(
+            "flex justify-between items-center cursor-pointer px-4 pt-4",
+            isPropertiesHidden && "pb-4"
+          )}
+        >
+          <div className="flex items-center gap-2">
+            <h3 className="text-lg font-semibold" title={accountDetails.name}>
+              {accountDetails.name}
+            </h3>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger onClick={(e) => e.stopPropagation()}>
+                  <Info
+                    size={14}
+                    className="text-gray-400 dark:text-gray-500 cursor-help"
+                  />
+                </TooltipTrigger>
+                <TooltipContent>
+                  {t("accountMainCard.creatorTooltip")}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+          {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
+        </div>
+      )}
       {!isPropertiesHidden && (
         <CardContent
           hidden={isPropertiesHidden}
-          className={cn("p-4 flex flex-col gap-5", isForCommunity && "pt-6")}
+          className={cn("p-4 flex flex-col gap-5", isForCommunity && "pt-3")}
         >
           <>
-            {isForCommunity && (
-              <div
-                onClick={handlePropertiesVisibility}
-                className="flex justify-between items-center cursor-pointer -mt-2 -mb-2"
-              >
-                <div className="flex items-center gap-2">
-                  <h3
-                    className="text-lg font-semibold"
-                    title={accountDetails.name}
-                  >
-                    {accountDetails.name}
-                  </h3>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <Info
-                          size={14}
-                          className="text-gray-400 dark:text-gray-500 cursor-help"
-                        />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        {t("accountMainCard.creatorTooltip")}
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-                {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
-              </div>
-            )}
-
             <div className="grid grid-cols-[repeat(auto-fit,minmax(110px,1fr))] gap-3">
               <StatCard
                 icon={<UserPlus size={20} />}
