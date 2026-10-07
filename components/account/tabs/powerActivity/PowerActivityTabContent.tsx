@@ -29,6 +29,7 @@ import HpMomentumChart from "@/components/home/HpMomentumChart";
 
 export interface PowerActivityTabSearchParams {
   accountName?: string;
+  activeTab?: string;
   vestingFilter: Hive.VestingHistoryFilter;
   granularity: "daily" | "monthly" | "yearly";
   fromBlock: Date | number | undefined;

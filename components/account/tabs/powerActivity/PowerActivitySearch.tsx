@@ -246,6 +246,7 @@ const PowerActivitySearch: React.FC<PowerActivitySearchProps> = ({
     setParams({
       ...defaultPowerActivityTabSearchParams,
       accountName: paramsState.accountName,
+      activeTab: paramsState.activeTab,
     });
     setRangeSelectKey("lastTime");
     setTimeUnitSelectKey("days");
