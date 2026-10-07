@@ -89,11 +89,11 @@ const CommentsTabContent: React.FC<CommnetsTabContentProps> = ({
   }, [router.isReady, router.query.accountName]);
   const hasActiveFilters = Boolean(
     (paramsState.filters?.length ?? 0) ||
-      paramsState.fromBlock ||
-      (paramsState.toBlock && paramsState.history.length < 2) ||
-      paramsState.startDate ||
-      paramsState.endDate ||
-      paramsState.commentType !== "all"
+    paramsState.fromBlock ||
+    (paramsState.toBlock && (paramsState.history?.length ?? 0) < 2) ||
+    paramsState.startDate ||
+    paramsState.endDate ||
+    paramsState.commentType !== "all"
   );
 
   useEffect(() => {
