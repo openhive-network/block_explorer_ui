@@ -56,14 +56,18 @@ const useBalanceHistory = (
     ? moment(fromDate).format("YYYY-MM-DDTHH:mm:ss")
     : undefined;
 
+  // Prices come in daily buckets, so an open range ends at the end of today:
+  // the current second would make a new query on every render.
   const end = toDate
     ? moment(toDate).format("YYYY-MM-DDTHH:mm:ss")
-    : moment().format("YYYY-MM-DDTHH:mm:ss");
+    : moment().endOf("day").format("YYYY-MM-DDTHH:mm:ss");
 
   const { marketHistory } = useMarketHistory(86400, start, end);
 
   const getHistoryWithHivePrice = () => {
-    if (!marketHistory || !accountBalanceHistory) return [];
+    if (!accountBalanceHistory) return [];
+    // No prices yet, or the price request failed: show the balances without them.
+    if (!marketHistory) return accountBalanceHistory;
 
     const udatedOperationResult = accountBalanceHistory?.operations_result?.map(
       (balance: any) => {
