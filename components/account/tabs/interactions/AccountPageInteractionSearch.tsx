@@ -94,7 +94,7 @@ const AccountPageInteractionSearch: React.FC<
 
   const onClickSearchButton = () => {
     setLastSearchKey("comment");
-    handleCommentsSearch(accountName, permlink);
+    handleCommentsSearch(accountName, permlink, paramsState.filters ?? null);
     refetchCommentSearchData();
   };
 
