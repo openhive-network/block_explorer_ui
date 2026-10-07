@@ -1367,7 +1367,6 @@
   "languageSelector.portuguese": "Português",
   "languageSelector.romanian": "Romeno",
   "languageSelector.arabic": "Árabe",
-  "accountFollowersDialog.title": "Seguidores",
   "accountFollowersDialog.searchPlaceholder": "Pesquisar seguidores...",
   "accountFollowersDialog.followersDataType": "Seguidores",
   "accountFollowersDialog.noResultsFound": "Nenhum seguidor encontrado que corresponda à sua pesquisa.",

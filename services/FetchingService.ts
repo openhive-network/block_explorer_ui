@@ -905,43 +905,6 @@ class FetchingService {
     );
   }
 
-  async getAccountFollowers(account: string): Promise<Hive.AccountFollower[]> {
-    const allFollowers: Hive.AccountFollower[] = [];
-    let start = "";
-    const limit = 1000; // The maximum number of followers to fetch per API call.
-
-    while (true) {
-      try {
-        const params = { account, start, limit };
-        const results: Hive.AccountFollower[] =
-          await this.extendedHiveChain!.api.condenser_api.get_followers(params);
-
-        // If the API returns an empty array, we have finished fetching all pages.
-        if (results.length === 0) {
-          break;
-        }
-
-        let followersToProcess = results;
-        if (start && results[0].follower === start) {
-          followersToProcess = results.slice(1);
-        }
-
-        if (followersToProcess.length > 0) {
-          allFollowers.push(...followersToProcess);
-        }
-
-        if (results.length < limit) {
-          break;
-        }
-
-        start = results[results.length - 1].follower;
-      } catch (error) {
-        throw error;
-      }
-    }
-
-    return allFollowers;
-  }
   // One alphabetical batch; `start` is the last name of the previous batch.
   async getAccountFollowPage(
     type: "followers" | "following",

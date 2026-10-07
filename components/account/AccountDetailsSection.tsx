@@ -773,6 +773,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
       />
       <AccountFollowersDialog
         accountName={accountName}
+        totalCount={accountDetails.follower_count}
         isFollowersOpen={isAccountFollowersModalOpen}
         changeFollowersDialogue={handleOpenAccountFollowersModal}
       />
