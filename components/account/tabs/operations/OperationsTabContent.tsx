@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { TabsContent } from "@/components/ui/tabs";
 import useURLParams from "@/hooks/common/useURLParams";
+import { useTabs } from "@/contexts/TabsContext";
 import {
   cn,
   convertBooleanArrayToIds,
@@ -61,11 +62,11 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
     toBlock: toBlockParam,
     fromDate: fromDateParam,
     toDate: toDateParam,
-    activeTab,
     direction,
   } = paramsState;
 
-  const isOperationsTabActive = !activeTab || activeTab === "operations";
+  const { activeTab } = useTabs();
+  const isOperationsTabActive = activeTab === "operations";
 
   const accountOperationsProps = {
     accountName,
@@ -85,7 +86,10 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
     accountOperations,
     isAccountOperationsLoading,
     refetchAccountOperations,
-  } = useAccountOperations(accountOperationsProps as any, liveDataEnabled);
+  } = useAccountOperations(accountOperationsProps as any, liveDataEnabled, {
+    // This tab stays mounted while others are shown: fetch only when it is the one in view.
+    enabled: isOperationsTabActive,
+  });
 
   const {
     handleLoadNextBlocks,
@@ -174,11 +178,11 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
 
   const hasActiveFilters = Boolean(
     (filtersParam?.length ?? 0) ||
-      fromBlockParam ||
-      (paramsState.toBlock && paramsState.history.length < 2) ||
-      fromDateParam ||
-      toDateParam ||
-      paramsState.direction
+    fromBlockParam ||
+    (paramsState.toBlock && paramsState.history.length < 2) ||
+    fromDateParam ||
+    toDateParam ||
+    paramsState.direction
   );
 
   useEffect(() => {
@@ -303,10 +307,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
                 </label>
               ) : null}
             </div>
-            <Button
-              onClick={handleClearFilter}
-              data-testid="clear-filters"
-            >
+            <Button onClick={handleClearFilter} data-testid="clear-filters">
               {t("common.clear")}
             </Button>
           </div>
