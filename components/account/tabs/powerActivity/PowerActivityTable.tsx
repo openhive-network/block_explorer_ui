@@ -19,7 +19,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/hybrid-tooltip";
 import CopyButton from "@/components/ui/CopyButton";
-import CustomPagination from "@/components/CustomPagination";
+import AccountPagination from "@/components/account/AccountPagination";
 import DataCountMessage from "@/components/DataCountMessage";
 import DataExport from "@/components/DataExport";
 import NoResult from "@/components/NoResult";
@@ -55,7 +55,7 @@ interface PowerActivityTableProps {
   filter: Hive.VestingHistoryFilter;
   onFilterChange: (filter: Hive.VestingHistoryFilter) => void;
   page: number | undefined;
-  onPageChange: (page: number) => void;
+  onPageChange: (page: number | undefined) => void;
   fromBlock?: Date | number | undefined;
   toBlock?: Date | number | undefined;
 }
@@ -181,11 +181,12 @@ const PowerActivityTable: React.FC<PowerActivityTableProps> = ({
   const isLoading =
     isAccountVestingHistoryLoading || isAccountVestingHistoryFetching;
 
-  const updatePageInUrl = (newPage: number) => {
+  const updatePageInUrl = (newPage: number | undefined) => {
     onPageChange(newPage);
+    const { page: _page, ...rest } = router.query;
     router.push({
       pathname: router.pathname,
-      query: { ...router.query, page: newPage.toString() },
+      query: newPage ? { ...rest, page: newPage.toString() } : rest,
     });
   };
 
@@ -273,13 +274,10 @@ const PowerActivityTable: React.FC<PowerActivityTableProps> = ({
     <div>
       {totalPages > 1 && (
         <div className="sticky z-20 top-[7rem] md:top-[7.5rem] scroll-mt-[7.5rem]">
-          <CustomPagination
-            currentPage={page ?? 1}
-            onPageChange={updatePageInUrl}
-            pageSize={config.standardPaginationSize}
-            totalCount={totalOperations}
-            className="rounded"
-            isMirrored={false}
+          <AccountPagination
+            page={page ?? totalPages}
+            setPage={updatePageInUrl}
+            operationsCount={totalOperations}
           />
         </div>
       )}
