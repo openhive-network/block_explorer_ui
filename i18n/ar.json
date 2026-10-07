@@ -818,7 +818,7 @@
   "commentPermlinkResultTable.trxId": "معرف المعاملة",
   "commentPermlinkResultTable.copyTransactionId": "نسخ معرف المعاملة",
   "commentPermlinkResultTable.permlinksDataType": "روابط دائمة",
-  "commentPermlinkResultTable.viewComments": "عرض التعليقات على هذا الرابط الدائم",
+  "commentPermlinkResultTable.showInteractions": "عرض التفاعلات",
   "languageSelector.english": "الإنجليزية",
   "languageSelector.spanish": "الإسبانية",
   "languageSelector.italian": "الإيطالية",

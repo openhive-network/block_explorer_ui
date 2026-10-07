@@ -818,7 +818,7 @@
   "commentPermlinkResultTable.trxId": "Trx Id",
   "commentPermlinkResultTable.copyTransactionId": "Copy transaction ID",
   "commentPermlinkResultTable.permlinksDataType": "permlinks",
-  "commentPermlinkResultTable.viewComments": "View comments on this permlink",
+  "commentPermlinkResultTable.showInteractions": "Show interactions",
   "languageSelector.english": "English",
   "languageSelector.spanish": "Español",
   "languageSelector.italian": "Italiano",

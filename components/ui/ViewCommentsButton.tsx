@@ -16,7 +16,7 @@ interface ViewCommentsButtonProps {
 
 const ViewCommentsButton: React.FC<ViewCommentsButtonProps> = ({ onClick }) => {
   const { t } = useI18n();
-  const label = t("commentPermlinkResultTable.viewComments");
+  const label = t("commentPermlinkResultTable.showInteractions");
 
   return (
     <TooltipProvider>
