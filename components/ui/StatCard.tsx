@@ -30,7 +30,7 @@ const StatCard = ({
         {
           "hover:bg-slate-200 dark:hover:bg-slate-700/80 transition-colors cursor-pointer":
             !!onClick,
-          "cursor-help": !!tooltipContent,
+          "cursor-help": !!tooltipContent && !onClick,
         }
       )}
       onClick={onClick}

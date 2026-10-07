@@ -98,6 +98,12 @@ export default function Account() {
     setIsDesktopAccountDetailsCollapsed,
   ] = useState(false);
 
+  // A stat tile in the mobile panel switches tab or filter: close the panel to show it.
+  // Declared before the wallet effect so ?section=wallet still opens the panel.
+  useEffect(() => {
+    setShowMobileAccountDetails(false);
+  }, [router.query.activeTab, router.query.filters]);
+
   // "My wallet" lands here with ?section=wallet: bring the account panel into view.
   useEffect(() => {
     if (router.query.section !== "wallet") return;

@@ -44,6 +44,7 @@ import { useI18n } from "../../i18n/i18n";
 import TimeAgo from "timeago-react";
 import useProposalVoteCount from "@/hooks/api/accountPage/useProposalVoteCount";
 import useAccountTopHolderRank from "@/hooks/api/common/useAccountTopHolderRank";
+import useAccountCreationOperation from "@/hooks/api/accountPage/useAccountCreationOperation";
 import WitnessVoteButton from "@/components/Witnesses/WitnessVoteButton";
 import SetProxyButton from "@/components/Witnesses/SetProxyButton";
 import moment from "moment";
@@ -102,6 +103,24 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
   const [shareOpen, setShareOpen] = useState(false);
   const handlePropertiesVisibility = () => {
     setIsPropertiesHidden(!isPropertiesHidden);
+  };
+
+  const openCommentsTab = () => {
+    router.push(
+      { pathname: `/@${accountName}`, query: { activeTab: "comments" } },
+      undefined,
+      { shallow: true }
+    );
+  };
+
+  const { creationOperation } = useAccountCreationOperation(accountName);
+  const openCreationOperation = () => {
+    if (!creationOperation) return;
+    const { block, trxId, operationId } = creationOperation;
+    const params = new URLSearchParams();
+    if (trxId) params.append("trxId", trxId);
+    params.append("opId", String(operationId));
+    router.push(`/block/${block}?${params.toString()}`);
   };
 
   const { manabarsData } = useManabars(accountName, liveDataEnabled);
@@ -506,6 +525,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                 label={t("accountMainCard.lastActive")}
                 value={lastActiveValue}
                 tooltipContent={<p>{t("accountMainCard.lastActiveTooltip")}</p>}
+                onClick={openCommentsTab}
               />
               <StatCard
                 icon={<CalendarDays size={20} />}
@@ -520,6 +540,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                   />
                 }
                 tooltipContent={<p>{accountDetails.created}</p>}
+                onClick={creationOperation ? openCreationOperation : undefined}
               />
               <StatCard
                 icon={<Vote size={20} />}
@@ -531,11 +552,12 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                     (proposalVoteCount ?? 0).toLocaleString(locale)
                   )
                 }
-                onClick={() => {
-                  if (proposalVoteCount && proposalVoteCount > 0) {
-                    router.push(`/proposals?q=${accountName}&status='all'`);
-                  }
-                }}
+                onClick={
+                  proposalVoteCount && proposalVoteCount > 0
+                    ? () =>
+                        router.push(`/proposals?q=${accountName}&status=all`)
+                    : undefined
+                }
               />
               {governanceHealthProps && (
                 <StatCard
