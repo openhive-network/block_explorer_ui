@@ -1378,7 +1378,6 @@
   "accountMainCard.subscriptions": "コミュニティ",
   "accountSubscriptionsDialog.title": "コミュニティの購読",
   "accountSubscriptionsDialog.searchPlaceholder": "コミュニティを検索...",
-  "accountSubscriptionsDialog.subscriptionsDataType": "購読",
   "accountSubscriptionsDialog.noResultsFound": "検索に一致する購読が見つかりませんでした。",
   "accountSubscriptionsDialog.communityHeader": "コミュニティ",
   "accountSubscriptionsDialog.communityID": "コミュニティID",

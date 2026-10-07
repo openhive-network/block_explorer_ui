@@ -1378,7 +1378,6 @@
   "accountMainCard.subscriptions": "커뮤니티",
   "accountSubscriptionsDialog.title": "커뮤니티 구독",
   "accountSubscriptionsDialog.searchPlaceholder": "커뮤니티 검색...",
-  "accountSubscriptionsDialog.subscriptionsDataType": "구독",
   "accountSubscriptionsDialog.noResultsFound": "검색과 일치하는 구독을 찾을 수 없습니다.",
   "accountSubscriptionsDialog.communityHeader": "커뮤니티",
   "accountSubscriptionsDialog.communityID": "커뮤니티 ID",

@@ -1378,7 +1378,6 @@
   "accountMainCard.subscriptions": "Communautés",
   "accountSubscriptionsDialog.title": "Abonnements aux Communautés",
   "accountSubscriptionsDialog.searchPlaceholder": "Rechercher des communautés...",
-  "accountSubscriptionsDialog.subscriptionsDataType": "Abonnements",
   "accountSubscriptionsDialog.noResultsFound": "Aucun abonnement trouvé correspondant à votre recherche.",
   "accountSubscriptionsDialog.communityHeader": "Communauté",
   "accountSubscriptionsDialog.communityID": "ID de la Communauté",

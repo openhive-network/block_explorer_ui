@@ -1378,7 +1378,6 @@
   "accountMainCard.subscriptions": "社区",
   "accountSubscriptionsDialog.title": "社区订阅",
   "accountSubscriptionsDialog.searchPlaceholder": "搜索社区...",
-  "accountSubscriptionsDialog.subscriptionsDataType": "订阅",
   "accountSubscriptionsDialog.noResultsFound": "未找到与您的搜索匹配的订阅。",
   "accountSubscriptionsDialog.communityHeader": "社区",
   "accountSubscriptionsDialog.communityID": "社区ID",

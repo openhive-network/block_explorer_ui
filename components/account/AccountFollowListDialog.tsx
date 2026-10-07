@@ -1,11 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { Download, Loader2, Search, X } from "lucide-react";
+import { Download, Loader2 } from "lucide-react";
 
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import ReportDialogHeader from "@/components/ui/ReportDialogHeader";
 import HiveAvatar from "@/components/ui/HiveAvatar";
-import { Input } from "@/components/ui/input";
+import DialogSearchInput from "@/components/ui/DialogSearchInput";
 import NoResult from "@/components/NoResult";
 import { useI18n } from "@/i18n/i18n";
 import useAccountFollowList, {
@@ -208,34 +208,14 @@ const AccountFollowListDialog: React.FC<AccountFollowListDialogProps> = ({
           ) : (
             <>
               <div className="sticky top-0 z-20 -mt-1 flex flex-wrap items-center gap-3 bg-theme pb-3 pt-1">
-                <div className="relative w-full sm:w-80">
-                  <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-                  <Input
-                    value={filter}
-                    onChange={(e) => {
-                      setFilter(e.target.value);
-                      setRevealCount(REVEAL_STEP);
-                    }}
-                    placeholder={searchPlaceholder}
-                    aria-label={searchPlaceholder}
-                    autoComplete="off"
-                    spellCheck={false}
-                    className="h-9 w-full rounded-full bg-theme pe-9 ps-9"
-                  />
-                  {filter && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setFilter("");
-                        setRevealCount(REVEAL_STEP);
-                      }}
-                      aria-label={t("common.clear")}
-                      className="absolute end-2 top-1/2 -translate-y-1/2 rounded-full p-1 text-gray-400 hover:text-text"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  )}
-                </div>
+                <DialogSearchInput
+                  value={filter}
+                  onChange={(value) => {
+                    setFilter(value);
+                    setRevealCount(REVEAL_STEP);
+                  }}
+                  placeholder={searchPlaceholder}
+                />
                 {(query || isWorking) && (
                   <span
                     className="flex items-center gap-2 text-xs tabular-nums text-gray-500 dark:text-gray-400"
