@@ -128,6 +128,7 @@ export default function Account() {
   const {
     formattedAccountDetails: accountDetails,
     notFound,
+    loadFailed,
     isAccountDetailsLoading,
   } = useConvertedAccountDetails(
     accountNameFromRoute,
@@ -208,6 +209,14 @@ export default function Account() {
 
   if (routeAccountName && !routeAccountName.startsWith("@")) {
     return <ErrorPage />;
+  }
+
+  if (loadFailed && !isAccountDetailsLoading) {
+    return (
+      <ErrorPage
+        errorMessage={`${routeAccountName} : ${t("common.errorLoadingData")}`}
+      />
+    );
   }
 
   if (notFound && !isAccountDetailsLoading) {

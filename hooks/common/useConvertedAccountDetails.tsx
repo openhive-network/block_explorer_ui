@@ -35,8 +35,12 @@ const useConvertedAccountDetails = (
   };
 
   const { hiveChain } = useHiveChainContext();
-  const { accountDetails, notFound, isAccountDetailsLoading } =
-    useAccountDetails(accountName, liveDataEnabled);
+  const {
+    accountDetails,
+    notFound,
+    isAccountDetailsLoading,
+    isAccountDetailsError,
+  } = useAccountDetails(accountName, liveDataEnabled);
   const { accountBalancesData, accountBalancesDataLoading } =
     useAccountBalances(accountName);
   const { recurrentTransfers } = useAccountRecurrentTransfers(
@@ -73,6 +77,8 @@ const useConvertedAccountDetails = (
     return {
       formattedAccountDetails: undefined,
       notFound: !accountDetails,
+      // Set when the requests failed, as opposed to the account not existing.
+      loadFailed: isAccountDetailsError && accountDetails !== null,
       isAccountDetailsLoading,
       balancesUnavailable: false,
     };

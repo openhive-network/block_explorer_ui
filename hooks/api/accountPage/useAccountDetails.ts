@@ -30,8 +30,12 @@ const useAccountDetails = (accountName: string, liveDataEnabled: boolean) => {
   const getAccountDetails = async (accountName: string) => {
     if (!accountName) return;
 
-    const accountDetails = await fetchingService.getAccount(accountName);
+    // An unknown name comes back as an empty list; anything thrown past this
+    // point is a failed request, not a missing account.
     const { accounts } = await fetchingService.findAccounts([accountName]);
+    if (!accounts.length) return null;
+
+    const accountDetails = await fetchingService.getAccount(accountName);
     const { follower_count, following_count } =
       await fetchingService.getAccountFollowCount(accountName);
     const subscriptions =
@@ -92,8 +96,7 @@ const useAccountDetails = (accountName: string, liveDataEnabled: boolean) => {
     accountDetails,
     isAccountDetailsLoading,
     isAccountDetailsError,
-    notFound:
-      !isAccountDetailsLoading && accountDetails && accountDetails.id === null,
+    notFound: !isAccountDetailsLoading && accountDetails === null,
   };
 };
 
