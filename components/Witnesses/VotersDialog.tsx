@@ -115,15 +115,16 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
     accountName,
     accountDetails ? !!accountDetails?.is_witness : true
   );
-  const { witnessVoters, isWitnessVotersLoading } = useWitnessVoters(
-    accountName,
-    isVotersOpen,
-    isAsc,
-    sortKey,
-    liveDataEnabled,
-    pageNum,
-    activeVoterName
-  );
+  const { witnessVoters, isWitnessVotersLoading, isWitnessVotersRefreshing } =
+    useWitnessVoters(
+      accountName,
+      isVotersOpen,
+      isAsc,
+      sortKey,
+      liveDataEnabled,
+      pageNum,
+      activeVoterName
+    );
   const { witnessVoters: chartData } = useWitnessVoters(
     accountName,
     isVotersOpen,
@@ -374,7 +375,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                   </div>
                 </div>
 
-                {isWitnessVotersLoading ? (
+                {isWitnessVotersLoading || isWitnessVotersRefreshing ? (
                   <div className="flex justify-center items-center h-64">
                     <Loader2 className="animate-spin h-8 w-8 text-brand" />
                   </div>
