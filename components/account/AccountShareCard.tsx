@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Download, Link2, Check } from "lucide-react";
+import { Download, Link2, Check, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { useI18n } from "@/i18n/i18n";
 import fetchingService from "@/services/FetchingService";
@@ -85,7 +86,7 @@ const AccountShareCard: React.FC<Props> = ({ accountName, accountDetails }) => {
     return d;
   }, []);
 
-  const { data: rawAccount } = useQuery({
+  const { data: rawAccount, isLoading: isAccountLoading } = useQuery({
     queryKey: ["share_card_account", accountName],
     queryFn: () => fetchingService.getAccount(accountName),
     enabled: !!accountName,
@@ -93,18 +94,19 @@ const AccountShareCard: React.FC<Props> = ({ accountName, accountDetails }) => {
     refetchOnWindowFocus: false,
   });
 
-  const { witnessDetails } = useWitnessDetails(
+  const { witnessDetails, isWitnessDetailsLoading } = useWitnessDetails(
     accountName,
     !!accountDetails.is_witness
   );
-  const { entries: topHolderEntries } = useAccountTopHolderRank(accountName);
-  const { data: finRows } = useFinancialSummary(
+  const { entries: topHolderEntries, isLoading: isTopHolderLoading } =
+    useAccountTopHolderRank(accountName);
+  const { data: finRows, isLoading: isFinRowsLoading } = useFinancialSummary(
     accountName,
     from1y,
     undefined,
     "month"
   );
-  const { data: vestsHistory } = useQuery({
+  const { data: vestsHistory, isLoading: isVestsHistoryLoading } = useQuery({
     queryKey: ["share_card_vests_hist", accountName],
     queryFn: () =>
       fetchingService.geAccountAggregatedtBalanceHistory(
@@ -123,6 +125,16 @@ const AccountShareCard: React.FC<Props> = ({ accountName, accountDetails }) => {
   const g = dynamicGlobalData?.headBlockDetails;
   const canConvert =
     !!hiveChain && !!g?.rawTotalVestingShares && !!g?.rawTotalVestingFundHive;
+
+  // Until every source has answered the card still shows placeholder zeros,
+  // so it must not be downloadable yet. A failed source counts as answered.
+  const isPreparing =
+    !canConvert ||
+    isAccountLoading ||
+    isFinRowsLoading ||
+    isVestsHistoryLoading ||
+    isTopHolderLoading ||
+    (!!accountDetails.is_witness && isWitnessDetailsLoading);
   const toHp = useMemo(() => {
     if (!canConvert) return null;
     return (vests: string): number => {
@@ -359,10 +371,14 @@ const AccountShareCard: React.FC<Props> = ({ accountName, accountDetails }) => {
         <button
           type="button"
           onClick={handleDownload}
-          disabled={downloading}
+          disabled={downloading || isPreparing}
           className="inline-flex items-center gap-2 rounded-lg bg-indigo-500 px-4 py-2 text-sm font-bold text-white disabled:opacity-60"
         >
-          <Download className="h-4 w-4" />
+          {downloading || isPreparing ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Download className="h-4 w-4" />
+          )}
           {t("accountShareCard.download")}
         </button>
         <button
@@ -380,9 +396,13 @@ const AccountShareCard: React.FC<Props> = ({ accountName, accountDetails }) => {
             : t("accountShareCard.copyLink")}
         </button>
         <a
-          href={svgDataUri}
+          href={isPreparing ? undefined : svgDataUri}
           download={`hivescan-${accountName}.svg`}
-          className="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-bold dark:border-gray-600"
+          aria-disabled={isPreparing}
+          className={cn(
+            "inline-flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-bold dark:border-gray-600",
+            isPreparing && "pointer-events-none opacity-60"
+          )}
         >
           SVG
         </a>
