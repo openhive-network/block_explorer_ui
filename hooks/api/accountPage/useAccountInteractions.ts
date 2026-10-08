@@ -12,7 +12,8 @@ const useAccountInteractions = (
 ) => {
   const {
     data: interactions,
-    isLoading: isInteractionsLoading,
+    isLoading,
+    isPreviousData,
     isError: isInteractionsError,
   }: UseQueryResult<Hive.AccountInteractionRow[] | undefined> = useQuery({
     queryKey: [
@@ -36,6 +37,10 @@ const useAccountInteractions = (
     staleTime: 30 * 60 * 1000,
     refetchOnWindowFocus: false,
   });
+
+  // Data kept from the previous range counts as loading, so a report never
+  // shows the old numbers under the newly selected range.
+  const isInteractionsLoading = isLoading || isPreviousData;
 
   return {
     interactions,

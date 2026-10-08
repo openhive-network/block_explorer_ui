@@ -28,6 +28,9 @@ interface ReportSearchRangesProps {
   showAll?: boolean;
 }
 
+// The reports query by date, so the block-based modes are not offered here.
+const DATE_RANGE_MODES = ["lastTime", "timeRange"];
+
 const DEFAULT_PRESETS: { days: number; key: RangeKey }[] = [
   { days: 30, key: "30" },
   { days: 90, key: "90" },
@@ -35,8 +38,8 @@ const DEFAULT_PRESETS: { days: number; key: RangeKey }[] = [
 ];
 
 // Date-range control for the analytics reports: quick day presets plus a Custom
-// option that opens the full SearchRanges plugin (last-time / last-blocks /
-// block-range / time-range) in a popover — no inline layout shift. Shared across
+// option that opens the SearchRanges plugin (last-time / time-range) in a
+// popover — no inline layout shift. Shared across
 // reports; presets and the optional All pill are configurable per report.
 const ReportSearchRanges: React.FC<ReportSearchRangesProps> = ({
   onApply,
@@ -147,7 +150,12 @@ const ReportSearchRanges: React.FC<ReportSearchRangesProps> = ({
             {t("reportRange.customTitle")}
           </div>
           <SearchRanges
-            rangesProps={searchRanges}
+            rangesProps={{
+              ...searchRanges,
+              rangeSelectOptions: searchRanges.rangeSelectOptions.filter(
+                (option) => DATE_RANGE_MODES.includes(option.key)
+              ),
+            }}
             setIsSearchButtonDisabled={setIsSearchButtonDisabled}
           />
           <Button

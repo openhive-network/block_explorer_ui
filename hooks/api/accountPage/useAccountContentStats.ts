@@ -14,7 +14,8 @@ const useAccountContentStats = (
 ) => {
   const {
     data: accountContentStats,
-    isLoading: isAccountContentStatsLoading,
+    isLoading,
+    isPreviousData,
     isError: isAccountContentStatsError,
   }: UseQueryResult<Hive.AccountContentStatsResponse[] | undefined> = useQuery({
     queryKey: [
@@ -37,6 +38,10 @@ const useAccountContentStats = (
     keepPreviousData: true,
     staleTime: 30 * 60 * 1000,
   });
+
+  // Data kept from the previous range counts as loading, so a report never
+  // shows the old numbers under the newly selected range.
+  const isAccountContentStatsLoading = isLoading || isPreviousData;
 
   return {
     accountContentStats,
