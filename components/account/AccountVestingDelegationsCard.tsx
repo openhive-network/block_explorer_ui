@@ -1,6 +1,7 @@
 import { useState, Fragment, useEffect } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import { Card, CardContent, CardHeader } from "../ui/card";
 import {
@@ -28,18 +29,25 @@ type AccountVestingDelegationsCardProps = {
 
 const buildTableBody = (
   direction: "outgoing" | "incoming",
-  delegations: Explorer.VestingDelegation[]
+  delegations: Explorer.VestingDelegation[],
+  onRowClick: (blockNum: number, operationId: string) => void
 ) => {
   return delegations.map((delegation, index: number) => {
     return (
       <Fragment key={index}>
-        <TableRow>
+        <TableRow
+          className="cursor-pointer hover:bg-rowHover"
+          onClick={() =>
+            onRowClick(delegation.block_num, delegation.operation_id)
+          }
+        >
           <TableCell>{index + 1}</TableCell>
           <TableCell className="text-right break-words">
             {direction === "outgoing" ? (
               <Link
                 className="text-link"
                 href={`/@${delegation.delegatee}`}
+                onClick={(e) => e.stopPropagation()}
               >
                 {delegation.delegatee}
               </Link>
@@ -47,6 +55,7 @@ const buildTableBody = (
               <Link
                 className="text-link"
                 href={`/@${delegation.delegator}`}
+                onClick={(e) => e.stopPropagation()}
               >
                 {delegation.delegator}
               </Link>
@@ -73,9 +82,9 @@ const AccountVestingDelegationsCard: React.FC<
   forceOpen = false,
 }) => {
   const { t } = useI18n();
-  const [isPropertiesHidden, setIsPropertiesHidden] = useState(
-    !isInitiallyOpen
-  );
+  const router = useRouter();
+  const [isPropertiesHidden, setIsPropertiesHidden] =
+    useState(!isInitiallyOpen);
 
   useEffect(() => {
     if (forceOpen) {
@@ -100,6 +109,13 @@ const AccountVestingDelegationsCard: React.FC<
 
   const handlePropertiesVisibility = () => {
     setIsPropertiesHidden(!isPropertiesHidden);
+  };
+
+  // Same drill-down as the RC delegation cards: the block with the operation highlighted.
+  const handleRowClick = (blockNum: number, operationId: string) => {
+    const params = new URLSearchParams();
+    params.append("opId", operationId);
+    router.push(`/block/${blockNum}?${params.toString()}`);
   };
 
   const sortBy = (key: string) => {
@@ -167,7 +183,7 @@ const AccountVestingDelegationsCard: React.FC<
             </TableRow>
           </TableHeader>
           <TableBody className="text-sm">
-            {buildTableBody(direction, sortedDelegations)}
+            {buildTableBody(direction, sortedDelegations, handleRowClick)}
           </TableBody>
         </Table>
       </CardContent>
