@@ -14,6 +14,8 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { grabNumericValue, spacesToUnderscores } from "@/utils/StringUtils";
 import { Loader2 } from "lucide-react";
 import useConvertedVestingShares from "@/hooks/common/useConvertedVestingShares";
+import useVestingDelegations from "@/hooks/api/common/useVestingDelegations";
+import { config } from "@/Config";
 import { useRegisterReportExport } from "./reportExports";
 
 // --- Graph Configuration Constants ---
@@ -236,8 +238,10 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
   // State to track which nodes are currently being fetched, used to show a loading state.
   const [loadingNodes, setLoadingNodes] = useState(new Set<string>());
 
-  // State to hold the name of the next account to fetch data for, triggering the data-fetching hook.
-  const [accountToFetch, setAccountToFetch] = useState<string | null>(null);
+  // Accounts waiting for their delegations, fetched one at a time: a second
+  // click must queue up, not replace the one already loading.
+  const [fetchQueue, setFetchQueue] = useState<string[]>([]);
+  const accountToFetch = fetchQueue[0] ?? null;
 
   // State for the legend categories that are currently visible in the chart.
   const [activeLegendCategories, setActiveLegendCategories] = useState<
@@ -336,9 +340,38 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
         newSet.delete(accountToFetch);
         return newSet;
       });
-      setAccountToFetch(null);
+      setFetchQueue((queue) => queue.slice(1));
     }
   }, [accountToFetch, fetchedIncoming, fetchedOutgoing]);
+
+  // Same queries as above (shared cache), read only for their error state.
+  const { isVestingDelegationsError: isNodeFetchError } = useVestingDelegations(
+    accountToFetch || "",
+    null,
+    config.maxDelegatorsCount,
+    liveDataEnabled,
+    !!accountToFetch
+  );
+  const { isVestingDelegationsError: isMainFetchError } = useVestingDelegations(
+    accountName,
+    null,
+    config.maxDelegatorsCount,
+    liveDataEnabled
+  );
+
+  // A node whose request failed goes back to collapsed so it can be clicked again.
+  useEffect(() => {
+    if (!accountToFetch || !isNodeFetchError) return;
+    const failed = accountToFetch;
+    const without = (prev: Set<string>) => {
+      const next = new Set(prev);
+      next.delete(failed);
+      return next;
+    };
+    setLoadingNodes(without);
+    setExpandedNodes(without);
+    setFetchQueue((queue) => queue.slice(1));
+  }, [accountToFetch, isNodeFetchError]);
 
   // Effect to set up a ResizeObserver to keep the chart dimensions updated.
   useEffect(() => {
@@ -392,7 +425,7 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
       ])
     );
     setLoadingNodes(new Set());
-    setAccountToFetch(null);
+    setFetchQueue([]);
     setNodePositions(new Map());
   }, [data.incoming, data.outgoing, accountName]);
 
@@ -910,8 +943,7 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
     async (params: any) => {
       if (params.dataType !== "node" || isFullyExpanded) return;
       const clickedNodeId = params.data.id as string;
-      if (loadingNodes.has(clickedNodeId) || accountToFetch === clickedNodeId)
-        return;
+      if (loadingNodes.has(clickedNodeId)) return;
 
       if (clickedNodeId.startsWith("others-")) {
         const [, direction, parentAccount, pageStr] = clickedNodeId.split("-");
@@ -951,19 +983,16 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
           setExpandedNodes((prev) => new Set(prev).add(accountToToggle));
           if (!dataCache.has(accountToToggle)) {
             setLoadingNodes((prev) => new Set(prev).add(accountToToggle));
-            setAccountToFetch(accountToToggle);
+            setFetchQueue((queue) =>
+              queue.includes(accountToToggle)
+                ? queue
+                : [...queue, accountToToggle]
+            );
           }
         }
       }
     },
-    [
-      isFullyExpanded,
-      expandedNodes,
-      dataCache,
-      accountName,
-      loadingNodes,
-      accountToFetch,
-    ]
+    [isFullyExpanded, expandedNodes, dataCache, accountName, loadingNodes]
   );
 
   /**
@@ -973,6 +1002,14 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
     setIsFullyExpanded((prevState) => !prevState);
     setNodePositions(new Map());
   };
+
+  if ((!data.incoming || !data.outgoing) && isMainFetchError) {
+    return (
+      <div className="flex justify-center items-center w-full h-full">
+        <p className="text-sm text-red-500">{t("common.errorLoadingData")}</p>
+      </div>
+    );
+  }
 
   if (!data.incoming || !data.outgoing) {
     return (
