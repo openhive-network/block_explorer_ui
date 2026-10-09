@@ -1,23 +1,25 @@
-// hooks/api/accountPage/useCommunitySubscribers.ts
-
 import fetchingService from "@/services/FetchingService";
 import { config } from "@/Config";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import type Hive from "@/types/Hive";
 
 const SUBSCRIBERS_PAGE_LIMIT = config.standardPaginationSize;
 
-const useCommunitySubscribers = (communityName: string ) => {
+// The list is alphabetical; `startAfter` begins it right after that subscriber.
+const useCommunitySubscribers = (
+  communityName: string,
+  startAfter?: string
+) => {
   const {
     data,
-    isLoading : isCommunitySubscribersLoading,
-    isError :isCommunitySubscribersError,
+    isLoading: isCommunitySubscribersLoading,
+    isError: isCommunitySubscribersError,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery<Hive.CommunitySubscriber[]>({
-    queryKey: ["communitySubscribers", communityName],
-    queryFn: async ({ pageParam }) => {
+    queryKey: ["communitySubscribers", communityName, startAfter],
+    queryFn: async ({ pageParam = startAfter }) => {
       try {
         const rawResult = await fetchingService.getCommunitySubscribers(
           communityName,
@@ -25,21 +27,19 @@ const useCommunitySubscribers = (communityName: string ) => {
           SUBSCRIBERS_PAGE_LIMIT
         );
 
-        // 1. Check if the result is a valid array.
         if (!Array.isArray(rawResult)) {
           return [];
         }
 
-        // 2. Transform the array of arrays into an array of objects.
-        const transformedSubscribers = rawResult.map((subscriberTuple: any[]): Hive.CommunitySubscriber => {
-          return {
+        // Each entry arrives as [name, role, title, subscribed at].
+        return rawResult.map(
+          (subscriberTuple: any[]): Hive.CommunitySubscriber => ({
             name: subscriberTuple[0],
+            role: subscriberTuple[1],
+            title: subscriberTuple[2],
             created_at: subscriberTuple[3],
-          };
-        });
-
-        return transformedSubscribers;
-
+          })
+        );
       } catch (error: any) {
         return [];
       }
@@ -48,9 +48,7 @@ const useCommunitySubscribers = (communityName: string ) => {
       if (!lastPage || lastPage.length < SUBSCRIBERS_PAGE_LIMIT) {
         return undefined;
       }
-      const lastSubscriber = lastPage[lastPage.length - 1];
-      const nextCursor = lastSubscriber?.name;
-      return nextCursor;
+      return lastPage[lastPage.length - 1]?.name;
     },
     enabled: !!communityName,
     refetchOnWindowFocus: false,
@@ -66,6 +64,41 @@ const useCommunitySubscribers = (communityName: string ) => {
     hasNextPage,
     isFetchingNextPage,
   };
+};
+
+// Answers "is this account subscribed?" in one request: the node rejects a
+// list that starts after a name that is not a subscriber.
+export const useCommunitySubscriberLookup = (
+  communityName: string,
+  accountName: string
+) => {
+  const {
+    data: isSubscribed,
+    isFetching: isLookupLoading,
+    isError: isLookupError,
+  } = useQuery<boolean>({
+    queryKey: ["communitySubscriberLookup", communityName, accountName],
+    queryFn: async () => {
+      try {
+        await fetchingService.getCommunitySubscribers(
+          communityName,
+          accountName,
+          1
+        );
+        return true;
+      } catch (error: any) {
+        const text = `${error?.message ?? ""} ${JSON.stringify(error ?? {})}`;
+        if (/does not exist|invalid account name/i.test(text)) return false;
+        throw error;
+      }
+    },
+    enabled: !!communityName && !!accountName,
+    refetchOnWindowFocus: false,
+    retry: false,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  return { isSubscribed, isLookupLoading, isLookupError };
 };
 
 export default useCommunitySubscribers;

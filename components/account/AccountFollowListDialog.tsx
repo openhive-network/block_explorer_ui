@@ -5,6 +5,7 @@ import { Download, Loader2 } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import ReportDialogHeader from "@/components/ui/ReportDialogHeader";
 import HiveAvatar from "@/components/ui/HiveAvatar";
+import LetterSection from "@/components/ui/LetterSection";
 import DialogSearchInput from "@/components/ui/DialogSearchInput";
 import NoResult from "@/components/NoResult";
 import { useI18n } from "@/i18n/i18n";
@@ -240,29 +241,21 @@ const AccountFollowListDialog: React.FC<AccountFollowListDialogProps> = ({
               </div>
 
               {groups.map((group) => (
-                <section key={group.letter} className="mb-3">
-                  <div className="mb-1 flex items-center gap-3" dir="ltr">
-                    <span className="w-4 text-sm font-semibold uppercase text-indigo-500">
-                      {group.letter}
-                    </span>
-                    <span className="h-px flex-1 bg-navbar-border" />
-                  </div>
-                  <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-x-2">
-                    {group.names.map((name) => (
-                      <Link
-                        key={name}
-                        href={`/@${name}`}
-                        onClick={() => onOpenChange(false)}
-                        className="flex min-w-0 items-center gap-2.5 rounded-md px-2 py-1.5 hover:bg-rowHover focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500"
-                      >
-                        <HiveAvatar accountName={name} size={28} />
-                        <span className="truncate text-sm text-link">
-                          {renderName(name)}
-                        </span>
-                      </Link>
-                    ))}
-                  </div>
-                </section>
+                <LetterSection key={group.letter} letter={group.letter}>
+                  {group.names.map((name) => (
+                    <Link
+                      key={name}
+                      href={`/@${name}`}
+                      onClick={() => onOpenChange(false)}
+                      className="flex items-center gap-2.5 rounded-md px-2 py-1.5 hover:bg-rowHover focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500"
+                    >
+                      <HiveAvatar accountName={name} size={28} />
+                      <span className="whitespace-nowrap text-sm text-link">
+                        {renderName(name)}
+                      </span>
+                    </Link>
+                  ))}
+                </LetterSection>
               ))}
 
               {filtered.length === 0 && !hasNextPage && (
