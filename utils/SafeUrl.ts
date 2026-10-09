@@ -23,3 +23,8 @@ export const normalizeExternalUrl = (raw: unknown): string | null => {
     return null;
   }
 };
+
+// Where a user-supplied link may point: an in-app path as is, or a valid
+// http(s) address. Null means it must not be rendered as a link.
+export const resolveLinkTarget = (raw: unknown): string | null =>
+  isInAppPath(raw) ? raw.trim() : normalizeExternalUrl(raw);

@@ -3,7 +3,8 @@ import Explorer from "@/types/Explorer";
 import { config } from "@/Config";
 import { cn } from "@/lib/utils";
 import useWitnessDetails from "@/hooks/api/common/useWitnessDetails";
-import { Link, Star } from "lucide-react";
+import { Star } from "lucide-react";
+import WitnessUrlIcon from "@/components/account/WitnessUrlIcon";
 
 import { useEffect, useState } from "react";
 import { isBadActor } from "@/utils/badActors";
@@ -87,13 +88,11 @@ const MobileAccountNameCard: React.FC<MobileAccountNameCardProps> = ({
                     </span>
                   )}
                   {witnessDetails?.url && isWitnessActive && (
-                    <a
-                      href={witnessDetails.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <Link size={15} strokeWidth={3} />
-                    </a>
+                    <WitnessUrlIcon
+                      url={witnessDetails.url}
+                      size={15}
+                      strokeWidth={3}
+                    />
                   )}
                 </div>
               )}

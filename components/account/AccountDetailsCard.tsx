@@ -16,6 +16,7 @@ import useElementWidth from "@/hooks/common/useElementWidth";
 import { formatIntegerString } from "@/lib/utils";
 import { useI18n } from "@/i18n/i18n";
 import useCollapsedState from "@/hooks/common/useCollapsedState";
+import { resolveLinkTarget } from "@/utils/SafeUrl";
 
 type AccountDetailsCardProps = {
   header: string;
@@ -112,9 +113,11 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
     }
     if (URL_KEYS.includes(key)) {
       const stringProperty = userDetails[key] as string;
+      const href = resolveLinkTarget(stringProperty);
+      if (!href) return stringProperty;
       return (
         <div className="text-link">
-          <Link href={stringProperty || ""} target="_blank" rel="noreferrer">
+          <Link href={href} target="_blank" rel="noreferrer">
             {stringProperty}
           </Link>
         </div>
