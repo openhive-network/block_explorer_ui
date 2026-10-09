@@ -443,6 +443,8 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                                     <Link
                                       className="text-link"
                                       href={`/@${voter.voter_name}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
                                       data-testid="voter-name"
                                     >
                                       {voter.voter_name}

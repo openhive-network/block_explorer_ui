@@ -249,7 +249,8 @@ const AccountFollowListDialog: React.FC<AccountFollowListDialogProps> = ({
                     <Link
                       key={name}
                       href={`/@${name}`}
-                      onClick={() => onOpenChange(false)}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="flex items-center gap-2.5 rounded-md px-2 py-1.5 hover:bg-rowHover focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500"
                     >
                       <HiveAvatar accountName={name} size={28} />

@@ -161,7 +161,8 @@ const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
               <Link
                 key={row.name}
                 href={`/@${row.name}`}
-                onClick={onClose}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="flex items-center gap-2.5 rounded-md px-2 py-1.5 hover:bg-rowHover focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500"
               >
                 <HiveAvatar accountName={row.name} alt="" size={28} />

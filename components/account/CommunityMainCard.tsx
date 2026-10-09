@@ -98,6 +98,8 @@ const TeamMember = ({ memberTuple }: { memberTuple: TeamMemberTuple }) => {
   return (
     <Link
       href={`/@${name}`}
+      target="_blank"
+      rel="noopener noreferrer"
       className="flex items-start gap-3 p-2 rounded-lg transition-colors hover:bg-slate-100 dark:hover:bg-slate-800/50"
     >
       <HiveAvatar
