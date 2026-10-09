@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import CustomPagination from "../CustomPagination";
 
-const PAGE_SIZE = config.standardPaginationSize;;
+const PAGE_SIZE = config.standardPaginationSize;
 
 import { formatNumber } from "@/lib/utils";
 import { Card, CardContent, CardHeader } from "../ui/card";
@@ -23,6 +23,7 @@ import {
 import { useI18n } from "../../i18n/i18n";
 import DataExport from "../DataExport";
 import { config } from "@/Config";
+import useCollapsedState from "@/hooks/common/useCollapsedState";
 
 type AccountIncomingRcDelegationsCardProps = {
   delegations?: IncomingRcDelegation[];
@@ -40,7 +41,9 @@ const buildTableBody = (
       <Fragment key={index}>
         <TableRow
           className="cursor-pointer hover:bg-rowHover"
-          onClick={() => onRowClick(delegation.block_num, delegation.operation_id)}
+          onClick={() =>
+            onRowClick(delegation.block_num, delegation.operation_id)
+          }
         >
           <TableCell>{offset + index + 1}</TableCell>
           <TableCell className="text-right break-words">
@@ -61,14 +64,13 @@ const buildTableBody = (
   });
 };
 
-const AccountIncomingRcDelegationsCard: React.FC<AccountIncomingRcDelegationsCardProps> = ({
-  delegations,
-  isInitiallyOpen,
-  accountName,
-}) => {
+const AccountIncomingRcDelegationsCard: React.FC<
+  AccountIncomingRcDelegationsCardProps
+> = ({ delegations, isInitiallyOpen, accountName }) => {
   const { t } = useI18n();
   const router = useRouter();
-  const [isPropertiesHidden, setIsPropertiesHidden] = useState(!isInitiallyOpen);
+  const [isPropertiesHidden, setIsPropertiesHidden] =
+    useCollapsedState(isInitiallyOpen);
 
   const [sortConfig, setSortConfig] = useState<{
     key: string;
@@ -117,7 +119,12 @@ const AccountIncomingRcDelegationsCard: React.FC<AccountIncomingRcDelegationsCar
       return {
         [t("common.order")]: index + 1,
         [t("delegationSort.Delegator")]: delegation.delegator,
-        [t("delegationSort.Amount")]: formatNumber(delegation.max_rc, false, true, 0),
+        [t("delegationSort.Amount")]: formatNumber(
+          delegation.max_rc,
+          false,
+          true,
+          0
+        ),
       };
     });
   };
@@ -133,7 +140,8 @@ const AccountIncomingRcDelegationsCard: React.FC<AccountIncomingRcDelegationsCar
           className="h-full flex justify-between align-center p-2 hover:bg-rowHover cursor-pointer px-4"
         >
           <div className="text-lg">
-            {t("accountIncomingRcDelegationsCard.delegations")} ({delegations.length})
+            {t("accountIncomingRcDelegationsCard.delegations")} (
+            {delegations.length})
           </div>
           <div className="flex items-center space-x-2">
             <DataExport
@@ -150,10 +158,16 @@ const AccountIncomingRcDelegationsCard: React.FC<AccountIncomingRcDelegationsCar
       <CardContent hidden={isPropertiesHidden}>
         <Table className="table-fixed">
           <TableHeader className="text-base">
-            <TableRow>{buildTableHead(sortBy, key, isAscending, t, "incoming")}</TableRow>
+            <TableRow>
+              {buildTableHead(sortBy, key, isAscending, t, "incoming")}
+            </TableRow>
           </TableHeader>
           <TableBody className="text-sm">
-            {buildTableBody(pagedDelegations, handleRowClick, (currentPage - 1) * PAGE_SIZE)}
+            {buildTableBody(
+              pagedDelegations,
+              handleRowClick,
+              (currentPage - 1) * PAGE_SIZE
+            )}
           </TableBody>
         </Table>
         <CustomPagination

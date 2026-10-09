@@ -55,6 +55,7 @@ import {
 } from "@/utils/StringUtils";
 import { TabKey } from "../AccountDetailsSection";
 import { PendingAssetSymbol } from "@/utils/accountPendingItems";
+import useCollapsedState from "@/hooks/common/useCollapsedState";
 
 const OPEN_ORDER_FIELDS: Record<string, PendingAssetSymbol> = {
   open_orders_hive_amount: "HIVE",
@@ -885,7 +886,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
   onChangeTab,
 }) => {
   const { t } = useI18n();
-  const [isCardHidden, setIsCardHidden] = useState(!isInitiallyOpen);
+  const [isCardHidden, setIsCardHidden] = useCollapsedState(isInitiallyOpen);
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     hive: false,
     hbd: false,
@@ -897,7 +898,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
     if (!focus) return;
     setIsCardHidden(false);
     setOpenSections({ hive: true, hbd: true, hp: true });
-  }, [focus]);
+  }, [focus, setIsCardHidden]);
   const [isOpenOrdersOpen, setIsOpenOrdersOpen] = useState(false);
   const [openOrdersSymbol, setOpenOrdersSymbol] =
     useState<PendingAssetSymbol>("HIVE");

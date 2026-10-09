@@ -1,4 +1,4 @@
-import { useState, useCallback, Fragment } from "react";
+import { useCallback, Fragment } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowDown, ArrowUp, Loader2 } from "lucide-react";
 import Link from "next/link";
@@ -9,6 +9,7 @@ import { config } from "@/Config";
 import fetchingService from "@/services/FetchingService";
 import { useI18n } from "@/i18n/i18n";
 import DataExport from "../DataExport";
+import useCollapsedState from "@/hooks/common/useCollapsedState";
 
 type AccountWitnessVotesCardProps = {
   voters: string[];
@@ -46,7 +47,7 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
 }) => {
   const { t } = useI18n();
   const [isPropertiesHidden, setIsPropertiesHidden] =
-    useState(!isInitiallyOpen);
+    useCollapsedState(isInitiallyOpen);
   const voters = [...initialVoters];
 
   const handlePropertiesVisibility = () => {

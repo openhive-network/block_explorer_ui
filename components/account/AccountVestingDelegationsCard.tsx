@@ -16,6 +16,7 @@ import { buildTableHead, handleSortDelegations } from "@/utils/DelegationsSort";
 import { capitalizeFirst } from "@/utils/StringUtils";
 import { useI18n } from "../../i18n/i18n";
 import DataExport from "../DataExport";
+import useCollapsedState from "@/hooks/common/useCollapsedState";
 
 type AccountVestingDelegationsCardProps = {
   id?: string;
@@ -84,13 +85,13 @@ const AccountVestingDelegationsCard: React.FC<
   const { t } = useI18n();
   const router = useRouter();
   const [isPropertiesHidden, setIsPropertiesHidden] =
-    useState(!isInitiallyOpen);
+    useCollapsedState(isInitiallyOpen);
 
   useEffect(() => {
     if (forceOpen) {
       setIsPropertiesHidden(false);
     }
-  }, [forceOpen]);
+  }, [forceOpen, setIsPropertiesHidden]);
 
   const [sortConfig, setSortConfig] = useState<{
     key: string;

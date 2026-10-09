@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from "react";
+import React, { Fragment } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import Link from "next/link";
 
@@ -15,6 +15,7 @@ import {
 import Hive from "@/types/Hive";
 import { useI18n } from "../../i18n/i18n";
 import DataExport from "../DataExport";
+import useCollapsedState from "@/hooks/common/useCollapsedState";
 
 type AccountWithdrawRoutesCardProps = {
   routes?: Hive.WithdrawVestingRoute[];
@@ -29,7 +30,7 @@ const AccountWithdrawRoutesCard: React.FC<AccountWithdrawRoutesCardProps> = ({
 }) => {
   const { t, locale } = useI18n();
   const [isPropertiesHidden, setIsPropertiesHidden] =
-    useState(!isInitiallyOpen);
+    useCollapsedState(isInitiallyOpen);
 
   if (!routes || !routes.length) {
     return null;

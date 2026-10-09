@@ -38,6 +38,7 @@ import {
   formatBlockchainTime,
   formatShortDuration,
 } from "@/utils/TimeUtils";
+import useCollapsedState from "@/hooks/common/useCollapsedState";
 
 type BaseTransfer = Omit<Hive.IncomingRecurrentTransfer, "from" | "amount"> &
   Omit<Hive.OutgoingRecurrentTransfer, "to" | "amount"> & {
@@ -60,7 +61,7 @@ const AccountRecurrentTransfersCard: React.FC<
 > = ({ direction, transfers, isInitiallyOpen, accountName }) => {
   const { t, locale } = useI18n();
   const [isPropertiesHidden, setIsPropertiesHidden] =
-    useState(!isInitiallyOpen);
+    useCollapsedState(isInitiallyOpen);
   const { hiveChain } = useHiveChainContext();
   const { dynamicGlobalData } = useDynamicGlobal();
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
