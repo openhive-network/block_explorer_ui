@@ -24,6 +24,7 @@ import {
 import { BaseReportProps } from "./reportRegistry";
 import { useRegisterReportExport } from "./reportExports";
 import HiveAvatar from "@/components/ui/HiveAvatar";
+import KpiTile from "@/components/ui/KpiTile";
 
 type TopNKey = "5" | "10" | "15";
 
@@ -67,26 +68,6 @@ const tileRichWithAvatar = (url: string, isRTL: boolean) => ({
     backgroundColor: { image: url },
   },
 });
-
-const Kpi: React.FC<{ label: string; value: string; sub?: string }> = ({
-  label,
-  value,
-  sub,
-}) => (
-  <div className="rounded-md border border-gray-200 dark:border-gray-700 bg-theme px-2.5 py-1.5">
-    <div className="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400 truncate">
-      {label}
-    </div>
-    <div className="text-sm font-semibold text-gray-800 dark:text-gray-100 break-words">
-      {value}
-      {sub && (
-        <span className="ms-1 text-xs font-normal text-gray-500 dark:text-gray-400 tabular-nums">
-          {sub}
-        </span>
-      )}
-    </div>
-  </div>
-);
 
 const CommunityActivityReport: React.FC<
   BaseReportProps & { fillHeight?: boolean }
@@ -436,21 +417,23 @@ const CommunityActivityReport: React.FC<
 
       {showChrome && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 shrink-0 mt-2">
-          <Kpi
+          <KpiTile
             label={t("communityActivity.kpiTotalContent")}
             value={stats.totalContent.toLocaleString(locale)}
           />
-          <Kpi
+          <KpiTile
             label={t("communityActivity.kpiCommunities")}
             value={stats.communityCount.toLocaleString(locale)}
           />
-          <Kpi
+          <KpiTile
             label={t("communityActivity.kpiTopCommunity")}
+            valueClassName="whitespace-normal break-words"
             value={stats.top ? stats.top.title : "—"}
             sub={stats.top ? stats.top.total.toLocaleString(locale) : undefined}
           />
-          <Kpi
+          <KpiTile
             label={t("communityActivity.kpiSplit")}
+            valueClassName="whitespace-normal break-words"
             value={`${stats.totalPosts.toLocaleString(locale)} / ${stats.totalComments.toLocaleString(locale)}`}
           />
         </div>

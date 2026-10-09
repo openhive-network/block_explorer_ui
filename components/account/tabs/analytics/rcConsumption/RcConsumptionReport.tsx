@@ -1,17 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Loader2, Cpu, Activity, Trophy, Info } from "lucide-react";
+import { Loader2, Cpu, Activity, Trophy } from "lucide-react";
 import moment from "moment";
 import { useI18n } from "@/i18n/i18n";
 import { cn } from "@/lib/utils";
 import SegmentedToggle from "@/components/ui/SegmentedToggle";
 import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipPortal,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import KpiTile from "@/components/ui/KpiTile";
 import { getOpHexColor } from "@/utils/operationColors";
 import { spacesToUnderscores } from "@/utils/StringUtils";
 import { formatRc, formatOpLabel } from "@/components/home/networkRcUtils";
@@ -224,37 +218,14 @@ const RcConsumptionReport: React.FC<
           <>
             <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
               {kpis.map(({ key, Icon, label, value, info }) => (
-                <div
+                <KpiTile
                   key={key}
-                  className="flex flex-col rounded-md border border-gray-200 bg-theme px-4 py-3 shadow-sm dark:border-gray-700"
-                >
-                  <div className="mb-1 flex items-start gap-1.5 text-xs text-gray-500">
-                    <Icon className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-                    <span className="min-w-0 break-words">{label}</span>
-                    {info && (
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <span className="shrink-0 cursor-help text-gray-400 hover:text-gray-500">
-                              <Info size={11} />
-                            </span>
-                          </TooltipTrigger>
-                          <TooltipPortal>
-                            <TooltipContent
-                              side="top"
-                              className="max-w-[240px] text-center text-[11px] normal-case"
-                            >
-                              {info}
-                            </TooltipContent>
-                          </TooltipPortal>
-                        </Tooltip>
-                      </TooltipProvider>
-                    )}
-                  </div>
-                  <div className="break-words text-base font-semibold">
-                    {value}
-                  </div>
-                </div>
+                  label={label}
+                  icon={<Icon className="h-3 w-3 shrink-0" />}
+                  infoText={info}
+                  valueClassName="whitespace-normal break-words"
+                  value={value}
+                />
               ))}
             </div>
 

@@ -24,6 +24,7 @@ import {
 import { BaseReportProps } from "./reportRegistry";
 import { useRegisterReportExport } from "./reportExports";
 import HiveAvatar from "@/components/ui/HiveAvatar";
+import KpiTile from "@/components/ui/KpiTile";
 
 type TopNKey = "5" | "10" | "15";
 
@@ -53,26 +54,6 @@ const avatarCard = (account: string, subtitleHtml: string) =>
       ${subtitleHtml}
     </div>
   </div>`;
-
-const Kpi: React.FC<{ label: string; value: string; sub?: string }> = ({
-  label,
-  value,
-  sub,
-}) => (
-  <div className="rounded-md border border-gray-200 dark:border-gray-700 bg-theme px-2.5 py-1.5">
-    <div className="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400 truncate">
-      {label}
-    </div>
-    <div className="text-sm font-semibold text-gray-800 dark:text-gray-100 break-words">
-      {value}
-      {sub && (
-        <span className="ms-1 text-xs font-normal text-gray-500 dark:text-gray-400 tabular-nums">
-          {sub}
-        </span>
-      )}
-    </div>
-  </div>
-);
 
 const SocialInteractionsReport: React.FC<
   BaseReportProps & { fillHeight?: boolean }
@@ -554,12 +535,13 @@ const SocialInteractionsReport: React.FC<
 
       {showChrome && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 shrink-0 mt-3">
-          <Kpi
+          <KpiTile
             label={t("socialInteractions.kpiUniquePartners")}
             value={stats.uniquePartners.toLocaleString(locale)}
           />
-          <Kpi
+          <KpiTile
             label={t("socialInteractions.kpiTopPartner")}
+            valueClassName="whitespace-normal break-words"
             value={stats.topPartner ? `@${stats.topPartner.account}` : "—"}
             sub={
               stats.topPartner
@@ -567,15 +549,16 @@ const SocialInteractionsReport: React.FC<
                 : undefined
             }
           />
-          <Kpi
+          <KpiTile
             label={t("socialInteractions.kpiDominantType")}
+            valueClassName="whitespace-normal break-words"
             value={
               stats.dominantType
                 ? t(`socialInteractions.type.${stats.dominantType}`)
                 : "—"
             }
           />
-          <Kpi
+          <KpiTile
             label={t("socialInteractions.kpiConcentration", { n: topN })}
             value={`${Math.round(stats.concentration * 100)}%`}
           />
