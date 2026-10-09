@@ -185,7 +185,7 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
   dynamicGlobalData,
   widgetId,
 }) => {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const { theme } = useTheme();
   const chartRef = useRef<ReactECharts>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -561,7 +561,7 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
             ]
           ),
           category: 2,
-          value: `${remaining.length} ${t("influenceMapReport.moreDelegations")} (${sumHP.toLocaleString()} HP)`,
+          value: `${remaining.length.toLocaleString(locale)} ${t("influenceMapReport.moreDelegations")} (${sumHP.toLocaleString(locale)} ${t("common.hp")})`,
           x: centerX + radius * Math.cos(angle),
           y: centerY + radius * Math.sin(angle),
           fixed: true,
@@ -569,7 +569,7 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
         links.push({
           source: "in-others-expanded",
           target: centralNodeId,
-          value: `${sumHP.toLocaleString()} HP`,
+          value: `${sumHP.toLocaleString(locale)} ${t("common.hp")}`,
           lineStyle: {
             width: scaleValue(sumAmount, [minAmount, maxAmount], [0.5, 8]),
           },
@@ -651,7 +651,7 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
             ]
           ),
           category: 4,
-          value: `${remaining.length} ${t("influenceMapReport.moreDelegations")} (${sumHP.toLocaleString()} HP)`,
+          value: `${remaining.length.toLocaleString(locale)} ${t("influenceMapReport.moreDelegations")} (${sumHP.toLocaleString(locale)} ${t("common.hp")})`,
           x: centerX + radius * Math.cos(angle),
           y: centerY + radius * Math.sin(angle),
           fixed: true,
@@ -659,7 +659,7 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
         links.push({
           source: centralNodeId,
           target: "out-others-expanded",
-          value: `${sumHP.toLocaleString()} HP`,
+          value: `${sumHP.toLocaleString(locale)} ${t("common.hp")}`,
           lineStyle: {
             width: scaleValue(sumAmount, [minAmount, maxAmount], [0.5, 8]),
           },
@@ -773,7 +773,7 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
             (sum, d) => sum + grabNumericValue(d.vesting_shares),
             0
           );
-          const tooltipValue = `${remaining.length} ${t("influenceMapReport.moreDelegations")} (${sumHP.toLocaleString()} HP)`;
+          const tooltipValue = `${remaining.length.toLocaleString(locale)} ${t("influenceMapReport.moreDelegations")} (${sumHP.toLocaleString(locale)} ${t("common.hp")})`;
           const othersId = `others-out-${parentAccountName}-${pages.outgoing}`;
           nodes.push({
             id: othersId,
@@ -836,7 +836,7 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
             (sum, d) => sum + grabNumericValue(d.vesting_shares),
             0
           );
-          const tooltipValue = `${remaining.length} ${t("influenceMapReport.moreDelegations")} (${sumHP.toLocaleString()} HP)`;
+          const tooltipValue = `${remaining.length.toLocaleString(locale)} ${t("influenceMapReport.moreDelegations")} (${sumHP.toLocaleString(locale)} ${t("common.hp")})`;
           const othersId = `others-in-${parentAccountName}-${pages.incoming}`;
           nodes.push({
             id: othersId,
@@ -873,6 +873,7 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
     );
     setActiveLegendCategories(currentActiveCategories);
   }, [
+    locale,
     accountName,
     chartDimensions,
     expandedNodes,
