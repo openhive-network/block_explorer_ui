@@ -1869,6 +1869,8 @@
   "accountOperationViewTabs.powerActivity": "パワーアクティビティ",
   "powerActivitySearch.eventType": "イベントタイプ",
   "activeFilters.eventType": "イベント: {{value}}",
+  "activeFilters.postType": "種類: {{value}}",
+  "activeFilters.permlink": "パーマリンク: {{value}}",
   "analyticsDashboard.centralHub": "中央ハブ",
   "analyticsDashboard.others": "その他",
   "analyticsDashboard.expandAll": "すべて展開",

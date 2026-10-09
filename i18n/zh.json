@@ -1869,6 +1869,8 @@
   "accountOperationViewTabs.powerActivity": "充能活动",
   "powerActivitySearch.eventType": "事件类型",
   "activeFilters.eventType": "事件：{{value}}",
+  "activeFilters.postType": "类型：{{value}}",
+  "activeFilters.permlink": "固定链接：{{value}}",
   "analyticsDashboard.centralHub": "中心枢纽",
   "analyticsDashboard.others": "其他",
   "analyticsDashboard.expandAll": "全部展开",

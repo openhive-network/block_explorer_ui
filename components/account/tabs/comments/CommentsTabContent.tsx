@@ -13,6 +13,10 @@ import { getLocalStorage } from "@/utils/LocalStorage";
 import useBlockNavigation from "@/hooks/common/useBlockNavigation";
 import BlockNavigation from "@/components/BlockNavigation";
 import { useI18n } from "@/i18n/i18n";
+import FilterChipsBar, {
+  FilterChip,
+  buildRangeChip,
+} from "@/components/ui/FilterChipsBar";
 
 interface CommnetsTabContentProps {
   isVisible: boolean;
@@ -108,8 +112,61 @@ const CommentsTabContent: React.FC<CommnetsTabContentProps> = ({
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasActiveFilters]);
 
+  const expandFilters = () => setIsVisible(true);
+  const commentType = paramsState.commentType ?? "all";
+
+  const resetRange = () =>
+    setParams({
+      ...paramsState,
+      fromBlock: undefined,
+      toBlock: undefined,
+      startDate: undefined,
+      endDate: undefined,
+      lastBlocks: undefined,
+      lastTime: DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS.lastTime,
+      timeUnit: DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS.timeUnit,
+      rangeSelectKey: "none",
+      history: undefined,
+      page: undefined,
+    });
+
+  const chips: FilterChip[] = [
+    {
+      key: "type",
+      label: t("activeFilters.postType", {
+        value: t(`postTypeSelector.commentTypes.${commentType}`),
+      }),
+      onRemove:
+        commentType !== "all"
+          ? () =>
+              setParams({ ...paramsState, commentType: "all", page: undefined })
+          : undefined,
+    },
+    buildRangeChip(
+      {
+        ...paramsState,
+        fromDate: paramsState.startDate,
+        toDate: paramsState.endDate,
+        // Paging through blocks sets toBlock on its own; that is not a filter.
+        toBlock:
+          (paramsState.history?.length ?? 0) < 2
+            ? paramsState.toBlock
+            : undefined,
+      },
+      t,
+      resetRange,
+      expandFilters
+    ),
+  ];
+
   return (
     <TabsContent value="comments">
+      <FilterChipsBar
+        sticky
+        chips={chips}
+        onExpand={expandFilters}
+        isLoading={permlinkSearchDataLoading}
+      />
       <Card
         className={cn(
           "mb-0 overflow-hidden transition-all duration-500 ease-in max-h-0 opacity-0",

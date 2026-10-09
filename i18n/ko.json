@@ -1869,6 +1869,8 @@
   "accountOperationViewTabs.powerActivity": "파워 활동",
   "powerActivitySearch.eventType": "이벤트 유형",
   "activeFilters.eventType": "이벤트: {{value}}",
+  "activeFilters.postType": "유형: {{value}}",
+  "activeFilters.permlink": "퍼머링크: {{value}}",
   "analyticsDashboard.centralHub": "중앙 허브",
   "analyticsDashboard.others": "기타",
   "analyticsDashboard.expandAll": "모두 펼치기",

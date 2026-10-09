@@ -13,6 +13,9 @@ import { cn, convertBooleanArrayToIds } from "@/lib/utils";
 import { DEFAULT_PARAMS } from "./AccountPageInteractionSearch";
 import { getLocalStorage } from "@/utils/LocalStorage";
 import { useI18n } from "@/i18n/i18n";
+import FilterChipsBar, { FilterChip } from "@/components/ui/FilterChipsBar";
+import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
+import { getOperationButtonTitle } from "@/utils/UI";
 
 interface InteractionsTabContentProps {
   isVisible: boolean;
@@ -35,7 +38,10 @@ const InteractionsTabContent: React.FC<InteractionsTabContentProps> = ({
     ""
   );
 
-  const { paramsState } = useURLParams(DEFAULT_PARAMS, ["accountName"]);
+  const { paramsState, setParams } = useURLParams(DEFAULT_PARAMS, [
+    "accountName",
+  ]);
+  const { operationsTypes } = useOperationsTypes();
 
   const props = {
     ...paramsState,
@@ -92,8 +98,49 @@ const InteractionsTabContent: React.FC<InteractionsTabContentProps> = ({
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paramsState, isFiltersActive]);
 
+  const selectedTypeIds = convertBooleanArrayToIds(paramsState.filters ?? []);
+  const typesTitle = getOperationButtonTitle(selectedTypeIds, operationsTypes);
+  const hasTypeFilter = (selectedTypeIds?.length ?? 0) > 0;
+  const permlink: string | undefined = paramsState.permlink;
+
+  const chips: FilterChip[] = [
+    ...(permlink
+      ? [
+          {
+            key: "permlink",
+            label: t("activeFilters.permlink", { value: permlink }),
+            onRemove: () =>
+              setParams({
+                ...paramsState,
+                permlink: undefined,
+                pageNumber: 1,
+              } as any),
+          },
+        ]
+      : []),
+    {
+      key: "types",
+      label:
+        (selectedTypeIds?.length ?? 0) > 1
+          ? typesTitle
+          : `${t("operationTypesDialog.operationTypes")}: ${
+              hasTypeFilter ? typesTitle : t("operationTypesDialog.all")
+            }`,
+      onRemove: hasTypeFilter
+        ? () =>
+            setParams({ ...paramsState, filters: null, pageNumber: 1 } as any)
+        : undefined,
+    },
+  ];
+
   return (
     <TabsContent value="interactions">
+      <FilterChipsBar
+        sticky
+        chips={chips}
+        onExpand={() => setIsVisible(true)}
+        isLoading={isCommentSearchDataFetching}
+      />
       <Card
         className={cn(
           "mb-4 overflow-hidden transition-all duration-500 ease-in max-h-0 opacity-0",

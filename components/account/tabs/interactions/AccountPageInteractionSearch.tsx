@@ -99,9 +99,7 @@ const AccountPageInteractionSearch: React.FC<
   };
 
   useEffect(() => {
-    if (paramsState.permlink) {
-      setPermlink(paramsState.permlink);
-    }
+    setPermlink(paramsState.permlink ?? "");
   }, [paramsState.permlink]);
 
   return (
