@@ -1,5 +1,5 @@
 import React from "react";
-import { Activity, Cpu, Layers, AppWindow, Info } from "lucide-react";
+import { Activity, Cpu, Layers, AppWindow } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/i18n/i18n";
 import {
@@ -9,6 +9,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import KpiTile from "@/components/ui/KpiTile";
 import Hive from "@/types/Hive";
 import { formatRc } from "./rcFootprintUtils";
 
@@ -29,7 +30,7 @@ const RcFootprintKpiStrip: React.FC<RcFootprintKpiStripProps> = ({
       Icon: Activity,
       label: t("rcFootprint.totalOps"),
       value: data.total_ops.toLocaleString(locale),
-      title: undefined as string | undefined,
+      exact: undefined as string | undefined,
       info: undefined as string | undefined,
     },
     {
@@ -37,7 +38,7 @@ const RcFootprintKpiStrip: React.FC<RcFootprintKpiStripProps> = ({
       Icon: Cpu,
       label: t("rcFootprint.totalRcEst"),
       value: formatRc(data.total_rc_estimated, locale),
-      title: `${data.total_rc_estimated.toLocaleString(locale)} RC`,
+      exact: `${data.total_rc_estimated.toLocaleString(locale)} RC`,
       info: t("rcFootprint.footprintEstimateNote"),
     },
     {
@@ -45,7 +46,7 @@ const RcFootprintKpiStrip: React.FC<RcFootprintKpiStripProps> = ({
       Icon: Layers,
       label: t("rcFootprint.topCategory"),
       value: data.top_category ?? t("rcFootprint.none"),
-      title: data.top_category ?? undefined,
+      exact: undefined,
       info: undefined,
     },
     {
@@ -53,47 +54,39 @@ const RcFootprintKpiStrip: React.FC<RcFootprintKpiStripProps> = ({
       Icon: AppWindow,
       label: t("rcFootprint.topDapp"),
       value: data.top_dapp ?? t("rcFootprint.none"),
-      title: data.top_dapp ?? undefined,
+      exact: undefined,
       info: undefined,
     },
   ];
 
   return (
     <div className={cn("grid gap-3", gridClassName)}>
-      {kpis.map(({ key, Icon, label, value, title, info }) => (
-        <div
+      {kpis.map(({ key, Icon, label, value, exact, info }) => (
+        <KpiTile
           key={key}
-          title={title}
-          className={cn(
-            "rounded-md border border-gray-200 dark:border-gray-700",
-            "bg-theme px-4 py-3 shadow-sm flex flex-col"
-          )}
-        >
-          <div className="flex items-start gap-1.5 text-xs text-gray-500 mb-1">
-            <Icon className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-            <span className="min-w-0 break-words">{label}</span>
-            {info && (
+          label={label}
+          icon={<Icon className="h-3 w-3 shrink-0" />}
+          infoText={info}
+          valueClassName="whitespace-normal break-words"
+          value={
+            exact ? (
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <span className="shrink-0 cursor-help text-gray-400 hover:text-gray-500">
-                      <Info size={11} />
-                    </span>
+                    <span>{value}</span>
                   </TooltipTrigger>
                   <TooltipPortal>
-                    <TooltipContent
-                      side="top"
-                      className="max-w-[240px] text-center text-[11px] normal-case"
-                    >
-                      {info}
+                    <TooltipContent side="top" className="text-[11px]">
+                      {exact}
                     </TooltipContent>
                   </TooltipPortal>
                 </Tooltip>
               </TooltipProvider>
-            )}
-          </div>
-          <div className="text-base font-semibold break-words">{value}</div>
-        </div>
+            ) : (
+              value
+            )
+          }
+        />
       ))}
     </div>
   );

@@ -1,6 +1,7 @@
 import React from "react";
 import { TrendingDown, TrendingUp, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
+import KpiTile from "@/components/ui/KpiTile";
 import { useI18n } from "@/i18n/i18n";
 import { formatCompact, computeTrendPct } from "@/utils/chartUtils";
 import { FilledRow, RewardRow, ActivityView } from "./contentActivityUtils";
@@ -37,32 +38,6 @@ const TrendBadge: React.FC<{ pct: number | null; locale: string }> = ({
     </span>
   );
 };
-
-const KpiTile: React.FC<{
-  label: string;
-  value: string;
-  pct: number | null;
-  dotColor: string;
-  locale: string;
-}> = ({ label, value, pct, dotColor, locale }) => (
-  <div className="flex-1 min-w-[110px] rounded-lg border border-gray-200 dark:border-gray-700 bg-explorer-extra-light-gray px-3 py-2 shadow-sm">
-    <div className="flex items-center gap-1.5 mb-1">
-      <span
-        className="inline-block h-2 w-2 rounded-[2px] shrink-0"
-        style={{ backgroundColor: dotColor }}
-      />
-      <span className="text-[10px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 break-words">
-        {label}
-      </span>
-    </div>
-    <div className="flex items-baseline gap-1.5">
-      <span className="text-lg font-bold leading-none text-explorer-dark-gray dark:text-text">
-        {value}
-      </span>
-      <TrendBadge pct={pct} locale={locale} />
-    </div>
-  </div>
-);
 
 const ContentActivityKpiStrip: React.FC<ContentActivityKpiStripProps> = ({
   rows,
@@ -144,7 +119,23 @@ const ContentActivityKpiStrip: React.FC<ContentActivityKpiStripProps> = ({
   return (
     <div className="flex flex-wrap gap-2">
       {tiles.map((tile) => (
-        <KpiTile key={tile.label} {...tile} locale={locale} />
+        <KpiTile
+          key={tile.label}
+          className="flex-1 min-w-[110px]"
+          label={tile.label}
+          icon={
+            <span
+              className="inline-block h-2 w-2 shrink-0 rounded-[2px]"
+              style={{ backgroundColor: tile.dotColor }}
+            />
+          }
+          value={
+            <span className="inline-flex items-baseline gap-1.5">
+              {tile.value}
+              <TrendBadge pct={tile.pct} locale={locale} />
+            </span>
+          }
+        />
       ))}
     </div>
   );
