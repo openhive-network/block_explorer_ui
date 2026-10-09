@@ -77,7 +77,7 @@ const Kpi: React.FC<{ label: string; value: string; sub?: string }> = ({
 const SocialInteractionsReport: React.FC<
   BaseReportProps & { fillHeight?: boolean }
 > = ({ accountName, widgetId, fillHeight = true }) => {
-  const { t, dir } = useI18n();
+  const { t, dir, locale } = useI18n();
   const isRtl = dir === "rtl";
   const { theme } = useTheme();
   const router = useRouter();
@@ -367,29 +367,29 @@ const SocialInteractionsReport: React.FC<
                 const breakdown = info.rows
                   .map(
                     (r) =>
-                      `${esc(labels.typeLabel(r.type))} <b>${r.count.toLocaleString()}</b>`
+                      `${esc(labels.typeLabel(r.type))} <b>${r.count.toLocaleString(locale)}</b>`
                   )
                   .join(" · ");
                 return avatarCard(
                   account,
-                  `<div style="font-size:11px;opacity:.85">${info.total.toLocaleString()} ${int} · ${pct}% ${t("socialInteractions.ofTotal")}</div>` +
+                  `<div style="font-size:11px;opacity:.85">${info.total.toLocaleString(locale)} ${int} · ${pct}% ${t("socialInteractions.ofTotal")}</div>` +
                     `<div style="font-size:11px;margin-top:2px">${breakdown}</div>`
                 );
               }
               // The account's own (You) node.
               return avatarCard(
                 account,
-                `<div style="font-size:11px;opacity:.85">${activeTotal.toLocaleString()} ${int} · ${stats.uniquePartners.toLocaleString()} ${t("socialInteractions.partners")}</div>`
+                `<div style="font-size:11px;opacity:.85">${activeTotal.toLocaleString(locale)} ${int} · ${stats.uniquePartners.toLocaleString(locale)} ${t("socialInteractions.partners")}</div>`
               );
             }
             if (name === labels.others) {
               const breakdown = othersInfo.rows
                 .map(
                   (r) =>
-                    `${esc(labels.typeLabel(r.type))} <b>${r.count.toLocaleString()}</b> <span style="opacity:.55">${r.accounts.toLocaleString()} ${t("socialInteractions.accounts")}</span>`
+                    `${esc(labels.typeLabel(r.type))} <b>${r.count.toLocaleString(locale)}</b> <span style="opacity:.55">${r.accounts.toLocaleString(locale)} ${t("socialInteractions.accounts")}</span>`
                 )
                 .join(" · ");
-              return `<div style="max-width:260px"><div style="font-weight:600">${esc(labels.others)}</div><div style="font-size:11px;opacity:.85">${othersInfo.total.toLocaleString()} ${int}</div><div style="font-size:11px;margin-top:2px">${breakdown}</div></div>`;
+              return `<div style="max-width:260px"><div style="font-weight:600">${esc(labels.others)}</div><div style="font-size:11px;opacity:.85">${othersInfo.total.toLocaleString(locale)} ${int}</div><div style="font-size:11px;margin-top:2px">${breakdown}</div></div>`;
             }
             return `<b>${esc(name)}</b>`;
           }
@@ -397,12 +397,12 @@ const SocialInteractionsReport: React.FC<
           // Read the ribbon from its own metadata rather than source/target —
           // RTL reverses those, but the meaning of the edge doesn't change.
           const link = params.data;
-          const count = Number(params.value).toLocaleString();
+          const count = Number(params.value).toLocaleString(locale);
           const typeName = esc(labels.typeLabel(link.interactionType));
           if (link.isOthers) {
             return `${typeName} → ${esc(labels.others)}<br/>${count} ${int} · ${Number(
               link.othersAccounts
-            ).toLocaleString()} ${t("socialInteractions.accounts")}`;
+            ).toLocaleString(locale)} ${t("socialInteractions.accounts")}`;
           }
           if (link.partner) {
             return avatarCard(
@@ -436,6 +436,7 @@ const SocialInteractionsReport: React.FC<
       ],
     }),
     [
+      locale,
       seriesNodes,
       sankey.links,
       textColor,
@@ -544,7 +545,7 @@ const SocialInteractionsReport: React.FC<
         {activeTotal > 0 && (
           <span className="text-sm text-gray-500 dark:text-gray-400">
             <span className="font-semibold text-gray-700 dark:text-gray-200 tabular-nums">
-              {activeTotal.toLocaleString()}
+              {activeTotal.toLocaleString(locale)}
             </span>{" "}
             {t("socialInteractions.interactions")}
           </span>
@@ -555,14 +556,14 @@ const SocialInteractionsReport: React.FC<
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 shrink-0 mt-3">
           <Kpi
             label={t("socialInteractions.kpiUniquePartners")}
-            value={stats.uniquePartners.toLocaleString()}
+            value={stats.uniquePartners.toLocaleString(locale)}
           />
           <Kpi
             label={t("socialInteractions.kpiTopPartner")}
             value={stats.topPartner ? `@${stats.topPartner.account}` : "—"}
             sub={
               stats.topPartner
-                ? stats.topPartner.count.toLocaleString()
+                ? stats.topPartner.count.toLocaleString(locale)
                 : undefined
             }
           />
@@ -634,7 +635,7 @@ const SocialInteractionsReport: React.FC<
                 />
                 {t(`socialInteractions.type.${type}`)}
                 <span className="tabular-nums opacity-80">
-                  {group.total.toLocaleString()}
+                  {group.total.toLocaleString(locale)}
                 </span>
               </button>
             );
@@ -757,11 +758,13 @@ const SocialInteractionsReport: React.FC<
                         key={ty}
                         className="text-end tabular-nums py-1.5 px-2 text-gray-600 dark:text-gray-300"
                       >
-                        {r.perType[ty] ? r.perType[ty]!.toLocaleString() : "—"}
+                        {r.perType[ty]
+                          ? r.perType[ty]!.toLocaleString(locale)
+                          : "—"}
                       </td>
                     ))}
                     <td className="text-end tabular-nums py-1.5 ps-2 font-semibold">
-                      {r.total.toLocaleString()}
+                      {r.total.toLocaleString(locale)}
                     </td>
                   </tr>
                 ))}
@@ -776,12 +779,12 @@ const SocialInteractionsReport: React.FC<
                         className="text-end tabular-nums py-1.5 px-2"
                       >
                         {othersByType[ty]
-                          ? othersByType[ty]!.toLocaleString()
+                          ? othersByType[ty]!.toLocaleString(locale)
                           : "—"}
                       </td>
                     ))}
                     <td className="text-end tabular-nums py-1.5 ps-2 font-semibold">
-                      {othersInfo.total.toLocaleString()}
+                      {othersInfo.total.toLocaleString(locale)}
                     </td>
                   </tr>
                 )}
