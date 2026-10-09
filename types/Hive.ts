@@ -1281,6 +1281,8 @@ namespace Hive {
   export class CommunitySubscriber {
     name!: string;
     created_at!: string;
+    role?: string;
+    title?: string | null;
   }
 
   export class CommunityList {

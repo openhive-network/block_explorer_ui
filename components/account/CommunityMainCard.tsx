@@ -401,6 +401,7 @@ const CommunityMainCard: React.FC<CommunityMainCardProps> = ({
           onClose={() => setIsSubscribersModalOpen(false)}
           communityName={name}
           communityTitle={title}
+          totalCount={subscribers}
         />
       )}
     </>

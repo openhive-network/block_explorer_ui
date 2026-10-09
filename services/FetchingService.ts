@@ -159,7 +159,8 @@ class FetchingService {
   private extendedHiveChain:
     | TWaxExtended<ExplorerNodeApi, TWaxRestExtended<typeof extendedRest>>
     | undefined = undefined;
-  // Same chain, same endpoints, longer abort budget. Used only by block-search.
+  // Same chain, same endpoints, longer abort budget. Used by block-search and
+  // the community subscribers list, the calls measured slower than the default.
   private blockSearchHiveChain:
     | TWaxExtended<ExplorerNodeApi, TWaxRestExtended<typeof extendedRest>>
     | undefined = undefined;
@@ -932,7 +933,9 @@ class FetchingService {
     limit: number
   ): Promise<Hive.CommunitySubscribers> {
     const params = { community, last, limit };
-    return await this.extendedHiveChain!.api.bridge.list_subscribers(params);
+    // A page of subscribers often takes longer than the default 2s budget.
+    const chain = this.blockSearchHiveChain ?? this.extendedHiveChain;
+    return await chain!.api.bridge.list_subscribers(params);
   }
 
   async getCommunitiesList(
