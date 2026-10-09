@@ -53,12 +53,12 @@ const TILE_RICH: Record<string, any> = {
 
 // A community's avatar rides in front of its name as a rich-text tile; the whole
 // rich map is repeated per node because only the avatar URL differs.
-const tileRichWithAvatar = (url: string, isRTL: boolean) => ({
+const tileRichWithAvatar = (url: string) => ({
   ...TILE_RICH,
   n: {
     ...TILE_RICH.n,
     verticalAlign: "middle",
-    padding: isRTL ? [0, 4, 0, 0] : [0, 0, 0, 4],
+    padding: [0, 0, 0, 4],
   },
   av: {
     width: 14,
@@ -224,11 +224,11 @@ const CommunityActivityReport: React.FC<
         ...(area < 2200
           ? { label: { show: false } }
           : avatar
-            ? { label: { rich: tileRichWithAvatar(avatar, isRTL) } }
+            ? { label: { rich: tileRichWithAvatar(avatar) } }
             : {}),
       };
     });
-  }, [treemapNodes, viewport.w, chartHeight, isRTL, locale, t]);
+  }, [treemapNodes, viewport.w, chartHeight, locale, t]);
 
   const option = useMemo(() => {
     const unitTotal = t("communityActivity.total");

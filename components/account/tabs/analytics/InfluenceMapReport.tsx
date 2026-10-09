@@ -107,7 +107,8 @@ const getChartOption = (
   allCategories: { name: string }[],
   activeLegendCategories: { name: string }[],
   t: (key: string) => string,
-  theme: string | undefined
+  theme: string | undefined,
+  isRtl: boolean
 ) => {
   const textColor = theme === "dark" ? "#FFFFFF" : "#1F2937";
 
@@ -119,7 +120,7 @@ const getChartOption = (
     roam: true,
     label: {
       show: true,
-      position: "right",
+      position: isRtl ? "left" : "right",
       formatter: "{b}",
       color: textColor,
     },
@@ -151,7 +152,7 @@ const getChartOption = (
       {
         data: activeLegendCategories.map((a) => a.name),
         orient: "vertical",
-        left: "left",
+        ...(isRtl ? { right: 0, align: "right" } : { left: "left" }),
         top: "50",
         textStyle: { color: textColor },
       },
@@ -185,7 +186,7 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
   dynamicGlobalData,
   widgetId,
 }) => {
-  const { t, locale } = useI18n();
+  const { t, locale, dir } = useI18n();
   const { theme } = useTheme();
   const chartRef = useRef<ReactECharts>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -1047,7 +1048,8 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
           allPossibleCategories,
           activeLegendCategories,
           t,
-          theme
+          theme,
+          dir === "rtl"
         )}
         onEvents={onEvents}
         style={{ height: "100%", width: "100%" }}
