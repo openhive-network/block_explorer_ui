@@ -330,6 +330,8 @@ const VotesHistoryDialog: React.FC<VotesHistoryDialogProps> = ({
                                   <Link
                                     className="text-link"
                                     href={`/@${vote.voter_name}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                   >
                                     {vote.voter_name}
                                   </Link>
