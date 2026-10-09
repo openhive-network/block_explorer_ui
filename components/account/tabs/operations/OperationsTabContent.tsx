@@ -26,6 +26,10 @@ import { getLocalStorage, removeStorageItem } from "@/utils/LocalStorage";
 import { useI18n } from "@/i18n/i18n";
 import BlockNavigation from "@/components/BlockNavigation";
 import useBlockNavigation from "@/hooks/common/useBlockNavigation";
+import FilterChipsBar, {
+  FilterChip,
+  buildRangeChip,
+} from "@/components/ui/FilterChipsBar";
 
 interface OpeationTabContentProps {
   liveDataEnabled: boolean;
@@ -199,8 +203,80 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
 
   const buttonLabel = `Value field can't be empty`;
 
+  const selectedTypeIds = convertBooleanArrayToIds(filtersParam ?? filters);
+  const typesTitle = getOperationButtonTitle(
+    selectedTypeIds,
+    accountOperationTypes
+  );
+  const hasTypeFilter = (selectedTypeIds?.length ?? 0) > 0;
+  const expandFilters = () => setIsVisible(true);
+
+  const resetRange = () => {
+    searchRanges.setRangeSelectKey("none");
+    searchRanges.setTimeUnitSelectKey(undefined);
+    searchRanges.setLastTimeUnitValue(undefined);
+    searchRanges.setLastBlocksValue(undefined);
+    setParams({
+      ...paramsState,
+      fromBlock: undefined,
+      toBlock: undefined,
+      fromDate: undefined,
+      toDate: undefined,
+      lastBlocks: undefined,
+      lastTime: undefined,
+      timeUnit: undefined,
+      rangeSelectKey: "none",
+      history: [],
+      page: undefined,
+    });
+  };
+
+  const chips: FilterChip[] = [
+    {
+      key: "types",
+      label:
+        (selectedTypeIds?.length ?? 0) > 1
+          ? typesTitle
+          : `${t("operationTypesDialog.operationTypes")}: ${
+              hasTypeFilter ? typesTitle : t("operationTypesDialog.all")
+            }`,
+      onRemove: hasTypeFilter ? () => handleOperationSelect(null) : undefined,
+    },
+    {
+      key: "direction",
+      label: `${t("operations.participationMode")}: ${t(
+        direction === "include"
+          ? "operations.outgoing"
+          : direction === "exclude"
+            ? "operations.incoming"
+            : "operations.all"
+      )}`,
+      onRemove: direction
+        ? () =>
+            setParams({ ...paramsState, page: undefined, direction: undefined })
+        : undefined,
+    },
+    buildRangeChip(
+      {
+        ...paramsState,
+        // Paging through blocks sets toBlock on its own; that is not a filter.
+        toBlock:
+          paramsState.history.length < 2 ? paramsState.toBlock : undefined,
+      },
+      t,
+      resetRange,
+      expandFilters
+    ),
+  ];
+
   return (
     <TabsContent value="operations">
+      <FilterChipsBar
+        sticky
+        chips={chips}
+        onExpand={expandFilters}
+        isLoading={isAccountOperationsLoading}
+      />
       <Card
         className={cn(
           "mb-0 pb-0 overflow-hidden transition-all duration-500 ease-in max-h-0 opacity-0",
