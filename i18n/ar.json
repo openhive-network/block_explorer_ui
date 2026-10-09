@@ -1869,6 +1869,8 @@
   "accountOperationViewTabs.powerActivity": "نشاط القوة",
   "powerActivitySearch.eventType": "نوع الحدث",
   "activeFilters.eventType": "الحدث: {{value}}",
+  "activeFilters.postType": "النوع: {{value}}",
+  "activeFilters.permlink": "الرابط الدائم: {{value}}",
   "analyticsDashboard.centralHub": "المحور المركزي",
   "analyticsDashboard.others": "أخرى",
   "analyticsDashboard.expandAll": "توسيع الكل",

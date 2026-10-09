@@ -1869,6 +1869,8 @@
   "accountOperationViewTabs.powerActivity": "Activitate Power",
   "powerActivitySearch.eventType": "Tip eveniment",
   "activeFilters.eventType": "Eveniment: {{value}}",
+  "activeFilters.postType": "Tip: {{value}}",
+  "activeFilters.permlink": "Permlink: {{value}}",
   "analyticsDashboard.centralHub": "Nod central",
   "analyticsDashboard.others": "Altele",
   "analyticsDashboard.expandAll": "Extinde tot",

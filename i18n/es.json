@@ -1869,6 +1869,8 @@
   "accountOperationViewTabs.powerActivity": "Actividad de Power",
   "powerActivitySearch.eventType": "Tipo de evento",
   "activeFilters.eventType": "Evento: {{value}}",
+  "activeFilters.postType": "Tipo: {{value}}",
+  "activeFilters.permlink": "Permlink: {{value}}",
   "analyticsDashboard.centralHub": "Núcleo central",
   "analyticsDashboard.others": "Otros",
   "analyticsDashboard.expandAll": "Expandir todo",
