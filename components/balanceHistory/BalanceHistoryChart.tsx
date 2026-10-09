@@ -488,7 +488,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
                   ? 50
                   : 10,
             left: isRTL ? (isMobile ? 0 : 5) : leftMargin,
-            bottom: isMobile ? 80 : 60,
+            bottom: isMobile && !quickView ? 80 : 60,
           }}
         >
           {!quickView && <ChartBrushDefs />}
@@ -500,6 +500,8 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             angle={isMobile ? -90 : 0}
             dx={isMobile ? -8 : 0}
             dy={isMobile ? 20 : 10}
+            // Upright labels on a phone need more room, or the legend below overlaps them.
+            height={isMobile && quickView ? 52 : 30}
             reversed={isRTL}
           />
           <YAxis
