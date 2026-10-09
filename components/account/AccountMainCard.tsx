@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import {
-  Link,
   Star,
   PenSquare,
   CalendarDays,
@@ -60,6 +59,7 @@ import {
 } from "@/components/ui/dialog";
 import AccountShareCard from "@/components/account/AccountShareCard";
 import StatCard from "@/components/ui/StatCard";
+import WitnessUrlIcon from "@/components/account/WitnessUrlIcon";
 import HiveAvatar from "@/components/ui/HiveAvatar";
 import useMediaQuery from "@/hooks/common/useMediaQuery";
 
@@ -339,22 +339,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                           </TooltipProvider>
                         )}
                         {isWitnessActive && witnessDetails?.url && (
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <a
-                                  href={witnessDetails.url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                >
-                                  <Link size={14} strokeWidth={2.5} />
-                                </a>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>{t("accountMainCard.witnessLink")}</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
+                          <WitnessUrlIcon url={witnessDetails.url} />
                         )}
                       </div>
                     )}
