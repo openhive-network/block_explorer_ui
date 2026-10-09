@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Download, Loader2 } from "lucide-react";
 
@@ -64,8 +64,10 @@ const AccountFollowListDialog: React.FC<AccountFollowListDialogProps> = ({
   const [filter, setFilter] = useState("");
   const [revealCount, setRevealCount] = useState(REVEAL_STEP);
   const [isExporting, setIsExporting] = useState(false);
-  const scrollRef = useRef<HTMLDivElement | null>(null);
-  const sentinelRef = useRef<HTMLDivElement | null>(null);
+  // Kept in state, not refs: the dialog mounts its content after this component,
+  // and the scroll observer must be attached once those nodes actually exist.
+  const [scrollEl, setScrollEl] = useState<HTMLDivElement | null>(null);
+  const [sentinel, setSentinel] = useState<HTMLDivElement | null>(null);
 
   const {
     names,
@@ -107,7 +109,6 @@ const AccountFollowListDialog: React.FC<AccountFollowListDialogProps> = ({
 
   // Re-created on every change so a sentinel still in view fires again.
   useEffect(() => {
-    const sentinel = sentinelRef.current;
     if (!sentinel) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -118,11 +119,13 @@ const AccountFollowListDialog: React.FC<AccountFollowListDialogProps> = ({
           fetchNextPage();
         }
       },
-      { root: scrollRef.current, rootMargin: "300px" }
+      { root: scrollEl, rootMargin: "300px" }
     );
     observer.observe(sentinel);
     return () => observer.disconnect();
   }, [
+    sentinel,
+    scrollEl,
     revealCount,
     filtered.length,
     hasNextPage,
@@ -162,7 +165,7 @@ const AccountFollowListDialog: React.FC<AccountFollowListDialogProps> = ({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="min-w-[70vw] pr-0" data-testid={testId}>
         <div
-          ref={scrollRef}
+          ref={setScrollEl}
           className="max-h-[90vh] min-h-[60vh] overflow-y-auto overflow-x-hidden pr-6 scrollableContainer"
         >
           <ReportDialogHeader
@@ -262,7 +265,7 @@ const AccountFollowListDialog: React.FC<AccountFollowListDialogProps> = ({
                 <NoResult descriptionKey={noMatchText} />
               )}
 
-              <div ref={sentinelRef} className="h-px" />
+              <div ref={setSentinel} className="h-px" />
             </>
           )}
         </div>
