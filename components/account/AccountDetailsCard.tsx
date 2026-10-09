@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ReactNode, useState, Fragment } from "react";
+import { ReactNode, Fragment } from "react";
 import { ArrowDown, ArrowUp, HelpCircle } from "lucide-react";
 
 import { Card, CardContent, CardHeader } from "../ui/card";
@@ -15,6 +15,7 @@ import VestsTooltip from "../VestsTooltip";
 import useElementWidth from "@/hooks/common/useElementWidth";
 import { formatIntegerString } from "@/lib/utils";
 import { useI18n } from "@/i18n/i18n";
+import useCollapsedState from "@/hooks/common/useCollapsedState";
 
 type AccountDetailsCardProps = {
   header: string;
@@ -68,7 +69,7 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
 }) => {
   const { t, locale } = useI18n();
   const [isPropertiesHidden, setIsPropertiesHidden] =
-    useState(!isInitiallyOpen);
+    useCollapsedState(isInitiallyOpen);
   const [containerRef, containerWidth] = useElementWidth<HTMLDivElement>();
   const isTooNarrow = containerWidth > 0 && containerWidth < 450;
 

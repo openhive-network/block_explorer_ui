@@ -36,6 +36,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import DataExport from "@/components/DataExport";
+import useCollapsedState from "@/hooks/common/useCollapsedState";
 
 // Page size used by the hafbe-api proxy-power endpoint — controls Next button visibility
 const PROXY_POWER_PAGE_SIZE = 1000;
@@ -64,7 +65,7 @@ const AccountProxyPowerCard: React.FC<AccountProxyPowerCardProps> = ({
   }, [settings.displayVestHpMode]);
 
   const [isPropertiesHidden, setIsPropertiesHidden] =
-    useState(!isInitiallyOpen);
+    useCollapsedState(isInitiallyOpen);
 
   const [sortConfig, setSortConfig] = useState<{
     key: keyof Hive.ProxyPowerResponse;

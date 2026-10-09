@@ -460,10 +460,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
                   </Tooltip>
                 </TooltipProvider>
               </div>
-              <div
-                key={tabExpandedStates.wallet ? "wallet-open" : "wallet-closed"}
-                className="space-y-4"
-              >
+              <div className="space-y-4">
                 <AccountBalanceCard
                   header={t("accountDetailsSection.wallet")}
                   userDetails={accountDetails}
@@ -531,14 +528,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
                     </Tooltip>
                   </TooltipProvider>
                 </div>
-                <div
-                  key={
-                    tabExpandedStates.delegations
-                      ? "delegations-open"
-                      : "delegations-closed"
-                  }
-                  className="space-y-4"
-                >
+                <div className="space-y-4">
                   <AccountVestingDelegationsCard
                     direction="outgoing"
                     delegations={outgoingVestingDelegations}
@@ -606,14 +596,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
                     </Tooltip>
                   </TooltipProvider>
                 </div>
-                <div
-                  key={
-                    tabExpandedStates.governance
-                      ? "governance-open"
-                      : "governance-closed"
-                  }
-                  className="space-y-4"
-                >
+                <div className="space-y-4">
                   <AccountWitnessVotesCard
                     voters={accountDetails.witness_votes}
                     accountName={accountName}
@@ -663,12 +646,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
                   </Tooltip>
                 </TooltipProvider>
               </div>
-              <div
-                key={
-                  tabExpandedStates.profile ? "profile-open" : "profile-closed"
-                }
-                className="space-y-4"
-              >
+              <div className="space-y-4">
                 <AccountDetailsCard
                   header={t("accountDetailsSection.properties")}
                   userDetails={accountDetails}
@@ -749,7 +727,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
               </Tooltip>
             </TooltipProvider>
           </div>
-          <div key={areAllCardsOpen ? "open" : "closed"} className="space-y-4">
+          <div className="space-y-4">
             {renderCollapsibleCards(areAllCardsOpen)}
           </div>
         </div>

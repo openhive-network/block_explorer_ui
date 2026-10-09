@@ -1,4 +1,4 @@
-import React, { MouseEvent, useMemo, useState } from "react";
+import React, { MouseEvent, useMemo } from "react";
 import moment from "moment";
 import { useRouter } from "next/router";
 import {
@@ -26,6 +26,7 @@ import {
   useAggregatedVesting,
   useVestingDisplayUnit,
 } from "../home/hpMomentumUtils";
+import useCollapsedState from "@/hooks/common/useCollapsedState";
 
 type AccountHpActivityCardProps = {
   header: string;
@@ -41,7 +42,7 @@ const AccountHpActivityCard: React.FC<AccountHpActivityCardProps> = ({
   const { t, locale } = useI18n();
   const { settings } = useSettings();
   const router = useRouter();
-  const [isHidden, setIsHidden] = useState(!isInitiallyOpen);
+  const [isHidden, setIsHidden] = useCollapsedState(isInitiallyOpen);
 
   const [unit, setUnit] = useVestingDisplayUnit();
 

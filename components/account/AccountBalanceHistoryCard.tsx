@@ -12,6 +12,7 @@ import { useI18n } from "../../i18n/i18n";
 import { useSettings } from "@/contexts/SettingsContext";
 import { cn } from "@/lib/utils";
 import { prepareBalanceHistoryData } from "@/utils/BalanceHistoryUtils";
+import useCollapsedState from "@/hooks/common/useCollapsedState";
 
 type AccountBalanceHistoryCardProps = {
   header: string;
@@ -28,7 +29,8 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
 }) => {
   const { t } = useI18n();
   const { settings } = useSettings();
-  const [isBalancesHidden, setIsBalancesHidden] = useState(!isInitiallyOpen);
+  const [isBalancesHidden, setIsBalancesHidden] =
+    useCollapsedState(isInitiallyOpen);
   const [coinType, setCoinType] = useState("HIVE");
   const [unit, setUnit] = useState<"vests" | "hp">(
     settings.displayVestHpMode === "hp" ? "hp" : "vests"
