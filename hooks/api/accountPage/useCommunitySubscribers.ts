@@ -20,29 +20,25 @@ const useCommunitySubscribers = (
   } = useInfiniteQuery<Hive.CommunitySubscriber[]>({
     queryKey: ["communitySubscribers", communityName, startAfter],
     queryFn: async ({ pageParam = startAfter }) => {
-      try {
-        const rawResult = await fetchingService.getCommunitySubscribers(
-          communityName,
-          pageParam,
-          SUBSCRIBERS_PAGE_LIMIT
-        );
+      const rawResult = await fetchingService.getCommunitySubscribers(
+        communityName,
+        pageParam,
+        SUBSCRIBERS_PAGE_LIMIT
+      );
 
-        if (!Array.isArray(rawResult)) {
-          return [];
-        }
-
-        // Each entry arrives as [name, role, title, subscribed at].
-        return rawResult.map(
-          (subscriberTuple: any[]): Hive.CommunitySubscriber => ({
-            name: subscriberTuple[0],
-            role: subscriberTuple[1],
-            title: subscriberTuple[2],
-            created_at: subscriberTuple[3],
-          })
-        );
-      } catch (error: any) {
+      if (!Array.isArray(rawResult)) {
         return [];
       }
+
+      // Each entry arrives as [name, role, title, subscribed at].
+      return rawResult.map(
+        (subscriberTuple: any[]): Hive.CommunitySubscriber => ({
+          name: subscriberTuple[0],
+          role: subscriberTuple[1],
+          title: subscriberTuple[2],
+          created_at: subscriberTuple[3],
+        })
+      );
     },
     getNextPageParam: (lastPage) => {
       if (!lastPage || lastPage.length < SUBSCRIBERS_PAGE_LIMIT) {
