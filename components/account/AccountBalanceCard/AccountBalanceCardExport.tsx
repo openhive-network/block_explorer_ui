@@ -1,5 +1,6 @@
 import Explorer from "@/types/Explorer";
 import { grabNumericValue, asCsvString } from "@/utils/StringUtils";
+import { relocalizeAmount } from "@/utils/localeAmount";
 import { ASSET_CONFIG, cardNameMapKeys } from "./AccountBalanceCard";
 
 // Define the types for the data we expect to receive
@@ -30,9 +31,12 @@ export const prepareAccountBalanceReport = (
   financialSummary: FinancialSummary,
   chartSegments: ChartSegment[],
   hbdInterestApr: string | null,
-  t: (key: string) => string
+  t: (key: string) => string,
+  locale: string
 ) => {
   if (!userDetails) return [];
+  const amountOf = (key: FinancialKey) =>
+    relocalizeAmount(String(userDetails[key]), locale);
 
   const headers = {
     metric: t("accountBalanceCardExport.metric"),
@@ -67,7 +71,7 @@ export const prepareAccountBalanceReport = (
   reportData.push({
     ...baseRow,
     [headers.metric]: t("accountBalanceCardExport.exportDate"),
-    [headers.value]: new Date().toLocaleString(),
+    [headers.value]: new Date().toLocaleString(locale),
   });
   reportData.push({});
 
@@ -88,7 +92,10 @@ export const prepareAccountBalanceReport = (
       ...baseRow,
       [headers.metric]: segment.label,
       [headers.valueUSD]: asCsvString(segment.displayValue),
-      [headers.percentage]: `${segment.percent.toFixed(2)}%`,
+      [headers.percentage]: `${segment.percent.toLocaleString(locale, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}%`,
     });
   });
   reportData.push({});
@@ -134,7 +141,7 @@ export const prepareAccountBalanceReport = (
       count = userDetails.escrow_pending_count;
 
     return count !== null && count !== undefined && Number(count) > 0
-      ? ` (${count})`
+      ? ` (${Number(count).toLocaleString(locale)})`
       : "";
   };
 
@@ -151,7 +158,7 @@ export const prepareAccountBalanceReport = (
     reportData.push({
       ...baseRow,
       [headers.metric]: t(cardNameMapKeys.get(metricKey)!),
-      [headers.value]: `${sign}${userDetails[metricKey]}`,
+      [headers.value]: `${sign}${amountOf(metricKey)}`,
       [headers.vestsValue]: formattedVests,
       [headers.valueUSD]: asCsvString(
         financialSummary.formatted.dollars[metricKey]
@@ -201,7 +208,7 @@ export const prepareAccountBalanceReport = (
     const notes = metricKey.startsWith("reward_")
       ? t("accountBalanceCardExport.unclaimedRewardNote")
       : "";
-    const displayValue = `${userDetails[metricKey]}${getCountSuffix(metricKey)}`;
+    const displayValue = `${amountOf(metricKey as FinancialKey)}${getCountSuffix(metricKey)}`;
 
     reportData.push({
       ...baseRow,
@@ -263,7 +270,7 @@ export const prepareAccountBalanceReport = (
       notes = t("accountBalanceCard.pendingInterestTooltip");
     }
 
-    const displayValue = `${userDetails[metricKey]}${getCountSuffix(metricKey)}`;
+    const displayValue = `${amountOf(metricKey as FinancialKey)}${getCountSuffix(metricKey)}`;
 
     reportData.push({
       ...baseRow,

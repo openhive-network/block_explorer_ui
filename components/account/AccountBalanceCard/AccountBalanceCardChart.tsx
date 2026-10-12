@@ -33,7 +33,12 @@ type AccountBalanceCardChartProps = {
 export const AccountBalanceCardChart: React.FC<
   AccountBalanceCardChartProps
 > = ({ segments, activeSegmentKey, onSegmentClick }) => {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
+  const formatShare = (percent: number) =>
+    percent.toLocaleString(locale, {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1,
+    });
 
   const adjustedChartSegments = useMemo(() => {
     const MINIMUM_PERCENTAGE = 1.5;
@@ -174,7 +179,7 @@ export const AccountBalanceCardChart: React.FC<
                         segment.iconColorClass
                       )}
                     >
-                      ({segment.percent.toFixed(1)}%)
+                      ({formatShare(segment.percent)}%)
                     </span>
                   )}
                 </div>
@@ -223,7 +228,7 @@ export const AccountBalanceCardChart: React.FC<
                           poweringDownSegment.iconColorClass
                         )}
                       >
-                        ({poweringDownSegment.percent.toFixed(1)}%)
+                        ({formatShare(poweringDownSegment.percent)}%)
                       </span>
                     )}
                   </div>
