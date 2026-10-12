@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import { Link as LinkIcon } from "lucide-react";
 
 import {
@@ -32,14 +33,14 @@ const WitnessUrlIcon: React.FC<WitnessUrlIconProps> = ({
       <Tooltip>
         <TooltipTrigger asChild>
           {href ? (
-            <a
+            <Link
               href={href}
               target="_blank"
               rel="noopener noreferrer"
               aria-label={t("accountMainCard.witnessLink")}
             >
               <LinkIcon size={size} strokeWidth={strokeWidth} />
-            </a>
+            </Link>
           ) : (
             <span tabIndex={0} aria-label={url} className="cursor-default">
               <LinkIcon size={size} strokeWidth={strokeWidth} />
