@@ -1009,10 +1009,11 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
 
     if (financialSummary.raw.openOrdersValue > 0) {
       const totalOrdersCount =
-        userDetails.open_orders_hive_count + userDetails.open_orders_hbd_count;
+        Number(userDetails.open_orders_hive_count) +
+        Number(userDetails.open_orders_hbd_count);
       segments.push({
         key: "orders",
-        label: `${t("accountBalanceCard.openOrders")} (${totalOrdersCount})`,
+        label: `${t("accountBalanceCard.openOrders")} (${totalOrdersCount.toLocaleString(locale)})`,
         value: financialSummary.raw.openOrdersValue,
         displayValue: formatDisplayValue(financialSummary.raw.openOrdersValue),
         percent: ordersPct,
@@ -1023,11 +1024,11 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
 
     if (financialSummary.raw.lockedValue > 0) {
       const totalLockedCount =
-        userDetails.conversion_pending_count_hive +
-        userDetails.conversion_pending_count_hbd;
+        Number(userDetails.conversion_pending_count_hive) +
+        Number(userDetails.conversion_pending_count_hbd);
       segments.push({
         key: "locked",
-        label: `${t("accountBalanceCard.locked")} (${totalLockedCount})`,
+        label: `${t("accountBalanceCard.locked")} (${totalLockedCount.toLocaleString(locale)})`,
         value: financialSummary.raw.lockedValue,
         displayValue: formatDisplayValue(financialSummary.raw.lockedValue),
         percent: lockedPct,
