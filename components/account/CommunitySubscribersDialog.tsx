@@ -50,8 +50,13 @@ const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
   const [scrollEl, setScrollEl] = useState<HTMLDivElement | null>(null);
   const [sentinel, setSentinel] = useState<HTMLDivElement | null>(null);
 
-  const { isSubscribed, isLookupLoading, isLookupError } =
-    useCommunitySubscriberLookup(communityName, lookupName);
+  const {
+    isSubscribed,
+    lookupRole,
+    lookupTitle,
+    isLookupLoading,
+    isLookupError,
+  } = useCommunitySubscriberLookup(communityName, lookupName);
   // A confirmed subscriber becomes the starting point of the list.
   const anchor = lookupName && isSubscribed ? lookupName : undefined;
 
@@ -106,7 +111,15 @@ const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
   const groups = useMemo(() => {
     // The list starts after the anchor, so the anchor itself is put back first.
     const rows: Hive.CommunitySubscriber[] = anchor
-      ? [{ name: anchor, created_at: "" }, ...subscribersData]
+      ? [
+          {
+            name: anchor,
+            role: lookupRole,
+            title: lookupTitle,
+            created_at: "",
+          },
+          ...subscribersData,
+        ]
       : subscribersData;
     const result: { letter: string; rows: Hive.CommunitySubscriber[] }[] = [];
     rows.forEach((row) => {
@@ -117,7 +130,7 @@ const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
       else result.push({ letter, rows: [row] });
     });
     return result;
-  }, [subscribersData, anchor]);
+  }, [subscribersData, anchor, lookupRole, lookupTitle]);
 
   const lookupMessage = !lookupName
     ? null

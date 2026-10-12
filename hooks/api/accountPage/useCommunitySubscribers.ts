@@ -62,29 +62,33 @@ const useCommunitySubscribers = (
   };
 };
 
-// Answers "is this account subscribed?" in one request: the node rejects a
-// list that starts after a name that is not a subscriber.
+// Answers "is this account subscribed, and in what role?" in one request. The
+// node rejects a name that is malformed or not an account.
 export const useCommunitySubscriberLookup = (
   communityName: string,
   accountName: string
 ) => {
   const {
-    data: isSubscribed,
+    data,
     isFetching: isLookupLoading,
     isError: isLookupError,
-  } = useQuery<boolean>({
+  } = useQuery<{ subscribed: boolean; role?: string; title?: string }>({
     queryKey: ["communitySubscriberLookup", communityName, accountName],
     queryFn: async () => {
       try {
-        await fetchingService.getCommunitySubscribers(
+        const context = await fetchingService.getCommunityContext(
           communityName,
-          accountName,
-          1
+          accountName
         );
-        return true;
+        return {
+          subscribed: !!context?.subscribed,
+          role: context?.role,
+          title: context?.title,
+        };
       } catch (error: any) {
         const text = `${error?.message ?? ""} ${JSON.stringify(error ?? {})}`;
-        if (/does not exist|invalid account/i.test(text)) return false;
+        if (/does not exist|invalid account/i.test(text))
+          return { subscribed: false };
         throw error;
       }
     },
@@ -94,7 +98,13 @@ export const useCommunitySubscriberLookup = (
     staleTime: 5 * 60 * 1000,
   });
 
-  return { isSubscribed, isLookupLoading, isLookupError };
+  return {
+    isSubscribed: data?.subscribed,
+    lookupRole: data?.role,
+    lookupTitle: data?.title,
+    isLookupLoading,
+    isLookupError,
+  };
 };
 
 export default useCommunitySubscribers;
