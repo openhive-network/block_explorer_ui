@@ -80,7 +80,12 @@ const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
     if (!sentinel) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+        if (
+          entry.isIntersecting &&
+          hasNextPage &&
+          !isFetchingNextPage &&
+          !isCommunitySubscribersError
+        ) {
           fetchNextPage();
         }
       },
@@ -94,6 +99,7 @@ const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
     subscribersData.length,
     hasNextPage,
     isFetchingNextPage,
+    isCommunitySubscribersError,
     fetchNextPage,
   ]);
 
@@ -141,7 +147,8 @@ const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
         </div>
       );
     }
-    if (isCommunitySubscribersError) {
+    // A later page failing keeps the rows already loaded.
+    if (isCommunitySubscribersError && subscribersData.length === 0) {
       return <ErrorMessage message={t("CommunitySubscribersDialog.error")} />;
     }
     if (groups.length === 0) {
@@ -190,6 +197,9 @@ const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
           <div className="flex justify-center py-4">
             <Loader2 className="h-5 w-5 animate-spin" />
           </div>
+        )}
+        {isCommunitySubscribersError && (
+          <ErrorMessage message={t("CommunitySubscribersDialog.error")} />
         )}
         <div ref={setSentinel} className="h-px" />
       </>
