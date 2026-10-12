@@ -19,7 +19,7 @@ import {
   TableHeader,
 } from "../ui/table";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
-import { capitalizeFirst } from "@/utils/StringUtils";
+import { capitalizeFirst, grabNumericValue } from "@/utils/StringUtils";
 import {
   buildTableHead,
   handleSortTransfers,
@@ -97,9 +97,12 @@ const AccountRecurrentTransfersCard: React.FC<
     formatShortDuration(hours * 3600, locale);
 
   // After this many failed payments in a row the chain cancels the transfer.
-  const maxFailures =
+  const maxFailuresRaw =
     dynamicGlobalData?.headBlockDetails
       ?.maxConvecutiveRecurrentTransferFailures;
+  const maxFailures = maxFailuresRaw
+    ? grabNumericValue(maxFailuresRaw).toLocaleString(locale)
+    : "";
 
   const buildTableBody = (rows: AllTransfers[]) =>
     rows.map((transfer) => {
@@ -209,9 +212,8 @@ const AccountRecurrentTransfersCard: React.FC<
       const commonData = {
         [t("common.order")]: index + 1,
         [t("recurrentTransfersSort.Amount")]: transfer.amount,
-        [t("recurrentTransfersSort.Recurrence")]: formatRecurrence(
-          transfer.recurrence
-        ),
+        // Plain hours, so the column sorts and reads the same in every language.
+        [t("recurrentTransfersSort.Recurrence")]: transfer.recurrence,
         [t("recurrentTransfersSort.Remaining")]: transfer.remaining_executions,
         [t("accountRecurrentTransfersCard.nextExecution")]:
           formatBlockchainTime(transfer.trigger_date),
