@@ -123,6 +123,10 @@ export type ExplorerNodeApi = {
       { name: string; observer?: string },
       Hive.CommunityDetails
     >;
+    get_community_context: TWaxApiRequest<
+      { name: string; account: string },
+      Hive.CommunityContext
+    >;
     list_subscribers: TWaxApiRequest<
       {
         community: string;
@@ -925,6 +929,16 @@ class FetchingService {
   async getCommunityDetails(name: string): Promise<Hive.CommunityDetails> {
     const params = { name };
     return await this.extendedHiveChain!.api.bridge.get_community(params);
+  }
+
+  async getCommunityContext(
+    name: string,
+    account: string
+  ): Promise<Hive.CommunityContext> {
+    const params = { name, account };
+    return await this.extendedHiveChain!.api.bridge.get_community_context(
+      params
+    );
   }
 
   async getCommunitySubscribers(
