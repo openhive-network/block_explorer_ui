@@ -13,7 +13,7 @@ type ChartSegment = {
 type FinancialSummary = {
   formatted: {
     totalValue: string;
-    effectiveHp: string;
+    totalHp: string;
     totalHive: string;
     totalHbd: string;
     totalHiveUsd: string;
@@ -124,7 +124,7 @@ export const prepareAccountBalanceReport = (
   reportData.push({
     ...baseRow,
     [headers.metric]: t("accountBalanceCard.effectiveHp"),
-    [headers.value]: financialSummary.formatted.effectiveHp,
+    [headers.value]: financialSummary.formatted.totalHp,
   });
 
   const getCountSuffix = (key: string) => {
