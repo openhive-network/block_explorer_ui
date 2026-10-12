@@ -25,7 +25,7 @@ const buildTableBody = (voters: string[], isProxy: boolean) => {
       <Fragment key={index}>
         <TableRow>
           <TableCell>{index + 1}</TableCell>
-          <TableCell className="text-right">
+          <TableCell className="text-end">
             <Link
               className={cn("text-link", { italic: isProxy })} // Apply italic class conditionally
               href={`/@${voter}`}
@@ -128,7 +128,7 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
             <div className="text-lg">
               {t("accountWitnessVotesCard.witnessVotesProxy")}
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 rtl:space-x-reverse">
               <DataExport
                 data={prepareExportData(votersForProxy)}
                 filename={`${accountName}_${t("accountWitnessVotesCard.witnessVotesProxyExport")}`}
@@ -201,7 +201,7 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
             {t("accountWitnessVotesCard.witnessVotes")} ({voters.length} /{" "}
             {config.maxWitnessVotes})
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 rtl:space-x-reverse">
             <DataExport
               data={prepareExportData(voters)}
               filename={`${accountName}_${t("accountWitnessVotesCard.witnessVotesExport")}`}

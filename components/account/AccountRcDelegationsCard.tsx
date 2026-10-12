@@ -17,7 +17,7 @@ import {
   handleSortDelegations,
 } from "@/utils/DelegationsSort";
 import { useI18n } from "../../i18n/i18n";
-import DataExport from "../DataExport"; 
+import DataExport from "../DataExport";
 
 type AccountRcDelegationsCardProps = {
   delegations?: RcDelegation[];
@@ -31,15 +31,12 @@ const buildTableBody = (delegations: RcDelegation[]) => {
       <Fragment key={index}>
         <TableRow>
           <TableCell>{index + 1}</TableCell>
-          <TableCell className="text-right">
-            <Link
-              className="text-link"
-              href={`/@${delegation.to}`}
-            >
+          <TableCell className="text-end">
+            <Link className="text-link" href={`/@${delegation.to}`}>
               {delegation.to}
             </Link>
           </TableCell>
-          <TableCell className="text-right">
+          <TableCell className="text-end">
             {formatNumber(delegation.delegated_rc, false, true, 0)}
           </TableCell>
         </TableRow>
@@ -54,7 +51,8 @@ const AccountRcDelegationsCard: React.FC<AccountRcDelegationsCardProps> = ({
   accountName,
 }) => {
   const { t } = useI18n();
-  const [isPropertiesHidden, setIsPropertiesHidden] = useState(!isInitiallyOpen);
+  const [isPropertiesHidden, setIsPropertiesHidden] =
+    useState(!isInitiallyOpen);
 
   const [sortConfig, setSortConfig] = useState<{
     key: string;
@@ -65,7 +63,7 @@ const AccountRcDelegationsCard: React.FC<AccountRcDelegationsCardProps> = ({
   });
 
   const { key, isAscending } = sortConfig;
-  
+
   // If there's no data, render nothing.
   if (!delegations || !delegations.length) {
     return null;
@@ -91,16 +89,18 @@ const AccountRcDelegationsCard: React.FC<AccountRcDelegationsCardProps> = ({
       return {
         [t("common.order")]: index + 1,
         [t("delegationSort.Recipient")]: delegation.to,
-        [t("delegationSort.Amount")]: formatNumber(delegation.delegated_rc, false, true, 0),
+        [t("delegationSort.Amount")]: formatNumber(
+          delegation.delegated_rc,
+          false,
+          true,
+          0
+        ),
       };
     });
   };
 
   return (
-    <Card
-      data-testid="rc-delegations-dropdown"
-      className="overflow-hidden"
-    >
+    <Card data-testid="rc-delegations-dropdown" className="overflow-hidden">
       <CardHeader className="p-0">
         <div
           onClick={handlePropertiesVisibility}
@@ -109,7 +109,7 @@ const AccountRcDelegationsCard: React.FC<AccountRcDelegationsCardProps> = ({
           <div className="text-lg">
             {t("accountRcDelegationsCard.delegations")} ({delegations.length})
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 rtl:space-x-reverse">
             <DataExport
               data={prepareExportData()}
               filename={`${accountName}_${t(

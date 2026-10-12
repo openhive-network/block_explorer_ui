@@ -102,10 +102,10 @@ const ConversionRequestsDialog: React.FC<ConversionRequestsDialogProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent
-        className="min-w-[70vw] pr-0"
+        className="min-w-[70vw] pe-0"
         data-testid="conversion-requests-dialog"
       >
-        <div className="max-h-[90vh] overflow-y-auto overflow-x-hidden pr-6 scrollableContainer">
+        <div className="max-h-[90vh] overflow-y-auto overflow-x-hidden pe-6 scrollableContainer">
           <ReportDialogHeader
             title={t("accountConversionsDialog.title")}
             subtitle={`@${accountName}`}

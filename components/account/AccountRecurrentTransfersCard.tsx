@@ -248,7 +248,7 @@ const AccountRecurrentTransfersCard: React.FC<
           className="h-full flex justify-between items-center p-2 hover:bg-rowHover cursor-pointer px-4"
         >
           <div className="text-lg">{headerText}</div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 rtl:space-x-reverse">
             <DataExport
               data={prepareExportData()}
               filename={`${accountName}_${t(

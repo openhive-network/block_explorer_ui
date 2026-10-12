@@ -86,10 +86,10 @@ const AccountSubscriptionsDialog: React.FC<SubscriptionsDialogProps> = ({
       onOpenChange={changeSubscriptionsDialogue}
     >
       <DialogContent
-        className="min-w-[70vw] pr-0"
+        className="min-w-[70vw] pe-0"
         data-testid="subscriptions-dialog"
       >
-        <div className="max-h-[90vh] min-h-[60vh] overflow-y-auto overflow-x-hidden pr-6 scrollableContainer">
+        <div className="max-h-[90vh] min-h-[60vh] overflow-y-auto overflow-x-hidden pe-6 scrollableContainer">
           <ReportDialogHeader
             title={
               <span className="flex flex-wrap items-center gap-2">

@@ -83,12 +83,12 @@ const AccountCommentsPermlinkSearch: React.FC<
         <div>
           <Button
             data-testid="search-button"
-            className="mr-2 my-2"
+            className="me-2 my-2"
             onClick={onSearchButtonClick}
             disabled={isSearchButtonDisabled}
           >
             {t("common.search")}
-            {isDataLoading && <Loader2 className="ml-2 animate-spin h-4 w-4" />}
+            {isDataLoading && <Loader2 className="ms-2 animate-spin h-4 w-4" />}
           </Button>
           {isSearchButtonDisabled ? (
             <label className="text-gray-300 dark:text-gray-500 ">

@@ -176,7 +176,7 @@ const CommentsTabContent: React.FC<CommnetsTabContentProps> = ({
         )}
       >
         <CardHeader>
-          <CardTitle className="text-left">{t("common.filters")}</CardTitle>
+          <CardTitle className="text-start">{t("common.filters")}</CardTitle>
         </CardHeader>
         <CardContent>
           <AccountCommentsPermlinkSearch

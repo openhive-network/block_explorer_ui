@@ -312,21 +312,21 @@ const fieldHighlightConfig = new Map<
 /** Maps a segment key to the specific Tailwind CSS classes for highlighting. */
 const highlightConfig = {
   staked:
-    "bg-purple-100 border-l-2 border-purple-400 dark:bg-purple-500/15 dark:border-purple-500",
+    "bg-purple-100 border-s-2 border-purple-400 dark:bg-purple-500/15 dark:border-purple-500",
   savings:
-    "bg-amber-100 border-l-2 border-amber-400 dark:bg-amber-400/15 dark:border-amber-400",
+    "bg-amber-100 border-s-2 border-amber-400 dark:bg-amber-400/15 dark:border-amber-400",
   liquid:
-    "bg-sky-100 border-l-2 border-sky-400 dark:bg-sky-500/15 dark:border-sky-500",
+    "bg-sky-100 border-s-2 border-sky-400 dark:bg-sky-500/15 dark:border-sky-500",
   unclaimed:
-    "bg-teal-100 border-l-2 border-teal-400 dark:bg-teal-400/15 dark:border-teal-400",
+    "bg-teal-100 border-s-2 border-teal-400 dark:bg-teal-400/15 dark:border-teal-400",
   poweringDown:
-    "bg-rose-100 border-l-2 border-rose-400 dark:bg-rose-400/15 dark:border-rose-400",
+    "bg-rose-100 border-s-2 border-rose-400 dark:bg-rose-400/15 dark:border-rose-400",
   orders:
-    "bg-indigo-200 border-l-2 border-indigo-400 dark:bg-indigo-500/15 dark:border-indigo-500",
+    "bg-indigo-200 border-s-2 border-indigo-400 dark:bg-indigo-500/15 dark:border-indigo-500",
   locked:
-    "bg-pink-100 border-l-2 border-pink-400 dark:bg-pink-400/15 dark:border-pink-400",
+    "bg-pink-100 border-s-2 border-pink-400 dark:bg-pink-400/15 dark:border-pink-400",
   escrow:
-    "bg-slate-200 border-l-2 border-slate-400 dark:bg-slate-700/50 dark:border-slate-500",
+    "bg-slate-200 border-s-2 border-slate-400 dark:bg-slate-700/50 dark:border-slate-500",
 };
 
 // ====================================================================
@@ -337,7 +337,7 @@ const highlightConfig = {
 const HbdAprTooltip = ({ hbdInterestApr, isLoading, t }: any) => (
   <Tooltip>
     <TooltipTrigger asChild>
-      <span className="flex items-center space-x-1 text-xs px-1.5 py-0.5 rounded-md bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 font-semibold cursor-help">
+      <span className="flex items-center space-x-1 rtl:space-x-reverse text-xs px-1.5 py-0.5 rounded-md bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 font-semibold cursor-help">
         {isLoading ? (
           <Loader2 className="h-3 w-3 animate-spin" />
         ) : (
@@ -466,7 +466,7 @@ const DetailRow = ({
       </div>
       <div
         id={isAction ? valueId : undefined}
-        className={cn("flex-grow text-right", { "shrink-0": isAction })}
+        className={cn("flex-grow text-end", { "shrink-0": isAction })}
       >
         <div
           className={cn(
@@ -549,11 +549,11 @@ const AssetSection = ({
       countSuffix !== null &&
       countSuffix !== undefined &&
       countSuffix !== 0 ? (
-        <span className="inline-flex items-center ml-1 text-xs opacity-70">
+        <span className="inline-flex items-center ms-1 text-xs opacity-70">
           ({countSuffix}
           <Tooltip>
             <TooltipTrigger asChild>
-              <sup className="ml-0.5 cursor-help">
+              <sup className="ms-0.5 cursor-help">
                 <Info size={10} strokeWidth={3} color="#0ea5e9" />
               </sup>
             </TooltipTrigger>
@@ -653,7 +653,7 @@ const AssetSection = ({
         onClick={onToggle}
         className="flex flex-wrap justify-between items-center p-2 cursor-pointer gap-x-4 gap-y-1"
       >
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 rtl:space-x-reverse">
           {asset.icon}
           <Tooltip>
             <TooltipTrigger asChild>
@@ -666,7 +666,7 @@ const AssetSection = ({
             </TooltipContent>
           </Tooltip>
         </div>
-        <div className="flex items-center space-x-2 flex-shrink-0">
+        <div className="flex items-center space-x-2 rtl:space-x-reverse flex-shrink-0">
           <span className="font-semibold text-sm">{assetTotalValue}</span>
           <ChevronUp
             className={cn("h-5 w-5 flex-shrink-0", {
@@ -1122,7 +1122,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
               <Wallet className="h-4 w-4" />
               {header}
             </CardTitle>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 rtl:space-x-reverse">
               <Tooltip>
                 <DataExport
                   data={prepareExportData()}

@@ -193,9 +193,9 @@ const PowerActivityTabContent: React.FC<PowerActivityTabContentProps> = ({
                   aria-pressed={isActive}
                   className={cn(
                     "font-medium transition-colors px-3 py-0.5",
-                    !isLast && "border-r border-navbar-border",
-                    isFirst && "rounded-l-full",
-                    isLast && "rounded-r-full",
+                    !isLast && "border-e border-navbar-border",
+                    isFirst && "rounded-s-full",
+                    isLast && "rounded-e-full",
                     isActive
                       ? "bg-blue-500 text-white"
                       : "bg-theme hover:bg-gray-100 dark:hover:bg-gray-700"

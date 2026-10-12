@@ -69,7 +69,7 @@ const InteractionsTabContent: React.FC<InteractionsTabContentProps> = ({
     } else if (isCommentSearchDataLoading || isCommentSearchDataFetching) {
       return (
         <div className="flex justify-center text-center items-center">
-          <Loader2 className="animate-spin mt-1 text-text h-12 w-12 ml-3 ..." />
+          <Loader2 className="animate-spin mt-1 text-text h-12 w-12 ms-3 ..." />
         </div>
       );
     } else {
@@ -150,7 +150,7 @@ const InteractionsTabContent: React.FC<InteractionsTabContentProps> = ({
         )}
       >
         <CardHeader>
-          <CardTitle className="text-left">{t("common.filters")}</CardTitle>
+          <CardTitle className="text-start">{t("common.filters")}</CardTitle>
         </CardHeader>
         <CardContent>
           <AccountPageInteractionSearch

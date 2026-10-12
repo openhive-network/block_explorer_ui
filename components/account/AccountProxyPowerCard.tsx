@@ -158,12 +158,12 @@ const AccountProxyPowerCard: React.FC<AccountProxyPowerCardProps> = ({
   const renderSortIcon = (columnKey: keyof Hive.ProxyPowerResponse) => {
     if (sortConfig.key === columnKey) {
       return sortConfig.isAscending ? (
-        <ChevronUp size={15} className="ml-2" />
+        <ChevronUp size={15} className="ms-2" />
       ) : (
-        <ChevronDown size={15} className="ml-2" />
+        <ChevronDown size={15} className="ms-2" />
       );
     }
-    return <ChevronsUpDown size={15} className="ml-2" />;
+    return <ChevronsUpDown size={15} className="ms-2" />;
   };
 
   return (
@@ -177,7 +177,7 @@ const AccountProxyPowerCard: React.FC<AccountProxyPowerCardProps> = ({
             {t("accountProxyPowerCard.proxyPowerReceived")} (
             {accountProxyPower.length})
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 rtl:space-x-reverse">
             <DataExport
               data={prepareExportData()}
               filename={`${accountName}_proxy_power.csv`}
@@ -221,9 +221,9 @@ const AccountProxyPowerCard: React.FC<AccountProxyPowerCardProps> = ({
             ).replace("{pct}", largestSharePct.toFixed(1))}`}
           />
         </div>
-        <div className="flex items-center justify-between space-x-4 p-2 border-b">
+        <div className="flex items-center justify-between space-x-4 rtl:space-x-reverse p-2 border-b">
           {showPagination ? (
-            <div className="flex items-center space-x-1 my-2">
+            <div className="flex items-center space-x-1 rtl:space-x-reverse my-2">
               <Button
                 variant="ghost"
                 size="icon"
@@ -247,7 +247,7 @@ const AccountProxyPowerCard: React.FC<AccountProxyPowerCardProps> = ({
           ) : (
             <div />
           )}
-          <div className="flex items-center space-x-1">
+          <div className="flex items-center space-x-1 rtl:space-x-reverse">
             <Label htmlFor="hp-vests-toggle" className="text-xs my-4">
               {t("common.vests")}
             </Label>
@@ -283,7 +283,7 @@ const AccountProxyPowerCard: React.FC<AccountProxyPowerCardProps> = ({
                 </span>
               </TableCell>
               <TableCell
-                className="cursor-pointer text-right p-1 pe-4"
+                className="cursor-pointer text-end p-1 pe-4"
                 onClick={() => sortBy("proxied_vests")}
               >
                 <span className="flex items-center justify-end whitespace-nowrap">
@@ -305,7 +305,7 @@ const AccountProxyPowerCard: React.FC<AccountProxyPowerCardProps> = ({
                   <TableCell className="p-1 w-28">
                     {formatAndDelocalizeTime(proxy.proxy_date)}
                   </TableCell>
-                  <TableCell className="text-right p-1 pe-4">
+                  <TableCell className="text-end p-1 pe-4">
                     {isHP ? (
                       <>
                         {hiveChain && dynamicGlobalData?.headBlockDetails && (
