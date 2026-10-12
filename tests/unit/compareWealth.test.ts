@@ -70,6 +70,16 @@ describe("compare wealth composition", () => {
     expect(wealthTotal(buildWealthComposition(dollars))).toBe(SUM_OF_PARTS);
   });
 
+  it("caps powering down at the staked value", () => {
+    const c = buildWealthComposition({
+      vesting_shares: "10.000 HBD",
+      vesting_withdraw_rate: "12.000 HBD",
+    });
+    expect(c.staked).toBe(0);
+    expect(c.poweringDown).toBe(10);
+    expect(wealthTotal(c)).toBe(10);
+  });
+
   it("leaves delegated and received vesting out of the breakdown", () => {
     const { delegated_vesting_shares, received_vesting_shares, ...without } =
       dollars;
