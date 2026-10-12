@@ -206,11 +206,6 @@ const useFinancialSummary = (
       grabNumericValue(userDetails.delegated_vesting_shares) -
       grabNumericValue(userDetails.vesting_withdraw_rate);
 
-    const effectiveHpRaw =
-      grabNumericValue(userDetails.vesting_shares) +
-      grabNumericValue(userDetails.received_vesting_shares) -
-      grabNumericValue(userDetails.delegated_vesting_shares);
-
     const totalHiveRaw =
       grabNumericValue(userDetails.balance) +
       grabNumericValue(String(userDetails.savings_balance)) +
@@ -275,7 +270,6 @@ const useFinancialSummary = (
         totalHp: formatTotal(totalHpRaw, "HP", 2),
         totalHive: formatTotal(totalHiveRaw, "HIVE"),
         totalHbd: formatTotal(totalHbdRaw, "HBD"),
-        effectiveHp: formatTotal(effectiveHpRaw, "HP"),
         totalHiveUsd: changeHBDToDollarsDisplay(totalHiveUsdRaw.toString()),
         totalHbdUsd: changeHBDToDollarsDisplay(totalHbdUsdRaw.toString()),
         dollars: formattedDollars,
