@@ -88,7 +88,7 @@ export const useCommunitySubscriberLookup = (
         return true;
       } catch (error: any) {
         const text = `${error?.message ?? ""} ${JSON.stringify(error ?? {})}`;
-        if (/does not exist|invalid account name/i.test(text)) return false;
+        if (/does not exist|invalid account/i.test(text)) return false;
         throw error;
       }
     },
