@@ -16,6 +16,7 @@ import { useI18n } from "@/i18n/i18n";
 import FilterChipsBar, { FilterChip } from "@/components/ui/FilterChipsBar";
 import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
 import { getOperationButtonTitle } from "@/utils/UI";
+import { useSearchesContext } from "@/contexts/SearchesContext";
 
 interface InteractionsTabContentProps {
   isVisible: boolean;
@@ -42,6 +43,8 @@ const InteractionsTabContent: React.FC<InteractionsTabContentProps> = ({
     "accountName",
   ]);
   const { operationsTypes } = useOperationsTypes();
+  const { setCommentPaginationPage, setSelectedCommentSearchOperationTypes } =
+    useSearchesContext();
 
   const props = {
     ...paramsState,
@@ -127,8 +130,11 @@ const InteractionsTabContent: React.FC<InteractionsTabContentProps> = ({
               hasTypeFilter ? typesTitle : t("operationTypesDialog.all")
             }`,
       onRemove: hasTypeFilter
-        ? () =>
-            setParams({ ...paramsState, filters: null, pageNumber: 1 } as any)
+        ? () => {
+            setSelectedCommentSearchOperationTypes(null);
+            setCommentPaginationPage(1);
+            setParams({ ...paramsState, filters: null, pageNumber: 1 } as any);
+          }
         : undefined,
     },
   ];
