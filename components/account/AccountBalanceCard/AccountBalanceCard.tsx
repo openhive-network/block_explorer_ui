@@ -48,7 +48,8 @@ import VestsTooltip from "../../VestsTooltip";
 import Explorer from "@/types/Explorer";
 import useBlockChainProperties from "@/hooks/api/common/useBlockChainProperties";
 import { useI18n } from "@/i18n/i18n";
-import { cn, formatNumber } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { relocalizeAmount } from "@/utils/localeAmount";
 import {
   changeHBDToDollarsDisplay,
   grabNumericValue,
@@ -153,9 +154,17 @@ export const ASSET_CONFIG = [
 /**
  * Calculate and format all financial data for the account
  */
-const useFinancialSummary = (userDetails: Explorer.FormattedAccountDetails) => {
+const useFinancialSummary = (
+  userDetails: Explorer.FormattedAccountDetails,
+  locale: string
+) => {
   return useMemo(() => {
     const { dollars } = userDetails;
+    const formatTotal = (value: number, unit: string, decimals?: number) =>
+      `${value.toLocaleString(locale, {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals ?? 3,
+      })} ${unit}`;
 
     // --- 1. Raw Numeric Values ---
     const totalValueRaw = grabNumericValue(dollars.account_value);
@@ -236,8 +245,10 @@ const useFinancialSummary = (userDetails: Explorer.FormattedAccountDetails) => {
 
     const formattedDollars = Object.entries(userDetails.dollars).reduce(
       (acc, [key, value]) => {
-        acc[key as keyof typeof userDetails.dollars] =
-          changeHBDToDollarsDisplay(value);
+        acc[key as keyof typeof userDetails.dollars] = relocalizeAmount(
+          changeHBDToDollarsDisplay(value),
+          locale
+        );
         return acc;
       },
       {} as Record<keyof typeof userDetails.dollars, string>
@@ -257,23 +268,22 @@ const useFinancialSummary = (userDetails: Explorer.FormattedAccountDetails) => {
       },
       formatted: {
         totalValue: formattedDollars.account_value,
-        totalHp: `${formatNumber(totalHpRaw, false, true)} HP`,
-        totalHive: `${totalHiveRaw.toLocaleString(undefined, {
-          maximumFractionDigits: 3,
-        })} HIVE`,
-        totalHbd: `${totalHbdRaw.toLocaleString(undefined, {
-          maximumFractionDigits: 3,
-        })} HBD`,
-        effectiveHp: `${effectiveHpRaw.toLocaleString(undefined, {
-          maximumFractionDigits: 3,
-        })} HP`,
+        totalHp: formatTotal(totalHpRaw, "HP", 2),
+        totalHive: formatTotal(totalHiveRaw, "HIVE"),
+        totalHbd: formatTotal(totalHbdRaw, "HBD"),
+        effectiveHp: formatTotal(effectiveHpRaw, "HP"),
         totalHiveUsd: changeHBDToDollarsDisplay(totalHiveUsdRaw.toString()),
         totalHbdUsd: changeHBDToDollarsDisplay(totalHbdUsdRaw.toString()),
         dollars: formattedDollars,
-        vests: userDetails.vests,
+        vests: Object.fromEntries(
+          Object.entries(userDetails.vests).map(([key, value]) => [
+            key,
+            relocalizeAmount(String(value), locale),
+          ])
+        ) as Record<keyof Explorer.AccountDetailsVests, string>,
       },
     };
-  }, [userDetails]);
+  }, [userDetails, locale]);
 };
 
 // ====================================================================
@@ -540,7 +550,7 @@ const AssetSection = ({
     sign: "" | "+" | "-" = "",
     hideCount = false
   ) => {
-    const rawVal = userDetails[key];
+    const rawVal = relocalizeAmount(String(userDetails[key]), locale);
     const { countSuffix, tooltipMsg } = countFor(key);
 
     // Drill-down rows show their count in the row pill instead.
@@ -550,7 +560,7 @@ const AssetSection = ({
       countSuffix !== undefined &&
       countSuffix !== 0 ? (
         <span className="inline-flex items-center ms-1 text-xs opacity-70">
-          ({countSuffix}
+          ({Number(countSuffix).toLocaleString(locale)}
           <Tooltip>
             <TooltipTrigger asChild>
               <sup className="ms-0.5 cursor-help">
@@ -570,8 +580,8 @@ const AssetSection = ({
       return (
         <span className="flex items-center justify-end">
           <VestsTooltip
-            tooltipTrigger={`${sign}${String(rawVal)}`}
-            tooltipContent={String(userDetails.vests[vestKey])}
+            tooltipTrigger={`${sign}${rawVal}`}
+            tooltipContent={financialSummary.formatted.vests[vestKey]}
           />
           {countDisplay}
         </span>
@@ -580,7 +590,7 @@ const AssetSection = ({
     return (
       <span className="flex items-center justify-end">
         {sign}
-        {String(rawVal)}
+        {rawVal}
         {countDisplay}
       </span>
     );
@@ -885,7 +895,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
   focus = false,
   onChangeTab,
 }) => {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [isCardHidden, setIsCardHidden] = useCollapsedState(isInitiallyOpen);
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     hive: false,
@@ -914,13 +924,16 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
   }, []);
 
   const { blockChainPropertiesData } = useBlockChainProperties();
-  const financialSummary = useFinancialSummary(userDetails);
+  const financialSummary = useFinancialSummary(userDetails, locale);
 
   const hbdInterestApr = useMemo(() => {
     return blockChainPropertiesData?.hbd_interest_rate
-      ? `${(blockChainPropertiesData.hbd_interest_rate / 100).toFixed(2)}%`
+      ? `${(blockChainPropertiesData.hbd_interest_rate / 100).toLocaleString(
+          locale,
+          { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+        )}%`
       : null;
-  }, [blockChainPropertiesData]);
+  }, [blockChainPropertiesData, locale]);
 
   const areAllOpen = useMemo(
     () => ASSET_CONFIG.every((asset) => !!openSections[asset.key]),
@@ -929,7 +942,8 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
 
   const chartSegments = useMemo(() => {
     const total = financialSummary.raw.totalValue || 1;
-    const formatDisplayValue = (value: number) => `${value.toLocaleString()} $`;
+    const formatDisplayValue = (value: number) =>
+      `${value.toLocaleString(locale)} $`;
 
     const liquidPct = (financialSummary.raw.liquidValue / total) * 100;
     const savingsPct = (financialSummary.raw.savingsValue / total) * 100;
@@ -1045,7 +1059,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
     }
 
     return segments;
-  }, [financialSummary.raw, t, userDetails]);
+  }, [financialSummary.raw, t, userDetails, locale]);
 
   const handleSegmentClick = (key: string | null) => {
     const newKey = activeSegmentKey === key ? null : key;
@@ -1102,9 +1116,10 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
       financialSummary,
       chartSegments,
       hbdInterestApr,
-      t
+      t,
+      locale
     );
-  }, [userDetails, financialSummary, chartSegments, hbdInterestApr, t]);
+  }, [userDetails, financialSummary, chartSegments, hbdInterestApr, t, locale]);
 
   return (
     <TooltipProvider>
