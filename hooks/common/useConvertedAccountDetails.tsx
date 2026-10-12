@@ -300,9 +300,12 @@ const useConvertedAccountDetails = (
   }
 
   /* Account Value Calculations */
+  // The weekly power-down instalment is still part of vesting_shares until it
+  // is paid out, so adding it again would count it twice.
   const skipCalculation = [
     "delegated_vesting_shares",
     "received_vesting_shares",
+    "vesting_withdraw_rate",
   ];
 
   let totalAccountValue = Object.entries(dollars).reduce(

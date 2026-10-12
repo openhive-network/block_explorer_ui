@@ -25,7 +25,11 @@ const n = (v: unknown): number =>
 export const buildWealthComposition = (
   dollars: Record<string, unknown>
 ): WealthComposition => ({
-  staked: n(dollars.vesting_shares),
+  // The weekly power-down instalment is its own segment, so it leaves staked.
+  staked: Math.max(
+    0,
+    n(dollars.vesting_shares) - n(dollars.vesting_withdraw_rate)
+  ),
   savings:
     n(dollars.savings_balance) +
     n(dollars.hbd_saving_balance) +

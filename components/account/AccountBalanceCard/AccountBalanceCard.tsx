@@ -168,9 +168,13 @@ const useFinancialSummary = (
 
     // --- 1. Raw Numeric Values ---
     const totalValueRaw = grabNumericValue(dollars.account_value);
-    const stakedValueRaw = grabNumericValue(dollars.vesting_shares);
     const poweringDownValueRaw = grabNumericValue(
       dollars.vesting_withdraw_rate
+    );
+    // Shown as its own segment, so it is taken out of the staked one.
+    const stakedValueRaw = Math.max(
+      0,
+      grabNumericValue(dollars.vesting_shares) - poweringDownValueRaw
     );
     const liquidValueRaw =
       grabNumericValue(dollars.balance) + grabNumericValue(dollars.hbd_balance);
