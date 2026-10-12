@@ -309,9 +309,9 @@ const PowerActivityTable: React.FC<PowerActivityTableProps> = ({
                   aria-pressed={isActive}
                   className={cn(
                     "font-medium transition-colors px-2.5 py-0.5",
-                    !isLast && "border-r border-navbar-border",
-                    isFirst && "rounded-l-full",
-                    isLast && "rounded-r-full",
+                    !isLast && "border-e border-navbar-border",
+                    isFirst && "rounded-s-full",
+                    isLast && "rounded-e-full",
                     isActive
                       ? "bg-blue-500 text-white"
                       : "bg-theme hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -431,13 +431,13 @@ const PowerActivityTable: React.FC<PowerActivityTableProps> = ({
                   >
                     <div className="flex justify-start items-center rounded">
                       <span
-                        className={cn("rounded w-4 mr-2", operationBgColor)}
+                        className={cn("rounded w-4 me-2", operationBgColor)}
                       />
                       <EventIcon type={op.direction} />
-                      <span className="ml-1.5">{eventLabel}</span>
+                      <span className="ms-1.5">{eventLabel}</span>
                     </div>
                     {opTypeName && (
-                      <div className=" text-[11px] text-gray-500 dark:text-gray-400 ml-6">
+                      <div className=" text-[11px] text-gray-500 dark:text-gray-400 ms-6">
                         {opTypeName}
                       </div>
                     )}

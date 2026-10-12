@@ -39,7 +39,7 @@ const AccountOperationsSection: React.FC<AccountOperationsSectionProps> = ({
   } else if (isAccountOperationsLoading) {
     return (
       <div className="flex justify-center text-center items-center">
-        <Loader2 className="animate-spin mt-1 text-text h-12 w-12 ml-3 ..." />
+        <Loader2 className="animate-spin mt-1 text-text h-12 w-12 ms-3 ..." />
       </div>
     );
   }

@@ -106,7 +106,7 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
       >
         {isLoading && (
           <div className="flex justify-center items-center">
-            <Loader2 className="animate-spin mt-1 h-16 w-10 ml-10 dark:text-white" />
+            <Loader2 className="animate-spin mt-1 h-16 w-10 ms-10 dark:text-white" />
           </div>
         )}
         {!isLoading && hasError && (

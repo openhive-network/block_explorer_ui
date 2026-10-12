@@ -150,9 +150,9 @@ const AccountHpActivityCard: React.FC<AccountHpActivityCardProps> = ({
                       aria-pressed={isActive}
                       className={cn(
                         "font-medium transition-colors px-2.5 py-0.5",
-                        !isLast && "border-r border-navbar-border",
-                        isFirst && "rounded-l-full",
-                        isLast && "rounded-r-full",
+                        !isLast && "border-e border-navbar-border",
+                        isFirst && "rounded-s-full",
+                        isLast && "rounded-e-full",
                         isActive
                           ? "bg-blue-500 text-white"
                           : "bg-theme hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -209,7 +209,7 @@ const AccountHpActivityCard: React.FC<AccountHpActivityCardProps> = ({
                     <Icon size={15} color={color} className="shrink-0" />
                     {label}
                   </span>
-                  <span className="ml-auto flex items-baseline gap-1.5 whitespace-nowrap">
+                  <span className="ms-auto flex items-baseline gap-1.5 whitespace-nowrap">
                     <span
                       className="font-semibold tabular-nums"
                       style={{ color }}
@@ -231,7 +231,7 @@ const AccountHpActivityCard: React.FC<AccountHpActivityCardProps> = ({
                   {t("accountHpActivityCard.netFlow", { unit: unitLabel })}
                 </span>
                 <span
-                  className="ml-auto text-sm font-bold tabular-nums whitespace-nowrap"
+                  className="ms-auto text-sm font-bold tabular-nums whitespace-nowrap"
                   style={{
                     color: netIsPositive
                       ? VESTING_COLORS.up

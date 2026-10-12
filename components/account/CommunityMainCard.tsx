@@ -149,7 +149,7 @@ const InfoSection = ({
   return (
     <div className="border-t border-slate-200 dark:border-slate-700 pt-3">
       <button
-        className="w-full flex justify-between items-center text-left font-semibold text-gray-700 dark:text-gray-300"
+        className="w-full flex justify-between items-center text-start font-semibold text-gray-700 dark:text-gray-300"
         onClick={() => setIsOpen(!isOpen)}
       >
         <span className="flex items-center gap-2">
@@ -258,7 +258,7 @@ const CommunityMainCard: React.FC<CommunityMainCardProps> = ({
               src={coverImageFromProfile}
               alt={`${title} cover image`}
             />
-            <div className="absolute -bottom-10 left-4 z-10">
+            <div className="absolute -bottom-10 start-4 z-10">
               <HiveAvatar
                 accountName={name}
                 size={80}

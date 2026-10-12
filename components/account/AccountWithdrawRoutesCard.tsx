@@ -68,7 +68,7 @@ const AccountWithdrawRoutesCard: React.FC<AccountWithdrawRoutesCardProps> = ({
           <div className="text-lg">
             {t("accountWithdrawRoutesCard.routes")} ({routes.length})
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 rtl:space-x-reverse">
             <DataExport
               data={prepareExportData()}
               filename={`${accountName}_${t(
@@ -87,14 +87,14 @@ const AccountWithdrawRoutesCard: React.FC<AccountWithdrawRoutesCardProps> = ({
         <Table enableMobileScrollArrows>
           <TableHeader className="text-base">
             <TableRow>
-              <TableHead className="w-10 text-right" />
-              <TableHead className="text-right">
+              <TableHead className="w-10 text-end" />
+              <TableHead className="text-end">
                 {t("accountWithdrawRoutesCard.destination")}
               </TableHead>
-              <TableHead className="text-right">
+              <TableHead className="text-end">
                 {t("accountWithdrawRoutesCard.percent")}
               </TableHead>
-              <TableHead className="text-right">
+              <TableHead className="text-end">
                 {t("accountWithdrawRoutesCard.autoPowerUp")}
               </TableHead>
             </TableRow>
@@ -104,7 +104,7 @@ const AccountWithdrawRoutesCard: React.FC<AccountWithdrawRoutesCardProps> = ({
               <Fragment key={route.id}>
                 <TableRow>
                   <TableCell>{index + 1}</TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-end">
                     <Link
                       className="text-link whitespace-nowrap"
                       href={`/@${route.to_account}`}
@@ -112,10 +112,10 @@ const AccountWithdrawRoutesCard: React.FC<AccountWithdrawRoutesCardProps> = ({
                       {route.to_account}
                     </Link>
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-end">
                     {formatPercent(route.percent, locale)}
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-end">
                     {autoVestLabel(route.auto_vest)}
                   </TableCell>
                 </TableRow>

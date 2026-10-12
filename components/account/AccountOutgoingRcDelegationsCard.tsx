@@ -46,7 +46,7 @@ const buildTableBody = (
           }
         >
           <TableCell>{offset + index + 1}</TableCell>
-          <TableCell className="text-right break-words">
+          <TableCell className="text-end break-words">
             <Link
               className="text-link"
               href={`/@${delegation.delegatee}`}
@@ -55,7 +55,7 @@ const buildTableBody = (
               {delegation.delegatee}
             </Link>
           </TableCell>
-          <TableCell className="text-right break-words">
+          <TableCell className="text-end break-words">
             {formatNumber(delegation.max_rc, false, true, 0)}
           </TableCell>
         </TableRow>
@@ -143,7 +143,7 @@ const AccountOutgoingRcDelegationsCard: React.FC<
             {t("accountOutgoingRcDelegationsCard.delegations")} (
             {delegations.length})
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 rtl:space-x-reverse">
             <DataExport
               data={prepareExportData()}
               filename={`${accountName}_${t(

@@ -199,12 +199,12 @@ const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
-        className="min-w-[70vw] pr-0"
+        className="min-w-[70vw] pe-0"
         data-testid="community-subscribers-dialog"
       >
         <div
           ref={setScrollEl}
-          className="max-h-[90vh] min-h-[60vh] overflow-y-auto overflow-x-hidden pr-6 scrollableContainer"
+          className="max-h-[90vh] min-h-[60vh] overflow-y-auto overflow-x-hidden pe-6 scrollableContainer"
         >
           <ReportDialogHeader
             title={

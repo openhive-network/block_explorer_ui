@@ -655,11 +655,11 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
               !isWitnessLoading && (
                 <div className="w-full flex flex-col gap-3 border-t border-slate-200 dark:border-slate-700 pt-5">
                   <Button className="w-full" onClick={openVotersModal}>
-                    <Vote className="mr-2 h-4 w-4" />
+                    <Vote className="me-2 h-4 w-4" />
                     {t("accountMainCard.voters")}
                   </Button>
                   <Button className="w-full" onClick={openVotesHistoryModal}>
-                    <History className="mr-2 h-4 w-4" />
+                    <History className="me-2 h-4 w-4" />
                     {t("accountMainCard.votesHistory")}
                   </Button>
                 </div>

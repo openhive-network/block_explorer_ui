@@ -286,7 +286,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
         )}
       >
         <CardHeader>
-          <CardTitle className="text-left">{t("common.filters")}</CardTitle>
+          <CardTitle className="text-start">{t("common.filters")}</CardTitle>
         </CardHeader>
         <CardContent>
           <SearchRanges
@@ -297,8 +297,8 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
             <div className="text-sm font-medium">
               {t("operations.participationMode")}
             </div>
-            <div className="flex space-x-4">
-              <label className="flex items-center space-x-2">
+            <div className="flex space-x-4 rtl:space-x-reverse">
+              <label className="flex items-center space-x-2 rtl:space-x-reverse">
                 <input
                   type="radio"
                   name="participationMode"
@@ -314,7 +314,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
                 />
                 <span className="text-sm">{t("operations.all")}</span>
               </label>
-              <label className="flex items-center space-x-2">
+              <label className="flex items-center space-x-2 rtl:space-x-reverse">
                 <input
                   type="radio"
                   name="participationMode"
@@ -330,7 +330,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
                 />
                 <span className="text-sm">{t("operations.incoming")}</span>
               </label>
-              <label className="flex items-center space-x-2">
+              <label className="flex items-center space-x-2 rtl:space-x-reverse">
                 <input
                   type="radio"
                   name="participationMode"
@@ -368,12 +368,12 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
               <Button
                 onClick={handleSearch}
                 data-testid="apply-filters"
-                className="mr-2 my-2"
+                className="me-2 my-2"
                 disabled={isSearchButtonDisabled}
               >
                 {t("common.search")}
                 {isAccountOperationsLoading && (
-                  <Loader2 className="ml-2 animate-spin h-4 w-4" />
+                  <Loader2 className="ms-2 animate-spin h-4 w-4" />
                 )}
               </Button>
 

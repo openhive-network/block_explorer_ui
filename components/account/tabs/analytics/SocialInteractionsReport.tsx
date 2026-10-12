@@ -630,7 +630,7 @@ const SocialInteractionsReport: React.FC<
         ref={viewportRef}
         className={cn(
           "mt-3",
-          fillHeight ? "flex-1 min-h-0 overflow-y-auto pr-0.5" : ""
+          fillHeight ? "flex-1 min-h-0 overflow-y-auto pe-0.5" : ""
         )}
       >
         {isInteractionsLoading ? (

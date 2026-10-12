@@ -67,7 +67,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
         <TableCell className="cursor-pointer whitespace-nowrap">
           {isAccount ? (
             <Link className="text-link flex" href={`/@${content}`}>
-              <User className="w-4 mr-2" />
+              <User className="w-4 me-2" />
               <span>{content}</span>
             </Link>
           ) : (
@@ -77,7 +77,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
             />
           )}
         </TableCell>
-        <TableCell className="text-right">{weight}</TableCell>
+        <TableCell className="text-end">{weight}</TableCell>
       </TableRow>
     );
   };
@@ -112,9 +112,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
               })}
             >
               <TableCell>{t("accountAuthoritiesCard.threshold")}</TableCell>
-              <TableCell className="text-right">
-                {a?.weight_threshold}
-              </TableCell>
+              <TableCell className="text-end">{a?.weight_threshold}</TableCell>
             </TableRow>
           </TableBody>
         </Table>

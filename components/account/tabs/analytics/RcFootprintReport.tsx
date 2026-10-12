@@ -132,7 +132,7 @@ const RcFootprintReport: React.FC<
       <div
         className={
           fillHeight
-            ? "flex-1 min-h-0 overflow-y-auto space-y-3 pr-0.5"
+            ? "flex-1 min-h-0 overflow-y-auto space-y-3 pe-0.5"
             : "space-y-3"
         }
       >

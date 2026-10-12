@@ -163,10 +163,10 @@ const AccountFollowListDialog: React.FC<AccountFollowListDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="min-w-[70vw] pr-0" data-testid={testId}>
+      <DialogContent className="min-w-[70vw] pe-0" data-testid={testId}>
         <div
           ref={setScrollEl}
-          className="max-h-[90vh] min-h-[60vh] overflow-y-auto overflow-x-hidden pr-6 scrollableContainer"
+          className="max-h-[90vh] min-h-[60vh] overflow-y-auto overflow-x-hidden pe-6 scrollableContainer"
         >
           <ReportDialogHeader
             title={
