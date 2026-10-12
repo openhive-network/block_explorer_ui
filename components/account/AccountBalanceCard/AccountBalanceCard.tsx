@@ -168,14 +168,14 @@ const useFinancialSummary = (
 
     // --- 1. Raw Numeric Values ---
     const totalValueRaw = grabNumericValue(dollars.account_value);
-    const poweringDownValueRaw = grabNumericValue(
-      dollars.vesting_withdraw_rate
+    const vestingValueRaw = grabNumericValue(dollars.vesting_shares);
+    // Shown as its own segment, so it is taken out of the staked one. Capped at
+    // vesting so the two never add up to more than was staked.
+    const poweringDownValueRaw = Math.min(
+      vestingValueRaw,
+      grabNumericValue(dollars.vesting_withdraw_rate)
     );
-    // Shown as its own segment, so it is taken out of the staked one.
-    const stakedValueRaw = Math.max(
-      0,
-      grabNumericValue(dollars.vesting_shares) - poweringDownValueRaw
-    );
+    const stakedValueRaw = vestingValueRaw - poweringDownValueRaw;
     const liquidValueRaw =
       grabNumericValue(dollars.balance) + grabNumericValue(dollars.hbd_balance);
     const savingsValueRaw =
@@ -256,6 +256,7 @@ const useFinancialSummary = (
     return {
       raw: {
         totalValue: totalValueRaw,
+        totalHp: totalHpRaw,
         liquidValue: liquidValueRaw,
         stakedValue: stakedValueRaw,
         savingsValue: savingsValueRaw,
@@ -293,7 +294,8 @@ const fieldHighlightConfig = new Map<
   string,
   (keyof Explorer.FormattedAccountDetails)[]
 >([
-  ["staked", ["vesting_shares"]],
+  // Staked is owned HP minus the power-down instalment, so both rows light up.
+  ["staked", ["vesting_shares", "vesting_withdraw_rate"]],
   [
     "savings",
     [
@@ -800,10 +802,12 @@ const AssetSection = ({
                     icon = <Hourglass size={16} color="#0ea5e9" />;
                   }
 
+                  const highlightClass =
+                    field === "vesting_withdraw_rate" && !isPoweringDown
+                      ? ""
+                      : getHighlightClass(field);
                   const isDefaultHighlighted =
-                    hasClaimableAmount &&
-                    !getHighlightClass(field) &&
-                    !activeSegmentKey;
+                    hasClaimableAmount && !highlightClass && !activeSegmentKey;
                   const drillDownSymbol =
                     OPEN_ORDER_FIELDS[field] ?? CONVERSION_FIELDS[field];
                   const hasDrillDown = !!drillDownSymbol;
@@ -842,13 +846,11 @@ const AssetSection = ({
                       }
                       key={field}
                       fieldKey={field}
-                      className={cn(getHighlightClass(field), {
+                      className={cn(highlightClass, {
                         "bg-gradient-to-r from-cyan-100 to-transparent dark:from-teal-900/50 dark:to-transparent":
                           isDefaultHighlighted,
                       })}
-                      isHighlighted={
-                        !!getHighlightClass(field) || isDefaultHighlighted
-                      }
+                      isHighlighted={!!highlightClass || isDefaultHighlighted}
                       label={t(cardNameMapKeys.get(field)!)}
                       labelClassName={
                         hasClaimableAmount
@@ -856,7 +858,11 @@ const AssetSection = ({
                           : "text-slate-600 dark:text-slate-400"
                       }
                       icon={icon}
-                      value={renderValue(field, "", hasDrillDown)}
+                      value={renderValue(
+                        field,
+                        isPoweringDown ? "-" : "",
+                        hasDrillDown
+                      )}
                       dollarValue={financialSummary.formatted.dollars[field]}
                     />
                   );

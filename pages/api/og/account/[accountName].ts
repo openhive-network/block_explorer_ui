@@ -108,11 +108,13 @@ export default async function handler(
     const totalShares = parseFloat(props.total_vesting_shares);
     const toHp = (v: string | number): number =>
       totalShares > 0 ? (num(v) * totalFund) / totalShares : 0;
-    // Net effective HP (own + received - delegated) — the headline HP stat.
+    // Net effective HP (own + received - delegated - weekly power down) — the
+    // headline HP stat.
     const hp =
       toHp(acc.vesting_shares) +
       toHp(acc.received_vesting_shares) -
-      toHp(acc.delegated_vesting_shares);
+      toHp(acc.delegated_vesting_shares) -
+      toHp(acc.vesting_withdraw_rate);
 
     const followers = Number(followCount?.follower_count) || 0;
     const posts = Number(acc.post_count) || 0;
@@ -138,8 +140,7 @@ export default async function handler(
         num(acc.savings_balance) +
         num(acc.reward_hive_balance) +
         num(acc.reward_vesting_hive) +
-        toHp(acc.vesting_shares) +
-        toHp(acc.vesting_withdraw_rate);
+        toHp(acc.vesting_shares);
       let v = hbdSide + hiveSide * hivePriceHbd;
 
       // balance-api extras (raw amounts, precision 3 -> /1000). Same components

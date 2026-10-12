@@ -154,7 +154,8 @@ const AccountShareCard: React.FC<Props> = ({ accountName, accountDetails }) => {
       return (
         toHp(rawAccount.vesting_shares) +
         toHp(rawAccount.received_vesting_shares) -
-        toHp(rawAccount.delegated_vesting_shares)
+        toHp(rawAccount.delegated_vesting_shares) -
+        toHp(rawAccount.vesting_withdraw_rate)
       );
     } catch {
       return 0;

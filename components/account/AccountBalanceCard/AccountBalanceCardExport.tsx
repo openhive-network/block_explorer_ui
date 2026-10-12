@@ -11,9 +11,9 @@ type ChartSegment = {
 };
 
 type FinancialSummary = {
+  raw: { totalHp: number };
   formatted: {
     totalValue: string;
-    totalHp: string;
     totalHive: string;
     totalHbd: string;
     totalHiveUsd: string;
@@ -124,7 +124,11 @@ export const prepareAccountBalanceReport = (
   reportData.push({
     ...baseRow,
     [headers.metric]: t("accountBalanceCard.effectiveHp"),
-    [headers.value]: financialSummary.formatted.totalHp,
+    // Three decimals, like the rows below it, so the column adds up.
+    [headers.value]: `${financialSummary.raw.totalHp.toLocaleString(locale, {
+      minimumFractionDigits: 3,
+      maximumFractionDigits: 3,
+    })} HP`,
   });
 
   const getCountSuffix = (key: string) => {
@@ -171,7 +175,7 @@ export const prepareAccountBalanceReport = (
   addHpRow("delegated_vesting_shares", "-");
   addHpRow("reward_vesting_balance");
   if (grabNumericValue(userDetails.vesting_withdraw_rate) > 0)
-    addHpRow("vesting_withdraw_rate");
+    addHpRow("vesting_withdraw_rate", "-");
   reportData.push({});
 
   // --- HIVE Section ---
