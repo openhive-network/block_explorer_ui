@@ -7,7 +7,6 @@ interface SidebarToggleButtonProps {
   className?: string;
 }
 
-
 export default function SidebarToggleButton({
   isCollapsed,
   onClick,
@@ -18,8 +17,8 @@ export default function SidebarToggleButton({
       onClick={onClick}
       className={cn(
         "fixed top-1/2 -translate-y-1/2 z-40",
-        "flex h-24 w-6 items-center justify-center rounded-r-xl",
-        "border-y border-r border-slate-300 dark:border-slate-700",
+        "flex h-24 w-6 items-center justify-center rounded-e-xl",
+        "border-y border-e border-slate-300 dark:border-slate-700",
         "bg-slate-100 dark:bg-slate-900",
         "text-slate-500 dark:text-slate-400",
         "transition-all duration-200 ease-in-out",
@@ -29,9 +28,9 @@ export default function SidebarToggleButton({
       )}
     >
       {isCollapsed ? (
-        <ChevronsRight className="h-5 w-5" />
+        <ChevronsRight className="h-5 w-5 rtl:rotate-180" />
       ) : (
-        <ChevronsLeft className="h-5 w-5" />
+        <ChevronsLeft className="h-5 w-5 rtl:rotate-180" />
       )}
     </button>
   );
