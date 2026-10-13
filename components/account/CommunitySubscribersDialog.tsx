@@ -245,7 +245,7 @@ const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
 
           <form
             onSubmit={handleLookup}
-            className="sticky top-0 z-20 -mt-1 flex flex-wrap items-center gap-3 bg-theme pb-3 pt-1"
+            className="sticky top-0 z-20 -mt-1 flex flex-wrap items-center gap-3 bg-theme pb-3 pr-6 pt-1 sm:pr-0"
           >
             <div className="flex w-full items-center rounded-full border border-navbar-border bg-theme ps-3 focus-within:ring-2 focus-within:ring-indigo-400 sm:w-96">
               <AutoCompleteInput
