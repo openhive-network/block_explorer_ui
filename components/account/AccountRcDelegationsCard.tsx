@@ -17,6 +17,7 @@ import {
   handleSortDelegations,
 } from "@/utils/DelegationsSort";
 import { useI18n } from "../../i18n/i18n";
+import useCollapsedState from "@/hooks/common/useCollapsedState";
 import DataExport from "../DataExport";
 
 type AccountRcDelegationsCardProps = {
@@ -52,7 +53,7 @@ const AccountRcDelegationsCard: React.FC<AccountRcDelegationsCardProps> = ({
 }) => {
   const { t } = useI18n();
   const [isPropertiesHidden, setIsPropertiesHidden] =
-    useState(!isInitiallyOpen);
+    useCollapsedState(isInitiallyOpen);
 
   const [sortConfig, setSortConfig] = useState<{
     key: string;
