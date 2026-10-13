@@ -211,7 +211,7 @@ const AccountFollowListDialog: React.FC<AccountFollowListDialogProps> = ({
             <NoResult />
           ) : (
             <>
-              <div className="sticky top-0 z-20 -mt-1 flex flex-wrap items-center gap-3 bg-theme pb-3 pt-1">
+              <div className="sticky top-0 z-20 -mt-1 flex flex-wrap items-center gap-3 bg-theme pb-3 pr-6 pt-1 sm:pr-0">
                 <DialogSearchInput
                   value={filter}
                   onChange={(value) => {
