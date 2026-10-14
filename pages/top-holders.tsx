@@ -194,7 +194,7 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
   const prefilledInputs = useRef(false);
   const [minInput, setMinInput] = useState("");
   const [maxInput, setMaxInput] = useState("");
-  const [searchSync, setSearchSync] = useState(0);
+  const [searchSync, setSearchSync] = useState({ value: "", nonce: 0 });
   const [searchTarget, setSearchTarget] = useState<string | null>(null);
   const [searchNonce, setSearchNonce] = useState(0);
   const [searchError, setSearchError] = useState<string | null>(null);
@@ -206,7 +206,7 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
   const accountSearchRef = useRef("");
   const prefillAccountSearch = (value: string) => {
     accountSearchRef.current = value;
-    setSearchSync((n) => n + 1);
+    setSearchSync((sync) => ({ value, nonce: sync.nonce + 1 }));
   };
   const foundRowRef = useRef<HTMLTableRowElement>(null);
   const scrollPending = useRef(false);
@@ -796,8 +796,8 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
               <div className="flex w-full flex-col gap-y-2 sm:w-[260px]">
                 <Label className="text-xs">{t("topHolders.findAccount")}</Label>
                 <FindAccountInput
-                  value={accountSearchRef.current}
-                  syncNonce={searchSync}
+                  value={searchSync.value}
+                  syncNonce={searchSync.nonce}
                   onChange={onAccountSearchChange}
                   placeholder={t("topHolders.findAccountPlaceholder")}
                 />
