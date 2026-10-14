@@ -66,7 +66,7 @@ const Kpi: React.FC<{ label: string; value: string; sub?: string }> = ({
     <div className="text-sm font-semibold text-gray-800 dark:text-gray-100 break-words">
       {value}
       {sub && (
-        <span className="ml-1 text-xs font-normal text-gray-500 dark:text-gray-400 tabular-nums">
+        <span className="ms-1 text-xs font-normal text-gray-500 dark:text-gray-400 tabular-nums">
           {sub}
         </span>
       )}
