@@ -200,11 +200,15 @@ const useFinancialSummary = (
       grabNumericValue(dollars.escrow_pending_amount_hive) +
       grabNumericValue(dollars.escrow_pending_amount_hbd);
 
-    const totalHpRaw =
+    // The chain rounds the weekly rate up, so in the last week of a full power
+    // down this would dip just below zero and read "-0.00 HP".
+    const totalHpRaw = Math.max(
+      0,
       grabNumericValue(userDetails.vesting_shares) +
-      grabNumericValue(userDetails.received_vesting_shares) -
-      grabNumericValue(userDetails.delegated_vesting_shares) -
-      grabNumericValue(userDetails.vesting_withdraw_rate);
+        grabNumericValue(userDetails.received_vesting_shares) -
+        grabNumericValue(userDetails.delegated_vesting_shares) -
+        grabNumericValue(userDetails.vesting_withdraw_rate)
+    );
 
     const totalHiveRaw =
       grabNumericValue(userDetails.balance) +
