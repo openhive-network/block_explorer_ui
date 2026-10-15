@@ -9,8 +9,36 @@ import {
   grabNumericValue,
   formatHash,
   asCsvString,
+  escapeCsvFormula,
   isHiveAccountName,
 } from "@/utils/StringUtils";
+
+describe("escapeCsvFormula", () => {
+  it.each([
+    '=HYPERLINK("https://x.io","claim")',
+    "+cmd|' /C calc'!A0",
+    "-2+3+cmd|' /C calc'!A0",
+    "@SUM(1+1)",
+    "\t=1+1",
+    '="a"&HYPERLINK("https://x.io")',
+    "＝1+1",
+  ])("neutralises %p", (value) => {
+    expect(escapeCsvFormula(value)).toBe(`'${value}`);
+  });
+
+  it.each([
+    "plain memo",
+    '="1,234.567 $"',
+    "-5.001 HP",
+    "+10.004 HP",
+    "-1.234,5 HIVE",
+    "-٥٫٠٠١ HP",
+    "-12.5%",
+    "",
+  ])("leaves %p as it is", (value) => {
+    expect(escapeCsvFormula(value)).toBe(value);
+  });
+});
 
 describe("capitalizeFirst", () => {
   it("uppercases the first character", () => {
