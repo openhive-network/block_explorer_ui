@@ -151,11 +151,13 @@ const AccountShareCard: React.FC<Props> = ({ accountName, accountDetails }) => {
   const hp = useMemo(() => {
     if (!rawAccount || !toHp) return 0;
     try {
-      return (
+      // Floored: the rounded-up last power-down week would read "-0.00".
+      return Math.max(
+        0,
         toHp(rawAccount.vesting_shares) +
-        toHp(rawAccount.received_vesting_shares) -
-        toHp(rawAccount.delegated_vesting_shares) -
-        toHp(rawAccount.vesting_withdraw_rate)
+          toHp(rawAccount.received_vesting_shares) -
+          toHp(rawAccount.delegated_vesting_shares) -
+          toHp(rawAccount.vesting_withdraw_rate)
       );
     } catch {
       return 0;

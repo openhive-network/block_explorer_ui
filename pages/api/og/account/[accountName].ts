@@ -109,12 +109,15 @@ export default async function handler(
     const toHp = (v: string | number): number =>
       totalShares > 0 ? (num(v) * totalFund) / totalShares : 0;
     // Net effective HP (own + received - delegated - weekly power down) — the
-    // headline HP stat.
-    const hp =
+    // headline HP stat. Floored: the chain rounds the weekly rate up, so the
+    // last week of a full power down would read "-0.00".
+    const hp = Math.max(
+      0,
       toHp(acc.vesting_shares) +
-      toHp(acc.received_vesting_shares) -
-      toHp(acc.delegated_vesting_shares) -
-      toHp(acc.vesting_withdraw_rate);
+        toHp(acc.received_vesting_shares) -
+        toHp(acc.delegated_vesting_shares) -
+        toHp(acc.vesting_withdraw_rate)
+    );
 
     const followers = Number(followCount?.follower_count) || 0;
     const posts = Number(acc.post_count) || 0;
