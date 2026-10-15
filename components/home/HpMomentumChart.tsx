@@ -137,7 +137,8 @@ const HpMomentumChart: React.FC<HpMomentumChartProps> = ({
               className="font-semibold text-right"
               style={{ color: COLOR_DOWN_FILL }}
             >
-              -{formatAmount(power_down_fill)} {unitLabel}
+              {power_down_fill > 0 ? "-" : ""}
+              {formatAmount(power_down_fill)} {unitLabel}
               {power_down_fill_count !== undefined && (
                 <span className="text-gray-400 font-normal">
                   {" "}

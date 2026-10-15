@@ -30,6 +30,7 @@ const PowerActivityKpiStrip: React.FC<PowerActivityKpiStripProps> = ({
   const { t, locale } = useI18n();
   const unitLabel = unit === "hp" ? "HP" : "VESTS";
 
+  const downFillSign = totals.downFill > 0 ? "-" : "";
   const netSign: 1 | -1 | 0 = totals.net > 0 ? 1 : totals.net < 0 ? -1 : 0;
   const TrendIcon = netSign > 0 ? ArrowUp : netSign < 0 ? ArrowDown : Minus;
   const trendColor =
@@ -87,8 +88,11 @@ const PowerActivityKpiStrip: React.FC<PowerActivityKpiStripProps> = ({
         icon={<TrendingDown size={14} color={VESTING_COLORS.downFill} />}
         valueClassName="text-rose-600 dark:text-rose-400"
         value={
-          <span title={`-${totals.downFill.toLocaleString()} ${unitLabel}`}>
-            -{formatCompact(totals.downFill, locale)} {unitLabel}
+          <span
+            title={`${downFillSign}${totals.downFill.toLocaleString()} ${unitLabel}`}
+          >
+            {downFillSign}
+            {formatCompact(totals.downFill, locale)} {unitLabel}
           </span>
         }
         sub={`${totals.downFillCount.toLocaleString()} ${t("hpMomentumCard.ops")}`}

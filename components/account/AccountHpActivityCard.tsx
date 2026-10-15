@@ -198,7 +198,7 @@ const AccountHpActivityCard: React.FC<AccountHpActivityCardProps> = ({
                   label: t("accountHpActivityCard.poweredDown"),
                   value: totals.downFill,
                   count: totals.downFillCount,
-                  sign: "-",
+                  sign: totals.downFill > 0 ? "-" : "",
                 },
               ].map(({ Icon, color, label, value, count, sign }) => (
                 <div

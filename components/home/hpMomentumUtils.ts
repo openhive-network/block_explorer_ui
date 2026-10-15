@@ -108,16 +108,18 @@ export const aggregateVestingBuckets = ({
 
   const chartData: HpMomentumChartPoint[] = buckets.map((row) => {
     const upHive = supplyToNumber(row.power_up_hive);
-    const downFillHive = supplyToNumber(row.power_down_fill_hive);
+    const downFillVests = supplyToNumber(row.power_down_fill_vests);
     const downInitVests = supplyToNumber(row.power_down_init_vests);
 
-    // HP mode: HIVE in/out IS HP-equivalent at the moment of op; init's
-    // queued VESTS converts to HP via the current global rate.
+    // HP mode: power up HIVE is HP-equivalent at the moment of op. Power down
+    // is measured by the VESTS that left, because a routed payment reports 0
+    // HIVE to this account; those and init's queued VESTS convert via the
+    // current global rate.
     // VESTS mode: API returns raw VESTS for init/fill_vests; power_up only
     // ships as HIVE so we approximate via the current rate.
     const up = unit === "hp" ? upHive : upHive * ratios.vestsPerHive;
     const downFill =
-      unit === "hp" ? downFillHive : supplyToNumber(row.power_down_fill_vests);
+      unit === "hp" ? downFillVests * ratios.hivePerVests : downFillVests;
     const downInit =
       unit === "hp" ? downInitVests * ratios.hivePerVests : downInitVests;
 
