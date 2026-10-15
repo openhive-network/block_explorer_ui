@@ -185,18 +185,21 @@ export default function Account() {
             isCollapsed={isDesktopAccountDetailsCollapsed}
             onClick={() => setIsDesktopAccountDetailsCollapsed((prev) => !prev)}
           />
-          {!isDesktopAccountDetailsCollapsed && (
-            <div className="col-start-1 col-span-1 flex flex-col gap-y-2">
-              <AccountDetailsSection
-                accountName={accountNameFromRoute}
-                liveDataEnabled={liveDataEnabled}
-                changeLiveRefresh={changeLiveRefresh}
-                accountDetails={accountDetails}
-                communityDetails={communityDetails}
-                dynamicGlobalData={dynamicGlobalData}
-              />
-            </div>
-          )}
+          {/* Hidden, not removed: unmounting would reset every card's open state, sort and page. */}
+          <div
+            className={cn("col-start-1 col-span-1 flex flex-col gap-y-2", {
+              hidden: isDesktopAccountDetailsCollapsed,
+            })}
+          >
+            <AccountDetailsSection
+              accountName={accountNameFromRoute}
+              liveDataEnabled={liveDataEnabled}
+              changeLiveRefresh={changeLiveRefresh}
+              accountDetails={accountDetails}
+              communityDetails={communityDetails}
+              dynamicGlobalData={dynamicGlobalData}
+            />
+          </div>
         </>
       );
     }
