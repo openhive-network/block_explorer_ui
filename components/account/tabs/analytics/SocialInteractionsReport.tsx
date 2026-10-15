@@ -523,7 +523,7 @@ const SocialInteractionsReport: React.FC<
             { value: "15", label: "15" },
           ]}
         />
-        {activeTotal > 0 && (
+        {showChrome && activeTotal > 0 && (
           <span className="text-sm text-gray-500 dark:text-gray-400">
             <span className="font-semibold text-gray-700 dark:text-gray-200 tabular-nums">
               {activeTotal.toLocaleString(locale)}
