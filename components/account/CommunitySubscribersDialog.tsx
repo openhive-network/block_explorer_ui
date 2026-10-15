@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import moment from "moment";
-import { Loader2 } from "lucide-react";
+import { Download, Loader2, X } from "lucide-react";
 
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import ReportDialogHeader from "@/components/ui/ReportDialogHeader";
@@ -10,9 +10,13 @@ import LetterSection from "@/components/ui/LetterSection";
 import HiveAvatar from "@/components/ui/HiveAvatar";
 import { useI18n } from "@/i18n/i18n";
 import useCommunitySubscribers, {
+  toCommunitySubscribers,
   useCommunitySubscriberLookup,
 } from "@/hooks/api/accountPage/useCommunitySubscribers";
+import fetchingService from "@/services/FetchingService";
 import Hive from "@/types/Hive";
+import { downloadCsv } from "@/utils/csvDownload";
+import { spacesToUnderscores } from "@/utils/StringUtils";
 import ErrorMessage from "../ErrorMessage";
 import NoResult from "../NoResult";
 
@@ -32,6 +36,9 @@ const ROLE_LABEL_KEYS: Record<string, string> = {
   member: "communityCard.roleMember",
 };
 
+// The node returns at most 100 subscribers per request.
+const EXPORT_PAGE_SIZE = 100;
+
 const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
   isOpen,
   onClose,
@@ -49,6 +56,18 @@ const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
   // and the scroll observer must be attached once those nodes actually exist.
   const [scrollEl, setScrollEl] = useState<HTMLDivElement | null>(null);
   const [sentinel, setSentinel] = useState<HTMLDivElement | null>(null);
+  // Subscribers fetched so far by a running export; null when none is running.
+  const [exportedCount, setExportedCount] = useState<number | null>(null);
+  const [isExportFailed, setIsExportFailed] = useState(false);
+  // Bumped to cancel: a run only keeps going while its number is current.
+  const exportRun = useRef(0);
+
+  useEffect(
+    () => () => {
+      exportRun.current += 1;
+    },
+    []
+  );
 
   const {
     isSubscribed,
@@ -68,6 +87,63 @@ const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
     hasNextPage,
     isFetchingNextPage,
   } = useCommunitySubscribers(communityName, anchor);
+
+  // Walks the whole list from the start, page by page, independent of the
+  // rows on screen (which may begin at a looked-up name).
+  const handleExport = async () => {
+    const run = ++exportRun.current;
+    setIsExportFailed(false);
+    setExportedCount(0);
+    const subscribers: Hive.CommunitySubscriber[] = [];
+    let last: string | undefined;
+    try {
+      while (true) {
+        const page = toCommunitySubscribers(
+          await fetchingService.getCommunitySubscribers(
+            communityName,
+            last,
+            EXPORT_PAGE_SIZE
+          )
+        );
+        if (run !== exportRun.current) return;
+        subscribers.push(...page);
+        setExportedCount(subscribers.length);
+        if (page.length < EXPORT_PAGE_SIZE) break;
+        last = page[page.length - 1].name;
+      }
+      const columns = {
+        name: t("CommunitySubscribersDialog.exportAccount"),
+        role: t("CommunitySubscribersDialog.exportRole"),
+        title: t("CommunitySubscribersDialog.exportTitle"),
+        since: t("CommunitySubscribersDialog.exportSubscribedSince"),
+      };
+      await downloadCsv(
+        `${communityName}_${spacesToUnderscores(
+          t("CommunitySubscribersDialog.title")
+        ).toLowerCase()}.csv`,
+        subscribers.map((subscriber) => ({
+          [columns.name]: subscriber.name,
+          [columns.role]: subscriber.role
+            ? ROLE_LABEL_KEYS[subscriber.role]
+              ? t(ROLE_LABEL_KEYS[subscriber.role])
+              : t("CommunitySubscribersDialog.roleGuest")
+            : "",
+          [columns.title]: subscriber.title ?? "",
+          [columns.since]: subscriber.created_at ?? "",
+        })),
+        Object.values(columns)
+      );
+    } catch {
+      if (run === exportRun.current) setIsExportFailed(true);
+    } finally {
+      if (run === exportRun.current) setExportedCount(null);
+    }
+  };
+
+  const cancelExport = () => {
+    exportRun.current += 1;
+    setExportedCount(null);
+  };
 
   const handleLookup = (event: React.FormEvent) => {
     event.preventDefault();
@@ -241,6 +317,48 @@ const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
               </span>
             }
             subtitle={communityTitle}
+            actions={
+              subscribersData.length > 0 &&
+              (exportedCount === null ? (
+                <>
+                  {isExportFailed && (
+                    <span className="text-xs font-medium text-red-500">
+                      {t("CommunitySubscribersDialog.exportFailed")}
+                    </span>
+                  )}
+                  <button
+                    type="button"
+                    className="report-export-btn"
+                    onClick={handleExport}
+                  >
+                    <Download className="h-4 w-4" />
+                    {t("common.export")}
+                  </button>
+                </>
+              ) : (
+                <>
+                  <span
+                    className="flex items-center gap-2 text-xs tabular-nums text-gray-500 dark:text-gray-400"
+                    aria-live="polite"
+                  >
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    <span dir="ltr">
+                      {exportedCount.toLocaleString(locale)}
+                      {totalCount !== undefined &&
+                        ` / ${totalCount.toLocaleString(locale)}`}
+                    </span>
+                  </span>
+                  <button
+                    type="button"
+                    className="report-export-btn"
+                    onClick={cancelExport}
+                  >
+                    <X className="h-4 w-4" />
+                    {t("common.cancel")}
+                  </button>
+                </>
+              ))
+            }
           />
 
           <form

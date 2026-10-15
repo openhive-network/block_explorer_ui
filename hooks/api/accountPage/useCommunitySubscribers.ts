@@ -5,6 +5,19 @@ import type Hive from "@/types/Hive";
 
 const SUBSCRIBERS_PAGE_LIMIT = config.standardPaginationSize;
 
+// Each entry arrives as [name, role, title, subscribed at].
+export const toCommunitySubscribers = (
+  rawResult: unknown
+): Hive.CommunitySubscriber[] =>
+  Array.isArray(rawResult)
+    ? rawResult.map((subscriberTuple: any[]) => ({
+        name: subscriberTuple[0],
+        role: subscriberTuple[1],
+        title: subscriberTuple[2],
+        created_at: subscriberTuple[3],
+      }))
+    : [];
+
 // The list is alphabetical; `startAfter` begins it right after that subscriber.
 const useCommunitySubscribers = (
   communityName: string,
@@ -20,24 +33,12 @@ const useCommunitySubscribers = (
   } = useInfiniteQuery<Hive.CommunitySubscriber[]>({
     queryKey: ["communitySubscribers", communityName, startAfter],
     queryFn: async ({ pageParam = startAfter }) => {
-      const rawResult = await fetchingService.getCommunitySubscribers(
-        communityName,
-        pageParam,
-        SUBSCRIBERS_PAGE_LIMIT
-      );
-
-      if (!Array.isArray(rawResult)) {
-        return [];
-      }
-
-      // Each entry arrives as [name, role, title, subscribed at].
-      return rawResult.map(
-        (subscriberTuple: any[]): Hive.CommunitySubscriber => ({
-          name: subscriberTuple[0],
-          role: subscriberTuple[1],
-          title: subscriberTuple[2],
-          created_at: subscriberTuple[3],
-        })
+      return toCommunitySubscribers(
+        await fetchingService.getCommunitySubscribers(
+          communityName,
+          pageParam,
+          SUBSCRIBERS_PAGE_LIMIT
+        )
       );
     },
     getNextPageParam: (lastPage) => {
