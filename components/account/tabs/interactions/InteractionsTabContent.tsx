@@ -46,11 +46,13 @@ const InteractionsTabContent: React.FC<InteractionsTabContentProps> = ({
   const { setCommentPaginationPage, setSelectedCommentSearchOperationTypes } =
     useSearchesContext();
 
+  // A link like ?filters=1 decodes to no types; sending an empty list makes
+  // the API return nothing, so "no types" means no type filter at all.
+  const selectedTypeIds = convertBooleanArrayToIds(paramsState.filters ?? []);
+
   const props = {
     ...paramsState,
-    operationTypes: paramsState.filters
-      ? convertBooleanArrayToIds(paramsState.filters)
-      : null,
+    operationTypes: selectedTypeIds.length ? selectedTypeIds : null,
     accountName: accountNameFromRoute,
   } as any;
 
@@ -101,7 +103,6 @@ const InteractionsTabContent: React.FC<InteractionsTabContentProps> = ({
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paramsState, isFiltersActive]);
 
-  const selectedTypeIds = convertBooleanArrayToIds(paramsState.filters ?? []);
   const typesTitle = getOperationButtonTitle(selectedTypeIds, operationsTypes);
   const hasTypeFilter = (selectedTypeIds?.length ?? 0) > 0;
   const permlink: string | undefined = paramsState.permlink;
