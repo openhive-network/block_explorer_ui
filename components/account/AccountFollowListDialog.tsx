@@ -13,6 +13,7 @@ import useAccountFollowList, {
   FollowListType,
 } from "@/hooks/api/accountPage/useAccountFollowList";
 import { spacesToUnderscores } from "@/utils/StringUtils";
+import { downloadCsv } from "@/utils/csvDownload";
 
 interface AccountFollowListDialogProps {
   type: FollowListType;
@@ -28,25 +29,6 @@ interface AccountFollowListDialogProps {
 }
 
 const REVEAL_STEP = 200;
-
-const downloadNamesCsv = (
-  filename: string,
-  header: string,
-  names: string[]
-) => {
-  const rows = [`"${header.replace(/"/g, '""')}"`, ...names];
-  const blob = new Blob(["﻿" + rows.join("\r\n")], {
-    type: "text/csv;charset=utf-8;",
-  });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = filename;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
-};
 
 const AccountFollowListDialog: React.FC<AccountFollowListDialogProps> = ({
   type,
@@ -103,7 +85,11 @@ const AccountFollowListDialog: React.FC<AccountFollowListDialogProps> = ({
 
   useEffect(() => {
     if (!isExporting || hasNextPage) return;
-    downloadNamesCsv(filename, exportHeader, filtered);
+    downloadCsv(
+      filename,
+      filtered.map((name) => ({ [exportHeader]: name })),
+      [exportHeader]
+    );
     setIsExporting(false);
   }, [isExporting, hasNextPage, filename, exportHeader, filtered]);
 
