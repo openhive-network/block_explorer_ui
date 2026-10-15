@@ -174,8 +174,11 @@ const PowerActivityTable: React.FC<PowerActivityTableProps> = ({
   const totalOperations = accountVestingHistory?.total_operations ?? 0;
   const totalPages = accountVestingHistory?.total_pages ?? 0;
   const operations = useMemo(
-    () => accountVestingHistory?.operations_result ?? [],
-    [accountVestingHistory]
+    () =>
+      totalOperations > 0
+        ? (accountVestingHistory?.operations_result ?? [])
+        : [],
+    [accountVestingHistory, totalOperations]
   );
 
   const isLoading =
