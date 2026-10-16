@@ -909,6 +909,7 @@
   "accountRecurrentTransfersCard.nextExecution": "次回実行",
   "accountRecurrentTransfersCard.failures": "失敗回数",
   "accountRecurrentTransfersCard.memo": "メモ",
+  "accountRecurrentTransfersCard.recurrenceHours": "繰り返し間隔（時間）",
   "recurrentTransfersSort.Recipient": "受取人",
   "recurrentTransfersSort.Amount": "金額",
   "recurrentTransfersSort.Recurrence": "頻度",

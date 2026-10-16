@@ -909,6 +909,7 @@
   "accountRecurrentTransfersCard.nextExecution": "다음 실행",
   "accountRecurrentTransfersCard.failures": "실패 횟수",
   "accountRecurrentTransfersCard.memo": "메모",
+  "accountRecurrentTransfersCard.recurrenceHours": "반복 주기(시간)",
   "recurrentTransfersSort.Recipient": "수신인",
   "recurrentTransfersSort.Amount": "금액",
   "recurrentTransfersSort.Recurrence": "주기",
