@@ -909,6 +909,7 @@
   "accountRecurrentTransfersCard.nextExecution": "下次执行",
   "accountRecurrentTransfersCard.failures": "失败次数",
   "accountRecurrentTransfersCard.memo": "备注",
+  "accountRecurrentTransfersCard.recurrenceHours": "重复间隔（小时）",
   "recurrentTransfersSort.Recipient": "收款人",
   "recurrentTransfersSort.Amount": "金额",
   "recurrentTransfersSort.Recurrence": "周期",

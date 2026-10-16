@@ -212,8 +212,8 @@ const AccountRecurrentTransfersCard: React.FC<
       const commonData = {
         [t("common.order")]: index + 1,
         [t("recurrentTransfersSort.Amount")]: transfer.amount,
-        // Plain hours, so the column sorts and reads the same in every language.
-        [t("recurrentTransfersSort.Recurrence")]: transfer.recurrence,
+        [t("accountRecurrentTransfersCard.recurrenceHours")]:
+          transfer.recurrence,
         [t("recurrentTransfersSort.Remaining")]: transfer.remaining_executions,
         [t("accountRecurrentTransfersCard.nextExecution")]:
           formatBlockchainTime(transfer.trigger_date),

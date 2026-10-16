@@ -909,6 +909,7 @@
   "accountRecurrentTransfersCard.nextExecution": "التنفيذ التالي",
   "accountRecurrentTransfersCard.failures": "محاولات فاشلة",
   "accountRecurrentTransfersCard.memo": "المذكرة",
+  "accountRecurrentTransfersCard.recurrenceHours": "التكرار (ساعات)",
   "recurrentTransfersSort.Recipient": "المستلم",
   "recurrentTransfersSort.Amount": "المبلغ",
   "recurrentTransfersSort.Recurrence": "التكرار",

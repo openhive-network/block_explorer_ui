@@ -909,6 +909,7 @@
   "accountRecurrentTransfersCard.nextExecution": "Următoarea execuție",
   "accountRecurrentTransfersCard.failures": "Încercări eșuate",
   "accountRecurrentTransfersCard.memo": "Memo",
+  "accountRecurrentTransfersCard.recurrenceHours": "Recurență (ore)",
   "recurrentTransfersSort.Recipient": "Destinatar",
   "recurrentTransfersSort.Amount": "Sumă",
   "recurrentTransfersSort.Recurrence": "Recurență",

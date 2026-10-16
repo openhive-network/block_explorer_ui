@@ -909,6 +909,7 @@
   "accountRecurrentTransfersCard.nextExecution": "Prossima esecuzione",
   "accountRecurrentTransfersCard.failures": "Tentativi falliti",
   "accountRecurrentTransfersCard.memo": "Memo",
+  "accountRecurrentTransfersCard.recurrenceHours": "Ricorrenza (ore)",
   "recurrentTransfersSort.Recipient": "Destinatario",
   "recurrentTransfersSort.Amount": "Importo",
   "recurrentTransfersSort.Recurrence": "Ricorrenza",
