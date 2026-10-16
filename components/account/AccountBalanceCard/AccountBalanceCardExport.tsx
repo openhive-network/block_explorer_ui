@@ -122,7 +122,6 @@ export const prepareAccountBalanceReport = (
   reportData.push({
     ...baseRow,
     [headers.metric]: t("accountBalanceCard.effectiveHp"),
-    // Three decimals, like the rows below it, so the column adds up.
     [headers.value]: `${financialSummary.raw.totalHp.toLocaleString(locale, {
       minimumFractionDigits: 3,
       maximumFractionDigits: 3,
