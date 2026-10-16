@@ -28,6 +28,8 @@ const WitnessUrlIcon: React.FC<WitnessUrlIconProps> = ({
   const { t } = useI18n();
   const href = resolveLinkTarget(url);
 
+  if (!url.trim()) return null;
+
   return (
     <TooltipProvider>
       <Tooltip>
