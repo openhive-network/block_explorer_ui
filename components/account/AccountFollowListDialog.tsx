@@ -24,7 +24,7 @@ interface AccountFollowListDialogProps {
   onOpenChange: (isOpen: boolean) => void;
   title: string;
   searchPlaceholder: string;
-  noMatchText: string;
+  noMatchKey: string;
   exportHeader: string;
   testId: string;
 }
@@ -39,7 +39,7 @@ const AccountFollowListDialog: React.FC<AccountFollowListDialogProps> = ({
   onOpenChange,
   title,
   searchPlaceholder,
-  noMatchText,
+  noMatchKey,
   exportHeader,
   testId,
 }) => {
@@ -254,7 +254,7 @@ const AccountFollowListDialog: React.FC<AccountFollowListDialogProps> = ({
               ))}
 
               {filtered.length === 0 && !hasNextPage && (
-                <NoResult descriptionKey={noMatchText} />
+                <NoResult descriptionKey={noMatchKey} />
               )}
 
               {isError && (

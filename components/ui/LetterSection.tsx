@@ -15,7 +15,7 @@ const LetterSection: React.FC<LetterSectionProps> = ({
   children,
 }) => (
   <section className="mb-3">
-    <div className="mb-1 flex items-center gap-3" dir="ltr">
+    <div className="mb-1 flex items-center gap-3">
       <span className="w-4 text-sm font-semibold uppercase text-indigo-500">
         {letter}
       </span>

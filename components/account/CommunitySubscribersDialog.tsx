@@ -241,9 +241,7 @@ const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
       return <ErrorMessage message={t("CommunitySubscribersDialog.error")} />;
     }
     if (groups.length === 0) {
-      return (
-        <NoResult descriptionKey={t("CommunitySubscribersDialog.noResults")} />
-      );
+      return <NoResult descriptionKey="CommunitySubscribersDialog.noResults" />;
     }
     return (
       <>

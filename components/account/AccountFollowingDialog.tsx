@@ -27,7 +27,7 @@ const AccountFollowingDialog: React.FC<FollowingDialogProps> = ({
       onOpenChange={changeFollowingDialogue}
       title={t("accountFollowingDialog.followingDataType")}
       searchPlaceholder={t("accountFollowingDialog.searchPlaceholder")}
-      noMatchText={t("accountFollowingDialog.noResultsFound")}
+      noMatchKey="accountFollowingDialog.noResultsFound"
       exportHeader={t("accountFollowingDialog.followingHeader")}
       testId="following-dialog"
     />
