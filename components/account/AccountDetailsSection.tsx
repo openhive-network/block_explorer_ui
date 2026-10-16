@@ -734,6 +734,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
       )}
 
       <VotersDialog
+        key={accountName}
         accountName={accountName}
         isVotersOpen={isVotersModalOpen}
         changeVotersDialogue={handleOpenVotersModal}

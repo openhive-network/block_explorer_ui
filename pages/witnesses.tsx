@@ -481,6 +481,7 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
             ) : sortedFilteredWitnesses.length > 0 ? (
               <>
                 <VotersDialog
+                  key={voterAccount}
                   accountName={voterAccount}
                   isVotersOpen={isVotersOpen}
                   changeVotersDialogue={setIsVotersOpen}
