@@ -8,6 +8,7 @@ import HiveAvatar from "@/components/ui/HiveAvatar";
 import LetterSection from "@/components/ui/LetterSection";
 import DialogSearchInput from "@/components/ui/DialogSearchInput";
 import NoResult from "@/components/NoResult";
+import ErrorMessage from "@/components/ErrorMessage";
 import { useI18n } from "@/i18n/i18n";
 import useAccountFollowList, {
   FollowListType,
@@ -76,8 +77,13 @@ const AccountFollowListDialog: React.FC<AccountFollowListDialogProps> = ({
   // Searching and exporting need the whole list; browsing loads it on scroll.
   const needsAll = !!query || isExporting;
   useEffect(() => {
-    if (needsAll && hasNextPage && !isFetchingNextPage) fetchNextPage();
-  }, [needsAll, hasNextPage, isFetchingNextPage, fetchNextPage]);
+    if (needsAll && hasNextPage && !isFetchingNextPage && !isError)
+      fetchNextPage();
+  }, [needsAll, hasNextPage, isFetchingNextPage, isError, fetchNextPage]);
+
+  useEffect(() => {
+    if (isExporting && isError) setIsExporting(false);
+  }, [isExporting, isError]);
 
   const filename = `${accountName}_${spacesToUnderscores(
     title
@@ -101,7 +107,7 @@ const AccountFollowListDialog: React.FC<AccountFollowListDialogProps> = ({
         if (!entry.isIntersecting) return;
         if (revealCount < filtered.length) {
           setRevealCount((count) => count + REVEAL_STEP);
-        } else if (hasNextPage && !isFetchingNextPage) {
+        } else if (hasNextPage && !isFetchingNextPage && !isError) {
           fetchNextPage();
         }
       },
@@ -116,6 +122,7 @@ const AccountFollowListDialog: React.FC<AccountFollowListDialogProps> = ({
     filtered.length,
     hasNextPage,
     isFetchingNextPage,
+    isError,
     fetchNextPage,
   ]);
 
@@ -131,7 +138,7 @@ const AccountFollowListDialog: React.FC<AccountFollowListDialogProps> = ({
   }, [filtered, revealCount]);
 
   const total = hasNextPage ? (totalCount ?? names.length) : names.length;
-  const isWorking = isFetchingNextPage || (needsAll && hasNextPage);
+  const isWorking = isFetchingNextPage || (needsAll && hasNextPage && !isError);
 
   const renderName = (name: string) => {
     const index = query ? name.indexOf(query) : -1;
@@ -189,10 +196,8 @@ const AccountFollowListDialog: React.FC<AccountFollowListDialogProps> = ({
             <div className="flex justify-center items-center py-16">
               <Loader2 className="animate-spin h-8 w-8" />
             </div>
-          ) : isError ? (
-            <div className="flex justify-center items-center py-16">
-              <p className="text-red-500">{t("common.errorLoadingData")}</p>
-            </div>
+          ) : isError && names.length === 0 ? (
+            <ErrorMessage message={t("common.errorLoadingData")} />
           ) : names.length === 0 ? (
             <NoResult />
           ) : (
@@ -250,6 +255,10 @@ const AccountFollowListDialog: React.FC<AccountFollowListDialogProps> = ({
 
               {filtered.length === 0 && !hasNextPage && (
                 <NoResult descriptionKey={noMatchText} />
+              )}
+
+              {isError && (
+                <ErrorMessage message={t("common.errorLoadingData")} />
               )}
 
               <div ref={setSentinel} className="h-px" />
