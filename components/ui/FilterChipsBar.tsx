@@ -108,13 +108,13 @@ const FilterChipsBar: React.FC<FilterChipsBarProps> = ({
         {chips.map((chip) => (
           <span
             key={chip.key}
-            className="inline-flex items-center rounded-full bg-blue-100 text-blue-700 text-xs font-medium dark:bg-blue-950/50 dark:text-blue-300"
+            className="inline-flex max-w-full items-center rounded-full bg-blue-100 text-blue-700 text-xs font-medium dark:bg-blue-950/50 dark:text-blue-300"
           >
             <button
               type="button"
               onClick={chip.onClick ?? onExpand}
               className={cn(
-                "py-0.5 rounded-full text-current hover:bg-blue-200 dark:hover:bg-blue-900 transition-colors cursor-pointer",
+                "min-w-0 py-0.5 text-start [overflow-wrap:anywhere] rounded-full text-current hover:bg-blue-200 dark:hover:bg-blue-900 transition-colors cursor-pointer",
                 chip.onRemove ? "ps-3 pe-2" : "px-3"
               )}
               aria-label={t("activeFilters.edit", { value: chip.label })}
