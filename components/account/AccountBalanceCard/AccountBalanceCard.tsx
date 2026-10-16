@@ -50,6 +50,7 @@ import useBlockChainProperties from "@/hooks/api/common/useBlockChainProperties"
 import { useI18n } from "@/i18n/i18n";
 import { cn } from "@/lib/utils";
 import { relocalizeAmount } from "@/utils/localeAmount";
+import { formatLocalePercent } from "@/utils/chartUtils";
 import {
   changeHBDToDollarsDisplay,
   grabNumericValue,
@@ -936,10 +937,11 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
 
   const hbdInterestApr = useMemo(() => {
     return blockChainPropertiesData?.hbd_interest_rate
-      ? `${(blockChainPropertiesData.hbd_interest_rate / 100).toLocaleString(
+      ? formatLocalePercent(
+          blockChainPropertiesData.hbd_interest_rate / 100,
           locale,
-          { minimumFractionDigits: 2, maximumFractionDigits: 2 }
-        )}%`
+          2
+        )
       : null;
   }, [blockChainPropertiesData, locale]);
 

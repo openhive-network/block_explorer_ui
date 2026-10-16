@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useI18n } from "@/i18n/i18n";
 import { cn } from "@/lib/utils";
+import { formatLocalePercent } from "@/utils/chartUtils";
 
 type ChartSegment = {
   key: string;
@@ -34,11 +35,7 @@ export const AccountBalanceCardChart: React.FC<
   AccountBalanceCardChartProps
 > = ({ segments, activeSegmentKey, onSegmentClick }) => {
   const { t, locale } = useI18n();
-  const formatShare = (percent: number) =>
-    percent.toLocaleString(locale, {
-      minimumFractionDigits: 1,
-      maximumFractionDigits: 1,
-    });
+  const formatShare = (percent: number) => formatLocalePercent(percent, locale);
 
   const adjustedChartSegments = useMemo(() => {
     const MINIMUM_PERCENTAGE = 1.5;
@@ -179,7 +176,7 @@ export const AccountBalanceCardChart: React.FC<
                         segment.iconColorClass
                       )}
                     >
-                      ({formatShare(segment.percent)}%)
+                      ({formatShare(segment.percent)})
                     </span>
                   )}
                 </div>
@@ -228,7 +225,7 @@ export const AccountBalanceCardChart: React.FC<
                           poweringDownSegment.iconColorClass
                         )}
                       >
-                        ({formatShare(poweringDownSegment.percent)}%)
+                        ({formatShare(poweringDownSegment.percent)})
                       </span>
                     )}
                   </div>

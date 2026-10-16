@@ -8,6 +8,7 @@ import { Loader2, Sparkles, Waypoints } from "lucide-react";
 import { useI18n } from "@/i18n/i18n";
 import { useTheme } from "@/contexts/ThemeContext";
 import { cn } from "@/lib/utils";
+import { formatLocalePercent } from "@/utils/chartUtils";
 import ReportSearchRanges from "./ReportSearchRanges";
 import SegmentedToggle from "@/components/ui/SegmentedToggle";
 import { spacesToUnderscores } from "@/utils/StringUtils";
@@ -341,10 +342,11 @@ const SocialInteractionsReport: React.FC<
               const account = name.slice(1);
               const info = partnerInfo.get(account);
               if (info) {
-                const pct =
-                  activeTotal > 0
-                    ? Math.round((info.total / activeTotal) * 100)
-                    : 0;
+                const pct = formatLocalePercent(
+                  activeTotal > 0 ? (info.total / activeTotal) * 100 : 0,
+                  locale,
+                  0
+                );
                 const breakdown = info.rows
                   .map(
                     (r) =>
@@ -353,7 +355,7 @@ const SocialInteractionsReport: React.FC<
                   .join(" · ");
                 return avatarCard(
                   account,
-                  `<div style="font-size:11px;opacity:.85">${info.total.toLocaleString(locale)} ${int} · ${pct}% ${t("socialInteractions.ofTotal")}</div>` +
+                  `<div style="font-size:11px;opacity:.85">${info.total.toLocaleString(locale)} ${int} · ${pct} ${t("socialInteractions.ofTotal")}</div>` +
                     `<div style="font-size:11px;margin-top:2px">${breakdown}</div>`
                 );
               }
