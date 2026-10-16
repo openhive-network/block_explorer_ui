@@ -60,18 +60,19 @@ const useAggregatedBalanceHistory = (
 
   const start = isBlockRange
     ? (rowsDayRange?.start ??
-      moment().startOf("day").format("YYYY-MM-DDTHH:mm:ss"))
+      moment.utc().startOf("day").format("YYYY-MM-DDTHH:mm:ss"))
     : fromDate
-      ? moment(fromDate).startOf("day").format("YYYY-MM-DDTHH:mm:ss")
+      ? moment.utc(fromDate).startOf("day").format("YYYY-MM-DDTHH:mm:ss")
       : undefined;
 
   // Prices come in daily buckets, so an open range ends at the end of today:
   // the current second would make a new query on every render.
   const end = isBlockRange
-    ? (rowsDayRange?.end ?? moment().endOf("day").format("YYYY-MM-DDTHH:mm:ss"))
+    ? (rowsDayRange?.end ??
+      moment.utc().endOf("day").format("YYYY-MM-DDTHH:mm:ss"))
     : toDate
-      ? moment(toDate).format("YYYY-MM-DDTHH:mm:ss")
-      : moment().endOf("day").format("YYYY-MM-DDTHH:mm:ss");
+      ? moment.utc(toDate).endOf("day").format("YYYY-MM-DDTHH:mm:ss")
+      : moment.utc().endOf("day").format("YYYY-MM-DDTHH:mm:ss");
 
   const { marketHistory } = useMarketHistory(86400, start, end);
 
