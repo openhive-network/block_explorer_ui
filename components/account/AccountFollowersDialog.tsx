@@ -27,7 +27,7 @@ const AccountFollowersDialog: React.FC<FollowersDialogProps> = ({
       onOpenChange={changeFollowersDialogue}
       title={t("accountFollowersDialog.followersDataType")}
       searchPlaceholder={t("accountFollowersDialog.searchPlaceholder")}
-      noMatchText={t("accountFollowersDialog.noResultsFound")}
+      noMatchKey="accountFollowersDialog.noResultsFound"
       exportHeader={t("accountFollowersDialog.followerHeader")}
       testId="followers-dialog"
     />
