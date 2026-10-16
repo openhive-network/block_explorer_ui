@@ -127,9 +127,10 @@ const InteractionsTabContent: React.FC<InteractionsTabContentProps> = ({
       label:
         (selectedTypeIds?.length ?? 0) > 1
           ? typesTitle
-          : `${t("operationTypesDialog.operationTypes")}: ${
-              hasTypeFilter ? typesTitle : t("operationTypesDialog.all")
-            }`,
+          : t("activeFilters.labelValue", {
+              label: t("operationTypesDialog.operationTypes"),
+              value: hasTypeFilter ? typesTitle : t("operationTypesDialog.all"),
+            }),
       onRemove: hasTypeFilter
         ? () => {
             setSelectedCommentSearchOperationTypes(null);

@@ -752,6 +752,7 @@
   "balanceHistoryKpi.dollarValue": "달러 가치",
   "activeFilters.title": "활성 필터",
   "activeFilters.coin": "코인: {{value}}",
+  "activeFilters.labelValue": "{{label}}: {{value}}",
   "activeFilters.lastDays": "최근 {{value}}일",
   "activeFilters.lastWeeks": "최근 {{value}}주",
   "activeFilters.lastMonths": "최근 {{value}}개월",

@@ -752,6 +752,7 @@
   "balanceHistoryKpi.dollarValue": "Dollarwert",
   "activeFilters.title": "Aktive Filter",
   "activeFilters.coin": "Münze: {{value}}",
+  "activeFilters.labelValue": "{{label}}: {{value}}",
   "activeFilters.lastDays": "Letzte {{value}} Tage",
   "activeFilters.lastWeeks": "Letzte {{value}} Wochen",
   "activeFilters.lastMonths": "Letzte {{value}} Monate",

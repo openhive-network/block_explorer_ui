@@ -752,6 +752,7 @@
   "balanceHistoryKpi.dollarValue": "قيمة الدولار",
   "activeFilters.title": "الفلاتر النشطة",
   "activeFilters.coin": "العملة: {{value}}",
+  "activeFilters.labelValue": "{{label}}: {{value}}",
   "activeFilters.lastDays": "آخر {{value}} يوم",
   "activeFilters.lastWeeks": "آخر {{value}} أسبوع",
   "activeFilters.lastMonths": "آخر {{value}} شهر",
