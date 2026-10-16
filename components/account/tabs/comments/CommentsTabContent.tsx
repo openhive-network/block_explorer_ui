@@ -134,7 +134,9 @@ const CommentsTabContent: React.FC<CommnetsTabContentProps> = ({
     {
       key: "type",
       label: t("activeFilters.postType", {
-        value: t(`postTypeSelector.commentTypes.${commentType}`),
+        value: ["all", "post", "comment"].includes(commentType)
+          ? t(`postTypeSelector.commentTypes.${commentType}`)
+          : String(commentType),
       }),
       onRemove:
         commentType !== "all"
