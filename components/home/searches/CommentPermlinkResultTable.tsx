@@ -161,12 +161,12 @@ const CommentPermlinkResultTable = ({
     return data.map(
       ({ block, operation_id, permlink, timestamp, trx_id }: any) => {
         return {
-          [t("commentPermlinkResultTable.block")]: block.toLocaleString(),
+          [t("commentPermlinkResultTable.block")]: block,
           [t("commentPermlinkResultTable.operationId")]: operation_id,
           [t("commentPermlinkResultTable.permlink")]: permlink,
           [t("commentPermlinkResultTable.timestamp")]:
             formatAndDelocalizeTime(timestamp),
-          [t("commentPermlinkResultTable.trxId")]: trx_id?.slice(0, 10),
+          [t("commentPermlinkResultTable.trxId")]: trx_id ?? "",
         };
       }
     );
