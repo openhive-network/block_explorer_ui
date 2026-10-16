@@ -288,7 +288,10 @@ const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
           </div>
         )}
         {isCommunitySubscribersError && (
-          <ErrorMessage message={t("CommunitySubscribersDialog.error")} />
+          <ErrorMessage
+            message={t("CommunitySubscribersDialog.error")}
+            onRetry={() => fetchNextPage()}
+          />
         )}
         <div ref={setSentinel} className="h-px" />
       </>
