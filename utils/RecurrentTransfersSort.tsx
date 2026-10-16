@@ -74,7 +74,13 @@ export const handleSortTransfers = ({
 
   if (!accessor) return transfers;
 
+  const symbolOf = (t: AllTransfers) => t.amount.split(" ").pop() ?? "";
+
   return [...transfers].sort((a, b) => {
+    if (key === "amount") {
+      const bySymbol = symbolOf(a).localeCompare(symbolOf(b));
+      if (bySymbol !== 0) return bySymbol;
+    }
     const aValue = accessor(a);
     const bValue = accessor(b);
 
