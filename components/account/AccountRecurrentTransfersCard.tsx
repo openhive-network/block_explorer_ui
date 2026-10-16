@@ -124,7 +124,12 @@ const AccountRecurrentTransfersCard: React.FC<
               {failures > 0 && (
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <sup aria-label={failuresLabel} className="ms-0.5">
+                    <sup
+                      tabIndex={0}
+                      role="img"
+                      aria-label={failuresLabel}
+                      className="ms-0.5"
+                    >
                       <AlertTriangle
                         className="inline h-3 w-3"
                         color="#ef4444"
