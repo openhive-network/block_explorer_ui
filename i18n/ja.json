@@ -752,6 +752,7 @@
   "balanceHistoryKpi.dollarValue": "ドル価値",
   "activeFilters.title": "アクティブなフィルター",
   "activeFilters.coin": "通貨: {{value}}",
+  "activeFilters.labelValue": "{{label}}: {{value}}",
   "activeFilters.lastDays": "過去 {{value}} 日",
   "activeFilters.lastWeeks": "過去 {{value}} 週間",
   "activeFilters.lastMonths": "過去 {{value}} ヶ月",

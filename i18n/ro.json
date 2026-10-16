@@ -752,6 +752,7 @@
   "balanceHistoryKpi.dollarValue": "Valoare în dolari",
   "activeFilters.title": "Filtre active",
   "activeFilters.coin": "Monedă: {{value}}",
+  "activeFilters.labelValue": "{{label}}: {{value}}",
   "activeFilters.lastDays": "Ultimele {{value}} zile",
   "activeFilters.lastWeeks": "Ultimele {{value}} săptămâni",
   "activeFilters.lastMonths": "Ultimele {{value}} luni",

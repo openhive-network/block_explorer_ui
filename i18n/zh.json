@@ -752,6 +752,7 @@
   "balanceHistoryKpi.dollarValue": "美元价值",
   "activeFilters.title": "活动筛选器",
   "activeFilters.coin": "币种: {{value}}",
+  "activeFilters.labelValue": "{{label}}: {{value}}",
   "activeFilters.lastDays": "最近 {{value}} 天",
   "activeFilters.lastWeeks": "最近 {{value}} 周",
   "activeFilters.lastMonths": "最近 {{value}} 个月",

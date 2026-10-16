@@ -61,9 +61,10 @@ const PowerActivityFilterChips: React.FC<PowerActivityFilterChipsProps> = ({
   const isDefaultGranularity = activeGranularity === "daily";
   chips.push({
     key: "granularity",
-    label: `${t("hpMomentumFullChartDialog.granularity")}: ${t(
-      GRANULARITY_LABEL_KEYS[activeGranularity]
-    )}`,
+    label: t("activeFilters.labelValue", {
+      label: t("hpMomentumFullChartDialog.granularity"),
+      value: t(GRANULARITY_LABEL_KEYS[activeGranularity]),
+    }),
     onClick: onExpand,
     onRemove: isDefaultGranularity
       ? undefined

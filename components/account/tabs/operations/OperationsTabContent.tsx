@@ -237,20 +237,24 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
       label:
         (selectedTypeIds?.length ?? 0) > 1
           ? typesTitle
-          : `${t("operationTypesDialog.operationTypes")}: ${
-              hasTypeFilter ? typesTitle : t("operationTypesDialog.all")
-            }`,
+          : t("activeFilters.labelValue", {
+              label: t("operationTypesDialog.operationTypes"),
+              value: hasTypeFilter ? typesTitle : t("operationTypesDialog.all"),
+            }),
       onRemove: hasTypeFilter ? () => handleOperationSelect(null) : undefined,
     },
     {
       key: "direction",
-      label: `${t("operations.participationMode")}: ${t(
-        direction === "include"
-          ? "operations.outgoing"
-          : direction === "exclude"
-            ? "operations.incoming"
-            : "operations.all"
-      )}`,
+      label: t("activeFilters.labelValue", {
+        label: t("operations.participationMode"),
+        value: t(
+          direction === "include"
+            ? "operations.outgoing"
+            : direction === "exclude"
+              ? "operations.incoming"
+              : "operations.all"
+        ),
+      }),
       onRemove: direction
         ? () =>
             setParams({ ...paramsState, page: undefined, direction: undefined })
