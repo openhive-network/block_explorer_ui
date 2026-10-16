@@ -258,7 +258,10 @@ const AccountFollowListDialog: React.FC<AccountFollowListDialogProps> = ({
               )}
 
               {isError && (
-                <ErrorMessage message={t("common.errorLoadingData")} />
+                <ErrorMessage
+                  message={t("common.errorLoadingData")}
+                  onRetry={() => fetchNextPage()}
+                />
               )}
 
               <div ref={setSentinel} className="h-px" />
