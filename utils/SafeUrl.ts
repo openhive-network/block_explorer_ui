@@ -1,7 +1,15 @@
 const URL_IGNORED = /[\t\n\r]/g;
 
-export const isInAppPath = (url: unknown): url is string =>
-  typeof url === "string" && /^\/(?![/\\])/.test(url.replace(URL_IGNORED, ""));
+const DOT_DOT_SEGMENT = /(^|[/\\])(\.|%2e){2}([/\\]|$)/i;
+
+export const isInAppPath = (url: unknown): url is string => {
+  if (typeof url !== "string") return false;
+  const cleaned = url.replace(URL_IGNORED, "");
+  return (
+    /^\/(?![/\\])/.test(cleaned) &&
+    !DOT_DOT_SEGMENT.test(cleaned.split(/[?#]/)[0])
+  );
+};
 
 /**
  * Returns the URL as a string if it parses as http(s), otherwise null.
