@@ -1,6 +1,7 @@
 import Explorer from "@/types/Explorer";
 import { grabNumericValue, asCsvString } from "@/utils/StringUtils";
 import { relocalizeAmount } from "@/utils/localeAmount";
+import { formatLocalePercent } from "@/utils/chartUtils";
 import { ASSET_CONFIG, cardNameMapKeys } from "./AccountBalanceCard";
 
 // Define the types for the data we expect to receive
@@ -92,10 +93,7 @@ export const prepareAccountBalanceReport = (
       ...baseRow,
       [headers.metric]: segment.label,
       [headers.valueUSD]: asCsvString(segment.displayValue),
-      [headers.percentage]: `${segment.percent.toLocaleString(locale, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })}%`,
+      [headers.percentage]: formatLocalePercent(segment.percent, locale, 2),
     });
   });
   reportData.push({});
