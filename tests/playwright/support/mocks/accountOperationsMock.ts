@@ -243,3 +243,36 @@ export const mockOperationTypes = async (page: Page): Promise<void> => {
     }
   );
 };
+
+/**
+ * Build a `Hive.CommentOperationResponse` payload for the hafbe-api comment
+ * operations endpoint. Same row shape as the account operations (real payload
+ * captured live), without `block_range`.
+ */
+export const buildCommentOperationsResponse = (ops: MockOperation[]) => {
+  const { total_operations, total_pages, operations_result } =
+    buildAccountOperationsResponse(ops);
+  return { total_operations, total_pages, operations_result };
+};
+
+/**
+ * Intercept the comment-operations request
+ * (`.../accounts/<account>/operations/comments/<permlink>`) and fulfil it with a
+ * fixed payload. This query can hit the node's statement timeout, so the Home
+ * page comment-search tests must not wait on it. Register before searching.
+ */
+export const mockCommentOperations = async (
+  page: Page,
+  ops: MockOperation[]
+): Promise<void> => {
+  await page.route(
+    (url) => url.pathname.includes("/operations/comments/"),
+    async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(buildCommentOperationsResponse(ops)),
+      });
+    }
+  );
+};
