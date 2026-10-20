@@ -1,4 +1,5 @@
 import { parseDisplayOrChainDate } from "@/utils/TimeUtils";
+import { HIVE_SLOT_SECONDS } from "@/utils/slotGaps";
 import {
   OP_BUCKET_ORDER,
   bucketOperations,
@@ -178,8 +179,6 @@ const UNIT_SECONDS: Record<string, number> = {
   weeks: 604800,
   months: 2592000,
 };
-
-const HIVE_SLOT_SECONDS = 3;
 
 export interface RangeFilterParams {
   startDate?: Date | string;
