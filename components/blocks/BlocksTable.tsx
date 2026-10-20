@@ -55,18 +55,15 @@ import {
 import LiveBeacon from "../ui/LiveBeacon";
 import { useI18n } from "@/i18n/i18n";
 
-// Column indexes carrying a magnitude, per table mode. Full table:
-// 0 block · 1 producer · 2 prev hash · 3 hash · 4 time · [5 Δt] · reward ·
-// transactions · operations · virtual ops · expander. The Δt column is dropped
-// on a sparse result set, which shifts everything after it left by one.
-const fullNumericColumns = (hasSlotTiming: boolean) => {
-  const first = hasSlotTiming ? 6 : 5;
-  return new Set([first, first + 1, first + 2, first + 3]);
-};
+// Full-table columns are found by label, so adding or reordering one (or the
+// Δt column being dropped on a sparse result) never shifts these.
+const NUMERIC_COLUMN_KEYS = [
+  "blocksPage.rewardVests",
+  "common.transactions",
+  "common.operations",
+  "blocksPage.virtualOperations",
+];
 const MAIN_NUMERIC_COLUMNS = new Set([3]);
-
-// Position of the Δt header in the full table, used to hang its explanation.
-const SLOT_DELTA_COLUMN = 5;
 
 // Names the witnesses that skipped the slot — never the producer of either
 // adjacent block, which is why the attribution lives here and not on their row.
@@ -183,7 +180,8 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
 
   const numericColumns = isMainPageTable
     ? MAIN_NUMERIC_COLUMNS
-    : fullNumericColumns(showSlotTiming);
+    : new Set(NUMERIC_COLUMN_KEYS.map((key) => TABLE_CELLS.indexOf(t(key))));
+  const slotDeltaColumn = TABLE_CELLS.indexOf(t("blocksPage.slotDelta"));
 
   const showSlotColumns = !isMainPageTable && showSlotTiming;
 
@@ -205,7 +203,7 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
               numericColumns.has(index) ? "text-end" : "text-start"
             )}
           >
-            {showSlotColumns && index === SLOT_DELTA_COLUMN ? (
+            {showSlotColumns && index === slotDeltaColumn ? (
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
