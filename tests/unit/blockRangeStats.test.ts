@@ -51,6 +51,43 @@ describe("computeRangeStats", () => {
     ]);
     expect(s.busiestBlock).toEqual({ blockNum: 6, operationCount: 19 });
   });
+
+  it("breaks a busiest-block tie toward the lower block number", () => {
+    const s = computeRangeStats([
+      row({ block_num: 9, operationCount: 7 }),
+      row({ block_num: 8, operationCount: 7 }),
+    ]);
+    expect(s.busiestBlock).toEqual({ blockNum: 8, operationCount: 7 });
+  });
+
+  it("counts producers, empty blocks, buckets, the block range and the span", () => {
+    const s = computeRangeStats([
+      row({
+        block_num: 12,
+        created_at: "2026-08-28T00:00:06",
+        producer_account: "bob",
+        buckets: { ...emptyBuckets(), vote: 2, transfer: 1 },
+      }),
+      row({ block_num: 11, created_at: "2026-08-28T00:00:03", trx_count: 0 }),
+      row({ block_num: 10, created_at: "2026-08-28T00:00:00" }),
+    ]);
+    expect(s.uniqueProducers).toBe(2);
+    expect(s.emptyBlocks).toBe(1);
+    expect(s.buckets.vote).toBe(4);
+    expect(s.buckets.transfer).toBe(1);
+    expect(s.fromBlock).toBe(10);
+    expect(s.toBlock).toBe(12);
+    expect(s.spanSeconds).toBe(6);
+  });
+
+  it("rounds the average operations per block to one decimal", () => {
+    const s = computeRangeStats([
+      row({ operationCount: 1 }),
+      row({ operationCount: 2 }),
+      row({ operationCount: 2 }),
+    ]);
+    expect(s.avgOpsPerBlock).toBe(1.7);
+  });
 });
 
 describe("isWideRange", () => {
@@ -110,6 +147,31 @@ describe("filterSpanSeconds", () => {
       NOW
     );
     expect(span).toBe(2 * 86400);
+  });
+
+  it("runs an open-ended date range up to now", () => {
+    expect(
+      filterSpanSeconds(
+        { startDate: new Date("2026-08-28T00:00:00.000Z") },
+        NOW
+      )
+    ).toBe(12 * 3600);
+  });
+
+  it("measures a last-N-time filter by its unit", () => {
+    expect(filterSpanSeconds({ lastTime: 3, timeUnit: "days" }, NOW)).toBe(
+      3 * 86400
+    );
+  });
+
+  it("measures a last-N-blocks filter by the slot length", () => {
+    expect(filterSpanSeconds({ lastBlocks: 1200 }, NOW)).toBe(3600);
+  });
+
+  it("measures a block range by the slot length", () => {
+    expect(filterSpanSeconds({ fromBlock: 100, toBlock: 1300 }, NOW)).toBe(
+      3600
+    );
   });
 });
 
