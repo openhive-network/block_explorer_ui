@@ -32,12 +32,14 @@ type AccountHpActivityCardProps = {
   header: string;
   userDetails: Explorer.FormattedAccountDetails;
   isInitiallyOpen: boolean;
+  liveDataEnabled?: boolean;
 };
 
 const AccountHpActivityCard: React.FC<AccountHpActivityCardProps> = ({
   header,
   userDetails,
   isInitiallyOpen,
+  liveDataEnabled,
 }) => {
   const { t, locale } = useI18n();
   const { settings } = useSettings();
@@ -58,7 +60,7 @@ const AccountHpActivityCard: React.FC<AccountHpActivityCardProps> = ({
     fromDate,
     undefined,
     "asc",
-    settings.liveData
+    liveDataEnabled ?? settings.liveData
   );
 
   const { chartData, totals, isReady } = useAggregatedVesting(

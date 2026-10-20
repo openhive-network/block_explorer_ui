@@ -477,6 +477,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
                   header={t("accountDetailsSection.hpActivity")}
                   userDetails={accountDetails}
                   isInitiallyOpen={tabExpandedStates.wallet}
+                  liveDataEnabled={liveDataEnabled}
                 />
                 <AccountBalanceHistoryCard
                   header={t("accountDetailsSection.balanceHistory")}
@@ -696,6 +697,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
               header={t("accountDetailsSection.hpActivity")}
               userDetails={accountDetails}
               isInitiallyOpen={false}
+              liveDataEnabled={liveDataEnabled}
             />
             <AccountBalanceHistoryCard
               header={t("accountDetailsSection.balanceHistory")}
