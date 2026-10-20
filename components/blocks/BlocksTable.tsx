@@ -508,13 +508,17 @@ const TableRowComponent: React.FC<TableRowComponentProps> = ({
           <>
             <TableCell className="whitespace-nowrap py-3 px-4">
               <div className="flex items-center space-x-2">
-                {/* The previous hash identifies block N-1, not this block. */}
-                <Link
-                  href={`/block/${row.block_num - 1}`}
-                  className="text-link"
-                >
-                  {formatHash(row.prev)}
-                </Link>
+                {/* The previous hash identifies block N-1; block 1 has none. */}
+                {row.block_num > 1 ? (
+                  <Link
+                    href={`/block/${row.block_num - 1}`}
+                    className="text-link"
+                  >
+                    {formatHash(row.prev)}
+                  </Link>
+                ) : (
+                  <span>{formatHash(row.prev)}</span>
+                )}
                 <CopyButton
                   text={String(row.prev)}
                   tooltipText={t("blocksTable.copyPrevBlockHash")}
