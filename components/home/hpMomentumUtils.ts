@@ -14,6 +14,7 @@ import { useSettings } from "@/contexts/SettingsContext";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
+import { formatCompact } from "@/utils/chartUtils";
 
 export type VestingDisplayUnit = "hp" | "vests";
 
@@ -37,7 +38,12 @@ export const VESTING_COLORS = {
 
 // Re-exported from chartUtils so every vesting surface uses the single
 // locale-aware compact formatter (pass the app locale from useI18n()).
-export { formatCompact } from "@/utils/chartUtils";
+export { formatCompact };
+
+export const formatVestingAmount = (n: number, locale: string): string =>
+  Math.abs(n) < 1
+    ? n.toLocaleString(locale, { maximumSignificantDigits: 2 })
+    : formatCompact(n, locale);
 
 export const makeSupplyToNumber = (
   hiveChain: IHiveChainInterface | null | undefined

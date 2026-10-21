@@ -22,7 +22,7 @@ import HpMomentumChart from "../home/HpMomentumChart";
 import {
   VESTING_COLORS,
   VestingDisplayUnit,
-  formatCompact,
+  formatVestingAmount,
   useAggregatedVesting,
   useVestingDisplayUnit,
 } from "../home/hpMomentumUtils";
@@ -218,7 +218,7 @@ const AccountHpActivityCard: React.FC<AccountHpActivityCardProps> = ({
                       title={`${sign}${value.toLocaleString()} ${unitLabel}`}
                     >
                       {sign}
-                      {formatCompact(value, locale)} {unitLabel}
+                      {formatVestingAmount(value, locale)} {unitLabel}
                     </span>
                     <span className="text-[11px] text-gray-400 tabular-nums">
                       ({count.toLocaleString()} {t("accountHpActivityCard.ops")}
@@ -242,7 +242,7 @@ const AccountHpActivityCard: React.FC<AccountHpActivityCardProps> = ({
                   title={`${netIsPositive ? "+" : ""}${totals.net.toLocaleString()} ${unitLabel}`}
                 >
                   {netIsPositive ? "+" : ""}
-                  {formatCompact(totals.net, locale)} {unitLabel}
+                  {formatVestingAmount(totals.net, locale)} {unitLabel}
                 </span>
               </div>
             </div>

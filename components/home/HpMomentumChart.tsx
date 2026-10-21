@@ -80,8 +80,17 @@ const HpMomentumChart: React.FC<HpMomentumChartProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, locale]);
 
+  const isSmallScale = chartData.every(
+    (d) => Math.abs(d.power_up) < 1 && Math.abs(d.power_down_fill) < 1
+  );
+
   const formatAmount = (n: number) =>
-    n.toLocaleString(locale, { maximumFractionDigits: 0 });
+    n.toLocaleString(
+      locale,
+      Math.abs(n) < 1
+        ? { maximumSignificantDigits: 2 }
+        : { maximumFractionDigits: 0 }
+    );
 
   const CustomTooltip = ({
     active,
@@ -200,6 +209,8 @@ const HpMomentumChart: React.FC<HpMomentumChartProps> = ({
       return `${sign}${(abs / 1000).toLocaleString(locale, {
         maximumFractionDigits: 0,
       })}k`;
+    if (abs < 1)
+      return tickValue.toLocaleString(locale, { maximumSignificantDigits: 3 });
     return tickValue.toLocaleString(locale, { maximumFractionDigits: 0 });
   };
 
@@ -238,7 +249,7 @@ const HpMomentumChart: React.FC<HpMomentumChartProps> = ({
         />
         <YAxis
           tickCount={tickCount}
-          width={44}
+          width={isSmallScale ? 60 : 44}
           style={{ fontSize: "11px" }}
           stroke={strokeColor}
           tickFormatter={formatYAxis}

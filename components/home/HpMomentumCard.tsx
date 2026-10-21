@@ -9,7 +9,7 @@ import SegmentedToggle from "@/components/ui/SegmentedToggle";
 import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
 import {
   VestingDisplayUnit,
-  formatCompact,
+  formatVestingAmount,
   useAggregatedVesting,
   useVestingDisplayUnit,
 } from "./hpMomentumUtils";
@@ -136,7 +136,7 @@ const HpMomentumCard = () => {
                     }${totals.net.toLocaleString(locale)} ${unitLabel}`}
                   >
                     {netIsPositive ? "+" : ""}
-                    {formatCompact(totals.net, locale)}{" "}
+                    {formatVestingAmount(totals.net, locale)}{" "}
                     <span className="text-base">{unitLabel}</span>
                   </p>
                 </div>
@@ -169,7 +169,7 @@ const HpMomentumCard = () => {
                           title={`${row.sign}${row.value.toLocaleString(locale)} ${unitLabel}`}
                         >
                           {row.sign}
-                          {formatCompact(row.value, locale)} {unitLabel}
+                          {formatVestingAmount(row.value, locale)} {unitLabel}
                         </span>
                         <span className="text-[10px] text-gray-400 whitespace-nowrap">
                           {row.count.toLocaleString(locale)}{" "}

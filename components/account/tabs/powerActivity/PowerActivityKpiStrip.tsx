@@ -15,7 +15,7 @@ import {
   VESTING_COLORS,
   VestingDisplayUnit,
   VestingTotals,
-  formatCompact,
+  formatVestingAmount,
 } from "@/components/home/hpMomentumUtils";
 
 interface PowerActivityKpiStripProps {
@@ -56,7 +56,7 @@ const PowerActivityKpiStrip: React.FC<PowerActivityKpiStripProps> = ({
               title={`${netSign >= 0 ? "+" : ""}${totals.net.toLocaleString()} ${unitLabel}`}
             >
               {netSign >= 0 ? "+" : ""}
-              {formatCompact(totals.net, locale)} {unitLabel}
+              {formatVestingAmount(totals.net, locale)} {unitLabel}
             </span>
           </span>
         }
@@ -67,7 +67,7 @@ const PowerActivityKpiStrip: React.FC<PowerActivityKpiStripProps> = ({
         valueClassName="text-emerald-600 dark:text-emerald-400"
         value={
           <span title={`+${totals.up.toLocaleString()} ${unitLabel}`}>
-            +{formatCompact(totals.up, locale)} {unitLabel}
+            +{formatVestingAmount(totals.up, locale)} {unitLabel}
           </span>
         }
         sub={`${totals.upCount.toLocaleString()} ${t("hpMomentumCard.ops")}`}
@@ -78,7 +78,7 @@ const PowerActivityKpiStrip: React.FC<PowerActivityKpiStripProps> = ({
         valueClassName="text-amber-600 dark:text-amber-400"
         value={
           <span title={`${totals.downInit.toLocaleString()} ${unitLabel}`}>
-            {formatCompact(totals.downInit, locale)} {unitLabel}
+            {formatVestingAmount(totals.downInit, locale)} {unitLabel}
           </span>
         }
         sub={`${totals.downInitCount.toLocaleString()} ${t("hpMomentumCard.ops")}`}
@@ -92,7 +92,7 @@ const PowerActivityKpiStrip: React.FC<PowerActivityKpiStripProps> = ({
             title={`${downFillSign}${totals.downFill.toLocaleString()} ${unitLabel}`}
           >
             {downFillSign}
-            {formatCompact(totals.downFill, locale)} {unitLabel}
+            {formatVestingAmount(totals.downFill, locale)} {unitLabel}
           </span>
         }
         sub={`${totals.downFillCount.toLocaleString()} ${t("hpMomentumCard.ops")}`}

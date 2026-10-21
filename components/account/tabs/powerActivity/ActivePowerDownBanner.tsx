@@ -13,7 +13,7 @@ import Hive from "@/types/Hive";
 import {
   VESTING_COLORS,
   VestingDisplayUnit,
-  formatCompact,
+  formatVestingAmount,
 } from "@/components/home/hpMomentumUtils";
 
 interface ActivePowerDownBannerProps {
@@ -119,14 +119,14 @@ const ActivePowerDownBanner: React.FC<ActivePowerDownBannerProps> = ({
           </span>
           <span>
             <span className="font-mono font-medium">
-              {formatCompact(stats.weeklyAmount, locale)} {unitLabel}
+              {formatVestingAmount(stats.weeklyAmount, locale)} {unitLabel}
             </span>{" "}
             {t("powerActivityBanner.perWeek")}
           </span>
           <span>
             {t("powerActivityBanner.remaining")}{" "}
             <span className="font-mono font-medium">
-              {formatCompact(stats.remainingAmount, locale)} {unitLabel}
+              {formatVestingAmount(stats.remainingAmount, locale)} {unitLabel}
             </span>
           </span>
           <span>
