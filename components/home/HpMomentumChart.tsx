@@ -110,6 +110,12 @@ const HpMomentumChart: React.FC<HpMomentumChartProps> = ({
       power_down_init_count,
       power_down_fill_count,
     } = payload[0].payload as BarPoint;
+    const showUp = !hiddenDataKeys.includes("power_up_bar");
+    const showDown = !hiddenDataKeys.includes("power_down_fill_neg");
+    const showNet = !hiddenDataKeys.includes("net");
+    const showInit =
+      !hiddenDataKeys.includes("power_down_init") ||
+      (showNet && power_down_init > 0);
 
     return (
       <div className="bg-theme rounded shadow-sm py-1.5 px-2 text-[0.6rem] min-w-[180px]">
@@ -121,42 +127,46 @@ const HpMomentumChart: React.FC<HpMomentumChartProps> = ({
               : moment(date).format("MMM D, YYYY")}
         </p>
         <div className="grid grid-cols-1 gap-y-1">
-          <div className="flex justify-between gap-3">
-            <span className="text-[0.6rem] text-gray-500 uppercase">
-              {t("hpMomentumChart.poweredUp")}
-            </span>
-            <span
-              className="font-semibold text-right"
-              style={{ color: COLOR_UP }}
-            >
-              +{formatAmount(power_up)} {unitLabel}
-              {power_up_count !== undefined && (
-                <span className="text-gray-400 font-normal">
-                  {" "}
-                  ({power_up_count.toLocaleString(locale)})
-                </span>
-              )}
-            </span>
-          </div>
-          <div className="flex justify-between gap-3">
-            <span className="text-[0.6rem] text-gray-500 uppercase">
-              {t("hpMomentumChart.poweredDown")}
-            </span>
-            <span
-              className="font-semibold text-right"
-              style={{ color: COLOR_DOWN_FILL }}
-            >
-              {power_down_fill > 0 ? "-" : ""}
-              {formatAmount(power_down_fill)} {unitLabel}
-              {power_down_fill_count !== undefined && (
-                <span className="text-gray-400 font-normal">
-                  {" "}
-                  ({power_down_fill_count.toLocaleString(locale)})
-                </span>
-              )}
-            </span>
-          </div>
-          {power_down_init > 0 && (
+          {showUp && (
+            <div className="flex justify-between gap-3">
+              <span className="text-[0.6rem] text-gray-500 uppercase">
+                {t("hpMomentumChart.poweredUp")}
+              </span>
+              <span
+                className="font-semibold text-right"
+                style={{ color: COLOR_UP }}
+              >
+                +{formatAmount(power_up)} {unitLabel}
+                {power_up_count !== undefined && (
+                  <span className="text-gray-400 font-normal">
+                    {" "}
+                    ({power_up_count.toLocaleString(locale)})
+                  </span>
+                )}
+              </span>
+            </div>
+          )}
+          {showDown && (
+            <div className="flex justify-between gap-3">
+              <span className="text-[0.6rem] text-gray-500 uppercase">
+                {t("hpMomentumChart.poweredDown")}
+              </span>
+              <span
+                className="font-semibold text-right"
+                style={{ color: COLOR_DOWN_FILL }}
+              >
+                {power_down_fill > 0 ? "-" : ""}
+                {formatAmount(power_down_fill)} {unitLabel}
+                {power_down_fill_count !== undefined && (
+                  <span className="text-gray-400 font-normal">
+                    {" "}
+                    ({power_down_fill_count.toLocaleString(locale)})
+                  </span>
+                )}
+              </span>
+            </div>
+          )}
+          {showInit && (
             <div className="flex justify-between gap-3">
               <span className="text-[0.6rem] text-gray-500 uppercase">
                 {t("hpMomentumChart.scheduledDown")}
@@ -175,20 +185,22 @@ const HpMomentumChart: React.FC<HpMomentumChartProps> = ({
               </span>
             </div>
           )}
-          <div className="flex justify-between gap-3 border-t pt-1 dark:border-gray-700">
-            <span className="text-[0.6rem] text-gray-500 uppercase">
-              {t("hpMomentumChart.netFlow")}
-            </span>
-            <span
-              className="font-semibold text-right"
-              style={{
-                color: net >= 0 ? COLOR_UP : COLOR_DOWN_FILL,
-              }}
-            >
-              {net >= 0 ? "+" : ""}
-              {formatAmount(net)} {unitLabel}
-            </span>
-          </div>
+          {showNet && (
+            <div className="flex justify-between gap-3 border-t pt-1 dark:border-gray-700">
+              <span className="text-[0.6rem] text-gray-500 uppercase">
+                {t("hpMomentumChart.netFlow")}
+              </span>
+              <span
+                className="font-semibold text-right"
+                style={{
+                  color: net >= 0 ? COLOR_UP : COLOR_DOWN_FILL,
+                }}
+              >
+                {net >= 0 ? "+" : ""}
+                {formatAmount(net)} {unitLabel}
+              </span>
+            </div>
+          )}
         </div>
       </div>
     );
