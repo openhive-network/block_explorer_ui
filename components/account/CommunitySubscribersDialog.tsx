@@ -65,15 +65,9 @@ const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
   // Subscribers fetched so far by a running export; null when none is running.
   const [exportedCount, setExportedCount] = useState<number | null>(null);
   const [isExportFailed, setIsExportFailed] = useState(false);
-  // Bumped to cancel: a run only keeps going while its number is current.
-  const exportRun = useRef(0);
+  const exportController = useRef<AbortController | null>(null);
 
-  useEffect(
-    () => () => {
-      exportRun.current += 1;
-    },
-    []
-  );
+  useEffect(() => () => exportController.current?.abort(), []);
 
   const {
     isSubscribed,
@@ -99,7 +93,10 @@ const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
   // Walks the whole list from the start, page by page, independent of the
   // rows on screen (which may begin at a looked-up name).
   const handleExport = async () => {
-    const run = ++exportRun.current;
+    exportController.current?.abort();
+    const controller = new AbortController();
+    exportController.current = controller;
+    const { signal } = controller;
     setIsExportFailed(false);
     setExportedCount(0);
     const subscribers: Hive.CommunitySubscriber[] = [];
@@ -113,7 +110,7 @@ const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
             EXPORT_PAGE_SIZE
           )
         );
-        if (run !== exportRun.current) return;
+        if (signal.aborted) return;
         subscribers.push(...page);
         setExportedCount(subscribers.length);
         if (page.length < EXPORT_PAGE_SIZE) break;
@@ -139,17 +136,18 @@ const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
           [columns.title]: subscriber.title ?? "",
           [columns.since]: subscriber.created_at ?? "",
         })),
-        Object.values(columns)
+        Object.values(columns),
+        signal
       );
     } catch {
-      if (run === exportRun.current) setIsExportFailed(true);
+      if (!signal.aborted) setIsExportFailed(true);
     } finally {
-      if (run === exportRun.current) setExportedCount(null);
+      if (!signal.aborted) setExportedCount(null);
     }
   };
 
   const cancelExport = () => {
-    exportRun.current += 1;
+    exportController.current?.abort();
     setExportedCount(null);
   };
 
