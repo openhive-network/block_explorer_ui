@@ -273,14 +273,14 @@ export const asCsvString = (value: string | number | undefined | null) => {
   return `="${String(value)}"`;
 };
 
-const CSV_FORMULA_START = /^[=+\-@\t\r＝＋－＠]/;
+const CSV_FORMULA_START = /^(?:[\t\r]|[\s​]*[=+\-@＝＋－＠])/;
 const CSV_TEXT_WRAPPER = /^="[^"]*"$/;
 const CSV_SIGNED_AMOUNT = /^[-+][\d٠-٩][\d٠-٩.,\s  ٫٬]*(?: ?(?:[A-Z]+|\$|%))?$/;
 
 /**
  * Stops a cell from running as a spreadsheet formula when the export is
  * opened. User-written text such as a transfer memo can start with `=`, `+`,
- * `-` or `@`; those cells get a leading `'`. The `="..."` text wrapper from
+ * `-` or `@`, even behind invisible spaces; those cells get a leading `'`. The `="..."` text wrapper from
  * asCsvString and plain signed amounts like "-5.001 HP" are left as they are.
  */
 export const escapeCsvFormula = (value: string): string =>
