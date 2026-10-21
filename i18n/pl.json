@@ -1068,6 +1068,7 @@
   "powerActivityBanner.perWeek": "tygodniowo",
   "powerActivityBanner.remaining": "Pozostało:",
   "powerActivityBanner.eta": "Kończy się ~",
+  "powerActivityBanner.nextPayment": "Następna wypłata:",
   "hpMomentumChart.trend": "Trend (liniowy)",
   "balanceHistoryPage.showingResultsAppliedFilters": "Wyświetlanie wyników z zastosowanymi filtrami.",
   "balanceHistoryPage.loadingTitle": "Ładowanie...",

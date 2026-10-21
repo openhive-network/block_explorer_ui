@@ -1068,6 +1068,7 @@
   "powerActivityBanner.perWeek": "per week",
   "powerActivityBanner.remaining": "Remaining:",
   "powerActivityBanner.eta": "Ends ~",
+  "powerActivityBanner.nextPayment": "Next payment:",
   "hpMomentumChart.trend": "Trend (linear)",
   "balanceHistoryPage.showingResultsAppliedFilters": "Showing Results with applied filters.",
   "balanceHistoryPage.loadingTitle": "Loading...",

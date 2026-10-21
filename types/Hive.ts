@@ -539,6 +539,7 @@ namespace Hive {
     withdrawn!: string;
     vesting_withdraw_rate!: string;
     to_withdraw!: string;
+    next_vesting_withdrawal?: string;
     withdraw_routes!: number;
     delayed_vests!: string;
     witness_votes!: string[];

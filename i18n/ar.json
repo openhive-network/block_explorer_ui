@@ -1068,6 +1068,7 @@
   "powerActivityBanner.perWeek": "أسبوعياً",
   "powerActivityBanner.remaining": "المتبقي:",
   "powerActivityBanner.eta": "ينتهي ~",
+  "powerActivityBanner.nextPayment": "الدفعة التالية:",
   "hpMomentumChart.trend": "الاتجاه (خطّي)",
   "balanceHistoryPage.showingResultsAppliedFilters": "عرض النتائج مع المرشحات المطبقة.",
   "balanceHistoryPage.loadingTitle": "جارٍ التحميل...",

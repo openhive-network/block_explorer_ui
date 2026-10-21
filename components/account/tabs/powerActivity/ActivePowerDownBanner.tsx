@@ -8,6 +8,7 @@ import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import useAccountDetails from "@/hooks/api/accountPage/useAccountDetails";
 import { grabNumericValue } from "@/utils/StringUtils";
 import { convertVestsToHP } from "@/utils/Calculations";
+import { parseChainDate } from "@/utils/TimeUtils";
 import { cn } from "@/lib/utils";
 import Hive from "@/types/Hive";
 import {
@@ -75,6 +76,7 @@ const ActivePowerDownBanner: React.FC<ActivePowerDownBannerProps> = ({
     const weeksRemaining = Math.max(0, POWER_DOWN_WEEKS - weeksDone);
     const progressPct = Math.min(100, (withdrawn / toWithdraw) * 100);
     const eta = moment().add(weeksRemaining, "weeks");
+    const nextPayment = parseChainDate(accountDetails.next_vesting_withdrawal);
 
     return {
       weeklyAmount: vestsToDisplay(weeklyRateVests),
@@ -84,6 +86,9 @@ const ActivePowerDownBanner: React.FC<ActivePowerDownBannerProps> = ({
       weeksTotal: POWER_DOWN_WEEKS,
       progressPct,
       etaLabel: eta.locale(locale).format("MMM D, YYYY"),
+      nextPaymentLabel: nextPayment
+        ? moment(nextPayment).locale(locale).format("MMM D, YYYY")
+        : null,
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountDetails, unit, hiveChain, dynamicGlobalData, locale]);
@@ -129,6 +134,12 @@ const ActivePowerDownBanner: React.FC<ActivePowerDownBannerProps> = ({
               {formatVestingAmount(stats.remainingAmount, locale)} {unitLabel}
             </span>
           </span>
+          {stats.nextPaymentLabel && (
+            <span>
+              {t("powerActivityBanner.nextPayment")}{" "}
+              <span className="font-medium">{stats.nextPaymentLabel}</span>
+            </span>
+          )}
           <span>
             {t("powerActivityBanner.eta")}{" "}
             <span className="font-medium">{stats.etaLabel}</span>
