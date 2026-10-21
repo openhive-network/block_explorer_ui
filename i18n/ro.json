@@ -1421,6 +1421,7 @@
   "CommunitySubscribersDialog.exportSubscribedSince": "Abonat din",
   "CommunitySubscribersDialog.exportFailed": "Exportul a eșuat. Încearcă din nou.",
   "CommunitySubscribersDialog.roleGuest": "Vizitator",
+  "CommunitySubscribersDialog.roleMuted": "Pe mut",
   "communityCard.avatarAlt": "Avatar pentru {title}",
   "communityCard.viewSubscribersTitle": "Vezi abonații",
   "communityCard.subscribersLabel": "Abonați",

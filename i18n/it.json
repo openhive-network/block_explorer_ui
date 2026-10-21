@@ -1421,6 +1421,7 @@
   "CommunitySubscribersDialog.exportSubscribedSince": "Iscritto dal",
   "CommunitySubscribersDialog.exportFailed": "Esportazione non riuscita. Riprova.",
   "CommunitySubscribersDialog.roleGuest": "Ospite",
+  "CommunitySubscribersDialog.roleMuted": "Silenziato",
   "communityCard.avatarAlt": "Avatar per {title}",
   "communityCard.viewSubscribersTitle": "Visualizza iscritti",
   "communityCard.subscribersLabel": "Iscritti",

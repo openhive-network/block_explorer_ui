@@ -1421,6 +1421,7 @@
   "CommunitySubscribersDialog.exportSubscribedSince": "订阅时间",
   "CommunitySubscribersDialog.exportFailed": "导出失败，请重试。",
   "CommunitySubscribersDialog.roleGuest": "访客",
+  "CommunitySubscribersDialog.roleMuted": "已禁言",
   "communityCard.avatarAlt": "{title}的头像",
   "communityCard.viewSubscribersTitle": "查看订阅者",
   "communityCard.subscribersLabel": "订阅者",

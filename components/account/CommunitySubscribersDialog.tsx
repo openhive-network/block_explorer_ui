@@ -36,6 +36,12 @@ const ROLE_LABEL_KEYS: Record<string, string> = {
   member: "communityCard.roleMember",
 };
 
+const EXPORT_ROLE_LABEL_KEYS: Record<string, string> = {
+  ...ROLE_LABEL_KEYS,
+  guest: "CommunitySubscribersDialog.roleGuest",
+  muted: "CommunitySubscribersDialog.roleMuted",
+};
+
 // The node returns at most 100 subscribers per request.
 const EXPORT_PAGE_SIZE = 100;
 
@@ -124,9 +130,9 @@ const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
         subscribers.map((subscriber) => ({
           [columns.name]: subscriber.name,
           [columns.role]: subscriber.role
-            ? ROLE_LABEL_KEYS[subscriber.role]
-              ? t(ROLE_LABEL_KEYS[subscriber.role])
-              : t("CommunitySubscribersDialog.roleGuest")
+            ? EXPORT_ROLE_LABEL_KEYS[subscriber.role]
+              ? t(EXPORT_ROLE_LABEL_KEYS[subscriber.role])
+              : subscriber.role
             : "",
           [columns.title]: subscriber.title ?? "",
           [columns.since]: subscriber.created_at ?? "",

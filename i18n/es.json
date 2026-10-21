@@ -1421,6 +1421,7 @@
   "CommunitySubscribersDialog.exportSubscribedSince": "Suscrito desde",
   "CommunitySubscribersDialog.exportFailed": "La exportación falló. Inténtalo de nuevo.",
   "CommunitySubscribersDialog.roleGuest": "Invitado",
+  "CommunitySubscribersDialog.roleMuted": "Silenciado",
   "communityCard.avatarAlt": "Avatar de {title}",
   "communityCard.viewSubscribersTitle": "Ver suscriptores",
   "communityCard.subscribersLabel": "Suscriptores",

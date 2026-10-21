@@ -1421,6 +1421,7 @@
   "CommunitySubscribersDialog.exportSubscribedSince": "購読開始日",
   "CommunitySubscribersDialog.exportFailed": "エクスポートに失敗しました。もう一度お試しください。",
   "CommunitySubscribersDialog.roleGuest": "ゲスト",
+  "CommunitySubscribersDialog.roleMuted": "ミュート",
   "communityCard.avatarAlt": "{title}のアバター",
   "communityCard.viewSubscribersTitle": "購読者を表示",
   "communityCard.subscribersLabel": "購読者",

@@ -1421,6 +1421,7 @@
   "CommunitySubscribersDialog.exportSubscribedSince": "구독 시작일",
   "CommunitySubscribersDialog.exportFailed": "내보내기에 실패했습니다. 다시 시도하세요.",
   "CommunitySubscribersDialog.roleGuest": "게스트",
+  "CommunitySubscribersDialog.roleMuted": "뮤트됨",
   "communityCard.avatarAlt": "{title}의 아바타",
   "communityCard.viewSubscribersTitle": "구독자 보기",
   "communityCard.subscribersLabel": "구독자",
