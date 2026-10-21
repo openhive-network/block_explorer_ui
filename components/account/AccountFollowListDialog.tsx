@@ -165,7 +165,7 @@ const AccountFollowListDialog: React.FC<AccountFollowListDialogProps> = ({
             title={
               <span className="flex flex-wrap items-center gap-2">
                 {title}
-                {!isLoading && !isError && (
+                {!isLoading && (!isError || names.length > 0) && (
                   <span className="rounded-full bg-indigo-500/10 px-2 py-0.5 text-xs font-semibold tabular-nums text-indigo-600 dark:text-indigo-300">
                     {total.toLocaleString(locale)}
                   </span>
@@ -178,7 +178,7 @@ const AccountFollowListDialog: React.FC<AccountFollowListDialogProps> = ({
                 <button
                   type="button"
                   className="report-export-btn"
-                  disabled={isExporting}
+                  disabled={isExporting || isError}
                   onClick={() => setIsExporting(true)}
                 >
                   {isExporting ? (
