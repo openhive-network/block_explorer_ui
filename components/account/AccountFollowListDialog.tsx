@@ -56,9 +56,11 @@ const AccountFollowListDialog: React.FC<AccountFollowListDialogProps> = ({
     names,
     isLoading,
     isError,
+    isFetching,
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
+    refetch,
   } = useAccountFollowList(type, accountName, { enabled: isOpen });
 
   useEffect(() => {
@@ -192,12 +194,15 @@ const AccountFollowListDialog: React.FC<AccountFollowListDialogProps> = ({
             }
           />
 
-          {isLoading ? (
+          {isLoading || (isFetching && names.length === 0) ? (
             <div className="flex justify-center items-center py-16">
               <Loader2 className="animate-spin h-8 w-8" />
             </div>
           ) : isError && names.length === 0 ? (
-            <ErrorMessage message={t("common.errorLoadingData")} />
+            <ErrorMessage
+              message={t("common.errorLoadingData")}
+              onRetry={() => refetch()}
+            />
           ) : names.length === 0 ? (
             <NoResult />
           ) : (
@@ -257,7 +262,7 @@ const AccountFollowListDialog: React.FC<AccountFollowListDialogProps> = ({
                 <NoResult descriptionKey={noMatchKey} />
               )}
 
-              {isError && (
+              {isError && !isFetchingNextPage && (
                 <ErrorMessage
                   message={t("common.errorLoadingData")}
                   onRetry={() => fetchNextPage()}

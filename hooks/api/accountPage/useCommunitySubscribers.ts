@@ -27,9 +27,11 @@ const useCommunitySubscribers = (
     data,
     isLoading: isCommunitySubscribersLoading,
     isError: isCommunitySubscribersError,
+    isFetching: isCommunitySubscribersFetching,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
+    refetch,
   } = useInfiniteQuery<Hive.CommunitySubscriber[]>({
     queryKey: ["communitySubscribers", communityName, startAfter],
     queryFn: async ({ pageParam = startAfter }) => {
@@ -57,9 +59,11 @@ const useCommunitySubscribers = (
     subscribersData,
     isCommunitySubscribersLoading,
     isCommunitySubscribersError,
+    isCommunitySubscribersFetching,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
+    refetch,
   };
 };
 

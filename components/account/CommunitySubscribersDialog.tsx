@@ -89,9 +89,11 @@ const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
     subscribersData,
     isCommunitySubscribersLoading,
     isCommunitySubscribersError,
+    isCommunitySubscribersFetching,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
+    refetch,
   } = useCommunitySubscribers(communityName, anchor);
 
   // Walks the whole list from the start, page by page, independent of the
@@ -235,7 +237,10 @@ const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
             };
 
   const renderList = () => {
-    if (isCommunitySubscribersLoading) {
+    if (
+      isCommunitySubscribersLoading ||
+      (isCommunitySubscribersFetching && subscribersData.length === 0)
+    ) {
       return (
         <div className="flex justify-center items-center py-16">
           <Loader2 className="animate-spin h-8 w-8" />
@@ -244,7 +249,12 @@ const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
     }
     // A later page failing keeps the rows already loaded.
     if (isCommunitySubscribersError && subscribersData.length === 0) {
-      return <ErrorMessage message={t("CommunitySubscribersDialog.error")} />;
+      return (
+        <ErrorMessage
+          message={t("CommunitySubscribersDialog.error")}
+          onRetry={() => refetch()}
+        />
+      );
     }
     if (groups.length === 0) {
       return <NoResult descriptionKey="CommunitySubscribersDialog.noResults" />;
@@ -291,7 +301,7 @@ const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
             <Loader2 className="h-5 w-5 animate-spin" />
           </div>
         )}
-        {isCommunitySubscribersError && (
+        {isCommunitySubscribersError && !isFetchingNextPage && (
           <ErrorMessage
             message={t("CommunitySubscribersDialog.error")}
             onRetry={() => fetchNextPage()}
