@@ -30,6 +30,7 @@ interface HpMomentumChartProps {
   showYear?: boolean;
   showLegend?: boolean;
   defaultHiddenKeys?: string[];
+  granularity?: "daily" | "monthly" | "yearly";
 }
 
 const COLOR_UP = VESTING_COLORS.up;
@@ -55,6 +56,7 @@ const HpMomentumChart: React.FC<HpMomentumChartProps> = ({
   showYear = false,
   showLegend = true,
   defaultHiddenKeys = ["power_down_init"],
+  granularity = "daily",
 }) => {
   const { theme } = useTheme();
   const { t, dir, locale } = useI18n();
@@ -69,7 +71,24 @@ const HpMomentumChart: React.FC<HpMomentumChartProps> = ({
   const chartData = useMemo<BarPoint[]>(() => {
     if (!data || data.length === 0) return [];
     const netValues = data.map((d) => d.net);
-    const trend = computeTrendLine(netValues);
+    // The current day/month/year is still filling up, so the trend is fitted
+    // on completed periods and only extended through it.
+    const period =
+      granularity === "yearly"
+        ? "year"
+        : granularity === "monthly"
+          ? "month"
+          : "day";
+    const lastIsCurrent = moment
+      .utc(data[data.length - 1].date)
+      .isSame(moment.utc(), period);
+    const completed = lastIsCurrent ? netValues.slice(0, -1) : netValues;
+    const trend = computeTrendLine(
+      completed.length >= 2 ? completed : netValues
+    );
+    if (trend.length < netValues.length) {
+      trend.push(trend[trend.length - 1] + (trend[1] - trend[0]));
+    }
     return data.map((row, i) => ({
       ...row,
       power_up_bar: row.power_up > 0 ? row.power_up : null,
@@ -78,7 +97,7 @@ const HpMomentumChart: React.FC<HpMomentumChartProps> = ({
       trend: trend[i],
     }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, locale]);
+  }, [data, locale, granularity]);
 
   const isSmallScale = chartData.every(
     (d) => Math.abs(d.power_up) < 1 && Math.abs(d.power_down_fill) < 1
