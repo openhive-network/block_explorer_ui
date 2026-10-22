@@ -17,6 +17,7 @@ const useAccountVestingHistory = (
     isLoading: isAccountVestingHistoryLoading,
     isFetching: isAccountVestingHistoryFetching,
     isError: isAccountVestingHistoryError,
+    refetch,
   }: UseQueryResult<Hive.AccountVestingHistoryResponse | undefined> = useQuery({
     queryKey: [
       "accountVestingHistory",
@@ -48,6 +49,7 @@ const useAccountVestingHistory = (
     isAccountVestingHistoryLoading,
     isAccountVestingHistoryFetching,
     isAccountVestingHistoryError,
+    refetch,
   };
 };
 

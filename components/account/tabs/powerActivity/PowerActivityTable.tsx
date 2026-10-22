@@ -23,6 +23,7 @@ import AccountPagination from "@/components/account/AccountPagination";
 import DataCountMessage from "@/components/DataCountMessage";
 import DataExport from "@/components/DataExport";
 import NoResult from "@/components/NoResult";
+import ErrorMessage from "@/components/ErrorMessage";
 import { getOperationColor } from "@/components/OperationsTable";
 
 import { config } from "@/Config";
@@ -105,6 +106,7 @@ const PowerActivityTable: React.FC<PowerActivityTableProps> = ({
     isAccountVestingHistoryLoading,
     isAccountVestingHistoryFetching,
     isAccountVestingHistoryError,
+    refetch,
   } = useAccountVestingHistory(
     accountName,
     filter,
@@ -335,9 +337,10 @@ const PowerActivityTable: React.FC<PowerActivityTableProps> = ({
       )}
 
       {!isLoading && isAccountVestingHistoryError && (
-        <p className="text-center text-red-500 text-sm py-4">
-          {t("common.errorLoadingData")}
-        </p>
+        <ErrorMessage
+          message={t("common.errorLoadingData")}
+          onRetry={() => refetch()}
+        />
       )}
 
       {!isLoading &&
