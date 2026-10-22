@@ -117,10 +117,12 @@ const ActivePowerDownBanner: React.FC<ActivePowerDownBannerProps> = ({
       <div className="flex-1 flex flex-col gap-1.5">
         <div className="flex flex-wrap items-baseline gap-x-4 gap-y-0.5 text-xs text-amber-900/80 dark:text-amber-200/80">
           <span>
-            <span className="font-mono font-medium">{stats.weeksDone}</span>
+            <span className="font-mono font-medium">
+              {stats.weeksDone.toLocaleString(locale)}
+            </span>
             {" / "}
             <span className="font-mono font-medium">
-              {stats.weeksTotal}
+              {stats.weeksTotal.toLocaleString(locale)}
             </span>{" "}
             {t("powerActivityBanner.weeks")}
           </span>
