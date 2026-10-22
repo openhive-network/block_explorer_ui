@@ -276,6 +276,8 @@ const PowerActivityTabContent: React.FC<PowerActivityTabContentProps> = ({
           onPageChange={(p) => setParams({ ...paramsState, page: p })}
           fromBlock={effectiveFromBlock}
           toBlock={effectiveToBlock}
+          unit={unit}
+          onUnitChange={setUnit}
         />
       </Card>
     </TabsContent>

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import TimeAgo from "timeago-react";
@@ -28,7 +28,6 @@ import { getOperationColor } from "@/components/OperationsTable";
 import { config } from "@/Config";
 import { useI18n } from "@/i18n/i18n";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
-import { useSettings } from "@/contexts/SettingsContext";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import useAccountVestingHistory from "@/hooks/api/balanceHistory/useAccountVestingHistory";
 import Hive from "@/types/Hive";
@@ -58,6 +57,8 @@ interface PowerActivityTableProps {
   onPageChange: (page: number | undefined) => void;
   fromBlock?: Date | number | undefined;
   toBlock?: Date | number | undefined;
+  unit: VestingDisplayUnit;
+  onUnitChange: (unit: VestingDisplayUnit) => void;
 }
 
 // Labels match the AccountHpActivityCard breakdown so users see the same
@@ -91,20 +92,13 @@ const PowerActivityTable: React.FC<PowerActivityTableProps> = ({
   onPageChange,
   fromBlock,
   toBlock,
+  unit,
+  onUnitChange,
 }) => {
   const { t, locale: appLocale } = useI18n();
   const router = useRouter();
-  const { settings } = useSettings();
   const { hiveChain } = useHiveChainContext();
   const { dynamicGlobalData } = useDynamicGlobal();
-
-  const [unit, setUnit] = useState<VestingDisplayUnit>(
-    settings.displayVestHpMode === "vests" ? "vests" : "hp"
-  );
-
-  useEffect(() => {
-    setUnit(settings.displayVestHpMode === "vests" ? "vests" : "hp");
-  }, [settings.displayVestHpMode]);
 
   const {
     accountVestingHistory,
@@ -308,7 +302,7 @@ const PowerActivityTable: React.FC<PowerActivityTableProps> = ({
                 <button
                   key={opt.key}
                   type="button"
-                  onClick={() => setUnit(opt.key)}
+                  onClick={() => onUnitChange(opt.key)}
                   aria-pressed={isActive}
                   className={cn(
                     "font-medium transition-colors px-2.5 py-0.5",
