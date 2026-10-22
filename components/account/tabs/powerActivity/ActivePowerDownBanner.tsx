@@ -75,8 +75,10 @@ const ActivePowerDownBanner: React.FC<ActivePowerDownBannerProps> = ({
     );
     const weeksRemaining = Math.max(0, POWER_DOWN_WEEKS - weeksDone);
     const progressPct = Math.min(100, (withdrawn / toWithdraw) * 100);
-    const eta = moment().add(weeksRemaining, "weeks");
     const nextPayment = parseChainDate(accountDetails.next_vesting_withdrawal);
+    const eta = nextPayment
+      ? moment(nextPayment).add(Math.max(weeksRemaining - 1, 0), "weeks")
+      : moment().add(weeksRemaining, "weeks");
 
     return {
       weeklyAmount: vestsToDisplay(weeklyRateVests),
