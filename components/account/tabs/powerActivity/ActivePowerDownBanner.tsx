@@ -1,4 +1,6 @@
 import React, { useMemo } from "react";
+import Link from "next/link";
+import HiveAvatar from "@/components/ui/HiveAvatar";
 import moment from "moment";
 import { Clock } from "lucide-react";
 
@@ -6,10 +8,11 @@ import { useI18n } from "@/i18n/i18n";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import useAccountDetails from "@/hooks/api/accountPage/useAccountDetails";
+import useAccountWithdrawRoutes from "@/hooks/api/accountPage/useAccountWithdrawRoutes";
 import { grabNumericValue } from "@/utils/StringUtils";
 import { convertVestsToHP } from "@/utils/Calculations";
 import { parseChainDate } from "@/utils/TimeUtils";
-import { cn } from "@/lib/utils";
+import { cn, formatPercent } from "@/lib/utils";
 import {
   Tooltip,
   TooltipContent,
@@ -40,6 +43,7 @@ const ActivePowerDownBanner: React.FC<ActivePowerDownBannerProps> = ({
   const { hiveChain } = useHiveChainContext();
   const { dynamicGlobalData } = useDynamicGlobal();
   const { accountDetails } = useAccountDetails(accountName, false);
+  const { withdrawRoutes } = useAccountWithdrawRoutes(accountName, false);
 
   // Convert a VESTS quantity (as a plain number in VESTS units) to either
   // VESTS or HP for display. HP path delegates to the shared convertVestsToHP
@@ -112,85 +116,120 @@ const ActivePowerDownBanner: React.FC<ActivePowerDownBannerProps> = ({
 
   const unitLabel = unit === "hp" ? "HP" : "VESTS";
 
+  // Whatever the routes leave over is paid to the account itself as HIVE,
+  // merged into a route the account already has to itself as HIVE.
+  const routes = (withdrawRoutes ?? []).map((route) => ({
+    name: route.to_account,
+    percent: route.percent,
+    asset: route.auto_vest ? "HP" : "HIVE",
+  }));
+  const leftover =
+    10000 - routes.reduce((sum, route) => sum + route.percent, 0);
+  if (routes.length && leftover > 0) {
+    const self = routes.find(
+      (route) => route.name === accountName && route.asset === "HIVE"
+    );
+    if (self) self.percent += leftover;
+    else routes.push({ name: accountName, percent: leftover, asset: "HIVE" });
+  }
+
+  const cells = [
+    {
+      label: t("powerActivityBanner.perWeek"),
+      value: `${formatVestingAmount(stats.weeklyAmount, locale)} ${unitLabel}`,
+    },
+    {
+      label: t("powerActivityBanner.remaining"),
+      value: `${formatVestingAmount(stats.remainingAmount, locale)} ${unitLabel}`,
+    },
+    ...(stats.nextPaymentLabel
+      ? [
+          {
+            label: t("powerActivityBanner.nextPayment"),
+            value: stats.nextPaymentLabel,
+          },
+        ]
+      : []),
+    { label: t("powerActivityBanner.eta"), value: stats.etaLabel },
+  ];
+
   return (
     <div
-      className={cn(
-        "rounded-lg border p-3 mb-4 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center",
-        "bg-amber-50/60 border-amber-200/80 dark:bg-amber-500/10 dark:border-amber-500/20"
-      )}
+      className="rounded-lg border px-3 py-2.5 mb-4 flex flex-col gap-2 bg-amber-50/60 border-amber-200/80 dark:bg-amber-500/10 dark:border-amber-500/20 text-amber-900 dark:text-amber-200"
       role="status"
     >
-      <div className="flex items-center gap-2 shrink-0">
-        <Clock size={16} color={VESTING_COLORS.downInit} />
-        <span className="text-sm font-semibold text-amber-900 dark:text-amber-200">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <span className="flex items-center gap-2 text-sm font-semibold">
+          <Clock size={16} color={VESTING_COLORS.downInit} />
           {t("powerActivityBanner.title")}
+        </span>
+        {routes.length > 0 && (
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="text-[11px] uppercase tracking-wide text-amber-900/60 dark:text-amber-200/60">
+              {t("powerActivityBanner.paidTo")}
+            </span>
+            {routes.map((route) => (
+              <Link
+                key={`${route.name}-${route.asset}`}
+                href={`/@${route.name}`}
+                className="inline-flex items-center gap-1.5 rounded-full border border-amber-300/70 bg-white/70 py-0.5 ps-0.5 pe-2.5 text-xs hover:bg-white dark:border-amber-500/30 dark:bg-white/5 dark:hover:bg-white/10"
+              >
+                <HiveAvatar accountName={route.name} size={20} />
+                <span className="text-link font-medium">{route.name}</span>
+                <span className="font-semibold tabular-nums">
+                  {formatPercent(route.percent, locale)}
+                </span>
+                <span className="rounded bg-amber-500/15 px-1 text-[10px] font-semibold">
+                  {route.asset}
+                </span>
+              </Link>
+            ))}
+          </div>
+        )}
+        <span className="ms-auto text-xs font-medium">
+          {stats.weeksDone.toLocaleString(locale)} /{" "}
+          {stats.weeksTotal.toLocaleString(locale)}{" "}
+          {t("powerActivityBanner.weeks")}
         </span>
       </div>
 
-      <div className="flex-1 flex flex-col gap-1.5">
-        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-0.5 text-xs text-amber-900/80 dark:text-amber-200/80">
-          <span>
-            <span className="font-mono font-medium">
-              {stats.weeksDone.toLocaleString(locale)}
-            </span>
-            {" / "}
-            <span className="font-mono font-medium">
-              {stats.weeksTotal.toLocaleString(locale)}
-            </span>{" "}
-            {t("powerActivityBanner.weeks")}
-          </span>
-          <span>
-            <span className="font-mono font-medium">
-              {formatVestingAmount(stats.weeklyAmount, locale)} {unitLabel}
-            </span>{" "}
-            {t("powerActivityBanner.perWeek")}
-          </span>
-          <span>
-            {t("powerActivityBanner.remaining")}{" "}
-            <span className="font-mono font-medium">
-              {formatVestingAmount(stats.remainingAmount, locale)} {unitLabel}
-            </span>
-          </span>
-          {stats.nextPaymentLabel && (
-            <span>
-              {t("powerActivityBanner.nextPayment")}{" "}
-              <span className="font-medium">{stats.nextPaymentLabel}</span>
-            </span>
-          )}
-          <span>
-            {t("powerActivityBanner.eta")}{" "}
-            <span className="font-medium">{stats.etaLabel}</span>
-          </span>
-        </div>
-
-        <TooltipProvider>
-          <div className="flex w-full gap-0.5">
-            {stats.paymentDates.map((date, week) => (
-              <Tooltip key={week}>
-                <TooltipTrigger asChild>
-                  <span tabIndex={0} className="flex-1 cursor-default py-1">
-                    <span
-                      className={cn(
-                        "block h-1.5 rounded-full",
-                        week < stats.weeksDone
-                          ? "bg-amber-500"
-                          : "bg-amber-200/60 dark:bg-amber-900/40"
-                      )}
-                    />
-                  </span>
-                </TooltipTrigger>
-                <TooltipPortal>
-                  <TooltipContent className="bg-theme text-text text-xs">
-                    {date && `${date} · `}
-                    {formatVestingAmount(stats.weeklyAmount, locale)}{" "}
-                    {unitLabel}
-                  </TooltipContent>
-                </TooltipPortal>
-              </Tooltip>
-            ))}
+      <dl className="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-1.5">
+        {cells.map((cell) => (
+          <div key={cell.label}>
+            <dt className="text-[11px] uppercase tracking-wide text-amber-900/60 dark:text-amber-200/60">
+              {cell.label}
+            </dt>
+            <dd className="text-sm font-semibold tabular-nums">{cell.value}</dd>
           </div>
-        </TooltipProvider>
-      </div>
+        ))}
+      </dl>
+
+      <TooltipProvider>
+        <div className="flex w-full gap-0.5">
+          {stats.paymentDates.map((date, week) => (
+            <Tooltip key={week}>
+              <TooltipTrigger asChild>
+                <span tabIndex={0} className="flex-1 cursor-default py-0.5">
+                  <span
+                    className={cn(
+                      "block h-1.5 rounded-full",
+                      week < stats.weeksDone
+                        ? "bg-amber-500"
+                        : "bg-amber-200/60 dark:bg-amber-900/40"
+                    )}
+                  />
+                </span>
+              </TooltipTrigger>
+              <TooltipPortal>
+                <TooltipContent className="bg-theme text-text text-xs">
+                  {date && `${date} · `}
+                  {formatVestingAmount(stats.weeklyAmount, locale)} {unitLabel}
+                </TooltipContent>
+              </TooltipPortal>
+            </Tooltip>
+          ))}
+        </div>
+      </TooltipProvider>
     </div>
   );
 };
