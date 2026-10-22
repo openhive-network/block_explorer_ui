@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import Hive from "@/types/Hive";
 import KpiTile from "@/components/ui/KpiTile";
 import { useI18n } from "@/i18n/i18n";
 import {
@@ -21,13 +22,21 @@ import {
 interface PowerActivityKpiStripProps {
   totals: VestingTotals;
   unit: VestingDisplayUnit;
+  filter: Hive.VestingHistoryFilter;
+  onFilterChange: (filter: Hive.VestingHistoryFilter) => void;
 }
 
 const PowerActivityKpiStrip: React.FC<PowerActivityKpiStripProps> = ({
   totals,
   unit,
+  filter,
+  onFilterChange,
 }) => {
   const { t, locale } = useI18n();
+  const filterProps = (tileFilter: Hive.VestingHistoryFilter) => ({
+    isActive: filter === tileFilter && tileFilter !== "all",
+    onClick: () => onFilterChange(filter === tileFilter ? "all" : tileFilter),
+  });
   const unitLabel = unit === "hp" ? "HP" : "VESTS";
 
   const downFillSign = totals.downFill > 0 ? "-" : "";
@@ -44,6 +53,7 @@ const PowerActivityKpiStrip: React.FC<PowerActivityKpiStripProps> = ({
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
       <KpiTile
         label={t("hpMomentumChart.netFlow")}
+        {...filterProps("all")}
         valueClassName={cn(
           netSign > 0 && "text-emerald-600 dark:text-emerald-400",
           netSign < 0 && "text-rose-600 dark:text-rose-400",
@@ -63,6 +73,7 @@ const PowerActivityKpiStrip: React.FC<PowerActivityKpiStripProps> = ({
       />
       <KpiTile
         label={t("accountHpActivityCard.poweredUp")}
+        {...filterProps("power_up")}
         icon={<TrendingUp size={14} color={VESTING_COLORS.up} />}
         valueClassName="text-emerald-600 dark:text-emerald-400"
         value={
@@ -74,6 +85,7 @@ const PowerActivityKpiStrip: React.FC<PowerActivityKpiStripProps> = ({
       />
       <KpiTile
         label={t("accountHpActivityCard.scheduledDown")}
+        {...filterProps("power_down_init")}
         icon={<Clock size={14} color={VESTING_COLORS.downInit} />}
         valueClassName="text-amber-600 dark:text-amber-400"
         value={
@@ -87,6 +99,7 @@ const PowerActivityKpiStrip: React.FC<PowerActivityKpiStripProps> = ({
       />
       <KpiTile
         label={t("accountHpActivityCard.poweredDown")}
+        {...filterProps("power_down_fill")}
         icon={<TrendingDown size={14} color={VESTING_COLORS.downFill} />}
         valueClassName="text-rose-600 dark:text-rose-400"
         value={
