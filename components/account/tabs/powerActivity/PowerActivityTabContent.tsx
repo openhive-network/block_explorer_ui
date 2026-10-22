@@ -246,6 +246,7 @@ const PowerActivityTabContent: React.FC<PowerActivityTabContentProps> = ({
               unit={unit}
               includeBrush
               showYear={paramsState.granularity === "yearly"}
+              granularity={paramsState.granularity}
               dateFormat={
                 paramsState.granularity === "monthly" ? "MMM YYYY" : undefined
               }
