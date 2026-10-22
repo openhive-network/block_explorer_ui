@@ -2360,6 +2360,8 @@
   "socialInteractions.expAccounts": "账户数",
   "socialInteractions.expCoveredFrom": "覆盖起始",
   "reportRange.d365": "1年",
+  "reportRange.d7": "7D",
+  "reportRange.blocks1k": "1K 区块",
   "reportRange.all": "全部",
   "socialInteractions.kpiUniquePartners": "独立伙伴",
   "socialInteractions.kpiTopPartner": "头号伙伴",

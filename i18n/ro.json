@@ -2360,6 +2360,8 @@
   "socialInteractions.expAccounts": "Conturi",
   "socialInteractions.expCoveredFrom": "Acoperit din",
   "reportRange.d365": "1A",
+  "reportRange.d7": "7D",
+  "reportRange.blocks1k": "1K blocuri",
   "reportRange.all": "Tot",
   "socialInteractions.kpiUniquePartners": "Parteneri unici",
   "socialInteractions.kpiTopPartner": "Partener principal",

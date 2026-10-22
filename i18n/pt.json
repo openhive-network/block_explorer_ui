@@ -2360,6 +2360,8 @@
   "socialInteractions.expAccounts": "Contas",
   "socialInteractions.expCoveredFrom": "Coberto desde",
   "reportRange.d365": "1A",
+  "reportRange.d7": "7D",
+  "reportRange.blocks1k": "1K blocos",
   "reportRange.all": "Tudo",
   "socialInteractions.kpiUniquePartners": "Parceiros únicos",
   "socialInteractions.kpiTopPartner": "Parceiro principal",
