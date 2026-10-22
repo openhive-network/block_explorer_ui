@@ -209,7 +209,11 @@ const ActivePowerDownBanner: React.FC<ActivePowerDownBannerProps> = ({
           {stats.paymentDates.map((date, week) => (
             <Tooltip key={week}>
               <TooltipTrigger asChild>
-                <span tabIndex={0} className="flex-1 cursor-default py-0.5">
+                <span
+                  tabIndex={0}
+                  aria-label={`${date ? `${date} · ` : ""}${formatVestingAmount(stats.weeklyAmount, locale)} ${unitLabel}`}
+                  className="flex-1 cursor-default py-0.5"
+                >
                   <span
                     className={cn(
                       "block h-1.5 rounded-full",

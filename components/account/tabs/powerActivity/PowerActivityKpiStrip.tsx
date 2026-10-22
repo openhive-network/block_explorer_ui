@@ -11,6 +11,7 @@ import {
 import { cn } from "@/lib/utils";
 import Hive from "@/types/Hive";
 import KpiTile from "@/components/ui/KpiTile";
+import ValueTooltip from "@/components/ui/ValueTooltip";
 import { useI18n } from "@/i18n/i18n";
 import {
   VESTING_COLORS,
@@ -53,7 +54,7 @@ const PowerActivityKpiStrip: React.FC<PowerActivityKpiStripProps> = ({
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
       <KpiTile
         label={t("hpMomentumChart.netFlow")}
-        {...filterProps("all")}
+        {...(filter !== "all" && filterProps("all"))}
         valueClassName={cn(
           netSign > 0 && "text-emerald-600 dark:text-emerald-400",
           netSign < 0 && "text-rose-600 dark:text-rose-400",
@@ -62,12 +63,14 @@ const PowerActivityKpiStrip: React.FC<PowerActivityKpiStripProps> = ({
         value={
           <span className="inline-flex items-center gap-1 whitespace-nowrap">
             <TrendIcon size={14} color={trendColor} />
-            <span
-              title={`${netSign >= 0 ? "+" : ""}${totals.net.toLocaleString(locale)} ${unitLabel}`}
+            <ValueTooltip
+              content={`${netSign >= 0 ? "+" : ""}${totals.net.toLocaleString(locale)} ${unitLabel}`}
             >
-              {netSign >= 0 ? "+" : ""}
-              {formatVestingAmount(totals.net, locale)} {unitLabel}
-            </span>
+              <span>
+                {netSign >= 0 ? "+" : ""}
+                {formatVestingAmount(totals.net, locale)} {unitLabel}
+              </span>
+            </ValueTooltip>
           </span>
         }
       />
@@ -77,9 +80,13 @@ const PowerActivityKpiStrip: React.FC<PowerActivityKpiStripProps> = ({
         icon={<TrendingUp size={14} color={VESTING_COLORS.up} />}
         valueClassName="text-emerald-600 dark:text-emerald-400"
         value={
-          <span title={`+${totals.up.toLocaleString(locale)} ${unitLabel}`}>
-            +{formatVestingAmount(totals.up, locale)} {unitLabel}
-          </span>
+          <ValueTooltip
+            content={`+${totals.up.toLocaleString(locale)} ${unitLabel}`}
+          >
+            <span>
+              +{formatVestingAmount(totals.up, locale)} {unitLabel}
+            </span>
+          </ValueTooltip>
         }
         sub={`${totals.upCount.toLocaleString(locale)} ${t("hpMomentumCard.ops")}`}
       />
@@ -89,11 +96,13 @@ const PowerActivityKpiStrip: React.FC<PowerActivityKpiStripProps> = ({
         icon={<Clock size={14} color={VESTING_COLORS.downInit} />}
         valueClassName="text-amber-600 dark:text-amber-400"
         value={
-          <span
-            title={`${totals.downInit.toLocaleString(locale)} ${unitLabel}`}
+          <ValueTooltip
+            content={`${totals.downInit.toLocaleString(locale)} ${unitLabel}`}
           >
-            {formatVestingAmount(totals.downInit, locale)} {unitLabel}
-          </span>
+            <span>
+              {formatVestingAmount(totals.downInit, locale)} {unitLabel}
+            </span>
+          </ValueTooltip>
         }
         sub={`${totals.downInitCount.toLocaleString(locale)} ${t("hpMomentumCard.ops")}`}
       />
@@ -103,12 +112,14 @@ const PowerActivityKpiStrip: React.FC<PowerActivityKpiStripProps> = ({
         icon={<TrendingDown size={14} color={VESTING_COLORS.downFill} />}
         valueClassName="text-rose-600 dark:text-rose-400"
         value={
-          <span
-            title={`${downFillSign}${totals.downFill.toLocaleString(locale)} ${unitLabel}`}
+          <ValueTooltip
+            content={`${downFillSign}${totals.downFill.toLocaleString(locale)} ${unitLabel}`}
           >
-            {downFillSign}
-            {formatVestingAmount(totals.downFill, locale)} {unitLabel}
-          </span>
+            <span>
+              {downFillSign}
+              {formatVestingAmount(totals.downFill, locale)} {unitLabel}
+            </span>
+          </ValueTooltip>
         }
         sub={`${totals.downFillCount.toLocaleString(locale)} ${t("hpMomentumCard.ops")}`}
       />
