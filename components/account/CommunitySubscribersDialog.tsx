@@ -333,7 +333,7 @@ const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
             }
             subtitle={communityTitle}
             actions={
-              subscribersData.length > 0 &&
+              (subscribersData.length > 0 || exportedCount !== null) &&
               (exportedCount === null ? (
                 <>
                   {isExportFailed && (
