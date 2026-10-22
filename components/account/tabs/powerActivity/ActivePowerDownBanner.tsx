@@ -10,6 +10,13 @@ import { grabNumericValue } from "@/utils/StringUtils";
 import { convertVestsToHP } from "@/utils/Calculations";
 import { parseChainDate } from "@/utils/TimeUtils";
 import { cn } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipPortal,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import Hive from "@/types/Hive";
 import {
   VESTING_COLORS,
@@ -74,7 +81,6 @@ const ActivePowerDownBanner: React.FC<ActivePowerDownBannerProps> = ({
       POWER_DOWN_WEEKS
     );
     const weeksRemaining = Math.max(0, POWER_DOWN_WEEKS - weeksDone);
-    const progressPct = Math.min(100, (withdrawn / toWithdraw) * 100);
     const nextPayment = parseChainDate(accountDetails.next_vesting_withdrawal);
     const eta = nextPayment
       ? moment(nextPayment).add(Math.max(weeksRemaining - 1, 0), "weeks")
@@ -86,8 +92,15 @@ const ActivePowerDownBanner: React.FC<ActivePowerDownBannerProps> = ({
       totalAmount: vestsToDisplay(toWithdraw),
       weeksDone,
       weeksTotal: POWER_DOWN_WEEKS,
-      progressPct,
       etaLabel: eta.locale(locale).format("MMM D, YYYY"),
+      paymentDates: Array.from({ length: POWER_DOWN_WEEKS }, (_, week) =>
+        nextPayment
+          ? moment(nextPayment)
+              .add(week - weeksDone, "weeks")
+              .locale(locale)
+              .format("MMM D, YYYY")
+          : null
+      ),
       nextPaymentLabel: nextPayment
         ? moment(nextPayment).locale(locale).format("MMM D, YYYY")
         : null,
@@ -150,12 +163,33 @@ const ActivePowerDownBanner: React.FC<ActivePowerDownBannerProps> = ({
           </span>
         </div>
 
-        <div className="h-1.5 w-full rounded-full bg-amber-200/60 dark:bg-amber-900/40 overflow-hidden">
-          <div
-            className="h-full rounded-full bg-amber-500"
-            style={{ width: `${stats.progressPct}%` }}
-          />
-        </div>
+        <TooltipProvider>
+          <div className="flex w-full gap-0.5">
+            {stats.paymentDates.map((date, week) => (
+              <Tooltip key={week}>
+                <TooltipTrigger asChild>
+                  <span tabIndex={0} className="flex-1 cursor-default py-1">
+                    <span
+                      className={cn(
+                        "block h-1.5 rounded-full",
+                        week < stats.weeksDone
+                          ? "bg-amber-500"
+                          : "bg-amber-200/60 dark:bg-amber-900/40"
+                      )}
+                    />
+                  </span>
+                </TooltipTrigger>
+                <TooltipPortal>
+                  <TooltipContent className="bg-theme text-text text-xs">
+                    {date && `${date} · `}
+                    {formatVestingAmount(stats.weeklyAmount, locale)}{" "}
+                    {unitLabel}
+                  </TooltipContent>
+                </TooltipPortal>
+              </Tooltip>
+            ))}
+          </div>
+        </TooltipProvider>
       </div>
     </div>
   );
