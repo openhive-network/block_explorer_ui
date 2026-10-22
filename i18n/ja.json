@@ -2377,6 +2377,8 @@
   "socialInteractions.expAccounts": "アカウント数",
   "socialInteractions.expCoveredFrom": "対象開始日",
   "reportRange.d365": "1年",
+  "reportRange.d7": "7D",
+  "reportRange.blocks1k": "1Kブロック",
   "reportRange.all": "全期間",
   "socialInteractions.kpiUniquePartners": "ユニークな相手",
   "socialInteractions.kpiTopPartner": "トップの相手",

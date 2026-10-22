@@ -2377,6 +2377,8 @@
   "socialInteractions.expAccounts": "الحسابات",
   "socialInteractions.expCoveredFrom": "مُغطّى منذ",
   "reportRange.d365": "سنة",
+  "reportRange.d7": "7D",
+  "reportRange.blocks1k": "1K كتلة",
   "reportRange.all": "الكل",
   "socialInteractions.kpiUniquePartners": "شركاء فريدون",
   "socialInteractions.kpiTopPartner": "أبرز شريك",

@@ -2377,6 +2377,8 @@
   "socialInteractions.expAccounts": "계정",
   "socialInteractions.expCoveredFrom": "포함 시작일",
   "reportRange.d365": "1년",
+  "reportRange.d7": "7D",
+  "reportRange.blocks1k": "1K 블록",
   "reportRange.all": "전체",
   "socialInteractions.kpiUniquePartners": "고유 상대",
   "socialInteractions.kpiTopPartner": "최다 상대",
