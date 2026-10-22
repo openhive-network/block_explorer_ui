@@ -39,7 +39,7 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({
   return (
     <div className={`${baseClass} flex ${warningStyle}`}>
       <AlertTriangleIcon color="red" />
-      <span className="ml-2">{message}</span>
+      <span className="ms-2">{message}</span>
       {onRetry && (
         <button
           type="button"
@@ -50,7 +50,7 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({
         </button>
       )}
       {onClose && (
-        <button className={`ml-2 ${closeButtonStyle}`} onClick={onClose}>
+        <button className={`ms-2 ${closeButtonStyle}`} onClick={onClose}>
           &times;
         </button>
       )}
