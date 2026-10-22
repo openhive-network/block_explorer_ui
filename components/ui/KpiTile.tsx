@@ -17,6 +17,8 @@ interface KpiTileProps {
   infoText?: string;
   valueClassName?: string;
   className?: string;
+  onClick?: () => void;
+  isActive?: boolean;
 }
 
 const KpiTile: React.FC<KpiTileProps> = ({
@@ -27,12 +29,30 @@ const KpiTile: React.FC<KpiTileProps> = ({
   infoText,
   valueClassName,
   className,
+  onClick,
+  isActive,
 }) => (
   <div
     className={cn(
       "rounded-md border border-gray-200 dark:border-gray-700 bg-theme px-3 py-2 shadow-sm",
+      onClick &&
+        "cursor-pointer transition-colors hover:border-indigo-300 dark:hover:border-indigo-500/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500",
+      isActive &&
+        "border-indigo-500 ring-1 ring-indigo-500 dark:border-indigo-500",
       className
     )}
+    {...(onClick && {
+      role: "button",
+      tabIndex: 0,
+      "aria-pressed": !!isActive,
+      onClick,
+      onKeyDown: (event: React.KeyboardEvent) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          onClick();
+        }
+      },
+    })}
   >
     <div className="text-[11px] text-gray-500 dark:text-gray-400 mb-0.5 flex items-center gap-1 uppercase tracking-wide">
       {icon}

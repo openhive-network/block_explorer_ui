@@ -194,7 +194,14 @@ const PowerActivityTabContent: React.FC<PowerActivityTabContentProps> = ({
 
       <ActivePowerDownBanner accountName={accountName} unit={unit} />
 
-      <PowerActivityKpiStrip totals={totals} unit={unit} />
+      <PowerActivityKpiStrip
+        totals={totals}
+        unit={unit}
+        filter={paramsState.vestingFilter ?? "all"}
+        onFilterChange={(vestingFilter) =>
+          setParams({ ...paramsState, vestingFilter, page: undefined })
+        }
+      />
 
       <Card
         data-testid="power-activity-chart"
