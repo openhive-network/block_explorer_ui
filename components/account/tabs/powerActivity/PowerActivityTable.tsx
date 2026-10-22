@@ -53,7 +53,6 @@ const VESTING_OP_TYPE_NAME: Record<number, string> = {
 interface PowerActivityTableProps {
   accountName: string;
   filter: Hive.VestingHistoryFilter;
-  onFilterChange: (filter: Hive.VestingHistoryFilter) => void;
   page: number | undefined;
   onPageChange: (page: number | undefined) => void;
   fromBlock?: Date | number | undefined;
@@ -88,7 +87,6 @@ const EventIcon: React.FC<{ type: Hive.VestingHistoryEvent["direction"] }> = ({
 const PowerActivityTable: React.FC<PowerActivityTableProps> = ({
   accountName,
   filter,
-  onFilterChange: _onFilterChange,
   page,
   onPageChange,
   fromBlock,

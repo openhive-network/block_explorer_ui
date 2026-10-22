@@ -269,13 +269,6 @@ const PowerActivityTabContent: React.FC<PowerActivityTabContentProps> = ({
         <PowerActivityTable
           accountName={accountName}
           filter={paramsState.vestingFilter}
-          onFilterChange={(filter) =>
-            setParams({
-              ...paramsState,
-              vestingFilter: filter,
-              page: undefined,
-            })
-          }
           page={paramsState.page}
           onPageChange={(p) => setParams({ ...paramsState, page: p })}
           fromBlock={effectiveFromBlock}
