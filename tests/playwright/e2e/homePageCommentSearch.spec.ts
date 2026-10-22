@@ -1,344 +1,155 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, Page } from "@playwright/test";
 import { MainPage } from "../support/pages/mainPage";
-import { BlockPage } from "../support/pages/blockPage";
+import {
+  mockCommentOperations,
+  mockInputTypeAccounts,
+  mockOperationTypes,
+  voteOperation,
+  commentOperation,
+  MockOperation,
+} from "../support/mocks/accountOperationsMock";
 
-test.describe.skip('Home page - searches', () => {
-    let mainPage: MainPage;
-    let blockPage: BlockPage;
-  
-    test.beforeEach(async ({ page }) => {
-        mainPage = new MainPage(page);
-        blockPage = new BlockPage(page);
+const ACCOUNT = "hopestylist";
+const PERMLINK = "vibes-week-1-on-purpose";
 
-        await mainPage.gotoBlockExplorerPage();
-        await mainPage.commentSearchSection.click()
-        await page.waitForTimeout(1000)
-    });
+test.describe("Home page - comment searches", () => {
+  let mainPage: MainPage;
 
-    test('Validate that Comment Search is impossible without Account Name - Search button is not clickable', async ({page}) => {
-       await expect(mainPage.searchButtonInComment).toBeDisabled()
-       await expect(mainPage.accountNameInputAccountSection).toBeVisible()
-    })
+  test.beforeEach(async ({ page }) => {
+    // Fail fast on a mistake (well under the old 120s live-response wait)
+    // while leaving headroom for the app's one-time wax/wasm init on load.
+    test.setTimeout(60_000);
 
-    test('Validate that Search button is clickable if Account Name property is filled', async ({page}) => {
-        await mainPage.accountNameInputCommentSection.fill('gtg')
-        await expect(mainPage.searchButtonInComment).toBeEnabled()
-        await expect(page.getByText('Set account name')).not.toBeVisible()
-        await mainPage.searchButtonInComment.click()
+    mainPage = new MainPage(page);
+    await mockInputTypeAccounts(page, [ACCOUNT]);
+    await mockOperationTypes(page);
 
-        const response = await page.waitForResponse((response) => response.url().includes("/get_comment_operations"));
-    
-        await response.finished();
-        
+    await mainPage.gotoBlockExplorerPage();
+    await mainPage.commentSearchSection.click();
+  });
 
-        if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
-            await expect(page.getByText('No operations matching given')).toBeVisible()
-          } 
+  const selectAccount = async (page: Page) => {
+    await mainPage.accountNameInputCommentSection.fill(ACCOUNT);
+    await page
+      .locator(".autocomplete-result-item")
+      .filter({ hasText: ACCOUNT })
+      .first()
+      .click();
+  };
 
-          else {
-            await expect(mainPage.detailedOperationCard.first()).toBeVisible()
-            await expect(mainPage.goToResultPageBtn).toBeVisible()
-        }
-        
-    })
+  const fillAccountAndPermlink = async (page: Page) => {
+    await selectAccount(page);
+    await mainPage.commentPermlinkInout.fill(PERMLINK);
+  };
 
-    test.skip('Validate that got results for Account Name and Last days/weeks/months properties', async ({page, browserName}) => {
-        test.skip(browserName === 'firefox', 'Automatic test works well on chromium');
-        await mainPage.accountNameInputCommentSection.fill('gtg')
-        await mainPage.lastBlockBtn.click()
-        await mainPage.lastDaysWeeksMonths.click()
-        await mainPage.searchButtonInComment.click()
+  const pickOperationTypes = async (page: Page, names: RegExp[]) => {
+    await mainPage.operationsTypesBtn.click();
+    await expect(mainPage.operationsTypesWindow).toBeVisible();
+    for (const name of names) {
+      await page
+        .getByLabel("Operation Types")
+        .locator("li")
+        .filter({ hasText: name })
+        .getByRole("checkbox")
+        .check();
+    }
+    await page.getByRole("button", { name: "Apply" }).click();
+  };
 
-        const response = await page.waitForResponse((response) => response.url().includes("/get_comment_operations"));
-    
-        await response.finished();
-        
+  const sortIds = (ids: number[]) => [...ids].sort((a, b) => a - b);
 
-        if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
-            await expect(page.getByText('No operations matching given')).toBeVisible()
-          } 
+  // The mock answers any query, so check the request carries what was picked.
+  const searchAndExpectRows = async (
+    page: Page,
+    ops: MockOperation[],
+    typeIds: number[] = []
+  ) => {
+    await mockCommentOperations(page, ops);
+    const request = page.waitForRequest((r) =>
+      r.url().includes("/operations/comments/")
+    );
+    await mainPage.searchButtonInComment.click();
 
-          else {
-            await expect(mainPage.detailedOperationCard.first()).toBeVisible()
-            await expect(mainPage.goToResultPageBtn).toBeVisible()
-        }
-        
-    })
+    const url = new URL((await request).url());
+    expect(url.pathname).toContain(
+      `/accounts/${ACCOUNT}/operations/comments/${PERMLINK}`
+    );
+    const sentTypes = url.searchParams.get("operation-types");
+    expect(sortIds(sentTypes ? sentTypes.split(",").map(Number) : [])).toEqual(
+      sortIds(typeIds)
+    );
 
-    test.skip('Validate that got results for Account Name and Block range properties', async ({page, browserName}) => {
-        test.skip(browserName === 'firefox', 'Automatic test works well on chromium');
-        await mainPage.accountNameInputCommentSection.fill('gtg')
-        await mainPage.lastBlockBtn.click()
-        await mainPage.blockRange.click()
-        await mainPage.searchButtonInComment.click()
+    await expect(mainPage.detailedOperationCard).toHaveCount(ops.length);
+    await expect(mainPage.goToResultPageBtn).toBeVisible();
+  };
 
-        const response = await page.waitForResponse((response) => response.url().includes("/get_comment_operations"));
-    
-        await response.finished();
-        
+  test("Search needs both Account Name and Permlink", async ({ page }) => {
+    await expect(mainPage.searchButtonInComment).toBeDisabled();
 
-        if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
-            await expect(page.getByText('No operations matching given')).toBeVisible()
-          } 
+    await selectAccount(page);
+    await expect(mainPage.searchButtonInComment).toBeDisabled();
 
-          else {
-            await expect(mainPage.detailedOperationCard.first()).toBeVisible()
-            await expect(mainPage.goToResultPageBtn).toBeVisible()
-        }
-    })
+    await mainPage.commentPermlinkInout.fill(PERMLINK);
+    await expect(mainPage.searchButtonInComment).toBeEnabled();
+  });
 
-    test.skip('Validate that got results for Account Name and Time range properties', async ({page, browserName}) => {
-        test.skip(browserName === 'firefox', 'Automatic test works well on chromium');
-        await mainPage.accountNameInputCommentSection.fill('gtg')
-        await mainPage.lastBlockBtn.click()
-        await mainPage.timeRange.click()
-        await mainPage.searchButtonInComment.click()
+  test("Validate that got results for Account Name and Permlink properties", async ({
+    page,
+  }) => {
+    await fillAccountAndPermlink(page);
+    await searchAndExpectRows(page, [
+      commentOperation(1),
+      voteOperation(2),
+      voteOperation(3),
+    ]);
+  });
 
-        const response = await page.waitForResponse((response) => response.url().includes("/get_comment_operations"));
-    
-        await response.finished();
-        
+  test("Validate that got results for Account Name, Permlink and One Operation Type properties", async ({
+    page,
+  }) => {
+    await fillAccountAndPermlink(page);
+    await pickOperationTypes(page, [/^vote$/]);
+    await searchAndExpectRows(page, [voteOperation(1), voteOperation(2)], [0]);
+    await expect(
+      mainPage.detailedOperationCard.first().getByText("vote", { exact: true })
+    ).toBeVisible();
+  });
 
-        if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
-            await expect(page.getByText('No operations matching given')).toBeVisible()
-          } 
+  test("Validate that got results for Account Name, Permlink and more than one Operation Types properties", async ({
+    page,
+  }) => {
+    await fillAccountAndPermlink(page);
+    await pickOperationTypes(page, [/^vote$/, /^comment$/]);
+    await searchAndExpectRows(
+      page,
+      [commentOperation(1), voteOperation(2), commentOperation(3)],
+      [0, 1]
+    );
+  });
 
-          else {
-            await expect(mainPage.detailedOperationCard.first()).toBeVisible()
-            await expect(mainPage.goToResultPageBtn).toBeVisible()
-        }
-    })
+  test("Validate that got results for Account Name, Permlink and all Operation Types properties", async ({
+    page,
+  }) => {
+    await fillAccountAndPermlink(page);
+    await mainPage.operationsTypesBtn.click();
+    await expect(mainPage.operationsTypesWindow).toBeVisible();
+    await page.getByRole("button", { name: "All", exact: true }).click();
+    await page.getByRole("button", { name: "Apply" }).click();
+    // Every comment-related type in the mocked list.
+    await searchAndExpectRows(
+      page,
+      [commentOperation(1), voteOperation(2)],
+      [0, 1, 51, 63, 72]
+    );
+  });
 
-    test('Validate that got results for Account Name and One Operation Type properties', async ({page}) => {
-        await mainPage.accountNameInputCommentSection.fill('gtg')
-        await mainPage.operationsTypesBtn.click()
-        await expect(mainPage.operationsTypesWindow).toBeVisible();
-        await page.locator('input[type="checkbox"]').first().check();
-        await page.getByRole('button', {name: 'Apply'}).click();
-        await mainPage.searchButtonInComment.click()
-
-        const response = await page.waitForResponse((response) => response.url().includes("/get_comment_operations"));
-    
-        await response.finished();
-        
-
-        if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
-            await expect(page.getByText('No operations matching given')).toBeVisible()
-          } 
-
-          else {
-            await expect(mainPage.detailedOperationCard.first()).toBeVisible()
-            await expect(mainPage.goToResultPageBtn).toBeVisible()
-        }
-    })
-
-    test('Validate that got results for Account Name and more than one Operation Types properties', async ({page}) => {
-        await mainPage.accountNameInputCommentSection.fill('gtg')
-        await mainPage.operationsTypesBtn.click()
-        await expect(mainPage.operationsTypesWindow).toBeVisible();
-        await page.locator('input[type="checkbox"]').first().check();
-        await page.getByLabel('Operation Types').locator('li').filter({ hasText: /^comment$/ }).getByRole('checkbox').check()
-        await page.getByRole('button', {name: 'Apply'}).click();
-        await mainPage.searchButtonInComment.click()
-
-        const response = await page.waitForResponse((response) => response.url().includes("/get_comment_operations"));
-    
-        await response.finished();
-        
-
-        if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
-            await expect(page.getByText('No operations matching given')).toBeVisible()
-          } 
-
-          else {
-            await expect(mainPage.detailedOperationCard.first()).toBeVisible()
-            await expect(mainPage.goToResultPageBtn).toBeVisible()
-        }
-    })
-
-    test('Validate that got results for Account Name and all Operation Types properties', async ({page}) => {
-        await mainPage.accountNameInputCommentSection.fill('gtg')
-        await mainPage.operationsTypesBtn.click()
-        await expect(mainPage.operationsTypesWindow).toBeVisible();
-        await page.getByRole('button', { name: 'Select all' }).click()
-        await page.getByRole('button', {name: 'Apply'}).click();
-        await mainPage.searchButtonInComment.click()
-
-        const response = await page.waitForResponse((response) => response.url().includes("/get_comment_operations"));
-    
-        await response.finished();
-        
-
-        if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
-            await expect(page.getByText('No operations matching given')).toBeVisible()
-          } 
-
-          else {
-            await expect(mainPage.detailedOperationCard.first()).toBeVisible()
-            await expect(mainPage.goToResultPageBtn).toBeVisible()
-        }
-    })
-
-    test('Validate that got results for Account Name and Permlink properties', async ({page}) => {
-        await mainPage.accountNameInputCommentSection.fill('hopestylist')
-        await mainPage.commentPermlinkInout.fill('vibes-week-1-on-purpose')
-        await mainPage.searchButtonInComment.click()
-
-        const response = await page.waitForResponse((response) => response.url().includes("/get_comment_operations"));
-    
-        await response.finished();
-
-        if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
-            await expect(page.getByText('No operations matching given')).toBeVisible()
-          } 
-
-          else {
-            await expect(mainPage.detailedOperationCard.first()).toBeVisible()
-            await expect(mainPage.goToResultPageBtn).toBeVisible()
-        }
-    })
-
-    test.skip('Validate that got results for Account Name, Permlink and Last days/weeks/months properties', async ({page, browserName}) => {
-        test.skip(browserName === 'firefox', 'Automatic test works well on chromium');
-        await mainPage.lastBlockBtn.click()
-        await page.waitForTimeout(2000)
-        await expect(mainPage.lastDaysWeeksMonths).toBeVisible()
-        await mainPage.lastDaysWeeksMonths.click()
-
-        await mainPage.accountNameInputCommentSection.fill('hopestylist')
-        await mainPage.commentPermlinkInout.fill('vibes-week-1-on-purpose')
-        
-        await mainPage.searchButtonInComment.click()
-
-        const response = await page.waitForResponse((response) => response.url().includes("/get_comment_operations"));
-    
-        await response.finished();
-
-        if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
-            await expect(page.getByText('No operations matching given')).toBeVisible()
-          } 
-
-          else {
-            await expect(mainPage.detailedOperationCard.first()).toBeVisible()
-            await expect(mainPage.goToResultPageBtn).toBeVisible()
-        }
-    })
-
-    test.skip('Validate that got results for Account Name, Permlink and Block range properties', async ({page, browserName}) => {
-        test.skip(browserName === 'firefox', 'Automatic test works well on chromium');
-        await mainPage.accountNameInputCommentSection.fill('hopestylist')
-        await mainPage.commentPermlinkInout.fill('vibes-week-1-on-purpose')
-        await mainPage.lastBlockBtn.click()
-        await page.waitForTimeout(2000)
-        await expect(mainPage.blockRange).toBeVisible()
-        await mainPage.blockRange.click()
-        await mainPage.searchButtonInComment.click()
-
-        const response = await page.waitForResponse((response) => response.url().includes("/get_comment_operations"));
-    
-        await response.finished();
-
-        if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
-            await expect(page.getByText('No operations matching given')).toBeVisible()
-          } 
-
-          else {
-            await expect(mainPage.detailedOperationCard.first()).toBeVisible()
-            await expect(mainPage.goToResultPageBtn).toBeVisible()
-        }
-    })
-
-    test.skip('Validate that got results for Account Name, Permlink and Time range properties', async ({page, browserName}) => {
-        test.skip(browserName === 'firefox', 'Automatic test works well on chromium');
-        await mainPage.accountNameInputCommentSection.fill('hopestylist')
-        await mainPage.commentPermlinkInout.fill('vibes-week-1-on-purpose')
-        await mainPage.lastBlockBtn.click()
-        await page.waitForTimeout(2000)
-        await expect(mainPage.timeRange).toBeVisible()
-        await mainPage.timeRange.click()
-        await mainPage.searchButtonInComment.click()
-
-        const response = await page.waitForResponse((response) => response.url().includes("/get_comment_operations"));
-    
-        await response.finished();
-
-        if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
-            await expect(page.getByText('No operations matching given')).toBeVisible()
-          } 
-
-          else {
-            await expect(mainPage.detailedOperationCard.first()).toBeVisible()
-            await expect(mainPage.goToResultPageBtn).toBeVisible()
-        }
-    })
-
-    test('Validate that got results for Account Name, Permlink and One Operation Type properties', async ({page}) => {
-        await mainPage.accountNameInputCommentSection.fill('hopestylist')
-        await mainPage.commentPermlinkInout.fill('vibes-week-1-on-purpose')
-        await mainPage.operationsTypesBtn.click()
-        await expect(mainPage.operationsTypesWindow).toBeVisible();
-        await page.locator('input[type="checkbox"]').first().check();
-        await page.getByRole('button', {name: 'Apply'}).click();
-        await mainPage.searchButtonInComment.click()
-
-        const response = await page.waitForResponse((response) => response.url().includes("/get_comment_operations"));
-    
-        await response.finished();
-
-        if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
-            await expect(page.getByText('No operations matching given')).toBeVisible()
-          } 
-
-          else {
-            await expect(mainPage.detailedOperationCard.first()).toBeVisible()
-            await expect(mainPage.goToResultPageBtn).toBeVisible()
-        }
-    })
-
-    test('Validate that got results for Account Name, Permlink and more than one Operation Types properties', async ({page}) => {
-        await mainPage.accountNameInputCommentSection.fill('hopestylist')
-        await mainPage.commentPermlinkInout.fill('vibes-week-1-on-purpose')
-        await mainPage.operationsTypesBtn.click()
-        await expect(mainPage.operationsTypesWindow).toBeVisible();
-        await page.locator('input[type="checkbox"]').first().check();
-        await page.getByLabel('Operation Types').locator('li').filter({ hasText: /^comment$/ }).getByRole('checkbox').check()
-        await page.getByRole('button', {name: 'Apply'}).click();
-        await mainPage.searchButtonInComment.click()
-
-        const response = await page.waitForResponse((response) => response.url().includes("/get_comment_operations"));
-    
-        await response.finished();
-
-        if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
-            await expect(page.getByText('No operations matching given')).toBeVisible()
-          } 
-
-          else {
-            await expect(mainPage.detailedOperationCard.first()).toBeVisible()
-            await expect(mainPage.goToResultPageBtn).toBeVisible()
-        }
-    })
-
-    test('Validate that got results for searching with all inputs filled with properties', async ({page}) => {
-        await mainPage.accountNameInputCommentSection.fill('hopestylist')
-        await mainPage.commentPermlinkInout.fill('vibes-week-1-on-purpose')
-        await mainPage.operationsTypesBtn.click()
-        await expect(mainPage.operationsTypesWindow).toBeVisible();
-        await page.getByRole('button', { name: 'Select all' }).click()
-        await page.getByRole('button', {name: 'Apply'}).click();
-        await mainPage.searchButtonInComment.click()
-
-        const response = await page.waitForResponse((response) => response.url().includes("/get_comment_operations"));
-    
-        await response.finished();
-
-        if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
-            await expect(page.getByText('No operations matching given')).toBeVisible()
-          } 
-
-          else {
-            await expect(mainPage.detailedOperationCard.first()).toBeVisible()
-            await expect(mainPage.goToResultPageBtn).toBeVisible()
-        }
-    })
+  test("Shows No Results when the comment has no matching operations", async ({
+    page,
+  }) => {
+    await fillAccountAndPermlink(page);
+    await mockCommentOperations(page, []);
+    await mainPage.searchButtonInComment.click();
+    await expect(page.getByText("No Results Found")).toBeVisible();
+    await expect(mainPage.detailedOperationCard).toHaveCount(0);
+  });
 });

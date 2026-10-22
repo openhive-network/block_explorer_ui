@@ -1,4 +1,4 @@
-import { useState, useCallback, Fragment } from "react";
+import { useCallback, Fragment } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowDown, ArrowUp, Loader2 } from "lucide-react";
 import Link from "next/link";
@@ -9,6 +9,7 @@ import { config } from "@/Config";
 import fetchingService from "@/services/FetchingService";
 import { useI18n } from "@/i18n/i18n";
 import DataExport from "../DataExport";
+import useCollapsedState from "@/hooks/common/useCollapsedState";
 
 type AccountWitnessVotesCardProps = {
   voters: string[];
@@ -24,7 +25,7 @@ const buildTableBody = (voters: string[], isProxy: boolean) => {
       <Fragment key={index}>
         <TableRow>
           <TableCell>{index + 1}</TableCell>
-          <TableCell className="text-right">
+          <TableCell className="text-end">
             <Link
               className={cn("text-link", { italic: isProxy })} // Apply italic class conditionally
               href={`/@${voter}`}
@@ -46,7 +47,7 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
 }) => {
   const { t } = useI18n();
   const [isPropertiesHidden, setIsPropertiesHidden] =
-    useState(!isInitiallyOpen);
+    useCollapsedState(isInitiallyOpen);
   const voters = [...initialVoters];
 
   const handlePropertiesVisibility = () => {
@@ -127,7 +128,7 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
             <div className="text-lg">
               {t("accountWitnessVotesCard.witnessVotesProxy")}
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 rtl:space-x-reverse">
               <DataExport
                 data={prepareExportData(votersForProxy)}
                 filename={`${accountName}_${t("accountWitnessVotesCard.witnessVotesProxyExport")}`}
@@ -200,7 +201,7 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
             {t("accountWitnessVotesCard.witnessVotes")} ({voters.length} /{" "}
             {config.maxWitnessVotes})
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 rtl:space-x-reverse">
             <DataExport
               data={prepareExportData(voters)}
               filename={`${accountName}_${t("accountWitnessVotesCard.witnessVotesExport")}`}

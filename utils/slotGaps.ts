@@ -1,3 +1,5 @@
+import { parseDisplayOrChainDate } from "@/utils/TimeUtils";
+
 export const HIVE_SLOT_SECONDS = 3;
 
 export interface SlotGapRow {
@@ -17,11 +19,6 @@ export interface SlotDelta {
   reason: UnknownDeltaReason | null;
 }
 
-const timestampOf = (value: Date | string): number => {
-  const ms = value instanceof Date ? value.getTime() : Date.parse(value);
-  return Number.isNaN(ms) ? NaN : ms;
-};
-
 // Rows arrive newest-first, so a row's predecessor is the next one along. A
 // filtered set is sparse, so only consecutive block numbers can be measured.
 export const computeSlotDeltas = (rows: SlotGapRow[]): SlotDelta[] =>
@@ -38,8 +35,9 @@ export const computeSlotDeltas = (rows: SlotGapRow[]): SlotDelta[] =>
     if (row.block_num - previous.block_num !== 1)
       return unknown("non-consecutive");
 
-    const current = timestampOf(row.created_at);
-    const before = timestampOf(previous.created_at);
+    const current = parseDisplayOrChainDate(row.created_at)?.getTime() ?? NaN;
+    const before =
+      parseDisplayOrChainDate(previous.created_at)?.getTime() ?? NaN;
     if (Number.isNaN(current) || Number.isNaN(before))
       return unknown("bad-timestamp");
 

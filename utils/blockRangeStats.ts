@@ -1,3 +1,5 @@
+import { parseDisplayOrChainDate } from "@/utils/TimeUtils";
+import { HIVE_SLOT_SECONDS } from "@/utils/slotGaps";
 import {
   OP_BUCKET_ORDER,
   bucketOperations,
@@ -33,11 +35,6 @@ export interface RangeStats {
   toBlock: number | null;
   spanSeconds: number | null;
 }
-
-const timestampOf = (value: Date | string): number => {
-  const ms = value instanceof Date ? value.getTime() : Date.parse(value);
-  return Number.isNaN(ms) ? NaN : ms;
-};
 
 export const computeRangeStats = (rows: BlockStatsRow[]): RangeStats => {
   const stats: RangeStats = {
@@ -94,7 +91,7 @@ export const computeRangeStats = (rows: BlockStatsRow[]): RangeStats => {
       };
     }
 
-    const ms = timestampOf(row.created_at);
+    const ms = parseDisplayOrChainDate(row.created_at)?.getTime() ?? NaN;
     if (!Number.isNaN(ms)) {
       oldest = Math.min(oldest, ms);
       newest = Math.max(newest, ms);
@@ -183,8 +180,6 @@ const UNIT_SECONDS: Record<string, number> = {
   months: 2592000,
 };
 
-const HIVE_SLOT_SECONDS = 3;
-
 export interface RangeFilterParams {
   startDate?: Date | string;
   endDate?: Date | string;
@@ -202,9 +197,11 @@ export const filterSpanSeconds = (
   params: RangeFilterParams,
   now: number = Date.now()
 ): number | null => {
-  const start = params.startDate ? new Date(params.startDate).getTime() : NaN;
+  const start = parseDisplayOrChainDate(params.startDate)?.getTime() ?? NaN;
   if (!Number.isNaN(start)) {
-    const end = params.endDate ? new Date(params.endDate).getTime() : now;
+    const end = params.endDate
+      ? (parseDisplayOrChainDate(params.endDate)?.getTime() ?? NaN)
+      : now;
     if (!Number.isNaN(end) && end > start) {
       return Math.round((end - start) / 1000);
     }
@@ -234,13 +231,7 @@ const asBound = (
   value: number | Date | string | undefined
 ): number | Date | undefined => {
   if (typeof value === "number") return value;
-  if (value instanceof Date)
-    return Number.isNaN(value.getTime()) ? undefined : value;
-  if (typeof value === "string") {
-    const parsed = new Date(value);
-    return Number.isNaN(parsed.getTime()) ? undefined : parsed;
-  }
-  return undefined;
+  return parseDisplayOrChainDate(value) ?? undefined;
 };
 
 export const rangeEndpointBounds = (

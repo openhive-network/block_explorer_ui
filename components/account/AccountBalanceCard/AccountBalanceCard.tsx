@@ -48,13 +48,16 @@ import VestsTooltip from "../../VestsTooltip";
 import Explorer from "@/types/Explorer";
 import useBlockChainProperties from "@/hooks/api/common/useBlockChainProperties";
 import { useI18n } from "@/i18n/i18n";
-import { cn, formatNumber } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { relocalizeAmount } from "@/utils/localeAmount";
+import { formatLocalePercent } from "@/utils/chartUtils";
 import {
   changeHBDToDollarsDisplay,
   grabNumericValue,
 } from "@/utils/StringUtils";
 import { TabKey } from "../AccountDetailsSection";
 import { PendingAssetSymbol } from "@/utils/accountPendingItems";
+import useCollapsedState from "@/hooks/common/useCollapsedState";
 
 const OPEN_ORDER_FIELDS: Record<string, PendingAssetSymbol> = {
   open_orders_hive_amount: "HIVE",
@@ -152,16 +155,28 @@ export const ASSET_CONFIG = [
 /**
  * Calculate and format all financial data for the account
  */
-const useFinancialSummary = (userDetails: Explorer.FormattedAccountDetails) => {
+const useFinancialSummary = (
+  userDetails: Explorer.FormattedAccountDetails,
+  locale: string
+) => {
   return useMemo(() => {
     const { dollars } = userDetails;
+    const formatTotal = (value: number, unit: string, decimals?: number) =>
+      `${value.toLocaleString(locale, {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals ?? 3,
+      })} ${unit}`;
 
     // --- 1. Raw Numeric Values ---
     const totalValueRaw = grabNumericValue(dollars.account_value);
-    const stakedValueRaw = grabNumericValue(dollars.vesting_shares);
-    const poweringDownValueRaw = grabNumericValue(
-      dollars.vesting_withdraw_rate
+    const vestingValueRaw = grabNumericValue(dollars.vesting_shares);
+    // Shown as its own segment, so it is taken out of the staked one. Capped at
+    // vesting so the two never add up to more than was staked.
+    const poweringDownValueRaw = Math.min(
+      vestingValueRaw,
+      grabNumericValue(dollars.vesting_withdraw_rate)
     );
+    const stakedValueRaw = vestingValueRaw - poweringDownValueRaw;
     const liquidValueRaw =
       grabNumericValue(dollars.balance) + grabNumericValue(dollars.hbd_balance);
     const savingsValueRaw =
@@ -186,16 +201,15 @@ const useFinancialSummary = (userDetails: Explorer.FormattedAccountDetails) => {
       grabNumericValue(dollars.escrow_pending_amount_hive) +
       grabNumericValue(dollars.escrow_pending_amount_hbd);
 
-    const totalHpRaw =
+    // The chain rounds the weekly rate up, so in the last week of a full power
+    // down this would dip just below zero and read "-0.00 HP".
+    const totalHpRaw = Math.max(
+      0,
       grabNumericValue(userDetails.vesting_shares) +
-      grabNumericValue(userDetails.received_vesting_shares) -
-      grabNumericValue(userDetails.delegated_vesting_shares) -
-      grabNumericValue(userDetails.vesting_withdraw_rate);
-
-    const effectiveHpRaw =
-      grabNumericValue(userDetails.vesting_shares) +
-      grabNumericValue(userDetails.received_vesting_shares) -
-      grabNumericValue(userDetails.delegated_vesting_shares);
+        grabNumericValue(userDetails.received_vesting_shares) -
+        grabNumericValue(userDetails.delegated_vesting_shares) -
+        grabNumericValue(userDetails.vesting_withdraw_rate)
+    );
 
     const totalHiveRaw =
       grabNumericValue(userDetails.balance) +
@@ -235,8 +249,10 @@ const useFinancialSummary = (userDetails: Explorer.FormattedAccountDetails) => {
 
     const formattedDollars = Object.entries(userDetails.dollars).reduce(
       (acc, [key, value]) => {
-        acc[key as keyof typeof userDetails.dollars] =
-          changeHBDToDollarsDisplay(value);
+        acc[key as keyof typeof userDetails.dollars] = relocalizeAmount(
+          changeHBDToDollarsDisplay(value),
+          locale
+        );
         return acc;
       },
       {} as Record<keyof typeof userDetails.dollars, string>
@@ -245,6 +261,7 @@ const useFinancialSummary = (userDetails: Explorer.FormattedAccountDetails) => {
     return {
       raw: {
         totalValue: totalValueRaw,
+        totalHp: totalHpRaw,
         liquidValue: liquidValueRaw,
         stakedValue: stakedValueRaw,
         savingsValue: savingsValueRaw,
@@ -256,23 +273,21 @@ const useFinancialSummary = (userDetails: Explorer.FormattedAccountDetails) => {
       },
       formatted: {
         totalValue: formattedDollars.account_value,
-        totalHp: `${formatNumber(totalHpRaw, false, true)} HP`,
-        totalHive: `${totalHiveRaw.toLocaleString(undefined, {
-          maximumFractionDigits: 3,
-        })} HIVE`,
-        totalHbd: `${totalHbdRaw.toLocaleString(undefined, {
-          maximumFractionDigits: 3,
-        })} HBD`,
-        effectiveHp: `${effectiveHpRaw.toLocaleString(undefined, {
-          maximumFractionDigits: 3,
-        })} HP`,
+        totalHp: formatTotal(totalHpRaw, "HP", 2),
+        totalHive: formatTotal(totalHiveRaw, "HIVE"),
+        totalHbd: formatTotal(totalHbdRaw, "HBD"),
         totalHiveUsd: changeHBDToDollarsDisplay(totalHiveUsdRaw.toString()),
         totalHbdUsd: changeHBDToDollarsDisplay(totalHbdUsdRaw.toString()),
         dollars: formattedDollars,
-        vests: userDetails.vests,
+        vests: Object.fromEntries(
+          Object.entries(userDetails.vests).map(([key, value]) => [
+            key,
+            relocalizeAmount(String(value), locale),
+          ])
+        ) as Record<keyof Explorer.AccountDetailsVests, string>,
       },
     };
-  }, [userDetails]);
+  }, [userDetails, locale]);
 };
 
 // ====================================================================
@@ -284,7 +299,8 @@ const fieldHighlightConfig = new Map<
   string,
   (keyof Explorer.FormattedAccountDetails)[]
 >([
-  ["staked", ["vesting_shares"]],
+  // Staked is owned HP minus the power-down instalment, so both rows light up.
+  ["staked", ["vesting_shares", "vesting_withdraw_rate"]],
   [
     "savings",
     [
@@ -311,21 +327,21 @@ const fieldHighlightConfig = new Map<
 /** Maps a segment key to the specific Tailwind CSS classes for highlighting. */
 const highlightConfig = {
   staked:
-    "bg-purple-100 border-l-2 border-purple-400 dark:bg-purple-500/15 dark:border-purple-500",
+    "bg-purple-100 border-s-2 border-purple-400 dark:bg-purple-500/15 dark:border-purple-500",
   savings:
-    "bg-amber-100 border-l-2 border-amber-400 dark:bg-amber-400/15 dark:border-amber-400",
+    "bg-amber-100 border-s-2 border-amber-400 dark:bg-amber-400/15 dark:border-amber-400",
   liquid:
-    "bg-sky-100 border-l-2 border-sky-400 dark:bg-sky-500/15 dark:border-sky-500",
+    "bg-sky-100 border-s-2 border-sky-400 dark:bg-sky-500/15 dark:border-sky-500",
   unclaimed:
-    "bg-teal-100 border-l-2 border-teal-400 dark:bg-teal-400/15 dark:border-teal-400",
+    "bg-teal-100 border-s-2 border-teal-400 dark:bg-teal-400/15 dark:border-teal-400",
   poweringDown:
-    "bg-rose-100 border-l-2 border-rose-400 dark:bg-rose-400/15 dark:border-rose-400",
+    "bg-rose-100 border-s-2 border-rose-400 dark:bg-rose-400/15 dark:border-rose-400",
   orders:
-    "bg-indigo-200 border-l-2 border-indigo-400 dark:bg-indigo-500/15 dark:border-indigo-500",
+    "bg-indigo-200 border-s-2 border-indigo-400 dark:bg-indigo-500/15 dark:border-indigo-500",
   locked:
-    "bg-pink-100 border-l-2 border-pink-400 dark:bg-pink-400/15 dark:border-pink-400",
+    "bg-pink-100 border-s-2 border-pink-400 dark:bg-pink-400/15 dark:border-pink-400",
   escrow:
-    "bg-slate-200 border-l-2 border-slate-400 dark:bg-slate-700/50 dark:border-slate-500",
+    "bg-slate-200 border-s-2 border-slate-400 dark:bg-slate-700/50 dark:border-slate-500",
 };
 
 // ====================================================================
@@ -336,7 +352,7 @@ const highlightConfig = {
 const HbdAprTooltip = ({ hbdInterestApr, isLoading, t }: any) => (
   <Tooltip>
     <TooltipTrigger asChild>
-      <span className="flex items-center space-x-1 text-xs px-1.5 py-0.5 rounded-md bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 font-semibold cursor-help">
+      <span className="flex items-center space-x-1 rtl:space-x-reverse text-xs px-1.5 py-0.5 rounded-md bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 font-semibold cursor-help">
         {isLoading ? (
           <Loader2 className="h-3 w-3 animate-spin" />
         ) : (
@@ -465,7 +481,7 @@ const DetailRow = ({
       </div>
       <div
         id={isAction ? valueId : undefined}
-        className={cn("flex-grow text-right", { "shrink-0": isAction })}
+        className={cn("flex-grow text-end", { "shrink-0": isAction })}
       >
         <div
           className={cn(
@@ -539,7 +555,7 @@ const AssetSection = ({
     sign: "" | "+" | "-" = "",
     hideCount = false
   ) => {
-    const rawVal = userDetails[key];
+    const rawVal = relocalizeAmount(String(userDetails[key]), locale);
     const { countSuffix, tooltipMsg } = countFor(key);
 
     // Drill-down rows show their count in the row pill instead.
@@ -548,11 +564,11 @@ const AssetSection = ({
       countSuffix !== null &&
       countSuffix !== undefined &&
       countSuffix !== 0 ? (
-        <span className="inline-flex items-center ml-1 text-xs opacity-70">
-          ({countSuffix}
+        <span className="inline-flex items-center ms-1 text-xs opacity-70">
+          ({Number(countSuffix).toLocaleString(locale)}
           <Tooltip>
             <TooltipTrigger asChild>
-              <sup className="ml-0.5 cursor-help">
+              <sup className="ms-0.5 cursor-help">
                 <Info size={10} strokeWidth={3} color="#0ea5e9" />
               </sup>
             </TooltipTrigger>
@@ -569,8 +585,8 @@ const AssetSection = ({
       return (
         <span className="flex items-center justify-end">
           <VestsTooltip
-            tooltipTrigger={`${sign}${String(rawVal)}`}
-            tooltipContent={String(userDetails.vests[vestKey])}
+            tooltipTrigger={`${sign}${rawVal}`}
+            tooltipContent={financialSummary.formatted.vests[vestKey]}
           />
           {countDisplay}
         </span>
@@ -579,7 +595,7 @@ const AssetSection = ({
     return (
       <span className="flex items-center justify-end">
         {sign}
-        {String(rawVal)}
+        {rawVal}
         {countDisplay}
       </span>
     );
@@ -652,7 +668,7 @@ const AssetSection = ({
         onClick={onToggle}
         className="flex flex-wrap justify-between items-center p-2 cursor-pointer gap-x-4 gap-y-1"
       >
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 rtl:space-x-reverse">
           {asset.icon}
           <Tooltip>
             <TooltipTrigger asChild>
@@ -665,7 +681,7 @@ const AssetSection = ({
             </TooltipContent>
           </Tooltip>
         </div>
-        <div className="flex items-center space-x-2 flex-shrink-0">
+        <div className="flex items-center space-x-2 rtl:space-x-reverse flex-shrink-0">
           <span className="font-semibold text-sm">{assetTotalValue}</span>
           <ChevronUp
             className={cn("h-5 w-5 flex-shrink-0", {
@@ -791,10 +807,12 @@ const AssetSection = ({
                     icon = <Hourglass size={16} color="#0ea5e9" />;
                   }
 
+                  const highlightClass =
+                    field === "vesting_withdraw_rate" && !isPoweringDown
+                      ? ""
+                      : getHighlightClass(field);
                   const isDefaultHighlighted =
-                    hasClaimableAmount &&
-                    !getHighlightClass(field) &&
-                    !activeSegmentKey;
+                    hasClaimableAmount && !highlightClass && !activeSegmentKey;
                   const drillDownSymbol =
                     OPEN_ORDER_FIELDS[field] ?? CONVERSION_FIELDS[field];
                   const hasDrillDown = !!drillDownSymbol;
@@ -833,13 +851,11 @@ const AssetSection = ({
                       }
                       key={field}
                       fieldKey={field}
-                      className={cn(getHighlightClass(field), {
+                      className={cn(highlightClass, {
                         "bg-gradient-to-r from-cyan-100 to-transparent dark:from-teal-900/50 dark:to-transparent":
                           isDefaultHighlighted,
                       })}
-                      isHighlighted={
-                        !!getHighlightClass(field) || isDefaultHighlighted
-                      }
+                      isHighlighted={!!highlightClass || isDefaultHighlighted}
                       label={t(cardNameMapKeys.get(field)!)}
                       labelClassName={
                         hasClaimableAmount
@@ -847,7 +863,11 @@ const AssetSection = ({
                           : "text-slate-600 dark:text-slate-400"
                       }
                       icon={icon}
-                      value={renderValue(field, "", hasDrillDown)}
+                      value={renderValue(
+                        field,
+                        isPoweringDown ? "-" : "",
+                        hasDrillDown
+                      )}
                       dollarValue={financialSummary.formatted.dollars[field]}
                     />
                   );
@@ -884,8 +904,8 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
   focus = false,
   onChangeTab,
 }) => {
-  const { t } = useI18n();
-  const [isCardHidden, setIsCardHidden] = useState(!isInitiallyOpen);
+  const { t, locale } = useI18n();
+  const [isCardHidden, setIsCardHidden] = useCollapsedState(isInitiallyOpen);
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     hive: false,
     hbd: false,
@@ -897,7 +917,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
     if (!focus) return;
     setIsCardHidden(false);
     setOpenSections({ hive: true, hbd: true, hp: true });
-  }, [focus]);
+  }, [focus, setIsCardHidden]);
   const [isOpenOrdersOpen, setIsOpenOrdersOpen] = useState(false);
   const [openOrdersSymbol, setOpenOrdersSymbol] =
     useState<PendingAssetSymbol>("HIVE");
@@ -913,13 +933,17 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
   }, []);
 
   const { blockChainPropertiesData } = useBlockChainProperties();
-  const financialSummary = useFinancialSummary(userDetails);
+  const financialSummary = useFinancialSummary(userDetails, locale);
 
   const hbdInterestApr = useMemo(() => {
     return blockChainPropertiesData?.hbd_interest_rate
-      ? `${(blockChainPropertiesData.hbd_interest_rate / 100).toFixed(2)}%`
+      ? formatLocalePercent(
+          blockChainPropertiesData.hbd_interest_rate / 100,
+          locale,
+          2
+        )
       : null;
-  }, [blockChainPropertiesData]);
+  }, [blockChainPropertiesData, locale]);
 
   const areAllOpen = useMemo(
     () => ASSET_CONFIG.every((asset) => !!openSections[asset.key]),
@@ -928,7 +952,8 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
 
   const chartSegments = useMemo(() => {
     const total = financialSummary.raw.totalValue || 1;
-    const formatDisplayValue = (value: number) => `${value.toLocaleString()} $`;
+    const formatDisplayValue = (value: number) =>
+      `${value.toLocaleString(locale)} $`;
 
     const liquidPct = (financialSummary.raw.liquidValue / total) * 100;
     const savingsPct = (financialSummary.raw.savingsValue / total) * 100;
@@ -990,10 +1015,11 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
 
     if (financialSummary.raw.openOrdersValue > 0) {
       const totalOrdersCount =
-        userDetails.open_orders_hive_count + userDetails.open_orders_hbd_count;
+        Number(userDetails.open_orders_hive_count) +
+        Number(userDetails.open_orders_hbd_count);
       segments.push({
         key: "orders",
-        label: `${t("accountBalanceCard.openOrders")} (${totalOrdersCount})`,
+        label: `${t("accountBalanceCard.openOrders")} (${totalOrdersCount.toLocaleString(locale)})`,
         value: financialSummary.raw.openOrdersValue,
         displayValue: formatDisplayValue(financialSummary.raw.openOrdersValue),
         percent: ordersPct,
@@ -1004,11 +1030,11 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
 
     if (financialSummary.raw.lockedValue > 0) {
       const totalLockedCount =
-        userDetails.conversion_pending_count_hive +
-        userDetails.conversion_pending_count_hbd;
+        Number(userDetails.conversion_pending_count_hive) +
+        Number(userDetails.conversion_pending_count_hbd);
       segments.push({
         key: "locked",
-        label: `${t("accountBalanceCard.locked")} (${totalLockedCount})`,
+        label: `${t("accountBalanceCard.locked")} (${totalLockedCount.toLocaleString(locale)})`,
         value: financialSummary.raw.lockedValue,
         displayValue: formatDisplayValue(financialSummary.raw.lockedValue),
         percent: lockedPct,
@@ -1044,7 +1070,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
     }
 
     return segments;
-  }, [financialSummary.raw, t, userDetails]);
+  }, [financialSummary.raw, t, userDetails, locale]);
 
   const handleSegmentClick = (key: string | null) => {
     const newKey = activeSegmentKey === key ? null : key;
@@ -1101,9 +1127,10 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
       financialSummary,
       chartSegments,
       hbdInterestApr,
-      t
+      t,
+      locale
     );
-  }, [userDetails, financialSummary, chartSegments, hbdInterestApr, t]);
+  }, [userDetails, financialSummary, chartSegments, hbdInterestApr, t, locale]);
 
   return (
     <TooltipProvider>
@@ -1121,7 +1148,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
               <Wallet className="h-4 w-4" />
               {header}
             </CardTitle>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 rtl:space-x-reverse">
               <Tooltip>
                 <DataExport
                   data={prepareExportData()}

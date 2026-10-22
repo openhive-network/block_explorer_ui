@@ -202,7 +202,7 @@ const AccountOperationViewTabs: React.FC<AccountOperationViewTabs> = ({
           ))}
         </TabsList>
         {activeTab !== "analytics" && (
-          <div className="pb-1 pr-1">
+          <div className="pb-1 pe-1">
             <FilterSectionToggle
               isFiltersActive={isFiltersActive}
               toggleFilters={handleFiltersVisibility}

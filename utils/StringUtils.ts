@@ -273,6 +273,23 @@ export const asCsvString = (value: string | number | undefined | null) => {
   return `="${String(value)}"`;
 };
 
+const CSV_FORMULA_START = /^[=+\-@\t\r＝＋－＠]/;
+const CSV_TEXT_WRAPPER = /^="[^"]*"$/;
+const CSV_SIGNED_AMOUNT = /^[-+][\d٠-٩][\d٠-٩.,\s  ٫٬]*(?: ?(?:[A-Z]+|\$|%))?$/;
+
+/**
+ * Stops a cell from running as a spreadsheet formula when the export is
+ * opened. User-written text such as a transfer memo can start with `=`, `+`,
+ * `-` or `@`; those cells get a leading `'`. The `="..."` text wrapper from
+ * asCsvString and plain signed amounts like "-5.001 HP" are left as they are.
+ */
+export const escapeCsvFormula = (value: string): string =>
+  CSV_FORMULA_START.test(value) &&
+  !CSV_TEXT_WRAPPER.test(value) &&
+  !CSV_SIGNED_AMOUNT.test(value)
+    ? `'${value}`
+    : value;
+
 /**
  * Validates if a string could be a valid Hive account name.
  * - Length between 3 and 16 characters.

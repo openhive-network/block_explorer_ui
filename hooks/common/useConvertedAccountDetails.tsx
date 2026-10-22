@@ -9,6 +9,7 @@ import useAccountRecurrentTransfers from "../api/accountPage/useAccoutRecurrentT
 import useAccountBalances from "../api/accountPage/useAccountBalances";
 import useBlockChainProperties from "../api/common/useBlockChainProperties";
 import { calculatePendingSavingsInterest } from "@/utils/Calculations";
+import { sumAccountValue } from "@/utils/accountValue";
 
 export const VEST_HP_KEYS_MAP: Record<string, string> = {
   reward_vesting_balance: "vest_reward_vesting_balance",
@@ -293,33 +294,7 @@ const useConvertedAccountDetails = (
       rawQuote
     ),
   };
-  interface NaiAsset {
-    amount: string;
-    nai: string;
-    precision: number;
-  }
-
-  /* Account Value Calculations */
-  const skipCalculation = [
-    "delegated_vesting_shares",
-    "received_vesting_shares",
-  ];
-
-  let totalAccountValue = Object.entries(dollars).reduce(
-    (sum, [key, value]) => {
-      if (
-        value &&
-        value.hasOwnProperty("amount") &&
-        !skipCalculation.includes(key)
-      ) {
-        return sum + Number((value as NaiAsset).amount);
-      }
-      return sum;
-    },
-    0
-  );
-
-  (dollars as any)["account_value"] = hiveChain.hbd(totalAccountValue);
+  (dollars as any)["account_value"] = hiveChain.hbd(sumAccountValue(dollars));
 
   const formattedAccountDetails = {
     ...hiveChain?.formatter.format({

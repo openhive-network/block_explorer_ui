@@ -97,10 +97,10 @@ const OpenOrdersDialog: React.FC<OpenOrdersDialogProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent
-        className="min-w-[70vw] pr-0"
+        className="min-w-[70vw] pe-0"
         data-testid="open-orders-dialog"
       >
-        <div className="max-h-[90vh] overflow-y-auto overflow-x-hidden pr-6 scrollableContainer">
+        <div className="max-h-[90vh] overflow-y-auto overflow-x-hidden pe-6 scrollableContainer">
           <ReportDialogHeader
             title={t("accountOpenOrdersDialog.title")}
             subtitle={`@${accountName}`}

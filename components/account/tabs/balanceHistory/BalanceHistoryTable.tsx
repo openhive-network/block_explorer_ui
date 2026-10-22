@@ -327,8 +327,7 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
         [t("balanceHistoryTable.timestamp")]: formatAndDelocalizeTime(
           operation.timestamp
         ),
-        [t("balanceHistoryTable.blockNumber")]:
-          operation.blockNumber?.toLocaleString() || "",
+        [t("balanceHistoryTable.blockNumber")]: operation.blockNumber ?? "",
         [t("balanceHistoryTable.balance")]: prevCell,
         [t("balanceHistoryTable.balanceChange")]: changeCell,
         [t("balanceHistoryTable.newBalance")]: balanceCell,
@@ -454,7 +453,7 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
                       <TableCell stickyLeft data-testid="operation-type">
                         <div className="flex justify-start rounded">
                           <span
-                            className={`rounded w-4 mr-2 ${operationBgColor}`}
+                            className={`rounded w-4 me-2 ${operationBgColor}`}
                           ></span>
                           <span>
                             {getOperationTypeForDisplayById(operation.opTypeId)}

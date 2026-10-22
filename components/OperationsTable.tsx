@@ -114,7 +114,6 @@ const LongCommentDescription = ({
   return formattedAccountOperations.op.value;
 };
 
-
 const getOperationValues = (operation: Hive.Operation) => {
   let valueAsObject = operation.value;
   if (typeof valueAsObject === "string") {
@@ -204,9 +203,9 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
     const isValid =
       content &&
       !(
-        typeof content === 'string' &&
+        typeof content === "string" &&
         (content as string).trim &&
-        (content as string).trim() === ''
+        (content as string).trim() === ""
       );
     if (opId !== undefined && isValid) {
       lastContentRef.current[opId] = content;
@@ -249,9 +248,8 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
           typeof content.type === "string" &&
           content.type === "div"
         ) {
-          
           // Use the recursive function to extract text content
-          contentString = extractTextFromReactElement(content,t);
+          contentString = extractTextFromReactElement(content, t);
         } else {
           contentString = String(content);
         }
@@ -260,9 +258,8 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
       contentString = contentString.replace(/\s+/g, " ");
 
       return {
-        [t("operationsTable.block")]:
-          operation.blockNumber?.toLocaleString() || "",
-        [t("operationsTable.transaction")]: operation.trxId?.slice(0, 10) || "",
+        [t("operationsTable.block")]: operation.blockNumber ?? "",
+        [t("operationsTable.transaction")]: operation.trxId || "",
         [t("operationsTable.date")]: formatAndDelocalizeTime(
           operation.timestamp
         ),
@@ -315,15 +312,16 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                 const op = operation.operation;
                 const isPlaceholder = op?.type === "body_placeholder_operation";
                 const originalType = (op.value as any)?.["org-operation_type"];
-                
+
                 // If it's a placeholder for a comment, treat it as a comment for UI/Color purposes
-                const effectiveType = (isPlaceholder && originalType === "comment_operation")
-                  ? "comment_operation"
-                  : op?.type;
+                const effectiveType =
+                  isPlaceholder && originalType === "comment_operation"
+                    ? "comment_operation"
+                    : op?.type;
 
                 const nextTransactionId: string | undefined =
                   allOperations[index + 1]?.trxId;
-                    const operationBgColor = getOperationColor(effectiveType);
+                const operationBgColor = getOperationColor(effectiveType);
                 const operationPerspective =
                   operation.operation?.value?.perspective;
 
@@ -478,7 +476,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                                 e.stopPropagation();
                                 setExpanded((prevExpanded) => [
                                   ...prevExpanded.filter(
-                                    (id) => id !== operation.operationId,
+                                    (id) => id !== operation.operationId
                                   ),
                                 ]);
                               }}

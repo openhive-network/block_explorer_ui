@@ -1,8 +1,20 @@
 import { Fragment } from "react";
-import { ChevronDown, ChevronUp, ChevronsUpDown } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  ChevronsUpDown,
+  Hourglass,
+  Repeat,
+} from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/hybrid-tooltip";
 import { grabNumericValue } from "./StringUtils";
 import { TableHead } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { AllTransfers } from "@/components/account/AccountRecurrentTransfersCard";
 
 type SortedTransfers = {
@@ -13,15 +25,27 @@ type SortedTransfers = {
 
 type KeyMapFn = (t: AllTransfers) => string | number;
 
+// The name column takes all spare width; the others shrink to their content.
+const COLUMN_CLASSES = [
+  "w-full text-start",
+  "w-px text-end",
+  "w-px text-center",
+  "w-px text-center",
+];
+
+// Narrow columns show an icon in the header; the label moves to a tooltip.
+const HEADER_ICONS: Partial<Record<string, typeof Repeat>> = {
+  Recurrence: Repeat,
+  Remaining: Hourglass,
+};
+
 export const TABLE_HEADER_CELLS_OUTGOING = [
-  "",
   "Recipient",
   "Amount",
   "Recurrence",
   "Remaining",
 ];
 export const TABLE_HEADER_CELLS_INCOMING = [
-  "",
   "Sender",
   "Amount",
   "Recurrence",
@@ -50,7 +74,13 @@ export const handleSortTransfers = ({
 
   if (!accessor) return transfers;
 
+  const symbolOf = (t: AllTransfers) => t.amount.split(" ").pop() ?? "";
+
   return [...transfers].sort((a, b) => {
+    if (key === "amount") {
+      const bySymbol = symbolOf(a).localeCompare(symbolOf(b));
+      if (bySymbol !== 0) return bySymbol;
+    }
     const aValue = accessor(a);
     const bValue = accessor(b);
 
@@ -70,26 +100,11 @@ const renderChevron = (
   const isKeyEqualToCell = sortKey === cellName.toLocaleLowerCase();
 
   if (isKeyEqualToCell && isOrderAscending) {
-    return (
-      <ChevronUp
-        size={15}
-        className="ml-2"
-      />
-    );
+    return <ChevronUp size={13} className="ms-0.5" />;
   } else if (isKeyEqualToCell && !isOrderAscending) {
-    return (
-      <ChevronDown
-        size={15}
-        className="ml-2"
-      />
-    );
+    return <ChevronDown size={13} className="ms-0.5" />;
   } else {
-    return (
-      <ChevronsUpDown
-        size={15}
-        className="ml-2"
-      />
-    );
+    return <ChevronsUpDown size={13} className="ms-0.5" />;
   }
 };
 
@@ -98,27 +113,43 @@ export const buildTableHead = (
   sortKey: string,
   isOrderAscending: boolean,
   direction: "incoming" | "outgoing",
-  t: (key: string) => string,
+  t: (key: string) => string
 ) => {
   const tableHeaderCells =
     direction === "incoming"
       ? TABLE_HEADER_CELLS_INCOMING
       : TABLE_HEADER_CELLS_OUTGOING;
 
-  return tableHeaderCells.map((cellName: string) => {
+  return tableHeaderCells.map((cellName: string, index: number) => {
+    const label = t(`recurrentTransfersSort.${cellName}`);
+    const Icon = HEADER_ICONS[cellName];
+    const sortButton = (
+      <Button
+        className="bg-inherit hover:bg-inherit p-0 m-0 h-auto text-xs sm:text-sm"
+        aria-label={label}
+        onClick={() => handleSort(cellName.toLocaleLowerCase())}
+      >
+        {Icon ? <Icon className="h-4 w-4" aria-hidden /> : label}
+        {renderChevron(cellName, sortKey, isOrderAscending)}
+      </Button>
+    );
     return (
       <Fragment key={cellName}>
         <TableHead
           key={cellName}
-          className="text-right"
+          className={cn(
+            "whitespace-nowrap px-1 sm:px-2",
+            COLUMN_CLASSES[index]
+          )}
         >
-          <Button
-            className="bg-inherit hover:bg-inherit p-0 m-0"
-            onClick={() => handleSort(cellName.toLocaleLowerCase())}
-          >
-            {cellName ? t(`recurrentTransfersSort.${cellName}`) : ""}{" "}
-            {renderChevron(cellName, sortKey, isOrderAscending)}
-          </Button>
+          {Icon ? (
+            <Tooltip>
+              <TooltipTrigger asChild>{sortButton}</TooltipTrigger>
+              <TooltipContent>{label}</TooltipContent>
+            </Tooltip>
+          ) : (
+            sortButton
+          )}
         </TableHead>
       </Fragment>
     );

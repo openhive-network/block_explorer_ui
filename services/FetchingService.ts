@@ -123,6 +123,10 @@ export type ExplorerNodeApi = {
       { name: string; observer?: string },
       Hive.CommunityDetails
     >;
+    get_community_context: TWaxApiRequest<
+      { name: string; account: string },
+      Hive.CommunityContext
+    >;
     list_subscribers: TWaxApiRequest<
       {
         community: string;
@@ -159,7 +163,8 @@ class FetchingService {
   private extendedHiveChain:
     | TWaxExtended<ExplorerNodeApi, TWaxRestExtended<typeof extendedRest>>
     | undefined = undefined;
-  // Same chain, same endpoints, longer abort budget. Used only by block-search.
+  // Same chain, same endpoints, longer abort budget. Used by block-search and
+  // the community subscribers list, the calls measured slower than the default.
   private blockSearchHiveChain:
     | TWaxExtended<ExplorerNodeApi, TWaxRestExtended<typeof extendedRest>>
     | undefined = undefined;
@@ -926,13 +931,25 @@ class FetchingService {
     return await this.extendedHiveChain!.api.bridge.get_community(params);
   }
 
+  async getCommunityContext(
+    name: string,
+    account: string
+  ): Promise<Hive.CommunityContext> {
+    const params = { name, account };
+    return await this.extendedHiveChain!.api.bridge.get_community_context(
+      params
+    );
+  }
+
   async getCommunitySubscribers(
     community: string,
     last: string | undefined,
     limit: number
   ): Promise<Hive.CommunitySubscribers> {
     const params = { community, last, limit };
-    return await this.extendedHiveChain!.api.bridge.list_subscribers(params);
+    // A page of subscribers often takes longer than the default 2s budget.
+    const chain = this.blockSearchHiveChain ?? this.extendedHiveChain;
+    return await chain!.api.bridge.list_subscribers(params);
   }
 
   async getCommunitiesList(

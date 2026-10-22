@@ -86,10 +86,10 @@ const AccountSubscriptionsDialog: React.FC<SubscriptionsDialogProps> = ({
       onOpenChange={changeSubscriptionsDialogue}
     >
       <DialogContent
-        className="min-w-[70vw] pr-0"
+        className="min-w-[70vw] pe-0"
         data-testid="subscriptions-dialog"
       >
-        <div className="max-h-[90vh] min-h-[60vh] overflow-y-auto overflow-x-hidden pr-6 scrollableContainer">
+        <div className="max-h-[90vh] min-h-[60vh] overflow-y-auto overflow-x-hidden pe-6 scrollableContainer">
           <ReportDialogHeader
             title={
               <span className="flex flex-wrap items-center gap-2">
@@ -128,7 +128,7 @@ const AccountSubscriptionsDialog: React.FC<SubscriptionsDialogProps> = ({
             <NoResult />
           ) : (
             <>
-              <div className="sticky top-0 z-20 -mt-1 flex flex-wrap items-center gap-3 bg-theme pb-3 pt-1">
+              <div className="sticky top-0 z-20 -mt-1 flex flex-wrap items-center gap-3 bg-theme pb-3 pr-6 pt-1 sm:pr-0">
                 <DialogSearchInput
                   value={filter}
                   onChange={setFilter}
@@ -153,6 +153,7 @@ const AccountSubscriptionsDialog: React.FC<SubscriptionsDialogProps> = ({
                       key={community.id}
                       href={`/@${community.id}`}
                       target="_blank"
+                      rel="noopener noreferrer"
                       className="flex min-w-0 items-center gap-3 rounded-md px-2 py-2 hover:bg-rowHover focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500"
                     >
                       <HiveAvatar accountName={community.id} alt="" size={36} />

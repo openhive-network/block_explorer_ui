@@ -98,6 +98,8 @@ const TeamMember = ({ memberTuple }: { memberTuple: TeamMemberTuple }) => {
   return (
     <Link
       href={`/@${name}`}
+      target="_blank"
+      rel="noopener noreferrer"
       className="flex items-start gap-3 p-2 rounded-lg transition-colors hover:bg-slate-100 dark:hover:bg-slate-800/50"
     >
       <HiveAvatar
@@ -147,7 +149,7 @@ const InfoSection = ({
   return (
     <div className="border-t border-slate-200 dark:border-slate-700 pt-3">
       <button
-        className="w-full flex justify-between items-center text-left font-semibold text-gray-700 dark:text-gray-300"
+        className="w-full flex justify-between items-center text-start font-semibold text-gray-700 dark:text-gray-300"
         onClick={() => setIsOpen(!isOpen)}
       >
         <span className="flex items-center gap-2">
@@ -256,7 +258,7 @@ const CommunityMainCard: React.FC<CommunityMainCardProps> = ({
               src={coverImageFromProfile}
               alt={`${title} cover image`}
             />
-            <div className="absolute -bottom-10 left-4 z-10">
+            <div className="absolute -bottom-10 start-4 z-10">
               <HiveAvatar
                 accountName={name}
                 size={80}
@@ -401,6 +403,7 @@ const CommunityMainCard: React.FC<CommunityMainCardProps> = ({
           onClose={() => setIsSubscribersModalOpen(false)}
           communityName={name}
           communityTitle={title}
+          totalCount={subscribers}
         />
       )}
     </>

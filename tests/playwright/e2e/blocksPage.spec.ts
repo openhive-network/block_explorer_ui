@@ -178,3 +178,98 @@ test.describe("Blocks page - slot health strip", () => {
     expect(counts.grey).toBe(0);
   });
 });
+
+// Regression guards for bugs fixed in #788.
+test.describe("Blocks page - regressions", () => {
+  let blocksPage: BlocksPage;
+
+  const savedLiveData = (page: Page) =>
+    page.evaluate(
+      () => JSON.parse(localStorage.getItem("app-settings") ?? "{}").liveData
+    );
+
+  const setSavedLiveData = (page: Page, liveData: boolean) =>
+    page.evaluate((value) => {
+      const settings = JSON.parse(localStorage.getItem("app-settings") ?? "{}");
+      localStorage.setItem(
+        "app-settings",
+        JSON.stringify({ ...settings, liveData: value })
+      );
+    }, liveData);
+
+  test.beforeEach(async ({ page }) => {
+    blocksPage = new BlocksPage(page);
+    await blocksPage.gotoBlocksPage();
+    await blocksPage.validateBlocksPageIsLoaded();
+  });
+
+  test("Should link the previous hash to the block before it", async () => {
+    const firstRow = blocksPage.tableBody.locator("tbody tr").first();
+    const blockHref = await firstRow
+      .locator('a[href*="/block/"]')
+      .first()
+      .getAttribute("href");
+    const blockNum = Number(blockHref?.split("/block/")[1]);
+    expect(blockNum).toBeGreaterThan(1);
+
+    await expect(
+      firstRow.locator(`a[href$="/block/${blockNum - 1}"]`)
+    ).toHaveCount(1);
+  });
+
+  test("Should pause Live data on a historical range without changing the saved setting", async ({
+    page,
+  }) => {
+    const liveSwitch = page
+      .getByTestId("toggle")
+      .filter({ hasText: "Live data" })
+      .locator("div")
+      .first();
+    await setSavedLiveData(page, true);
+    await page.reload();
+    await blocksPage.validateBlocksPageIsLoaded();
+    await expect(liveSwitch).toHaveClass(/cursor-pointer/);
+    await expect(liveSwitch).toHaveClass(/bg-green-600/);
+
+    await page.goto("/blocks?fromBlock=100000000&toBlock=100000050");
+    await blocksPage.validateBlocksPageIsLoaded();
+    // Disabled: not clickable, and shown off for this view only.
+    await expect(liveSwitch).not.toHaveClass(/cursor-pointer/);
+    await expect(liveSwitch).not.toHaveClass(/bg-green-600/);
+    expect(await savedLiveData(page)).toBe(true);
+
+    await liveSwitch.click();
+    expect(await savedLiveData(page)).toBe(true);
+  });
+
+  test("Should keep the opened row open when a new block arrives", async ({
+    page,
+  }) => {
+    test.setTimeout(90_000);
+    await setSavedLiveData(page, true);
+    await page.reload();
+    await blocksPage.validateBlocksPageIsLoaded();
+
+    const rows = blocksPage.tableBody.locator("tbody tr");
+    const firstBlockText = await rows.first().locator("a").first().innerText();
+    const label = await rows
+      .nth(1)
+      .getByTestId("expand-details")
+      .getAttribute("aria-label");
+    // Pinned by its block, not its position: new blocks push every row down.
+    const expander = page.getByLabel(label ?? "", { exact: true });
+    await expander.click();
+    await expect(expander).toHaveAttribute("aria-expanded", "true");
+
+    // Live data prepends the next block within a few slots.
+    await expect(rows.first().locator("a").first()).not.toHaveText(
+      firstBlockText,
+      { timeout: 30_000 }
+    );
+
+    await expect(expander).toHaveAttribute("aria-expanded", "true");
+    await expect(
+      page.locator('[data-testid="expand-details"][aria-expanded="true"]')
+    ).toHaveCount(1);
+  });
+});

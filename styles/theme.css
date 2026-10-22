@@ -564,3 +564,6 @@ pre {
 .recharts-surface {
   direction: ltr;
 }
+.echarts-for-react svg {
+  direction: ltr;
+}

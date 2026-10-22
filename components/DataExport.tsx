@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import { stringify } from "csv-stringify";
 import { Download, FileDown, Loader2 } from "lucide-react"; // 1. Add FileDown
 import { useI18n } from "@/i18n/i18n";
+import { escapeCsvFormula } from "@/utils/StringUtils";
 import {
   Tooltip,
   TooltipContent,
@@ -109,7 +110,11 @@ const DataExport: React.FC<DataExportProps> = ({
       const csvData = await new Promise<string>((resolve, reject) => {
         stringify(
           filteredData,
-          { header: true, columns: columnsToExport },
+          {
+            header: true,
+            columns: columnsToExport,
+            cast: { string: escapeCsvFormula },
+          },
           (err, output) => {
             if (err) {
               reject(err);

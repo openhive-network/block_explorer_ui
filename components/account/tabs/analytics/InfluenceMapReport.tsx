@@ -107,7 +107,8 @@ const getChartOption = (
   allCategories: { name: string }[],
   activeLegendCategories: { name: string }[],
   t: (key: string) => string,
-  theme: string | undefined
+  theme: string | undefined,
+  isRtl: boolean
 ) => {
   const textColor = theme === "dark" ? "#FFFFFF" : "#1F2937";
 
@@ -119,7 +120,7 @@ const getChartOption = (
     roam: true,
     label: {
       show: true,
-      position: "right",
+      position: isRtl ? "left" : "right",
       formatter: "{b}",
       color: textColor,
     },
@@ -151,7 +152,7 @@ const getChartOption = (
       {
         data: activeLegendCategories.map((a) => a.name),
         orient: "vertical",
-        left: "left",
+        ...(isRtl ? { right: 0, align: "right" } : { left: "left" }),
         top: "50",
         textStyle: { color: textColor },
       },
@@ -185,7 +186,7 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
   dynamicGlobalData,
   widgetId,
 }) => {
-  const { t } = useI18n();
+  const { t, locale, dir } = useI18n();
   const { theme } = useTheme();
   const chartRef = useRef<ReactECharts>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -561,7 +562,7 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
             ]
           ),
           category: 2,
-          value: `${remaining.length} ${t("influenceMapReport.moreDelegations")} (${sumHP.toLocaleString()} HP)`,
+          value: `${remaining.length.toLocaleString(locale)} ${t("influenceMapReport.moreDelegations")} (${sumHP.toLocaleString(locale)} ${t("common.hp")})`,
           x: centerX + radius * Math.cos(angle),
           y: centerY + radius * Math.sin(angle),
           fixed: true,
@@ -569,7 +570,7 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
         links.push({
           source: "in-others-expanded",
           target: centralNodeId,
-          value: `${sumHP.toLocaleString()} HP`,
+          value: `${sumHP.toLocaleString(locale)} ${t("common.hp")}`,
           lineStyle: {
             width: scaleValue(sumAmount, [minAmount, maxAmount], [0.5, 8]),
           },
@@ -651,7 +652,7 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
             ]
           ),
           category: 4,
-          value: `${remaining.length} ${t("influenceMapReport.moreDelegations")} (${sumHP.toLocaleString()} HP)`,
+          value: `${remaining.length.toLocaleString(locale)} ${t("influenceMapReport.moreDelegations")} (${sumHP.toLocaleString(locale)} ${t("common.hp")})`,
           x: centerX + radius * Math.cos(angle),
           y: centerY + radius * Math.sin(angle),
           fixed: true,
@@ -659,7 +660,7 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
         links.push({
           source: centralNodeId,
           target: "out-others-expanded",
-          value: `${sumHP.toLocaleString()} HP`,
+          value: `${sumHP.toLocaleString(locale)} ${t("common.hp")}`,
           lineStyle: {
             width: scaleValue(sumAmount, [minAmount, maxAmount], [0.5, 8]),
           },
@@ -773,7 +774,7 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
             (sum, d) => sum + grabNumericValue(d.vesting_shares),
             0
           );
-          const tooltipValue = `${remaining.length} ${t("influenceMapReport.moreDelegations")} (${sumHP.toLocaleString()} HP)`;
+          const tooltipValue = `${remaining.length.toLocaleString(locale)} ${t("influenceMapReport.moreDelegations")} (${sumHP.toLocaleString(locale)} ${t("common.hp")})`;
           const othersId = `others-out-${parentAccountName}-${pages.outgoing}`;
           nodes.push({
             id: othersId,
@@ -836,7 +837,7 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
             (sum, d) => sum + grabNumericValue(d.vesting_shares),
             0
           );
-          const tooltipValue = `${remaining.length} ${t("influenceMapReport.moreDelegations")} (${sumHP.toLocaleString()} HP)`;
+          const tooltipValue = `${remaining.length.toLocaleString(locale)} ${t("influenceMapReport.moreDelegations")} (${sumHP.toLocaleString(locale)} ${t("common.hp")})`;
           const othersId = `others-in-${parentAccountName}-${pages.incoming}`;
           nodes.push({
             id: othersId,
@@ -873,6 +874,7 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
     );
     setActiveLegendCategories(currentActiveCategories);
   }, [
+    locale,
     accountName,
     chartDimensions,
     expandedNodes,
@@ -1029,7 +1031,7 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
           variant="outline"
           size="sm"
           onClick={toggleExpandAll}
-          className="absolute top-2 right-2 z-10"
+          className="absolute top-2 end-2 z-10"
         >
           {isFullyExpanded
             ? t("analyticsDashboard.collapseAll")
@@ -1046,7 +1048,8 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
           allPossibleCategories,
           activeLegendCategories,
           t,
-          theme
+          theme,
+          dir === "rtl"
         )}
         onEvents={onEvents}
         style={{ height: "100%", width: "100%" }}

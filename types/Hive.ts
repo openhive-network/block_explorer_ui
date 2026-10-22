@@ -1278,9 +1278,17 @@ namespace Hive {
     subscribers!: CommunitySubscriber[];
   }
 
+  export class CommunityContext {
+    role!: string;
+    title!: string;
+    subscribed!: boolean;
+  }
+
   export class CommunitySubscriber {
     name!: string;
     created_at!: string;
+    role?: string;
+    title?: string | null;
   }
 
   export class CommunityList {

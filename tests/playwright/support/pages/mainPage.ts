@@ -143,7 +143,7 @@ export class MainPage {
       name: "Comment search",
     });
     this.searchButtonInComment = page.getByTestId("search-button");
-    this.accountNameInputCommentSection = page.getByTestId("account-name");
+    this.accountNameInputCommentSection = page.getByPlaceholder("Account name");
     this.noOperationsMatchingTextSection =
       ".flex.justify-center.w-full.text-black";
     this.detailedOperationCard = page.getByTestId("detailed-operation-card");

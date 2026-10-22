@@ -80,7 +80,7 @@ const HpMomentumCard = () => {
       value: totals.downFill,
       count: totals.downFillCount,
       color: "text-rose-500",
-      sign: "-",
+      sign: totals.downFill > 0 ? "-" : "",
     },
   ];
 

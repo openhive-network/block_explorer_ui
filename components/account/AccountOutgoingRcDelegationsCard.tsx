@@ -21,6 +21,7 @@ import { useI18n } from "../../i18n/i18n";
 import DataExport from "../DataExport";
 import CustomPagination from "../CustomPagination";
 import { config } from "@/Config";
+import useCollapsedState from "@/hooks/common/useCollapsedState";
 
 const PAGE_SIZE = config.standardPaginationSize;
 
@@ -40,10 +41,12 @@ const buildTableBody = (
       <Fragment key={index}>
         <TableRow
           className="cursor-pointer hover:bg-rowHover"
-          onClick={() => onRowClick(delegation.block_num, delegation.operation_id)}
+          onClick={() =>
+            onRowClick(delegation.block_num, delegation.operation_id)
+          }
         >
           <TableCell>{offset + index + 1}</TableCell>
-          <TableCell className="text-right break-words">
+          <TableCell className="text-end break-words">
             <Link
               className="text-link"
               href={`/@${delegation.delegatee}`}
@@ -52,7 +55,7 @@ const buildTableBody = (
               {delegation.delegatee}
             </Link>
           </TableCell>
-          <TableCell className="text-right break-words">
+          <TableCell className="text-end break-words">
             {formatNumber(delegation.max_rc, false, true, 0)}
           </TableCell>
         </TableRow>
@@ -61,14 +64,13 @@ const buildTableBody = (
   });
 };
 
-const AccountOutgoingRcDelegationsCard: React.FC<AccountOutgoingRcDelegationsCardProps> = ({
-  delegations,
-  isInitiallyOpen,
-  accountName,
-}) => {
+const AccountOutgoingRcDelegationsCard: React.FC<
+  AccountOutgoingRcDelegationsCardProps
+> = ({ delegations, isInitiallyOpen, accountName }) => {
   const { t } = useI18n();
   const router = useRouter();
-  const [isPropertiesHidden, setIsPropertiesHidden] = useState(!isInitiallyOpen);
+  const [isPropertiesHidden, setIsPropertiesHidden] =
+    useCollapsedState(isInitiallyOpen);
 
   const [sortConfig, setSortConfig] = useState<{
     key: string;
@@ -117,7 +119,12 @@ const AccountOutgoingRcDelegationsCard: React.FC<AccountOutgoingRcDelegationsCar
       return {
         [t("common.order")]: index + 1,
         [t("delegationSort.Recipient")]: delegation.delegatee,
-        [t("delegationSort.Amount")]: formatNumber(delegation.max_rc, false, true, 0),
+        [t("delegationSort.Amount")]: formatNumber(
+          delegation.max_rc,
+          false,
+          true,
+          0
+        ),
       };
     });
   };
@@ -133,9 +140,10 @@ const AccountOutgoingRcDelegationsCard: React.FC<AccountOutgoingRcDelegationsCar
           className="h-full flex justify-between align-center p-2 hover:bg-rowHover cursor-pointer px-4"
         >
           <div className="text-lg">
-            {t("accountOutgoingRcDelegationsCard.delegations")} ({delegations.length})
+            {t("accountOutgoingRcDelegationsCard.delegations")} (
+            {delegations.length})
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 rtl:space-x-reverse">
             <DataExport
               data={prepareExportData()}
               filename={`${accountName}_${t(
@@ -150,10 +158,16 @@ const AccountOutgoingRcDelegationsCard: React.FC<AccountOutgoingRcDelegationsCar
       <CardContent hidden={isPropertiesHidden}>
         <Table className="table-fixed">
           <TableHeader className="text-base">
-            <TableRow>{buildTableHead(sortBy, key, isAscending, t, "outgoing")}</TableRow>
+            <TableRow>
+              {buildTableHead(sortBy, key, isAscending, t, "outgoing")}
+            </TableRow>
           </TableHeader>
           <TableBody className="text-sm">
-            {buildTableBody(pagedDelegations, handleRowClick, (currentPage - 1) * PAGE_SIZE)}
+            {buildTableBody(
+              pagedDelegations,
+              handleRowClick,
+              (currentPage - 1) * PAGE_SIZE
+            )}
           </TableBody>
         </Table>
         <CustomPagination

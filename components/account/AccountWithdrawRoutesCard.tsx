@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from "react";
+import React, { Fragment } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import Link from "next/link";
 
@@ -15,6 +15,7 @@ import {
 import Hive from "@/types/Hive";
 import { useI18n } from "../../i18n/i18n";
 import DataExport from "../DataExport";
+import useCollapsedState from "@/hooks/common/useCollapsedState";
 
 type AccountWithdrawRoutesCardProps = {
   routes?: Hive.WithdrawVestingRoute[];
@@ -29,7 +30,7 @@ const AccountWithdrawRoutesCard: React.FC<AccountWithdrawRoutesCardProps> = ({
 }) => {
   const { t, locale } = useI18n();
   const [isPropertiesHidden, setIsPropertiesHidden] =
-    useState(!isInitiallyOpen);
+    useCollapsedState(isInitiallyOpen);
 
   if (!routes || !routes.length) {
     return null;
@@ -67,7 +68,7 @@ const AccountWithdrawRoutesCard: React.FC<AccountWithdrawRoutesCardProps> = ({
           <div className="text-lg">
             {t("accountWithdrawRoutesCard.routes")} ({routes.length})
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 rtl:space-x-reverse">
             <DataExport
               data={prepareExportData()}
               filename={`${accountName}_${t(
@@ -86,14 +87,14 @@ const AccountWithdrawRoutesCard: React.FC<AccountWithdrawRoutesCardProps> = ({
         <Table enableMobileScrollArrows>
           <TableHeader className="text-base">
             <TableRow>
-              <TableHead className="w-10 text-right" />
-              <TableHead className="text-right">
+              <TableHead className="w-10 text-end" />
+              <TableHead className="text-end">
                 {t("accountWithdrawRoutesCard.destination")}
               </TableHead>
-              <TableHead className="text-right">
+              <TableHead className="text-end">
                 {t("accountWithdrawRoutesCard.percent")}
               </TableHead>
-              <TableHead className="text-right">
+              <TableHead className="text-end">
                 {t("accountWithdrawRoutesCard.autoPowerUp")}
               </TableHead>
             </TableRow>
@@ -103,7 +104,7 @@ const AccountWithdrawRoutesCard: React.FC<AccountWithdrawRoutesCardProps> = ({
               <Fragment key={route.id}>
                 <TableRow>
                   <TableCell>{index + 1}</TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-end">
                     <Link
                       className="text-link whitespace-nowrap"
                       href={`/@${route.to_account}`}
@@ -111,10 +112,10 @@ const AccountWithdrawRoutesCard: React.FC<AccountWithdrawRoutesCardProps> = ({
                       {route.to_account}
                     </Link>
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-end">
                     {formatPercent(route.percent, locale)}
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-end">
                     {autoVestLabel(route.auto_vest)}
                   </TableCell>
                 </TableRow>

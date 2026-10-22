@@ -136,7 +136,7 @@ const RcFootprintDrilldown: React.FC<RcFootprintDrilldownProps> = ({
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-xs uppercase tracking-wide text-gray-500 border-b border-gray-200 dark:border-gray-700">
+                <tr className="text-start text-xs uppercase tracking-wide text-gray-500 border-b border-gray-200 dark:border-gray-700">
                   <th className="py-1.5 pe-3 font-medium">
                     {t("rcFootprint.colTime")}
                   </th>
