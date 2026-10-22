@@ -215,14 +215,14 @@ const AccountHpActivityCard: React.FC<AccountHpActivityCardProps> = ({
                     <span
                       className="font-semibold tabular-nums"
                       style={{ color }}
-                      title={`${sign}${value.toLocaleString()} ${unitLabel}`}
+                      title={`${sign}${value.toLocaleString(locale)} ${unitLabel}`}
                     >
                       {sign}
                       {formatVestingAmount(value, locale)} {unitLabel}
                     </span>
                     <span className="text-[11px] text-gray-400 tabular-nums">
-                      ({count.toLocaleString()} {t("accountHpActivityCard.ops")}
-                      )
+                      ({count.toLocaleString(locale)}{" "}
+                      {t("accountHpActivityCard.ops")})
                     </span>
                   </span>
                 </div>
@@ -239,7 +239,7 @@ const AccountHpActivityCard: React.FC<AccountHpActivityCardProps> = ({
                       ? VESTING_COLORS.up
                       : VESTING_COLORS.downFill,
                   }}
-                  title={`${netIsPositive ? "+" : ""}${totals.net.toLocaleString()} ${unitLabel}`}
+                  title={`${netIsPositive ? "+" : ""}${totals.net.toLocaleString(locale)} ${unitLabel}`}
                 >
                   {netIsPositive ? "+" : ""}
                   {formatVestingAmount(totals.net, locale)} {unitLabel}

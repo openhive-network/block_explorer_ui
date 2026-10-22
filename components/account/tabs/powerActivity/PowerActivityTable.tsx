@@ -244,17 +244,17 @@ const PowerActivityTable: React.FC<PowerActivityTableProps> = ({
           : eventLabel,
         [t("powerActivityTable.amountHive")]:
           hive !== null
-            ? `${hive.toLocaleString(undefined, { maximumFractionDigits: 3 })} HIVE`
+            ? `${hive.toLocaleString(appLocale, { maximumFractionDigits: 3 })} HIVE`
             : "—",
         [unitLabel]:
           amount.value !== null
-            ? `${amount.value.toLocaleString(undefined, {
+            ? `${amount.value.toLocaleString(appLocale, {
                 maximumFractionDigits: unit === "hp" ? 3 : 0,
               })} ${amount.unitSuffix}`
             : "—",
         [t("balanceHistoryTable.dollarValue")]:
           usd !== null
-            ? `$${usd.toLocaleString(undefined, { maximumFractionDigits: 2 })}`
+            ? `$${usd.toLocaleString(appLocale, { maximumFractionDigits: 2 })}`
             : "—",
         [t("commentPermlinkResultTable.operationId")]: String(
           op.operation_id ?? ""
@@ -262,7 +262,7 @@ const PowerActivityTable: React.FC<PowerActivityTableProps> = ({
       };
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [operations, unit, hivePrice, t]);
+  }, [operations, unit, hivePrice, t, appLocale]);
 
   const unitOptions: { key: VestingDisplayUnit; label: string }[] = [
     { key: "hp", label: "HP" },
@@ -398,7 +398,7 @@ const PowerActivityTable: React.FC<PowerActivityTableProps> = ({
                       className="text-link"
                       href={`/block/${op.block_num}`}
                     >
-                      {op.block_num?.toLocaleString()}
+                      {op.block_num?.toLocaleString(appLocale)}
                     </Link>
                     <CopyButton
                       text={op.block_num}
@@ -444,21 +444,21 @@ const PowerActivityTable: React.FC<PowerActivityTableProps> = ({
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
                     {hive !== null
-                      ? `${hive.toLocaleString(undefined, {
+                      ? `${hive.toLocaleString(appLocale, {
                           maximumFractionDigits: 3,
                         })} HIVE`
                       : "—"}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
                     {amount.value !== null
-                      ? `${amount.value.toLocaleString(undefined, {
+                      ? `${amount.value.toLocaleString(appLocale, {
                           maximumFractionDigits: unit === "hp" ? 3 : 0,
                         })} ${amount.unitSuffix}`
                       : "—"}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
                     {usd !== null
-                      ? `$${usd.toLocaleString(undefined, {
+                      ? `$${usd.toLocaleString(appLocale, {
                           maximumFractionDigits: 2,
                         })}`
                       : "—"}

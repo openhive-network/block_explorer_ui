@@ -53,7 +53,7 @@ const PowerActivityKpiStrip: React.FC<PowerActivityKpiStripProps> = ({
           <span className="inline-flex items-center gap-1 whitespace-nowrap">
             <TrendIcon size={14} color={trendColor} />
             <span
-              title={`${netSign >= 0 ? "+" : ""}${totals.net.toLocaleString()} ${unitLabel}`}
+              title={`${netSign >= 0 ? "+" : ""}${totals.net.toLocaleString(locale)} ${unitLabel}`}
             >
               {netSign >= 0 ? "+" : ""}
               {formatVestingAmount(totals.net, locale)} {unitLabel}
@@ -66,22 +66,24 @@ const PowerActivityKpiStrip: React.FC<PowerActivityKpiStripProps> = ({
         icon={<TrendingUp size={14} color={VESTING_COLORS.up} />}
         valueClassName="text-emerald-600 dark:text-emerald-400"
         value={
-          <span title={`+${totals.up.toLocaleString()} ${unitLabel}`}>
+          <span title={`+${totals.up.toLocaleString(locale)} ${unitLabel}`}>
             +{formatVestingAmount(totals.up, locale)} {unitLabel}
           </span>
         }
-        sub={`${totals.upCount.toLocaleString()} ${t("hpMomentumCard.ops")}`}
+        sub={`${totals.upCount.toLocaleString(locale)} ${t("hpMomentumCard.ops")}`}
       />
       <KpiTile
         label={t("accountHpActivityCard.scheduledDown")}
         icon={<Clock size={14} color={VESTING_COLORS.downInit} />}
         valueClassName="text-amber-600 dark:text-amber-400"
         value={
-          <span title={`${totals.downInit.toLocaleString()} ${unitLabel}`}>
+          <span
+            title={`${totals.downInit.toLocaleString(locale)} ${unitLabel}`}
+          >
             {formatVestingAmount(totals.downInit, locale)} {unitLabel}
           </span>
         }
-        sub={`${totals.downInitCount.toLocaleString()} ${t("hpMomentumCard.ops")}`}
+        sub={`${totals.downInitCount.toLocaleString(locale)} ${t("hpMomentumCard.ops")}`}
       />
       <KpiTile
         label={t("accountHpActivityCard.poweredDown")}
@@ -89,13 +91,13 @@ const PowerActivityKpiStrip: React.FC<PowerActivityKpiStripProps> = ({
         valueClassName="text-rose-600 dark:text-rose-400"
         value={
           <span
-            title={`${downFillSign}${totals.downFill.toLocaleString()} ${unitLabel}`}
+            title={`${downFillSign}${totals.downFill.toLocaleString(locale)} ${unitLabel}`}
           >
             {downFillSign}
             {formatVestingAmount(totals.downFill, locale)} {unitLabel}
           </span>
         }
-        sub={`${totals.downFillCount.toLocaleString()} ${t("hpMomentumCard.ops")}`}
+        sub={`${totals.downFillCount.toLocaleString(locale)} ${t("hpMomentumCard.ops")}`}
       />
     </div>
   );
