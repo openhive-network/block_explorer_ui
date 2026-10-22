@@ -26,6 +26,7 @@ import PowerActivityFilterChips from "./PowerActivityFilterChips";
 import ActivePowerDownBanner from "./ActivePowerDownBanner";
 import PowerActivityKpiStrip from "./PowerActivityKpiStrip";
 import HpMomentumChart from "@/components/home/HpMomentumChart";
+import ErrorMessage from "@/components/ErrorMessage";
 
 const CHART_SERIES = [
   "power_up_bar",
@@ -145,6 +146,7 @@ const PowerActivityTabContent: React.FC<PowerActivityTabContentProps> = ({
     accountVestingStats,
     isAccountVestingStatsLoading,
     isAccountVestingStatsError,
+    refetch,
   } = useAccountVestingStats(
     isTabActive ? accountName : "",
     paramsState.granularity,
@@ -255,9 +257,10 @@ const PowerActivityTabContent: React.FC<PowerActivityTabContentProps> = ({
           </p>
         )}
         {isAccountVestingStatsError && (
-          <p className="text-red-500 text-xs mt-1">
-            {t("common.errorLoadingData")}
-          </p>
+          <ErrorMessage
+            message={t("common.errorLoadingData")}
+            onRetry={() => refetch()}
+          />
         )}
       </Card>
 
