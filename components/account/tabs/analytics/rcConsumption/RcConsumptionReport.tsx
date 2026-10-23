@@ -19,7 +19,8 @@ import RcConsumptionDrilldown from "./RcConsumptionDrilldown";
 
 type Metric = "ops" | "rc";
 const TOP_N = 15;
-// haf_stats prices RC from the recorded cost only up to this many ops (exact_rc_op_cap).
+// Mirrors haf_stats exact_rc_op_cap(): above this many ops the API prices RC as
+// an estimate. haf_stats#44 may change it, so update both together.
 const RC_EXACT_OP_CAP = 15000;
 
 const RcConsumptionReport: React.FC<
@@ -123,7 +124,11 @@ const RcConsumptionReport: React.FC<
           [t("rcConsumption.colOps")]: r.op_count,
           [t("rcConsumption.colOpsPct")]:
             tOps > 0 ? (r.op_count / tOps) * 100 : 0,
-          [t("rcConsumption.colRc")]: r.rc_consumed,
+          [t(
+            tOps > RC_EXACT_OP_CAP
+              ? "rcConsumption.colRcEst"
+              : "rcConsumption.colRc"
+          )]: r.rc_consumed,
           [t("rcConsumption.colRcPct")]:
             tRc > 0 ? (r.rc_consumed / tRc) * 100 : 0,
         })),
@@ -139,7 +144,11 @@ const RcConsumptionReport: React.FC<
     {
       key: "rc",
       Icon: Cpu,
-      label: t("rcConsumption.kpiTotalRc"),
+      label: t(
+        totalOps > RC_EXACT_OP_CAP
+          ? "rcConsumption.kpiTotalRcEst"
+          : "rcConsumption.kpiTotalRc"
+      ),
       value: formatRc(totalRc, locale),
       info:
         totalOps > RC_EXACT_OP_CAP

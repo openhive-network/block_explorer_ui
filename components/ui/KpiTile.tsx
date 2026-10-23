@@ -41,9 +41,13 @@ const KpiTile: React.FC<KpiTileProps> = ({
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <span className="text-gray-400 hover:text-gray-500 cursor-help flex-shrink-0">
+              <button
+                type="button"
+                aria-label={infoText}
+                className="text-gray-400 hover:text-gray-500 cursor-help flex-shrink-0"
+              >
                 <Info size={10} />
-              </span>
+              </button>
             </TooltipTrigger>
             <TooltipPortal>
               <TooltipContent
