@@ -29,12 +29,12 @@ The Playwright e2e suite (`tests/playwright`, live API) is not bound yet.
 
 ## The test runtime image (`runtime/`)
 
-The suites run in a container with `--network none` and your uid. It carries Node 24.21
-(as CI and the Dockerfile), pnpm (package.json `packageManager`, through corepack) and a
-pnpm store from `pnpm fetch`. `pnpm-deps.sh` installs `node_modules` offline from it.
+The suites run in a container with `--network none` and your uid. It is built on ccc's
+`node-test-tools:develop`, which supplies Node and pnpm, and adds a pnpm store from
+`pnpm fetch`. `pnpm-deps.sh` installs `node_modules` offline from it.
 
-When `pnpm-lock.yaml`, `.npmrc`, `packageManager` or `runtime/Dockerfile` change, rebuild
-and re-pin **in the same commit**:
+When `pnpm-lock.yaml`, `.npmrc` or `runtime/Dockerfile` change, rebuild (on the digest
+`node-test-tools:develop` names then) and re-pin **in the same commit**:
 
 ```bash
 .aidev/runtime/build.sh --push   # put the printed repo@sha256:<digest> in project.yaml environment.image
