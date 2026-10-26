@@ -234,9 +234,9 @@ export default async function handler(
       const from = new Date();
       from.setUTCFullYear(from.getUTCFullYear() - 1);
       const fin = await restGet(
-        `/haf-stats-api/accounts/${encodeURIComponent(
+        `/haf-stats-api/account/${encodeURIComponent(
           accountName
-        )}/financial-summary?from-date=${from.toISOString()}&granularity=month`
+        )}/financial-summary?from_date=${from.toISOString()}&granularity=month`
       );
       const rows = Array.isArray(fin) ? fin : fin?.financial_summary;
       const val = toHp(sumAuthorCurationVests(rows) / 1e6);
