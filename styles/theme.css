@@ -548,9 +548,14 @@ pre {
     border-color 0.15s ease;
 }
 
-.report-export-btn:hover {
+.report-export-btn:hover:not(:disabled) {
   border-color: #818cf8;
   color: #6366f1;
+}
+
+.report-export-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .dark .report-export-btn {

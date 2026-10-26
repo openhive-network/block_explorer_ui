@@ -27,6 +27,29 @@ import ActivePowerDownBanner from "./ActivePowerDownBanner";
 import PowerActivityKpiStrip from "./PowerActivityKpiStrip";
 import HpMomentumChart from "@/components/home/HpMomentumChart";
 
+const CHART_SERIES = [
+  "power_up_bar",
+  "power_down_fill_neg",
+  "power_down_init",
+  "net",
+  "trend",
+];
+
+const CHART_SERIES_BY_FILTER: Record<Hive.VestingHistoryFilter, string | null> =
+  {
+    all: null,
+    power_up: "power_up_bar",
+    power_down_fill: "power_down_fill_neg",
+    power_down_init: "power_down_init",
+  };
+
+const chartHiddenKeys = (filter: Hive.VestingHistoryFilter = "all") => {
+  const shown = CHART_SERIES_BY_FILTER[filter];
+  return shown
+    ? CHART_SERIES.filter((key) => key !== shown)
+    : ["power_down_init"];
+};
+
 export interface PowerActivityTabSearchParams {
   accountName?: string;
   activeTab?: string;
@@ -215,7 +238,9 @@ const PowerActivityTabContent: React.FC<PowerActivityTabContentProps> = ({
         ) : hasChartData ? (
           <div className="h-[360px] w-full">
             <HpMomentumChart
+              key={paramsState.vestingFilter}
               data={chartData}
+              defaultHiddenKeys={chartHiddenKeys(paramsState.vestingFilter)}
               unit={unit}
               includeBrush
               showYear={paramsState.granularity === "yearly"}

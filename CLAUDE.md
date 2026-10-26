@@ -15,12 +15,12 @@ Web-based GUI for exploring Hive blockchain data. Features include:
 
 ## Tech Stack
 
-- **Framework**: Next.js 15.3.3, React 18.3.1, TypeScript 5.1.6 (strict mode)
+- **Framework**: Next.js 15.3.3, React 18.3.1, TypeScript 5.9.3 (strict mode)
 - **Styling**: Tailwind CSS 3.4.12, Shadcn UI (Radix UI primitives)
 - **Data Fetching**: React Query (TanStack Query) 4.29.25
 - **Blockchain**: @hiveio/wax 2.0.1, @hiveio/hb-healthchecker-component
 - **Charts**: ECharts 5.6.0, Recharts 2.9.2
-- **Testing**: Playwright 1.57.0 (Chromium, Firefox, WebKit)
+- **Testing**: Playwright 1.64.1 (Chromium, Firefox, WebKit)
 - **Runtime**: Node.js 24.21.0+
 
 ## Directory Structure
@@ -52,8 +52,8 @@ When AIDEV runs you on an issue, no one is there to answer questions. GitLab CI 
 
 - **Check your change:** run `aidev test run --slot quick` once, after your last edit. It runs `next lint`, `tsc --noEmit` and the Jest unit tests. `--slot full` adds `next build`.
 - **Iterate:** `.aidev/run-checks.sh dev unit` (or `lint` / `typecheck` / `build`) runs one step.
-- **Package manager:** pnpm 10.15 (`pnpm-lock.yaml`), not npm.
-- **Dependencies:** a change to `pnpm-lock.yaml`, `.npmrc` or `packageManager` needs a new test image. Run `.aidev/runtime/build.sh --push` and put the printed reference in `.aidev/project.yaml` `environment.image` in the same commit (see `.aidev/README.md`).
+- **Package manager:** pnpm 10.33 (`pnpm-lock.yaml`), not npm.
+- **Dependencies:** a change to `pnpm-lock.yaml` or `.npmrc` needs a new test image, built on ccc's `node-test-tools:develop`. Run `.aidev/runtime/build.sh --push` and put the printed reference in `.aidev/project.yaml` `environment.image` in the same commit (see `.aidev/README.md`).
 - **The Playwright e2e tests** hit the live API and are not part of the AIDEV slots yet. Don't rely on them to verify a change.
 
 ## Development Commands

@@ -179,11 +179,7 @@ const AccountSubscriptionsDialog: React.FC<SubscriptionsDialogProps> = ({
                   ))}
                 </div>
               ) : (
-                <NoResult
-                  descriptionKey={t(
-                    "accountSubscriptionsDialog.noResultsFound"
-                  )}
-                />
+                <NoResult descriptionKey="accountSubscriptionsDialog.noResultsFound" />
               )}
             </>
           )}

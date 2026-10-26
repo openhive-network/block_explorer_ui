@@ -22,7 +22,7 @@ import HpMomentumChart from "../home/HpMomentumChart";
 import {
   VESTING_COLORS,
   VestingDisplayUnit,
-  formatCompact,
+  formatVestingAmount,
   useAggregatedVesting,
   useVestingDisplayUnit,
 } from "../home/hpMomentumUtils";
@@ -32,12 +32,14 @@ type AccountHpActivityCardProps = {
   header: string;
   userDetails: Explorer.FormattedAccountDetails;
   isInitiallyOpen: boolean;
+  liveDataEnabled?: boolean;
 };
 
 const AccountHpActivityCard: React.FC<AccountHpActivityCardProps> = ({
   header,
   userDetails,
   isInitiallyOpen,
+  liveDataEnabled,
 }) => {
   const { t, locale } = useI18n();
   const { settings } = useSettings();
@@ -58,7 +60,7 @@ const AccountHpActivityCard: React.FC<AccountHpActivityCardProps> = ({
     fromDate,
     undefined,
     "asc",
-    settings.liveData
+    liveDataEnabled ?? settings.liveData
   );
 
   const { chartData, totals, isReady } = useAggregatedVesting(
@@ -216,7 +218,7 @@ const AccountHpActivityCard: React.FC<AccountHpActivityCardProps> = ({
                       title={`${sign}${value.toLocaleString()} ${unitLabel}`}
                     >
                       {sign}
-                      {formatCompact(value, locale)} {unitLabel}
+                      {formatVestingAmount(value, locale)} {unitLabel}
                     </span>
                     <span className="text-[11px] text-gray-400 tabular-nums">
                       ({count.toLocaleString()} {t("accountHpActivityCard.ops")}
@@ -240,7 +242,7 @@ const AccountHpActivityCard: React.FC<AccountHpActivityCardProps> = ({
                   title={`${netIsPositive ? "+" : ""}${totals.net.toLocaleString()} ${unitLabel}`}
                 >
                   {netIsPositive ? "+" : ""}
-                  {formatCompact(totals.net, locale)} {unitLabel}
+                  {formatVestingAmount(totals.net, locale)} {unitLabel}
                 </span>
               </div>
             </div>

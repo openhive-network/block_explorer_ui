@@ -56,9 +56,11 @@ const AccountFollowListDialog: React.FC<AccountFollowListDialogProps> = ({
     names,
     isLoading,
     isError,
+    isFetching,
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
+    refetch,
   } = useAccountFollowList(type, accountName, { enabled: isOpen });
 
   useEffect(() => {
@@ -165,7 +167,7 @@ const AccountFollowListDialog: React.FC<AccountFollowListDialogProps> = ({
             title={
               <span className="flex flex-wrap items-center gap-2">
                 {title}
-                {!isLoading && !isError && (
+                {!isLoading && (!isError || names.length > 0) && (
                   <span className="rounded-full bg-indigo-500/10 px-2 py-0.5 text-xs font-semibold tabular-nums text-indigo-600 dark:text-indigo-300">
                     {total.toLocaleString(locale)}
                   </span>
@@ -178,7 +180,7 @@ const AccountFollowListDialog: React.FC<AccountFollowListDialogProps> = ({
                 <button
                   type="button"
                   className="report-export-btn"
-                  disabled={isExporting}
+                  disabled={isExporting || isError}
                   onClick={() => setIsExporting(true)}
                 >
                   {isExporting ? (
@@ -192,12 +194,15 @@ const AccountFollowListDialog: React.FC<AccountFollowListDialogProps> = ({
             }
           />
 
-          {isLoading ? (
+          {isLoading || (isFetching && names.length === 0) ? (
             <div className="flex justify-center items-center py-16">
               <Loader2 className="animate-spin h-8 w-8" />
             </div>
           ) : isError && names.length === 0 ? (
-            <ErrorMessage message={t("common.errorLoadingData")} />
+            <ErrorMessage
+              message={t("common.errorLoadingData")}
+              onRetry={() => refetch()}
+            />
           ) : names.length === 0 ? (
             <NoResult />
           ) : (
@@ -257,7 +262,7 @@ const AccountFollowListDialog: React.FC<AccountFollowListDialogProps> = ({
                 <NoResult descriptionKey={noMatchKey} />
               )}
 
-              {isError && (
+              {isError && !isFetchingNextPage && (
                 <ErrorMessage
                   message={t("common.errorLoadingData")}
                   onRetry={() => fetchNextPage()}

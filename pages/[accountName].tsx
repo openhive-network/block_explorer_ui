@@ -193,7 +193,9 @@ export default function Account() {
           >
             <AccountDetailsSection
               accountName={accountNameFromRoute}
-              liveDataEnabled={liveDataEnabled}
+              liveDataEnabled={
+                liveDataEnabled && !isDesktopAccountDetailsCollapsed
+              }
               changeLiveRefresh={changeLiveRefresh}
               accountDetails={accountDetails}
               communityDetails={communityDetails}

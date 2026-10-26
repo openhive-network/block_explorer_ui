@@ -66,6 +66,7 @@ const useAccountDetails = (accountName: string, liveDataEnabled: boolean) => {
       following_count,
       subscriptions,
       post_count,
+      next_vesting_withdrawal: accounts[0].next_vesting_withdrawal,
       // The liquid-HBD trio comes from hafbe (hbd_seconds passes through the
       // spread untouched). Only what hafbe actually returned is formatted, so
       // on a node that has yet to deploy them the rows stay absent rather than

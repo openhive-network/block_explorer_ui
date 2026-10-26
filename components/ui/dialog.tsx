@@ -28,25 +28,22 @@ const DialogOverlay = React.forwardRef<
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
 const DescriptionContext = React.createContext<{
-  id: string;
-  register: () => () => void;
+  register: (id: string) => () => void;
 } | null>(null);
 
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
 >(({ className, children, ...props }, ref) => {
-  const descriptionId = React.useId();
-  const [descriptionCount, setDescriptionCount] = React.useState(0);
+  const [descriptionIds, setDescriptionIds] = React.useState<string[]>([]);
   const description = React.useMemo(
     () => ({
-      id: descriptionId,
-      register: () => {
-        setDescriptionCount((count) => count + 1);
-        return () => setDescriptionCount((count) => count - 1);
+      register: (id: string) => {
+        setDescriptionIds((ids) => [...ids, id]);
+        return () => setDescriptionIds((ids) => ids.filter((i) => i !== id));
       },
     }),
-    [descriptionId]
+    []
   );
 
   return (
@@ -54,7 +51,9 @@ const DialogContent = React.forwardRef<
       <DialogOverlay />
       <DialogPrimitive.Content
         ref={ref}
-        aria-describedby={descriptionCount > 0 ? descriptionId : undefined}
+        aria-describedby={
+          descriptionIds.length > 0 ? descriptionIds.join(" ") : undefined
+        }
         className={cn(
           "rounded fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-theme p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] md:w-full",
           className
@@ -123,14 +122,18 @@ DialogTitle.displayName = DialogPrimitive.Title.displayName;
 const DialogDescription = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Description>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
->(({ className, ...props }, ref) => {
-  const description = React.useContext(DescriptionContext);
-  const register = description?.register;
-  React.useLayoutEffect(() => register?.(), [register]);
+>(({ className, id, ...props }, ref) => {
+  const generatedId = React.useId();
+  const descriptionId = id ?? generatedId;
+  const register = React.useContext(DescriptionContext)?.register;
+  React.useLayoutEffect(
+    () => register?.(descriptionId),
+    [register, descriptionId]
+  );
   return (
     <DialogPrimitive.Description
       ref={ref}
-      id={description?.id}
+      id={descriptionId}
       className={cn("text-sm text-muted-foreground", className)}
       {...props}
     />

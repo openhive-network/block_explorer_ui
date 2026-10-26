@@ -24,11 +24,15 @@ gitlab:
 # `stable` is omitted and `aidev release` never moves develop or master.
 branches:
   integration: "aidev/integration"
+  # develop is protected and fast-forward only: hand off by merge request, as a
+  # linear one-commit-per-change copy (aidev docs/operations/project-handoff.md).
+  handoff: "develop"
+  handoff_history: "linear"
 
 # How this project's suites execute (#13892): one kind, stated once.
 environment:
   kind: "container"
-  image: "registry.gitlab.syncad.com/hive/block_explorer_ui/aidev-tests@sha256:8460aa931849991427fc1848e6443295ce2dd6471ae782a37f21b1dc5906f87c"
+  image: "registry.gitlab.syncad.com/hive/block_explorer_ui/aidev-tests@sha256:537b305618deac6485a3ae945c3e86c04700a5ebfd49f4223227e20996e41a81"
   inputs: ["pnpm-lock.yaml"]
 
 issues:

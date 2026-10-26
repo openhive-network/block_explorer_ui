@@ -19,6 +19,9 @@ import RcConsumptionDrilldown from "./RcConsumptionDrilldown";
 
 type Metric = "ops" | "rc";
 const TOP_N = 15;
+// Mirrors haf_stats exact_rc_op_cap(): above this many ops the API prices RC as
+// an estimate. haf_stats#44 may change it, so update both together.
+const RC_EXACT_OP_CAP = 15000;
 
 const RcConsumptionReport: React.FC<
   BaseReportProps & { fillHeight?: boolean }
@@ -121,7 +124,11 @@ const RcConsumptionReport: React.FC<
           [t("rcConsumption.colOps")]: r.op_count,
           [t("rcConsumption.colOpsPct")]:
             tOps > 0 ? (r.op_count / tOps) * 100 : 0,
-          [t("rcConsumption.colRc")]: r.rc_consumed,
+          [t(
+            tOps > RC_EXACT_OP_CAP
+              ? "rcConsumption.colRcEst"
+              : "rcConsumption.colRc"
+          )]: r.rc_consumed,
           [t("rcConsumption.colRcPct")]:
             tRc > 0 ? (r.rc_consumed / tRc) * 100 : 0,
         })),
@@ -137,9 +144,22 @@ const RcConsumptionReport: React.FC<
     {
       key: "rc",
       Icon: Cpu,
-      label: t("rcConsumption.kpiTotalRc"),
+      label: t(
+        totalOps > RC_EXACT_OP_CAP
+          ? "rcConsumption.kpiTotalRcEst"
+          : "rcConsumption.kpiTotalRc"
+      ),
       value: formatRc(totalRc, locale),
-      info: t("rcConsumption.estimateNote"),
+      info:
+        totalOps > RC_EXACT_OP_CAP
+          ? t("rcConsumption.estimateNote", {
+              count: RC_EXACT_OP_CAP.toLocaleString(locale),
+            })
+          : t(
+              groupBy === "op_type"
+                ? "rcConsumption.recordedNote"
+                : "rcConsumption.recordedNoteByDapp"
+            ),
     },
     {
       key: "ops",

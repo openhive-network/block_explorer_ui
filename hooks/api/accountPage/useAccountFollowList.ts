@@ -19,9 +19,11 @@ const useAccountFollowList = (
     data,
     isLoading,
     isError,
+    isFetching,
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
+    refetch,
   } = useInfiniteQuery<string[]>({
     queryKey: ["account_follow_list", type, accountName],
     queryFn: ({ pageParam = "" }) =>
@@ -47,9 +49,11 @@ const useAccountFollowList = (
     names,
     isLoading,
     isError,
+    isFetching,
     hasNextPage: !!hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
+    refetch,
   };
 };
 

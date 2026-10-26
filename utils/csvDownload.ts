@@ -7,7 +7,8 @@ import { escapeCsvFormula } from "@/utils/StringUtils";
 export const downloadCsv = async (
   filename: string,
   rows: Record<string, unknown>[],
-  columns: string[]
+  columns: string[],
+  signal?: AbortSignal
 ) => {
   const csv = await new Promise<string>((resolve, reject) => {
     stringify(
@@ -16,6 +17,7 @@ export const downloadCsv = async (
       (err, output) => (err ? reject(err) : resolve(output))
     );
   });
+  if (signal?.aborted) return;
   const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");

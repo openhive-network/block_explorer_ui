@@ -31,8 +31,12 @@ const nextConfig = {
     basePath: basePath,
   },
   // The OG routes read the resvg wasm with fs, which tracing cannot detect.
+  // The glob names pnpm's real directory: it does not follow the
+  // node_modules/@resvg/resvg-wasm symlink, and standalone recreates that link.
   outputFileTracingIncludes: {
-    "/api/og/**": ["./node_modules/@resvg/resvg-wasm/index_bg.wasm"],
+    "/api/og/**": [
+      "./node_modules/.pnpm/@resvg+resvg-wasm@*/node_modules/@resvg/resvg-wasm/index_bg.wasm",
+    ],
   },
   images: {
     remotePatterns: [

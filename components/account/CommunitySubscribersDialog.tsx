@@ -36,6 +36,12 @@ const ROLE_LABEL_KEYS: Record<string, string> = {
   member: "communityCard.roleMember",
 };
 
+const EXPORT_ROLE_LABEL_KEYS: Record<string, string> = {
+  ...ROLE_LABEL_KEYS,
+  guest: "CommunitySubscribersDialog.roleGuest",
+  muted: "CommunitySubscribersDialog.roleMuted",
+};
+
 // The node returns at most 100 subscribers per request.
 const EXPORT_PAGE_SIZE = 100;
 
@@ -59,15 +65,9 @@ const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
   // Subscribers fetched so far by a running export; null when none is running.
   const [exportedCount, setExportedCount] = useState<number | null>(null);
   const [isExportFailed, setIsExportFailed] = useState(false);
-  // Bumped to cancel: a run only keeps going while its number is current.
-  const exportRun = useRef(0);
+  const exportController = useRef<AbortController | null>(null);
 
-  useEffect(
-    () => () => {
-      exportRun.current += 1;
-    },
-    []
-  );
+  useEffect(() => () => exportController.current?.abort(), []);
 
   const {
     isSubscribed,
@@ -83,15 +83,20 @@ const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
     subscribersData,
     isCommunitySubscribersLoading,
     isCommunitySubscribersError,
+    isCommunitySubscribersFetching,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
+    refetch,
   } = useCommunitySubscribers(communityName, anchor);
 
   // Walks the whole list from the start, page by page, independent of the
   // rows on screen (which may begin at a looked-up name).
   const handleExport = async () => {
-    const run = ++exportRun.current;
+    exportController.current?.abort();
+    const controller = new AbortController();
+    exportController.current = controller;
+    const { signal } = controller;
     setIsExportFailed(false);
     setExportedCount(0);
     const subscribers: Hive.CommunitySubscriber[] = [];
@@ -105,7 +110,7 @@ const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
             EXPORT_PAGE_SIZE
           )
         );
-        if (run !== exportRun.current) return;
+        if (signal.aborted) return;
         subscribers.push(...page);
         setExportedCount(subscribers.length);
         if (page.length < EXPORT_PAGE_SIZE) break;
@@ -124,24 +129,25 @@ const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
         subscribers.map((subscriber) => ({
           [columns.name]: subscriber.name,
           [columns.role]: subscriber.role
-            ? ROLE_LABEL_KEYS[subscriber.role]
-              ? t(ROLE_LABEL_KEYS[subscriber.role])
-              : t("CommunitySubscribersDialog.roleGuest")
+            ? EXPORT_ROLE_LABEL_KEYS[subscriber.role]
+              ? t(EXPORT_ROLE_LABEL_KEYS[subscriber.role])
+              : subscriber.role
             : "",
           [columns.title]: subscriber.title ?? "",
           [columns.since]: subscriber.created_at ?? "",
         })),
-        Object.values(columns)
+        Object.values(columns),
+        signal
       );
     } catch {
-      if (run === exportRun.current) setIsExportFailed(true);
+      if (!signal.aborted) setIsExportFailed(true);
     } finally {
-      if (run === exportRun.current) setExportedCount(null);
+      if (!signal.aborted) setExportedCount(null);
     }
   };
 
   const cancelExport = () => {
-    exportRun.current += 1;
+    exportController.current?.abort();
     setExportedCount(null);
   };
 
@@ -229,7 +235,10 @@ const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
             };
 
   const renderList = () => {
-    if (isCommunitySubscribersLoading) {
+    if (
+      isCommunitySubscribersLoading ||
+      (isCommunitySubscribersFetching && subscribersData.length === 0)
+    ) {
       return (
         <div className="flex justify-center items-center py-16">
           <Loader2 className="animate-spin h-8 w-8" />
@@ -238,7 +247,12 @@ const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
     }
     // A later page failing keeps the rows already loaded.
     if (isCommunitySubscribersError && subscribersData.length === 0) {
-      return <ErrorMessage message={t("CommunitySubscribersDialog.error")} />;
+      return (
+        <ErrorMessage
+          message={t("CommunitySubscribersDialog.error")}
+          onRetry={() => refetch()}
+        />
+      );
     }
     if (groups.length === 0) {
       return <NoResult descriptionKey="CommunitySubscribersDialog.noResults" />;
@@ -285,7 +299,7 @@ const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
             <Loader2 className="h-5 w-5 animate-spin" />
           </div>
         )}
-        {isCommunitySubscribersError && (
+        {isCommunitySubscribersError && !isFetchingNextPage && (
           <ErrorMessage
             message={t("CommunitySubscribersDialog.error")}
             onRetry={() => fetchNextPage()}
@@ -319,7 +333,7 @@ const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
             }
             subtitle={communityTitle}
             actions={
-              subscribersData.length > 0 &&
+              (subscribersData.length > 0 || exportedCount !== null) &&
               (exportedCount === null ? (
                 <>
                   {isExportFailed && (
