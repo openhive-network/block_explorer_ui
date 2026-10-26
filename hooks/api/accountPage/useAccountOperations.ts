@@ -7,8 +7,10 @@ import Explorer from "@/types/Explorer";
 
 const useAccountOperations = (
   accountOperationsProps?: Explorer.AccountSearchOperationsProps,
-  liveDataEnabled?: boolean
+  liveDataEnabled?: boolean,
+  options?: { enabled?: boolean }
 ) => {
+  const { enabled = true } = options || {};
   const fetchAccountOperations = async (
     accountOperationsProps: Explorer.AccountSearchOperationsProps | undefined
   ) => {
@@ -31,6 +33,7 @@ const useAccountOperations = (
       ? config.accountRefreshInterval
       : undefined,
     enabled:
+      enabled &&
       !!accountOperationsProps?.accountName &&
       !!accountOperationsProps?.accountName.length,
     // User-initiated account search: surface errors via toast even on home.

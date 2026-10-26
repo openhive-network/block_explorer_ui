@@ -13,6 +13,10 @@ import { cn, convertBooleanArrayToIds } from "@/lib/utils";
 import { DEFAULT_PARAMS } from "./AccountPageInteractionSearch";
 import { getLocalStorage } from "@/utils/LocalStorage";
 import { useI18n } from "@/i18n/i18n";
+import FilterChipsBar, { FilterChip } from "@/components/ui/FilterChipsBar";
+import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
+import { getOperationButtonTitle } from "@/utils/UI";
+import { useSearchesContext } from "@/contexts/SearchesContext";
 
 interface InteractionsTabContentProps {
   isVisible: boolean;
@@ -35,13 +39,20 @@ const InteractionsTabContent: React.FC<InteractionsTabContentProps> = ({
     ""
   );
 
-  const { paramsState } = useURLParams(DEFAULT_PARAMS, ["accountName"]);
+  const { paramsState, setParams } = useURLParams(DEFAULT_PARAMS, [
+    "accountName",
+  ]);
+  const { operationsTypes } = useOperationsTypes();
+  const { setCommentPaginationPage, setSelectedCommentSearchOperationTypes } =
+    useSearchesContext();
+
+  // A link like ?filters=1 decodes to no types; sending an empty list makes
+  // the API return nothing, so "no types" means no type filter at all.
+  const selectedTypeIds = convertBooleanArrayToIds(paramsState.filters ?? []);
 
   const props = {
     ...paramsState,
-    operationTypes: paramsState.filters
-      ? convertBooleanArrayToIds(paramsState.filters)
-      : null,
+    operationTypes: selectedTypeIds.length ? selectedTypeIds : null,
     accountName: accountNameFromRoute,
   } as any;
 
@@ -63,7 +74,7 @@ const InteractionsTabContent: React.FC<InteractionsTabContentProps> = ({
     } else if (isCommentSearchDataLoading || isCommentSearchDataFetching) {
       return (
         <div className="flex justify-center text-center items-center">
-          <Loader2 className="animate-spin mt-1 text-text h-12 w-12 ml-3 ..." />
+          <Loader2 className="animate-spin mt-1 text-text h-12 w-12 ms-3 ..." />
         </div>
       );
     } else {
@@ -92,8 +103,52 @@ const InteractionsTabContent: React.FC<InteractionsTabContentProps> = ({
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paramsState, isFiltersActive]);
 
+  const typesTitle = getOperationButtonTitle(selectedTypeIds, operationsTypes);
+  const hasTypeFilter = (selectedTypeIds?.length ?? 0) > 0;
+  const permlink: string | undefined = paramsState.permlink;
+
+  const chips: FilterChip[] = [
+    ...(permlink
+      ? [
+          {
+            key: "permlink",
+            label: t("activeFilters.permlink", { value: permlink }),
+            onRemove: () =>
+              setParams({
+                ...paramsState,
+                permlink: undefined,
+                pageNumber: 1,
+              } as any),
+          },
+        ]
+      : []),
+    {
+      key: "types",
+      label:
+        (selectedTypeIds?.length ?? 0) > 1
+          ? typesTitle
+          : t("activeFilters.labelValue", {
+              label: t("operationTypesDialog.operationTypes"),
+              value: hasTypeFilter ? typesTitle : t("operationTypesDialog.all"),
+            }),
+      onRemove: hasTypeFilter
+        ? () => {
+            setSelectedCommentSearchOperationTypes(null);
+            setCommentPaginationPage(1);
+            setParams({ ...paramsState, filters: null, pageNumber: 1 } as any);
+          }
+        : undefined,
+    },
+  ];
+
   return (
     <TabsContent value="interactions">
+      <FilterChipsBar
+        sticky
+        chips={chips}
+        onExpand={() => setIsVisible(true)}
+        isLoading={isCommentSearchDataFetching}
+      />
       <Card
         className={cn(
           "mb-4 overflow-hidden transition-all duration-500 ease-in max-h-0 opacity-0",
@@ -103,7 +158,7 @@ const InteractionsTabContent: React.FC<InteractionsTabContentProps> = ({
         )}
       >
         <CardHeader>
-          <CardTitle className="text-left">{t("common.filters")}</CardTitle>
+          <CardTitle className="text-start">{t("common.filters")}</CardTitle>
         </CardHeader>
         <CardContent>
           <AccountPageInteractionSearch

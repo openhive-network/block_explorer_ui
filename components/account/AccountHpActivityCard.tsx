@@ -1,4 +1,4 @@
-import React, { MouseEvent, useMemo, useState } from "react";
+import React, { MouseEvent, useMemo } from "react";
 import moment from "moment";
 import { useRouter } from "next/router";
 import {
@@ -22,26 +22,29 @@ import HpMomentumChart from "../home/HpMomentumChart";
 import {
   VESTING_COLORS,
   VestingDisplayUnit,
-  formatCompact,
+  formatVestingAmount,
   useAggregatedVesting,
   useVestingDisplayUnit,
 } from "../home/hpMomentumUtils";
+import useCollapsedState from "@/hooks/common/useCollapsedState";
 
 type AccountHpActivityCardProps = {
   header: string;
   userDetails: Explorer.FormattedAccountDetails;
   isInitiallyOpen: boolean;
+  liveDataEnabled?: boolean;
 };
 
 const AccountHpActivityCard: React.FC<AccountHpActivityCardProps> = ({
   header,
   userDetails,
   isInitiallyOpen,
+  liveDataEnabled,
 }) => {
   const { t, locale } = useI18n();
   const { settings } = useSettings();
   const router = useRouter();
-  const [isHidden, setIsHidden] = useState(!isInitiallyOpen);
+  const [isHidden, setIsHidden] = useCollapsedState(isInitiallyOpen);
 
   const [unit, setUnit] = useVestingDisplayUnit();
 
@@ -57,7 +60,7 @@ const AccountHpActivityCard: React.FC<AccountHpActivityCardProps> = ({
     fromDate,
     undefined,
     "asc",
-    settings.liveData
+    liveDataEnabled ?? settings.liveData
   );
 
   const { chartData, totals, isReady } = useAggregatedVesting(
@@ -149,9 +152,9 @@ const AccountHpActivityCard: React.FC<AccountHpActivityCardProps> = ({
                       aria-pressed={isActive}
                       className={cn(
                         "font-medium transition-colors px-2.5 py-0.5",
-                        !isLast && "border-r border-navbar-border",
-                        isFirst && "rounded-l-full",
-                        isLast && "rounded-r-full",
+                        !isLast && "border-e border-navbar-border",
+                        isFirst && "rounded-s-full",
+                        isLast && "rounded-e-full",
                         isActive
                           ? "bg-blue-500 text-white"
                           : "bg-theme hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -197,7 +200,7 @@ const AccountHpActivityCard: React.FC<AccountHpActivityCardProps> = ({
                   label: t("accountHpActivityCard.poweredDown"),
                   value: totals.downFill,
                   count: totals.downFillCount,
-                  sign: "-",
+                  sign: totals.downFill > 0 ? "-" : "",
                 },
               ].map(({ Icon, color, label, value, count, sign }) => (
                 <div
@@ -208,14 +211,14 @@ const AccountHpActivityCard: React.FC<AccountHpActivityCardProps> = ({
                     <Icon size={15} color={color} className="shrink-0" />
                     {label}
                   </span>
-                  <span className="ml-auto flex items-baseline gap-1.5 whitespace-nowrap">
+                  <span className="ms-auto flex items-baseline gap-1.5 whitespace-nowrap">
                     <span
                       className="font-semibold tabular-nums"
                       style={{ color }}
                       title={`${sign}${value.toLocaleString()} ${unitLabel}`}
                     >
                       {sign}
-                      {formatCompact(value, locale)} {unitLabel}
+                      {formatVestingAmount(value, locale)} {unitLabel}
                     </span>
                     <span className="text-[11px] text-gray-400 tabular-nums">
                       ({count.toLocaleString()} {t("accountHpActivityCard.ops")}
@@ -230,7 +233,7 @@ const AccountHpActivityCard: React.FC<AccountHpActivityCardProps> = ({
                   {t("accountHpActivityCard.netFlow", { unit: unitLabel })}
                 </span>
                 <span
-                  className="ml-auto text-sm font-bold tabular-nums whitespace-nowrap"
+                  className="ms-auto text-sm font-bold tabular-nums whitespace-nowrap"
                   style={{
                     color: netIsPositive
                       ? VESTING_COLORS.up
@@ -239,7 +242,7 @@ const AccountHpActivityCard: React.FC<AccountHpActivityCardProps> = ({
                   title={`${netIsPositive ? "+" : ""}${totals.net.toLocaleString()} ${unitLabel}`}
                 >
                   {netIsPositive ? "+" : ""}
-                  {formatCompact(totals.net, locale)} {unitLabel}
+                  {formatVestingAmount(totals.net, locale)} {unitLabel}
                 </span>
               </div>
             </div>

@@ -4,7 +4,7 @@ import { Loader2, ChevronDown, ChevronUp, ChevronsUpDown } from "lucide-react";
 import { Switch } from "../ui/switch";
 import { cn, formatNumber, formatPercent } from "@/lib/utils";
 import useWitnessVoters from "@/hooks/api/common/useWitnessVoters";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import {
   Table,
   TableBody,
@@ -115,15 +115,16 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
     accountName,
     accountDetails ? !!accountDetails?.is_witness : true
   );
-  const { witnessVoters, isWitnessVotersLoading } = useWitnessVoters(
-    accountName,
-    isVotersOpen,
-    isAsc,
-    sortKey,
-    liveDataEnabled,
-    pageNum,
-    activeVoterName
-  );
+  const { witnessVoters, isWitnessVotersLoading, isWitnessVotersRefreshing } =
+    useWitnessVoters(
+      accountName,
+      isVotersOpen,
+      isAsc,
+      sortKey,
+      liveDataEnabled,
+      pageNum,
+      activeVoterName
+    );
   const { witnessVoters: chartData } = useWitnessVoters(
     accountName,
     isVotersOpen,
@@ -273,6 +274,10 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
         )}
         data-testid="voters-dialog"
       >
+        <DialogTitle className="sr-only">
+          {accountName}
+          {t("votersDialog.nameVoters")}
+        </DialogTitle>
         {isWitnessVotersLoading && !witnessVoters ? (
           <div className="flex justify-center items-center w-full h-full">
             <Loader2 className="animate-spin mt-1 h-8 w-8 ml-3 ..." />
@@ -374,7 +379,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                   </div>
                 </div>
 
-                {isWitnessVotersLoading ? (
+                {isWitnessVotersLoading || isWitnessVotersRefreshing ? (
                   <div className="flex justify-center items-center h-64">
                     <Loader2 className="animate-spin h-8 w-8 text-brand" />
                   </div>
@@ -438,6 +443,8 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                                     <Link
                                       className="text-link"
                                       href={`/@${voter.voter_name}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
                                       data-testid="voter-name"
                                     >
                                       {voter.voter_name}

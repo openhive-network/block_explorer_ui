@@ -28,6 +28,9 @@ interface ReportSearchRangesProps {
   showAll?: boolean;
 }
 
+// The reports query by date, so the block-based modes are not offered here.
+const DATE_RANGE_MODES = ["lastTime", "timeRange"];
+
 const DEFAULT_PRESETS: { days: number; key: RangeKey }[] = [
   { days: 30, key: "30" },
   { days: 90, key: "90" },
@@ -35,8 +38,8 @@ const DEFAULT_PRESETS: { days: number; key: RangeKey }[] = [
 ];
 
 // Date-range control for the analytics reports: quick day presets plus a Custom
-// option that opens the full SearchRanges plugin (last-time / last-blocks /
-// block-range / time-range) in a popover — no inline layout shift. Shared across
+// option that opens the SearchRanges plugin (last-time / time-range) in a
+// popover — no inline layout shift. Shared across
 // reports; presets and the optional All pill are configurable per report.
 const ReportSearchRanges: React.FC<ReportSearchRangesProps> = ({
   onApply,
@@ -87,14 +90,14 @@ const ReportSearchRanges: React.FC<ReportSearchRangesProps> = ({
 
   // Match SegmentedToggle (size "md") so all pills in a report line up.
   const pill =
-    "px-3.5 py-1.5 text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-400";
+    "px-2 py-1.5 text-sm font-medium sm:px-3.5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-400";
   const pillActive = "bg-indigo-500 text-white";
   const pillIdle = "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300";
 
   return (
     <div
       className={cn(
-        "inline-flex flex-shrink-0 overflow-hidden rounded border border-gray-200 font-medium dark:border-gray-700",
+        "inline-flex max-w-full flex-shrink-0 flex-wrap overflow-hidden rounded border border-gray-200 font-medium dark:border-gray-700",
         className
       )}
       role="group"
@@ -147,7 +150,12 @@ const ReportSearchRanges: React.FC<ReportSearchRangesProps> = ({
             {t("reportRange.customTitle")}
           </div>
           <SearchRanges
-            rangesProps={searchRanges}
+            rangesProps={{
+              ...searchRanges,
+              rangeSelectOptions: searchRanges.rangeSelectOptions.filter(
+                (option) => DATE_RANGE_MODES.includes(option.key)
+              ),
+            }}
             setIsSearchButtonDisabled={setIsSearchButtonDisabled}
           />
           <Button

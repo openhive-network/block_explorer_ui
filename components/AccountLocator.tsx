@@ -2,7 +2,11 @@ import React, { useEffect, useMemo, useRef } from "react";
 import useAccountBalances from "@/hooks/api/accountPage/useAccountBalances";
 import useTopHolderRank from "@/hooks/api/common/useTopHolderRank";
 import fetchingService from "@/services/FetchingService";
-import { TIE_PAGE_SIZE, findRankInTieGroup } from "@/utils/topHolderLocate";
+import {
+  TIE_PAGE_SIZE,
+  findRankInTieGroup,
+  isSafeForPlusOne,
+} from "@/utils/topHolderLocate";
 import { CoinType, BalanceType } from "@/hooks/api/common/useTopHolders";
 import { getAccountBalanceRaw } from "@/utils/accountBalanceForCoin";
 
@@ -50,7 +54,7 @@ const AccountLocator: React.FC<Props> = ({
       done.current = true;
       // `rank` is where the account's tie group starts; find its own row in it.
       const effBalanceType = coinType === "VESTS" ? "balance" : balanceType;
-      const exactTie = balanceRaw + 1 > balanceRaw;
+      const exactTie = isSafeForPlusOne(balanceRaw);
       const locate = exactTie
         ? findRankInTieGroup(account, async (page) => {
             const res = await fetchingService.getTopHolders(

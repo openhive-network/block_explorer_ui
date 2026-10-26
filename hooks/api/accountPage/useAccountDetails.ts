@@ -30,8 +30,12 @@ const useAccountDetails = (accountName: string, liveDataEnabled: boolean) => {
   const getAccountDetails = async (accountName: string) => {
     if (!accountName) return;
 
-    const accountDetails = await fetchingService.getAccount(accountName);
+    // An unknown name comes back as an empty list; anything thrown past this
+    // point is a failed request, not a missing account.
     const { accounts } = await fetchingService.findAccounts([accountName]);
+    if (!accounts.length) return null;
+
+    const accountDetails = await fetchingService.getAccount(accountName);
     const { follower_count, following_count } =
       await fetchingService.getAccountFollowCount(accountName);
     const subscriptions =
@@ -62,6 +66,7 @@ const useAccountDetails = (accountName: string, liveDataEnabled: boolean) => {
       following_count,
       subscriptions,
       post_count,
+      next_vesting_withdrawal: accounts[0].next_vesting_withdrawal,
       // The liquid-HBD trio comes from hafbe (hbd_seconds passes through the
       // spread untouched). Only what hafbe actually returned is formatted, so
       // on a node that has yet to deploy them the rows stay absent rather than
@@ -92,8 +97,7 @@ const useAccountDetails = (accountName: string, liveDataEnabled: boolean) => {
     accountDetails,
     isAccountDetailsLoading,
     isAccountDetailsError,
-    notFound:
-      !isAccountDetailsLoading && accountDetails && accountDetails.id === null,
+    notFound: !isAccountDetailsLoading && accountDetails === null,
   };
 };
 

@@ -13,7 +13,8 @@ const useAccountRcFootprint = (
 ) => {
   const {
     data: rcFootprint,
-    isLoading: isRcFootprintLoading,
+    isLoading,
+    isPreviousData,
     isError: isRcFootprintError,
   }: UseQueryResult<Hive.AccountRcFootprintRow[] | undefined> = useQuery({
     queryKey: ["account_rc_footprint", accountName, fromDate, toDate, groupBy],
@@ -29,6 +30,10 @@ const useAccountRcFootprint = (
     staleTime: 30 * 60 * 1000,
     refetchOnWindowFocus: false,
   });
+
+  // Data kept from the previous range counts as loading, so a report never
+  // shows the old numbers under the newly selected range.
+  const isRcFootprintLoading = isLoading || isPreviousData;
 
   return { rcFootprint, isRcFootprintLoading, isRcFootprintError };
 };

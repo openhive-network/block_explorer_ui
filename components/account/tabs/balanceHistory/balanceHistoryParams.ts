@@ -2,6 +2,7 @@ export type VestHpUnit = "vests" | "hp";
 
 export interface BalanceHistorySearchParams {
   accountName?: string;
+  activeTab?: string;
   coinType: string;
   fromBlock: Date | number | undefined;
   toBlock: Date | number | undefined;

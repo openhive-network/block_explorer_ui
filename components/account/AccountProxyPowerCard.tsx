@@ -36,6 +36,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import DataExport from "@/components/DataExport";
+import useCollapsedState from "@/hooks/common/useCollapsedState";
 
 // Page size used by the hafbe-api proxy-power endpoint — controls Next button visibility
 const PROXY_POWER_PAGE_SIZE = 1000;
@@ -64,7 +65,7 @@ const AccountProxyPowerCard: React.FC<AccountProxyPowerCardProps> = ({
   }, [settings.displayVestHpMode]);
 
   const [isPropertiesHidden, setIsPropertiesHidden] =
-    useState(!isInitiallyOpen);
+    useCollapsedState(isInitiallyOpen);
 
   const [sortConfig, setSortConfig] = useState<{
     key: keyof Hive.ProxyPowerResponse;
@@ -157,12 +158,12 @@ const AccountProxyPowerCard: React.FC<AccountProxyPowerCardProps> = ({
   const renderSortIcon = (columnKey: keyof Hive.ProxyPowerResponse) => {
     if (sortConfig.key === columnKey) {
       return sortConfig.isAscending ? (
-        <ChevronUp size={15} className="ml-2" />
+        <ChevronUp size={15} className="ms-2" />
       ) : (
-        <ChevronDown size={15} className="ml-2" />
+        <ChevronDown size={15} className="ms-2" />
       );
     }
-    return <ChevronsUpDown size={15} className="ml-2" />;
+    return <ChevronsUpDown size={15} className="ms-2" />;
   };
 
   return (
@@ -176,7 +177,7 @@ const AccountProxyPowerCard: React.FC<AccountProxyPowerCardProps> = ({
             {t("accountProxyPowerCard.proxyPowerReceived")} (
             {accountProxyPower.length})
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 rtl:space-x-reverse">
             <DataExport
               data={prepareExportData()}
               filename={`${accountName}_proxy_power.csv`}
@@ -190,7 +191,7 @@ const AccountProxyPowerCard: React.FC<AccountProxyPowerCardProps> = ({
         </div>
       </CardHeader>
       <CardContent hidden={isPropertiesHidden} className="p-0">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 p-3">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-2 p-3">
           <KpiTile
             icon={<Zap size={14} className="text-explorer-orange" />}
             label={
@@ -220,9 +221,9 @@ const AccountProxyPowerCard: React.FC<AccountProxyPowerCardProps> = ({
             ).replace("{pct}", largestSharePct.toFixed(1))}`}
           />
         </div>
-        <div className="flex items-center justify-between space-x-4 p-2 border-b">
+        <div className="flex items-center justify-between space-x-4 rtl:space-x-reverse p-2 border-b">
           {showPagination ? (
-            <div className="flex items-center space-x-1 my-2">
+            <div className="flex items-center space-x-1 rtl:space-x-reverse my-2">
               <Button
                 variant="ghost"
                 size="icon"
@@ -246,7 +247,7 @@ const AccountProxyPowerCard: React.FC<AccountProxyPowerCardProps> = ({
           ) : (
             <div />
           )}
-          <div className="flex items-center space-x-1">
+          <div className="flex items-center space-x-1 rtl:space-x-reverse">
             <Label htmlFor="hp-vests-toggle" className="text-xs my-4">
               {t("common.vests")}
             </Label>
@@ -265,7 +266,7 @@ const AccountProxyPowerCard: React.FC<AccountProxyPowerCardProps> = ({
           <TableHeader>
             <TableRow>
               <TableCell
-                className="cursor-pointer w-28 p-1"
+                className="cursor-pointer w-28 p-1 ps-4"
                 onClick={() => sortBy("account")}
               >
                 <span className="flex items-center whitespace-nowrap">
@@ -282,7 +283,7 @@ const AccountProxyPowerCard: React.FC<AccountProxyPowerCardProps> = ({
                 </span>
               </TableCell>
               <TableCell
-                className="cursor-pointer text-right p-1"
+                className="cursor-pointer text-end p-1 pe-4"
                 onClick={() => sortBy("proxied_vests")}
               >
                 <span className="flex items-center justify-end whitespace-nowrap">
@@ -296,7 +297,7 @@ const AccountProxyPowerCard: React.FC<AccountProxyPowerCardProps> = ({
             {accountProxyPower.map((proxy) => (
               <Fragment key={proxy.account}>
                 <TableRow className="text-sm">
-                  <TableCell className="w-28 p-1">
+                  <TableCell className="w-28 p-1 ps-4">
                     <Link className="text-link" href={`/@${proxy.account}`}>
                       {proxy.account}
                     </Link>
@@ -304,7 +305,7 @@ const AccountProxyPowerCard: React.FC<AccountProxyPowerCardProps> = ({
                   <TableCell className="p-1 w-28">
                     {formatAndDelocalizeTime(proxy.proxy_date)}
                   </TableCell>
-                  <TableCell className="text-right whitespace-nowrap p-1">
+                  <TableCell className="text-end p-1 pe-4">
                     {isHP ? (
                       <>
                         {hiveChain && dynamicGlobalData?.headBlockDetails && (
@@ -340,12 +341,14 @@ const KpiTile: React.FC<{
   sub?: string;
   icon?: React.ReactNode;
 }> = ({ label, value, sub, icon }) => (
-  <div className="rounded-md border border-gray-200 dark:border-gray-700 bg-theme px-3 py-2 shadow-sm">
+  <div className="min-w-0 rounded-md border border-gray-200 dark:border-gray-700 bg-theme px-3 py-2 shadow-sm">
     <div className="text-[11px] text-gray-500 dark:text-gray-400 mb-0.5 flex items-center gap-1 uppercase tracking-wide">
       {icon}
       <span>{label}</span>
     </div>
-    <div className="text-sm font-semibold leading-tight">{value}</div>
+    <div className="text-sm font-semibold leading-tight break-words">
+      {value}
+    </div>
     {sub && (
       <div className="text-[10px] text-gray-400 mt-0.5 break-words">{sub}</div>
     )}

@@ -246,6 +246,7 @@ const PowerActivitySearch: React.FC<PowerActivitySearchProps> = ({
     setParams({
       ...defaultPowerActivityTabSearchParams,
       accountName: paramsState.accountName,
+      activeTab: paramsState.activeTab,
     });
     setRangeSelectKey("lastTime");
     setTimeUnitSelectKey("days");
@@ -298,11 +299,11 @@ const PowerActivitySearch: React.FC<PowerActivitySearchProps> = ({
       )}
     >
       <CardHeader>
-        <CardTitle className="text-left">{t("common.filters")}</CardTitle>
+        <CardTitle className="text-start">{t("common.filters")}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-3">
-          <span className="text-sm text-gray-500 sm:mr-4">
+          <span className="text-sm text-gray-500 sm:me-4">
             {t("powerActivitySearch.eventType")}:
           </span>
           <div
@@ -323,9 +324,9 @@ const PowerActivitySearch: React.FC<PowerActivitySearchProps> = ({
                   data-testid={`power-activity-filter-${option.key}`}
                   className={cn(
                     "px-2 py-1 text-xs sm:px-4 sm:text-sm font-medium whitespace-nowrap shrink-0 transition-colors",
-                    !isLast && "border-r border-navbar-border",
-                    isFirst && "rounded-l-full",
-                    isLast && "rounded-r-full",
+                    !isLast && "border-e border-navbar-border",
+                    isFirst && "rounded-s-full",
+                    isLast && "rounded-e-full",
                     isActive
                       ? "bg-blue-500 text-white"
                       : "bg-theme hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -339,7 +340,7 @@ const PowerActivitySearch: React.FC<PowerActivitySearchProps> = ({
         </div>
 
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-3">
-          <span className="text-sm text-gray-500 sm:mr-4">
+          <span className="text-sm text-gray-500 sm:me-4">
             {t("hpMomentumFullChartDialog.granularity")}:
           </span>
           <div
@@ -359,9 +360,9 @@ const PowerActivitySearch: React.FC<PowerActivitySearchProps> = ({
                   aria-pressed={isActive}
                   className={cn(
                     "px-2 py-1 text-xs sm:px-4 sm:text-sm font-medium whitespace-nowrap shrink-0 transition-colors",
-                    !isLast && "border-r border-navbar-border",
-                    isFirst && "rounded-l-full",
-                    isLast && "rounded-r-full",
+                    !isLast && "border-e border-navbar-border",
+                    isFirst && "rounded-s-full",
+                    isLast && "rounded-e-full",
                     isActive
                       ? "bg-blue-500 text-white"
                       : "bg-theme hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -375,7 +376,7 @@ const PowerActivitySearch: React.FC<PowerActivitySearchProps> = ({
         </div>
 
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-3">
-          <span className="text-sm text-gray-500 sm:mr-1">
+          <span className="text-sm text-gray-500 sm:me-1">
             {t("balanceHistorySearch.quickRange")}:
           </span>
           <div
@@ -395,9 +396,9 @@ const PowerActivitySearch: React.FC<PowerActivitySearchProps> = ({
                   aria-pressed={isActive}
                   className={cn(
                     "px-2 py-1 text-xs sm:px-4 sm:text-sm font-medium whitespace-nowrap shrink-0 transition-colors",
-                    !isLast && "border-r border-navbar-border",
-                    isFirst && "rounded-l-full",
-                    isLast && "rounded-r-full",
+                    !isLast && "border-e border-navbar-border",
+                    isFirst && "rounded-s-full",
+                    isLast && "rounded-e-full",
                     isActive
                       ? "bg-blue-500 text-white"
                       : "bg-theme hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -428,7 +429,7 @@ const PowerActivitySearch: React.FC<PowerActivitySearchProps> = ({
                 {t("common.search")}
               </Button>
               {isSearchButtonDisabled ? (
-                <label className="ml-2 text-gray-300 dark:text-gray-500">
+                <label className="ms-2 text-gray-300 dark:text-gray-500">
                   {t("balanceHistorySearch.valueFieldEmpty")}
                 </label>
               ) : null}

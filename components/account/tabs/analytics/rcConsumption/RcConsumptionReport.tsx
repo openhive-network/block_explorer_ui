@@ -1,17 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Loader2, Cpu, Activity, Trophy, Info } from "lucide-react";
+import { Loader2, Cpu, Activity, Trophy } from "lucide-react";
 import moment from "moment";
 import { useI18n } from "@/i18n/i18n";
 import { cn } from "@/lib/utils";
 import SegmentedToggle from "@/components/ui/SegmentedToggle";
 import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipPortal,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import KpiTile from "@/components/ui/KpiTile";
 import { getOpHexColor } from "@/utils/operationColors";
 import { spacesToUnderscores } from "@/utils/StringUtils";
 import { formatRc, formatOpLabel } from "@/components/home/networkRcUtils";
@@ -25,6 +19,9 @@ import RcConsumptionDrilldown from "./RcConsumptionDrilldown";
 
 type Metric = "ops" | "rc";
 const TOP_N = 15;
+// Mirrors haf_stats exact_rc_op_cap(): above this many ops the API prices RC as
+// an estimate. haf_stats#44 may change it, so update both together.
+const RC_EXACT_OP_CAP = 15000;
 
 const RcConsumptionReport: React.FC<
   BaseReportProps & { fillHeight?: boolean }
@@ -127,7 +124,11 @@ const RcConsumptionReport: React.FC<
           [t("rcConsumption.colOps")]: r.op_count,
           [t("rcConsumption.colOpsPct")]:
             tOps > 0 ? (r.op_count / tOps) * 100 : 0,
-          [t("rcConsumption.colRc")]: r.rc_consumed,
+          [t(
+            tOps > RC_EXACT_OP_CAP
+              ? "rcConsumption.colRcEst"
+              : "rcConsumption.colRc"
+          )]: r.rc_consumed,
           [t("rcConsumption.colRcPct")]:
             tRc > 0 ? (r.rc_consumed / tRc) * 100 : 0,
         })),
@@ -143,9 +144,22 @@ const RcConsumptionReport: React.FC<
     {
       key: "rc",
       Icon: Cpu,
-      label: t("rcConsumption.kpiTotalRc"),
+      label: t(
+        totalOps > RC_EXACT_OP_CAP
+          ? "rcConsumption.kpiTotalRcEst"
+          : "rcConsumption.kpiTotalRc"
+      ),
       value: formatRc(totalRc, locale),
-      info: t("rcConsumption.estimateNote"),
+      info:
+        totalOps > RC_EXACT_OP_CAP
+          ? t("rcConsumption.estimateNote", {
+              count: RC_EXACT_OP_CAP.toLocaleString(locale),
+            })
+          : t(
+              groupBy === "op_type"
+                ? "rcConsumption.recordedNote"
+                : "rcConsumption.recordedNoteByDapp"
+            ),
     },
     {
       key: "ops",
@@ -168,7 +182,7 @@ const RcConsumptionReport: React.FC<
       <div
         className={
           fillHeight
-            ? "flex-1 min-h-0 overflow-y-auto space-y-3 p-1 pr-0.5"
+            ? "flex-1 min-h-0 overflow-y-auto space-y-3 p-1 pe-0.5"
             : "space-y-3 p-1"
         }
       >
@@ -224,37 +238,14 @@ const RcConsumptionReport: React.FC<
           <>
             <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
               {kpis.map(({ key, Icon, label, value, info }) => (
-                <div
+                <KpiTile
                   key={key}
-                  className="flex flex-col rounded-md border border-gray-200 bg-theme px-4 py-3 shadow-sm dark:border-gray-700"
-                >
-                  <div className="mb-1 flex items-start gap-1.5 text-xs text-gray-500">
-                    <Icon className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-                    <span className="min-w-0 break-words">{label}</span>
-                    {info && (
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <span className="shrink-0 cursor-help text-gray-400 hover:text-gray-500">
-                              <Info size={11} />
-                            </span>
-                          </TooltipTrigger>
-                          <TooltipPortal>
-                            <TooltipContent
-                              side="top"
-                              className="max-w-[240px] text-center text-[11px] normal-case"
-                            >
-                              {info}
-                            </TooltipContent>
-                          </TooltipPortal>
-                        </Tooltip>
-                      </TooltipProvider>
-                    )}
-                  </div>
-                  <div className="break-words text-base font-semibold">
-                    {value}
-                  </div>
-                </div>
+                  label={label}
+                  icon={<Icon className="h-3 w-3 shrink-0" />}
+                  infoText={info}
+                  valueClassName="whitespace-normal break-words"
+                  value={value}
+                />
               ))}
             </div>
 

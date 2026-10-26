@@ -16,6 +16,7 @@ interface KpiTileProps {
   icon?: React.ReactNode;
   infoText?: string;
   valueClassName?: string;
+  className?: string;
 }
 
 const KpiTile: React.FC<KpiTileProps> = ({
@@ -25,18 +26,28 @@ const KpiTile: React.FC<KpiTileProps> = ({
   icon,
   infoText,
   valueClassName,
+  className,
 }) => (
-  <div className="rounded-md border border-gray-200 dark:border-gray-700 bg-theme px-3 py-2 shadow-sm">
+  <div
+    className={cn(
+      "rounded-md border border-gray-200 dark:border-gray-700 bg-theme px-3 py-2 shadow-sm",
+      className
+    )}
+  >
     <div className="text-[11px] text-gray-500 dark:text-gray-400 mb-0.5 flex items-center gap-1 uppercase tracking-wide">
       {icon}
-      <span>{label}</span>
+      <span className="min-w-0 break-words">{label}</span>
       {infoText && (
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <span className="text-gray-400 hover:text-gray-500 cursor-help flex-shrink-0">
+              <button
+                type="button"
+                aria-label={infoText}
+                className="text-gray-400 hover:text-gray-500 cursor-help flex-shrink-0"
+              >
                 <Info size={10} />
-              </span>
+              </button>
             </TooltipTrigger>
             <TooltipPortal>
               <TooltipContent

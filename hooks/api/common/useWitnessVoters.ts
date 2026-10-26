@@ -14,7 +14,7 @@ const useWitnessVoters = (
   sortKey: string,
   liveDataEnabled: boolean,
   pageNum: number,
-  voterName?: string, 
+  voterName?: string
 ) => {
   const sortDirection = isAsc ? SORT_ASC : SORT_DESC;
 
@@ -22,7 +22,7 @@ const useWitnessVoters = (
     data: witnessVoters,
     isLoading: isWitnessVotersLoading,
     isError: isWitnessVotersError,
-    
+    isPreviousData: isWitnessVotersRefreshing,
   }: UseQueryResult<Hive.WitnessVotersResponse> = useQuery({
     queryKey: [
       "witness_voters",
@@ -32,18 +32,27 @@ const useWitnessVoters = (
       sortKey,
       liveDataEnabled,
       pageNum,
-      voterName
+      voterName,
     ],
     queryFn: () =>
-    fetchingService.getWitnessVoters(accountName, sortKey, sortDirection, pageNum,voterName),
+      fetchingService.getWitnessVoters(
+        accountName,
+        sortKey,
+        sortDirection,
+        pageNum,
+        voterName
+      ),
     enabled: !!accountName && isModalOpen,
+    // Keeps the dialog in place while a new page, sort or search loads.
+    keepPreviousData: true,
     refetchInterval: liveDataEnabled ? config.accountRefreshInterval : false,
     refetchOnWindowFocus: false,
   });
-  
+
   return {
     witnessVoters,
     isWitnessVotersLoading,
+    isWitnessVotersRefreshing,
     isWitnessVotersError,
   };
 };

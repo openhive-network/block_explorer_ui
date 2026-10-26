@@ -73,11 +73,15 @@ export const formatCompact = (n: number, locale: string): string => {
   return n.toLocaleString(locale, { maximumFractionDigits: 0 });
 };
 
-export const formatLocalePercent = (value: number, locale: string): string =>
+export const formatLocalePercent = (
+  value: number,
+  locale: string,
+  decimals = 1
+): string =>
   (value / 100).toLocaleString(locale, {
     style: "percent",
-    minimumFractionDigits: 1,
-    maximumFractionDigits: 1,
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
   });
 
 // A 0..1 fraction as a share-of-supply percent ("—" / "<0.01%" / 2-dp).

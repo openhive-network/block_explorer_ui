@@ -33,7 +33,7 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
   handleLatestPage,
   handleFirstPage,
 }) => {
-  const { locale } = useI18n();
+  const { t, locale } = useI18n();
   const [wrapper, setWrapper] = useState<HTMLDivElement | null>(null);
   const [width, setWidth] = useState(0);
   useEffect(() => {
@@ -54,13 +54,24 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
     return () => query.removeEventListener("change", update);
   }, []);
 
-  // On phones, show as many page numbers as fit on one line.
+  // On phones, show as many page numbers as fit on one line. Sizes follow the
+  // phone button classes: 28px wide (min-w-7), 12px padding (px-1.5), 4px gap
+  // (gap-1) and about 7px per digit at text-xs; 16px is the bar's own padding.
   let fittedSiblingCount = siblingCount;
   if (isPhone && width > 0) {
-    const digits = String(Math.ceil(totalCount / pageSize)).length;
-    const numberWidth = Math.max(28, digits * 7 + 12) + 4;
-    const slots = Math.floor((width - 16 - 4 * 32) / numberWidth);
-    fittedSiblingCount = Math.min(2, Math.max(0, Math.floor((slots - 3) / 2)));
+    const pageCount = Math.ceil(totalCount / pageSize);
+    const arrowsWidth = 4 * (28 + 4);
+    // Sized by the widest number the window around the current page can show.
+    const fits = (siblings: number) => {
+      const numbers = 2 * siblings + 3;
+      const widest = Math.min(
+        pageCount,
+        Math.max(currentPage + siblings + 1, numbers)
+      );
+      const numberWidth = Math.max(28, String(widest).length * 7 + 12) + 4;
+      return numbers * numberWidth <= width - 16 - arrowsWidth;
+    };
+    fittedSiblingCount = fits(2) ? 2 : fits(1) ? 1 : 0;
   }
 
   const paginationRange = usePagination({
@@ -125,6 +136,7 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
   return (
     <div ref={setWrapper} className="w-full">
       <Pagination
+        aria-label={t("pagination.label")}
         className={cn(
           "bg-theme p-1.5 flex items-center justify-center",
           className
@@ -134,7 +146,9 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
           <PaginationItem>
             <button
               type="button"
-              aria-label={isMirrored ? "Go to last page" : "Go to first page"}
+              aria-label={t(
+                isMirrored ? "pagination.last" : "pagination.first"
+              )}
               disabled={atStart}
               onClick={isMirrored ? onLastPage : onFirstPage}
               className={arrowStyle}
@@ -145,9 +159,9 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
           <PaginationItem>
             <button
               type="button"
-              aria-label={
-                isMirrored ? "Go to next page" : "Go to previous page"
-              }
+              aria-label={t(
+                isMirrored ? "pagination.next" : "pagination.previous"
+              )}
               disabled={atStart}
               onClick={isMirrored ? onNext : onPrevious}
               className={arrowStyle}
@@ -179,9 +193,9 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
           <PaginationItem>
             <button
               type="button"
-              aria-label={
-                isMirrored ? "Go to previous page" : "Go to next page"
-              }
+              aria-label={t(
+                isMirrored ? "pagination.previous" : "pagination.next"
+              )}
               disabled={atEnd}
               onClick={isMirrored ? onPrevious : onNext}
               className={arrowStyle}
@@ -192,7 +206,9 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
           <PaginationItem>
             <button
               type="button"
-              aria-label={isMirrored ? "Go to first page" : "Go to last page"}
+              aria-label={t(
+                isMirrored ? "pagination.first" : "pagination.last"
+              )}
               disabled={atEnd}
               onClick={isMirrored ? onFirstPage : onLastPage}
               className={arrowStyle}

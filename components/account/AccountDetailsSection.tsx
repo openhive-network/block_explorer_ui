@@ -243,11 +243,9 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
 
   const isCommunity = !!communityDetails;
 
-  const CollapsibleCards = ({
-    isInitiallyOpen,
-  }: {
-    isInitiallyOpen: boolean;
-  }) => (
+  // A plain render function: as a component declared here it would be a new
+  // type on every render and remount every card, losing their open state.
+  const renderCollapsibleCards = (isInitiallyOpen: boolean) => (
     <div className="space-y-4">
       <AccountRecurrentTransfersCard
         direction="outgoing"
@@ -462,10 +460,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
                   </Tooltip>
                 </TooltipProvider>
               </div>
-              <div
-                key={tabExpandedStates.wallet ? "wallet-open" : "wallet-closed"}
-                className="space-y-4"
-              >
+              <div className="space-y-4">
                 <AccountBalanceCard
                   header={t("accountDetailsSection.wallet")}
                   userDetails={accountDetails}
@@ -482,6 +477,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
                   header={t("accountDetailsSection.hpActivity")}
                   userDetails={accountDetails}
                   isInitiallyOpen={tabExpandedStates.wallet}
+                  liveDataEnabled={liveDataEnabled}
                 />
                 <AccountBalanceHistoryCard
                   header={t("accountDetailsSection.balanceHistory")}
@@ -533,14 +529,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
                     </Tooltip>
                   </TooltipProvider>
                 </div>
-                <div
-                  key={
-                    tabExpandedStates.delegations
-                      ? "delegations-open"
-                      : "delegations-closed"
-                  }
-                  className="space-y-4"
-                >
+                <div className="space-y-4">
                   <AccountVestingDelegationsCard
                     direction="outgoing"
                     delegations={outgoingVestingDelegations}
@@ -608,14 +597,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
                     </Tooltip>
                   </TooltipProvider>
                 </div>
-                <div
-                  key={
-                    tabExpandedStates.governance
-                      ? "governance-open"
-                      : "governance-closed"
-                  }
-                  className="space-y-4"
-                >
+                <div className="space-y-4">
                   <AccountWitnessVotesCard
                     voters={accountDetails.witness_votes}
                     accountName={accountName}
@@ -665,12 +647,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
                   </Tooltip>
                 </TooltipProvider>
               </div>
-              <div
-                key={
-                  tabExpandedStates.profile ? "profile-open" : "profile-closed"
-                }
-                className="space-y-4"
-              >
+              <div className="space-y-4">
                 <AccountDetailsCard
                   header={t("accountDetailsSection.properties")}
                   userDetails={accountDetails}
@@ -716,6 +693,12 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
               isInitiallyOpen={false}
               dynamicGlobalData={dynamicGlobalData}
             />
+            <AccountHpActivityCard
+              header={t("accountDetailsSection.hpActivity")}
+              userDetails={accountDetails}
+              isInitiallyOpen={false}
+              liveDataEnabled={liveDataEnabled}
+            />
             <AccountBalanceHistoryCard
               header={t("accountDetailsSection.balanceHistory")}
               userDetails={accountDetails}
@@ -746,13 +729,14 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
               </Tooltip>
             </TooltipProvider>
           </div>
-          <div key={areAllCardsOpen ? "open" : "closed"} className="space-y-4">
-            <CollapsibleCards isInitiallyOpen={areAllCardsOpen} />
+          <div className="space-y-4">
+            {renderCollapsibleCards(areAllCardsOpen)}
           </div>
         </div>
       )}
 
       <VotersDialog
+        key={accountName}
         accountName={accountName}
         isVotersOpen={isVotersModalOpen}
         changeVotersDialogue={handleOpenVotersModal}
@@ -768,11 +752,13 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
       />
       <AccountFollowersDialog
         accountName={accountName}
+        totalCount={accountDetails.follower_count}
         isFollowersOpen={isAccountFollowersModalOpen}
         changeFollowersDialogue={handleOpenAccountFollowersModal}
       />
       <AccountFollowingDialog
         accountName={accountName}
+        totalCount={accountDetails.following_count}
         isFollowingOpen={isAccountFollowingModalOpen}
         changeFollowingDialogue={handleOpenAccountFollowingModal}
       />

@@ -1,7 +1,7 @@
-import { useState } from "react";
 import JSONView from "./JSONView";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { Card, CardContent, CardHeader } from "./ui/card";
+import useCollapsedState from "@/hooks/common/useCollapsedState";
 
 interface JSONCardProps {
   header: string;
@@ -14,9 +14,9 @@ const JSONCard: React.FC<JSONCardProps> = ({
   header,
   json,
   showCollapseButton,
-  isInitiallyOpen
+  isInitiallyOpen,
 }) => {
-  const [isDataHidden, setIsDataHidden] = useState(!isInitiallyOpen);
+  const [isDataHidden, setIsDataHidden] = useCollapsedState(isInitiallyOpen);
 
   if (!json || json === "{}") return null;
 

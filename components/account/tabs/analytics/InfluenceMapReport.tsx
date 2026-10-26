@@ -14,6 +14,8 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { grabNumericValue, spacesToUnderscores } from "@/utils/StringUtils";
 import { Loader2 } from "lucide-react";
 import useConvertedVestingShares from "@/hooks/common/useConvertedVestingShares";
+import useVestingDelegations from "@/hooks/api/common/useVestingDelegations";
+import { config } from "@/Config";
 import { useRegisterReportExport } from "./reportExports";
 
 // --- Graph Configuration Constants ---
@@ -105,7 +107,8 @@ const getChartOption = (
   allCategories: { name: string }[],
   activeLegendCategories: { name: string }[],
   t: (key: string) => string,
-  theme: string | undefined
+  theme: string | undefined,
+  isRtl: boolean
 ) => {
   const textColor = theme === "dark" ? "#FFFFFF" : "#1F2937";
 
@@ -117,7 +120,7 @@ const getChartOption = (
     roam: true,
     label: {
       show: true,
-      position: "right",
+      position: isRtl ? "left" : "right",
       formatter: "{b}",
       color: textColor,
     },
@@ -149,7 +152,7 @@ const getChartOption = (
       {
         data: activeLegendCategories.map((a) => a.name),
         orient: "vertical",
-        left: "left",
+        ...(isRtl ? { right: 0, align: "right" } : { left: "left" }),
         top: "50",
         textStyle: { color: textColor },
       },
@@ -183,7 +186,7 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
   dynamicGlobalData,
   widgetId,
 }) => {
-  const { t } = useI18n();
+  const { t, locale, dir } = useI18n();
   const { theme } = useTheme();
   const chartRef = useRef<ReactECharts>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -236,8 +239,10 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
   // State to track which nodes are currently being fetched, used to show a loading state.
   const [loadingNodes, setLoadingNodes] = useState(new Set<string>());
 
-  // State to hold the name of the next account to fetch data for, triggering the data-fetching hook.
-  const [accountToFetch, setAccountToFetch] = useState<string | null>(null);
+  // Accounts waiting for their delegations, fetched one at a time: a second
+  // click must queue up, not replace the one already loading.
+  const [fetchQueue, setFetchQueue] = useState<string[]>([]);
+  const accountToFetch = fetchQueue[0] ?? null;
 
   // State for the legend categories that are currently visible in the chart.
   const [activeLegendCategories, setActiveLegendCategories] = useState<
@@ -336,9 +341,38 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
         newSet.delete(accountToFetch);
         return newSet;
       });
-      setAccountToFetch(null);
+      setFetchQueue((queue) => queue.slice(1));
     }
   }, [accountToFetch, fetchedIncoming, fetchedOutgoing]);
+
+  // Same queries as above (shared cache), read only for their error state.
+  const { isVestingDelegationsError: isNodeFetchError } = useVestingDelegations(
+    accountToFetch || "",
+    null,
+    config.maxDelegatorsCount,
+    liveDataEnabled,
+    !!accountToFetch
+  );
+  const { isVestingDelegationsError: isMainFetchError } = useVestingDelegations(
+    accountName,
+    null,
+    config.maxDelegatorsCount,
+    liveDataEnabled
+  );
+
+  // A node whose request failed goes back to collapsed so it can be clicked again.
+  useEffect(() => {
+    if (!accountToFetch || !isNodeFetchError) return;
+    const failed = accountToFetch;
+    const without = (prev: Set<string>) => {
+      const next = new Set(prev);
+      next.delete(failed);
+      return next;
+    };
+    setLoadingNodes(without);
+    setExpandedNodes(without);
+    setFetchQueue((queue) => queue.slice(1));
+  }, [accountToFetch, isNodeFetchError]);
 
   // Effect to set up a ResizeObserver to keep the chart dimensions updated.
   useEffect(() => {
@@ -392,7 +426,7 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
       ])
     );
     setLoadingNodes(new Set());
-    setAccountToFetch(null);
+    setFetchQueue([]);
     setNodePositions(new Map());
   }, [data.incoming, data.outgoing, accountName]);
 
@@ -528,7 +562,7 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
             ]
           ),
           category: 2,
-          value: `${remaining.length} ${t("influenceMapReport.moreDelegations")} (${sumHP.toLocaleString()} HP)`,
+          value: `${remaining.length.toLocaleString(locale)} ${t("influenceMapReport.moreDelegations")} (${sumHP.toLocaleString(locale)} ${t("common.hp")})`,
           x: centerX + radius * Math.cos(angle),
           y: centerY + radius * Math.sin(angle),
           fixed: true,
@@ -536,7 +570,7 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
         links.push({
           source: "in-others-expanded",
           target: centralNodeId,
-          value: `${sumHP.toLocaleString()} HP`,
+          value: `${sumHP.toLocaleString(locale)} ${t("common.hp")}`,
           lineStyle: {
             width: scaleValue(sumAmount, [minAmount, maxAmount], [0.5, 8]),
           },
@@ -618,7 +652,7 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
             ]
           ),
           category: 4,
-          value: `${remaining.length} ${t("influenceMapReport.moreDelegations")} (${sumHP.toLocaleString()} HP)`,
+          value: `${remaining.length.toLocaleString(locale)} ${t("influenceMapReport.moreDelegations")} (${sumHP.toLocaleString(locale)} ${t("common.hp")})`,
           x: centerX + radius * Math.cos(angle),
           y: centerY + radius * Math.sin(angle),
           fixed: true,
@@ -626,7 +660,7 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
         links.push({
           source: centralNodeId,
           target: "out-others-expanded",
-          value: `${sumHP.toLocaleString()} HP`,
+          value: `${sumHP.toLocaleString(locale)} ${t("common.hp")}`,
           lineStyle: {
             width: scaleValue(sumAmount, [minAmount, maxAmount], [0.5, 8]),
           },
@@ -740,7 +774,7 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
             (sum, d) => sum + grabNumericValue(d.vesting_shares),
             0
           );
-          const tooltipValue = `${remaining.length} ${t("influenceMapReport.moreDelegations")} (${sumHP.toLocaleString()} HP)`;
+          const tooltipValue = `${remaining.length.toLocaleString(locale)} ${t("influenceMapReport.moreDelegations")} (${sumHP.toLocaleString(locale)} ${t("common.hp")})`;
           const othersId = `others-out-${parentAccountName}-${pages.outgoing}`;
           nodes.push({
             id: othersId,
@@ -803,7 +837,7 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
             (sum, d) => sum + grabNumericValue(d.vesting_shares),
             0
           );
-          const tooltipValue = `${remaining.length} ${t("influenceMapReport.moreDelegations")} (${sumHP.toLocaleString()} HP)`;
+          const tooltipValue = `${remaining.length.toLocaleString(locale)} ${t("influenceMapReport.moreDelegations")} (${sumHP.toLocaleString(locale)} ${t("common.hp")})`;
           const othersId = `others-in-${parentAccountName}-${pages.incoming}`;
           nodes.push({
             id: othersId,
@@ -840,6 +874,7 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
     );
     setActiveLegendCategories(currentActiveCategories);
   }, [
+    locale,
     accountName,
     chartDimensions,
     expandedNodes,
@@ -910,8 +945,7 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
     async (params: any) => {
       if (params.dataType !== "node" || isFullyExpanded) return;
       const clickedNodeId = params.data.id as string;
-      if (loadingNodes.has(clickedNodeId) || accountToFetch === clickedNodeId)
-        return;
+      if (loadingNodes.has(clickedNodeId)) return;
 
       if (clickedNodeId.startsWith("others-")) {
         const [, direction, parentAccount, pageStr] = clickedNodeId.split("-");
@@ -951,19 +985,16 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
           setExpandedNodes((prev) => new Set(prev).add(accountToToggle));
           if (!dataCache.has(accountToToggle)) {
             setLoadingNodes((prev) => new Set(prev).add(accountToToggle));
-            setAccountToFetch(accountToToggle);
+            setFetchQueue((queue) =>
+              queue.includes(accountToToggle)
+                ? queue
+                : [...queue, accountToToggle]
+            );
           }
         }
       }
     },
-    [
-      isFullyExpanded,
-      expandedNodes,
-      dataCache,
-      accountName,
-      loadingNodes,
-      accountToFetch,
-    ]
+    [isFullyExpanded, expandedNodes, dataCache, accountName, loadingNodes]
   );
 
   /**
@@ -973,6 +1004,14 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
     setIsFullyExpanded((prevState) => !prevState);
     setNodePositions(new Map());
   };
+
+  if ((!data.incoming || !data.outgoing) && isMainFetchError) {
+    return (
+      <div className="flex justify-center items-center w-full h-full">
+        <p className="text-sm text-red-500">{t("common.errorLoadingData")}</p>
+      </div>
+    );
+  }
 
   if (!data.incoming || !data.outgoing) {
     return (
@@ -992,7 +1031,7 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
           variant="outline"
           size="sm"
           onClick={toggleExpandAll}
-          className="absolute top-2 right-2 z-10"
+          className="absolute top-2 end-2 z-10"
         >
           {isFullyExpanded
             ? t("analyticsDashboard.collapseAll")
@@ -1009,7 +1048,8 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
           allPossibleCategories,
           activeLegendCategories,
           t,
-          theme
+          theme,
+          dir === "rtl"
         )}
         onEvents={onEvents}
         style={{ height: "100%", width: "100%" }}

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import {
-  Link,
   Star,
   PenSquare,
   CalendarDays,
@@ -44,6 +43,7 @@ import { useI18n } from "../../i18n/i18n";
 import TimeAgo from "timeago-react";
 import useProposalVoteCount from "@/hooks/api/accountPage/useProposalVoteCount";
 import useAccountTopHolderRank from "@/hooks/api/common/useAccountTopHolderRank";
+import useAccountCreationOperation from "@/hooks/api/accountPage/useAccountCreationOperation";
 import WitnessVoteButton from "@/components/Witnesses/WitnessVoteButton";
 import SetProxyButton from "@/components/Witnesses/SetProxyButton";
 import moment from "moment";
@@ -59,6 +59,7 @@ import {
 } from "@/components/ui/dialog";
 import AccountShareCard from "@/components/account/AccountShareCard";
 import StatCard from "@/components/ui/StatCard";
+import WitnessUrlIcon from "@/components/account/WitnessUrlIcon";
 import HiveAvatar from "@/components/ui/HiveAvatar";
 import useMediaQuery from "@/hooks/common/useMediaQuery";
 
@@ -102,6 +103,24 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
   const [shareOpen, setShareOpen] = useState(false);
   const handlePropertiesVisibility = () => {
     setIsPropertiesHidden(!isPropertiesHidden);
+  };
+
+  const openCommentsTab = () => {
+    router.push(
+      { pathname: `/@${accountName}`, query: { activeTab: "comments" } },
+      undefined,
+      { shallow: true }
+    );
+  };
+
+  const { creationOperation } = useAccountCreationOperation(accountName);
+  const openCreationOperation = () => {
+    if (!creationOperation) return;
+    const { block, trxId, operationId } = creationOperation;
+    const params = new URLSearchParams();
+    if (trxId) params.append("trxId", trxId);
+    params.append("opId", String(operationId));
+    router.push(`/block/${block}?${params.toString()}`);
   };
 
   const { manabarsData } = useManabars(accountName, liveDataEnabled);
@@ -320,22 +339,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                           </TooltipProvider>
                         )}
                         {isWitnessActive && witnessDetails?.url && (
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <a
-                                  href={witnessDetails.url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                >
-                                  <Link size={14} strokeWidth={2.5} />
-                                </a>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>{t("accountMainCard.witnessLink")}</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
+                          <WitnessUrlIcon url={witnessDetails.url} />
                         )}
                       </div>
                     )}
@@ -434,42 +438,41 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
           )}
         </>
       )}
+      {isForCommunity && (
+        <div
+          onClick={handlePropertiesVisibility}
+          className={cn(
+            "flex justify-between items-center cursor-pointer px-4 pt-4",
+            isPropertiesHidden && "pb-4"
+          )}
+        >
+          <div className="flex items-center gap-2">
+            <h3 className="text-lg font-semibold" title={accountDetails.name}>
+              {accountDetails.name}
+            </h3>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger onClick={(e) => e.stopPropagation()}>
+                  <Info
+                    size={14}
+                    className="text-gray-400 dark:text-gray-500 cursor-help"
+                  />
+                </TooltipTrigger>
+                <TooltipContent>
+                  {t("accountMainCard.creatorTooltip")}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+          {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
+        </div>
+      )}
       {!isPropertiesHidden && (
         <CardContent
           hidden={isPropertiesHidden}
-          className={cn("p-4 flex flex-col gap-5", isForCommunity && "pt-6")}
+          className={cn("p-4 flex flex-col gap-5", isForCommunity && "pt-3")}
         >
           <>
-            {isForCommunity && (
-              <div
-                onClick={handlePropertiesVisibility}
-                className="flex justify-between items-center cursor-pointer -mt-2 -mb-2"
-              >
-                <div className="flex items-center gap-2">
-                  <h3
-                    className="text-lg font-semibold"
-                    title={accountDetails.name}
-                  >
-                    {accountDetails.name}
-                  </h3>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <Info
-                          size={14}
-                          className="text-gray-400 dark:text-gray-500 cursor-help"
-                        />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        {t("accountMainCard.creatorTooltip")}
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-                {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
-              </div>
-            )}
-
             <div className="grid grid-cols-[repeat(auto-fit,minmax(110px,1fr))] gap-3">
               <StatCard
                 icon={<UserPlus size={20} />}
@@ -506,6 +509,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                 label={t("accountMainCard.lastActive")}
                 value={lastActiveValue}
                 tooltipContent={<p>{t("accountMainCard.lastActiveTooltip")}</p>}
+                onClick={openCommentsTab}
               />
               <StatCard
                 icon={<CalendarDays size={20} />}
@@ -520,6 +524,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                   />
                 }
                 tooltipContent={<p>{accountDetails.created}</p>}
+                onClick={creationOperation ? openCreationOperation : undefined}
               />
               <StatCard
                 icon={<Vote size={20} />}
@@ -531,11 +536,12 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                     (proposalVoteCount ?? 0).toLocaleString(locale)
                   )
                 }
-                onClick={() => {
-                  if (proposalVoteCount && proposalVoteCount > 0) {
-                    router.push(`/proposals?q=${accountName}&status='all'`);
-                  }
-                }}
+                onClick={
+                  proposalVoteCount && proposalVoteCount > 0
+                    ? () =>
+                        router.push(`/proposals?q=${accountName}&status=all`)
+                    : undefined
+                }
               />
               {governanceHealthProps && (
                 <StatCard
@@ -649,11 +655,11 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
               !isWitnessLoading && (
                 <div className="w-full flex flex-col gap-3 border-t border-slate-200 dark:border-slate-700 pt-5">
                   <Button className="w-full" onClick={openVotersModal}>
-                    <Vote className="mr-2 h-4 w-4" />
+                    <Vote className="me-2 h-4 w-4" />
                     {t("accountMainCard.voters")}
                   </Button>
                   <Button className="w-full" onClick={openVotesHistoryModal}>
-                    <History className="mr-2 h-4 w-4" />
+                    <History className="me-2 h-4 w-4" />
                     {t("accountMainCard.votesHistory")}
                   </Button>
                 </div>

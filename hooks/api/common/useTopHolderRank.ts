@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
 import Hive from "@/types/Hive";
 import { CoinType, BalanceType } from "@/hooks/api/common/useTopHolders";
+import { isSafeForPlusOne } from "@/utils/topHolderLocate";
 
 // Past 2^53 the parsed balance can round above the real one and match nobody.
 const floatBelow = (n: number) => {
@@ -21,7 +22,7 @@ const useTopHolderRank = (
   const effBalanceType = coinType === "VESTS" ? "balance" : balanceType;
   const enabled = balanceRaw !== null && balanceRaw > 0;
 
-  const strictlyAbove = balanceRaw !== null && balanceRaw + 1 > balanceRaw;
+  const strictlyAbove = balanceRaw !== null && isSafeForPlusOne(balanceRaw);
   const rankMinBalance =
     balanceRaw === null
       ? undefined

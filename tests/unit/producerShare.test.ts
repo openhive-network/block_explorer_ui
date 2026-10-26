@@ -47,8 +47,6 @@ describe("countMissedByProducer", () => {
   });
 });
 
-describe("computeProducerShare with missed slots", () => {});
-
 describe("witnesses that missed are never folded into Other", () => {
   it("lists a low-ranked witness that missed, instead of hiding it in Other", () => {
     // The consensus witnesses fill the top ranks and rarely miss; the ones that

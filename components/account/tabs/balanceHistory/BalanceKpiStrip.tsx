@@ -38,6 +38,7 @@ const BalanceKpiStrip: React.FC<BalanceKpiStripProps> = ({
     const unitLabel = isHpMode ? "HP" : coinType;
 
     const lastHivePrice = parseFloat(last.hivePrice || "0");
+    const hasPrice = coinType === "HBD" || lastHivePrice > 0;
 
     let currentNumeric: number;
     let changeNumeric: number;
@@ -99,7 +100,7 @@ const BalanceKpiStrip: React.FC<BalanceKpiStripProps> = ({
       )} ${unitLabel}`,
       changePercent,
       changeSign,
-      dollarValue,
+      dollarValue: hasPrice ? dollarValue : null,
       unitLabel,
     };
   }, [data, coinType, unit, hiveChain, dynamicGlobalData]);
@@ -138,8 +139,16 @@ const BalanceKpiStrip: React.FC<BalanceKpiStripProps> = ({
       />
       <KpiCard
         label={t("balanceHistoryKpi.dollarValue")}
-        value={`$${compactFormat(kpis.dollarValue)}`}
-        title={`$${fullFormat(kpis.dollarValue, 2)}`}
+        value={
+          kpis.dollarValue === null
+            ? "—"
+            : `$${compactFormat(kpis.dollarValue)}`
+        }
+        title={
+          kpis.dollarValue === null
+            ? undefined
+            : `$${fullFormat(kpis.dollarValue, 2)}`
+        }
       />
     </div>
   );

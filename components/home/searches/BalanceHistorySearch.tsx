@@ -316,6 +316,8 @@ const BalanceHistorySearch = ({
     const props = {
       ...defaultBalanceHistorySearchParams,
       accountName: accountNameFromRoute,
+      // Clearing the filters must not drop the tab from the URL.
+      activeTab: paramsState.activeTab,
       coinType: DEFAULT_COIN_TYPE,
     };
 

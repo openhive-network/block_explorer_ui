@@ -1,3 +1,7 @@
+/**
+ * @jest-environment ./tests/unit/support/timeZoneEnvironment.js
+ * @jest-environment-options {"timeZone": "America/New_York"}
+ */
 // Unit tests for slot-gap detection on the blocks list. @hiveio/wax is mocked
 // virtually so importing the Hive types never pulls the WASM bundle.
 jest.mock("@hiveio/wax", () => ({}), { virtual: true });
@@ -50,6 +54,18 @@ describe("computeSlotDeltas", () => {
     const deltas = computeSlotDeltas(desc([20, at(90)], [10, at(0)]));
     expect(deltas[0].deltaSeconds).toBeNull();
     expect(deltas[0].missedSlots).toBe(0);
+  });
+});
+
+// Chain times carry no zone and are UTC. Read as local time on the night New
+// York set its clocks back, two blocks 3 s apart looked an hour apart.
+describe("computeSlotDeltas across a daylight-saving change", () => {
+  it("reads zone-less chain times as UTC", () => {
+    const [newer] = computeSlotDeltas(
+      desc([101, "2025-11-02T02:00:02"], [100, "2025-11-02T01:59:59"])
+    );
+    expect(newer.deltaSeconds).toBe(HIVE_SLOT_SECONDS);
+    expect(newer.missedSlots).toBe(0);
   });
 });
 

@@ -94,19 +94,17 @@ const AccountPageInteractionSearch: React.FC<
 
   const onClickSearchButton = () => {
     setLastSearchKey("comment");
-    handleCommentsSearch(accountName, permlink);
+    handleCommentsSearch(accountName, permlink, paramsState.filters ?? null);
     refetchCommentSearchData();
   };
 
   useEffect(() => {
-    if (paramsState.permlink) {
-      setPermlink(paramsState.permlink);
-    }
+    setPermlink(paramsState.permlink ?? "");
   }, [paramsState.permlink]);
 
   return (
     <>
-      <p className="ml-2">{infoText}</p>
+      <p className="ms-2">{infoText}</p>
 
       <div className={"flex flex-col my-5"}>
         <Input
@@ -140,12 +138,12 @@ const AccountPageInteractionSearch: React.FC<
           <Button
             data-testid="search-button"
             onClick={onClickSearchButton}
-            className="mr-2 my-2"
+            className="me-2 my-2"
             disabled={!permlink}
           >
             {t("common.search")}
             {isCommentSearchDataLoading && (
-              <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />
+              <Loader2 className="ms-2 animate-spin h-4 w-4  ..." />
             )}
           </Button>
           {!permlink ? (

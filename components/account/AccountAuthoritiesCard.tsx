@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { ArrowDown, ArrowUp, User } from "lucide-react";
 import Link from "next/link";
 
@@ -10,6 +9,7 @@ import { Card, CardContent, CardHeader } from "../ui/card";
 import CopyToKeyboard from "../CopyToKeyboard";
 import { useI18n } from "@/i18n/i18n";
 import useElementWidth from "@/hooks/common/useElementWidth";
+import useCollapsedState from "@/hooks/common/useCollapsedState";
 
 interface AccountMainCardProps {
   accountName: string;
@@ -27,17 +27,18 @@ type NewAuthKeys = {
 const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
   accountName,
   liveDataEnabled,
-  isInitiallyOpen
+  isInitiallyOpen,
 }) => {
   const { t } = useI18n();
   const { accountAuthoritiesData } = useAccountAuthorities(
     accountName,
-    liveDataEnabled,
+    liveDataEnabled
   );
   const [containerRef, containerWidth] = useElementWidth<HTMLDivElement>();
   const isTooNarrow = containerWidth > 0 && containerWidth < 450;
 
-  const [isPropertiesHidden, setIsPropertiesHidden] = useState<boolean>(!isInitiallyOpen);
+  const [isPropertiesHidden, setIsPropertiesHidden] =
+    useCollapsedState(isInitiallyOpen);
 
   const handlePropertiesVisibility = () => {
     setIsPropertiesHidden((v) => !v);
@@ -65,11 +66,8 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
       >
         <TableCell className="cursor-pointer whitespace-nowrap">
           {isAccount ? (
-            <Link
-              className="text-link flex"
-              href={`/@${content}`}
-            >
-              <User className="w-4 mr-2" />
+            <Link className="text-link flex" href={`/@${content}`}>
+              <User className="w-4 me-2" />
               <span>{content}</span>
             </Link>
           ) : (
@@ -79,7 +77,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
             />
           )}
         </TableCell>
-        <TableCell className="text-right">{weight}</TableCell>
+        <TableCell className="text-end">{weight}</TableCell>
       </TableRow>
     );
   };
@@ -114,7 +112,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
               })}
             >
               <TableCell>{t("accountAuthoritiesCard.threshold")}</TableCell>
-              <TableCell className="text-right">{a?.weight_threshold}</TableCell>
+              <TableCell className="text-end">{a?.weight_threshold}</TableCell>
             </TableRow>
           </TableBody>
         </Table>
@@ -123,10 +121,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
   };
 
   return (
-    <Card
-      data-testid="authorities"
-      className="overflow-hidden pb-0 w-full"
-    >
+    <Card data-testid="authorities" className="overflow-hidden pb-0 w-full">
       <CardHeader className="p-0">
         <div
           onClick={handlePropertiesVisibility}
@@ -166,7 +161,11 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
                 <TableCell className="cursor-pointer whitespace-nowrap">
                   <CopyToKeyboard
                     value={accountAuthoritiesData?.memo}
-                    displayValue={isTooNarrow ? cutPublicKey(accountAuthoritiesData?.memo) : (accountAuthoritiesData?.memo ?? "")}
+                    displayValue={
+                      isTooNarrow
+                        ? cutPublicKey(accountAuthoritiesData?.memo)
+                        : (accountAuthoritiesData?.memo ?? "")
+                    }
                   />
                 </TableCell>
               </TableRow>
@@ -183,8 +182,15 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
                     <TableCell className="cursor-pointer whitespace-nowrap">
                       <CopyToKeyboard
                         value={accountAuthoritiesData?.witness_signing}
-                        displayValue={isTooNarrow ? cutPublicKey(accountAuthoritiesData?.witness_signing) : (accountAuthoritiesData?.witness_signing ?? "")}
-                      />                    </TableCell>
+                        displayValue={
+                          isTooNarrow
+                            ? cutPublicKey(
+                                accountAuthoritiesData?.witness_signing
+                              )
+                            : (accountAuthoritiesData?.witness_signing ?? "")
+                        }
+                      />{" "}
+                    </TableCell>
                   </TableRow>
                 </TableBody>
               </Table>

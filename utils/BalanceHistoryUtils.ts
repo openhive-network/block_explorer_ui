@@ -14,6 +14,20 @@ export interface PreparedBalanceHistoryEntry {
   hivePrice: string;
 }
 
+// Start and end of the days a set of rows covers, in the node time format.
+// Used to price a block range, where the range itself carries no dates.
+export const getDayRangeOfRows = (timestamps: string[] | undefined) => {
+  const days = (timestamps ?? [])
+    .filter(Boolean)
+    .map((timestamp) => timestamp.slice(0, 10))
+    .sort();
+  if (!days.length) return undefined;
+  return {
+    start: `${days[0]}T00:00:00`,
+    end: `${days[days.length - 1]}T23:59:59`,
+  };
+};
+
 export const compactFormat = (v: number, decimals = 2): string => {
   const abs = Math.abs(v);
   const sign = v < 0 ? "-" : "";

@@ -10,7 +10,8 @@ const useAccountCommunityActivity = (
 ) => {
   const {
     data: communityActivity,
-    isLoading: isCommunityActivityLoading,
+    isLoading,
+    isPreviousData,
     isError: isCommunityActivityError,
   }: UseQueryResult<Hive.AccountCommunityActivityRow[] | undefined> = useQuery({
     queryKey: ["account_community_activity", accountName, fromDate, toDate],
@@ -25,6 +26,10 @@ const useAccountCommunityActivity = (
     staleTime: 30 * 60 * 1000,
     refetchOnWindowFocus: false,
   });
+
+  // Data kept from the previous range counts as loading, so a report never
+  // shows the old numbers under the newly selected range.
+  const isCommunityActivityLoading = isLoading || isPreviousData;
 
   return {
     communityActivity,

@@ -70,7 +70,10 @@ export type ExplorerNodeApi = {
       Hive.AccountFollower[]
     >;
     get_accounts: TWaxApiRequest<unknown[], FindAccountsResponse[]>;
-    get_following: TWaxApiRequest<{ account: string }, Hive.AccountFollowing>;
+    get_following: TWaxApiRequest<
+      { account: string; start: string; limit: number },
+      Hive.AccountFollowing[]
+    >;
     list_proposals: TWaxApiRequest<
       [
         start: (string | number)[],
@@ -120,6 +123,10 @@ export type ExplorerNodeApi = {
       { name: string; observer?: string },
       Hive.CommunityDetails
     >;
+    get_community_context: TWaxApiRequest<
+      { name: string; account: string },
+      Hive.CommunityContext
+    >;
     list_subscribers: TWaxApiRequest<
       {
         community: string;
@@ -156,7 +163,8 @@ class FetchingService {
   private extendedHiveChain:
     | TWaxExtended<ExplorerNodeApi, TWaxRestExtended<typeof extendedRest>>
     | undefined = undefined;
-  // Same chain, same endpoints, longer abort budget. Used only by block-search.
+  // Same chain, same endpoints, longer abort budget. Used by block-search and
+  // the community subscribers list, the calls measured slower than the default.
   private blockSearchHiveChain:
     | TWaxExtended<ExplorerNodeApi, TWaxRestExtended<typeof extendedRest>>
     | undefined = undefined;
@@ -902,53 +910,35 @@ class FetchingService {
     );
   }
 
-  async getAccountFollowers(account: string): Promise<Hive.AccountFollower[]> {
-    const allFollowers: Hive.AccountFollower[] = [];
-    let start = "";
-    const limit = 1000; // The maximum number of followers to fetch per API call.
-
-    while (true) {
-      try {
-        const params = { account, start, limit };
-        const results: Hive.AccountFollower[] =
-          await this.extendedHiveChain!.api.condenser_api.get_followers(params);
-
-        // If the API returns an empty array, we have finished fetching all pages.
-        if (results.length === 0) {
-          break;
-        }
-
-        let followersToProcess = results;
-        if (start && results[0].follower === start) {
-          followersToProcess = results.slice(1);
-        }
-
-        if (followersToProcess.length > 0) {
-          allFollowers.push(...followersToProcess);
-        }
-
-        if (results.length < limit) {
-          break;
-        }
-
-        start = results[results.length - 1].follower;
-      } catch (error) {
-        throw error;
-      }
-    }
-
-    return allFollowers;
-  }
-  async getAccountFollowing(account: string): Promise<Hive.AccountFollowing> {
-    const params = { account };
-    return await this.extendedHiveChain!.api.condenser_api.get_following(
-      params
-    );
+  // One alphabetical batch; `start` is the last name of the previous batch.
+  async getAccountFollowPage(
+    type: "followers" | "following",
+    account: string,
+    start: string,
+    limit: number
+  ): Promise<string[]> {
+    const api = this.extendedHiveChain!.api.condenser_api;
+    const params = { account, start, limit };
+    const names =
+      type === "followers"
+        ? (await api.get_followers(params)).map((row) => row.follower)
+        : (await api.get_following(params)).map((row) => row.following);
+    return names[0] === start ? names.slice(1) : names;
   }
 
   async getCommunityDetails(name: string): Promise<Hive.CommunityDetails> {
     const params = { name };
     return await this.extendedHiveChain!.api.bridge.get_community(params);
+  }
+
+  async getCommunityContext(
+    name: string,
+    account: string
+  ): Promise<Hive.CommunityContext> {
+    const params = { name, account };
+    return await this.extendedHiveChain!.api.bridge.get_community_context(
+      params
+    );
   }
 
   async getCommunitySubscribers(
@@ -957,7 +947,9 @@ class FetchingService {
     limit: number
   ): Promise<Hive.CommunitySubscribers> {
     const params = { community, last, limit };
-    return await this.extendedHiveChain!.api.bridge.list_subscribers(params);
+    // A page of subscribers often takes longer than the default 2s budget.
+    const chain = this.blockSearchHiveChain ?? this.extendedHiveChain;
+    return await chain!.api.bridge.list_subscribers(params);
   }
 
   async getCommunitiesList(

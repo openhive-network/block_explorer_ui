@@ -255,6 +255,8 @@ export const convertBooleanArrayIntoHexadecimals = (
 
 export const convertBooleanArrayToIds = (filters: boolean[]) => {
   const idsArray: number[] = [];
+  // A hand-edited or outdated link can carry a non-array value here.
+  if (!Array.isArray(filters)) return idsArray;
   filters.forEach((filter, i) => {
     if (filter) idsArray.push(i);
   });

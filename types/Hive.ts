@@ -539,6 +539,7 @@ namespace Hive {
     withdrawn!: string;
     vesting_withdraw_rate!: string;
     to_withdraw!: string;
+    next_vesting_withdrawal?: string;
     withdraw_routes!: number;
     delayed_vests!: string;
     witness_votes!: string[];
@@ -1278,9 +1279,17 @@ namespace Hive {
     subscribers!: CommunitySubscriber[];
   }
 
+  export class CommunityContext {
+    role!: string;
+    title!: string;
+    subscribed!: boolean;
+  }
+
   export class CommunitySubscriber {
     name!: string;
     created_at!: string;
+    role?: string;
+    title?: string | null;
   }
 
   export class CommunityList {

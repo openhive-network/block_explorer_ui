@@ -98,6 +98,12 @@ export default function Account() {
     setIsDesktopAccountDetailsCollapsed,
   ] = useState(false);
 
+  // A stat tile in the mobile panel switches tab or filter: close the panel to show it.
+  // Declared before the wallet effect so ?section=wallet still opens the panel.
+  useEffect(() => {
+    setShowMobileAccountDetails(false);
+  }, [router.query.activeTab, router.query.filters]);
+
   // "My wallet" lands here with ?section=wallet: bring the account panel into view.
   useEffect(() => {
     if (router.query.section !== "wallet") return;
@@ -122,6 +128,7 @@ export default function Account() {
   const {
     formattedAccountDetails: accountDetails,
     notFound,
+    loadFailed,
     isAccountDetailsLoading,
   } = useConvertedAccountDetails(
     accountNameFromRoute,
@@ -178,18 +185,23 @@ export default function Account() {
             isCollapsed={isDesktopAccountDetailsCollapsed}
             onClick={() => setIsDesktopAccountDetailsCollapsed((prev) => !prev)}
           />
-          {!isDesktopAccountDetailsCollapsed && (
-            <div className="col-start-1 col-span-1 flex flex-col gap-y-2">
-              <AccountDetailsSection
-                accountName={accountNameFromRoute}
-                liveDataEnabled={liveDataEnabled}
-                changeLiveRefresh={changeLiveRefresh}
-                accountDetails={accountDetails}
-                communityDetails={communityDetails}
-                dynamicGlobalData={dynamicGlobalData}
-              />
-            </div>
-          )}
+          {/* Hidden, not removed: unmounting would reset every card's open state, sort and page. */}
+          <div
+            className={cn("col-start-1 col-span-1 flex flex-col gap-y-2", {
+              hidden: isDesktopAccountDetailsCollapsed,
+            })}
+          >
+            <AccountDetailsSection
+              accountName={accountNameFromRoute}
+              liveDataEnabled={
+                liveDataEnabled && !isDesktopAccountDetailsCollapsed
+              }
+              changeLiveRefresh={changeLiveRefresh}
+              accountDetails={accountDetails}
+              communityDetails={communityDetails}
+              dynamicGlobalData={dynamicGlobalData}
+            />
+          </div>
         </>
       );
     }
@@ -202,6 +214,14 @@ export default function Account() {
 
   if (routeAccountName && !routeAccountName.startsWith("@")) {
     return <ErrorPage />;
+  }
+
+  if (loadFailed && !isAccountDetailsLoading) {
+    return (
+      <ErrorPage
+        errorMessage={`${routeAccountName} : ${t("common.errorLoadingData")}`}
+      />
+    );
   }
 
   if (notFound && !isAccountDetailsLoading) {

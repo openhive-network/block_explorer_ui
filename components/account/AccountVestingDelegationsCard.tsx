@@ -1,6 +1,7 @@
 import { useState, Fragment, useEffect } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import { Card, CardContent, CardHeader } from "../ui/card";
 import {
@@ -15,6 +16,7 @@ import { buildTableHead, handleSortDelegations } from "@/utils/DelegationsSort";
 import { capitalizeFirst } from "@/utils/StringUtils";
 import { useI18n } from "../../i18n/i18n";
 import DataExport from "../DataExport";
+import useCollapsedState from "@/hooks/common/useCollapsedState";
 
 type AccountVestingDelegationsCardProps = {
   id?: string;
@@ -28,18 +30,25 @@ type AccountVestingDelegationsCardProps = {
 
 const buildTableBody = (
   direction: "outgoing" | "incoming",
-  delegations: Explorer.VestingDelegation[]
+  delegations: Explorer.VestingDelegation[],
+  onRowClick: (blockNum: number, operationId: string) => void
 ) => {
   return delegations.map((delegation, index: number) => {
     return (
       <Fragment key={index}>
-        <TableRow>
+        <TableRow
+          className="cursor-pointer hover:bg-rowHover"
+          onClick={() =>
+            onRowClick(delegation.block_num, delegation.operation_id)
+          }
+        >
           <TableCell>{index + 1}</TableCell>
-          <TableCell className="text-right break-words">
+          <TableCell className="text-end break-words">
             {direction === "outgoing" ? (
               <Link
                 className="text-link"
                 href={`/@${delegation.delegatee}`}
+                onClick={(e) => e.stopPropagation()}
               >
                 {delegation.delegatee}
               </Link>
@@ -47,12 +56,13 @@ const buildTableBody = (
               <Link
                 className="text-link"
                 href={`/@${delegation.delegator}`}
+                onClick={(e) => e.stopPropagation()}
               >
                 {delegation.delegator}
               </Link>
             )}
           </TableCell>
-          <TableCell className="text-right break-words">
+          <TableCell className="text-end break-words">
             {delegation.vesting_shares}
           </TableCell>
         </TableRow>
@@ -73,15 +83,15 @@ const AccountVestingDelegationsCard: React.FC<
   forceOpen = false,
 }) => {
   const { t } = useI18n();
-  const [isPropertiesHidden, setIsPropertiesHidden] = useState(
-    !isInitiallyOpen
-  );
+  const router = useRouter();
+  const [isPropertiesHidden, setIsPropertiesHidden] =
+    useCollapsedState(isInitiallyOpen);
 
   useEffect(() => {
     if (forceOpen) {
       setIsPropertiesHidden(false);
     }
-  }, [forceOpen]);
+  }, [forceOpen, setIsPropertiesHidden]);
 
   const [sortConfig, setSortConfig] = useState<{
     key: string;
@@ -100,6 +110,13 @@ const AccountVestingDelegationsCard: React.FC<
 
   const handlePropertiesVisibility = () => {
     setIsPropertiesHidden(!isPropertiesHidden);
+  };
+
+  // Same drill-down as the RC delegation cards: the block with the operation highlighted.
+  const handleRowClick = (blockNum: number, operationId: string) => {
+    const params = new URLSearchParams();
+    params.append("opId", operationId);
+    router.push(`/block/${blockNum}?${params.toString()}`);
   };
 
   const sortBy = (key: string) => {
@@ -147,7 +164,7 @@ const AccountVestingDelegationsCard: React.FC<
           className="h-full flex justify-between items-center p-2 hover:bg-rowHover cursor-pointer px-4"
         >
           <div className="text-lg">{headerText}</div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 rtl:space-x-reverse">
             <DataExport
               data={prepareExportData()}
               filename={`${accountName}_${t(
@@ -167,7 +184,7 @@ const AccountVestingDelegationsCard: React.FC<
             </TableRow>
           </TableHeader>
           <TableBody className="text-sm">
-            {buildTableBody(direction, sortedDelegations)}
+            {buildTableBody(direction, sortedDelegations, handleRowClick)}
           </TableBody>
         </Table>
       </CardContent>

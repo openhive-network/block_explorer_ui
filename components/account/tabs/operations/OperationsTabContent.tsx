@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { TabsContent } from "@/components/ui/tabs";
 import useURLParams from "@/hooks/common/useURLParams";
+import { useTabs } from "@/contexts/TabsContext";
 import {
   cn,
   convertBooleanArrayToIds,
@@ -25,6 +26,10 @@ import { getLocalStorage, removeStorageItem } from "@/utils/LocalStorage";
 import { useI18n } from "@/i18n/i18n";
 import BlockNavigation from "@/components/BlockNavigation";
 import useBlockNavigation from "@/hooks/common/useBlockNavigation";
+import FilterChipsBar, {
+  FilterChip,
+  buildRangeChip,
+} from "@/components/ui/FilterChipsBar";
 
 interface OpeationTabContentProps {
   liveDataEnabled: boolean;
@@ -61,11 +66,11 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
     toBlock: toBlockParam,
     fromDate: fromDateParam,
     toDate: toDateParam,
-    activeTab,
     direction,
   } = paramsState;
 
-  const isOperationsTabActive = !activeTab || activeTab === "operations";
+  const { activeTab } = useTabs();
+  const isOperationsTabActive = activeTab === "operations";
 
   const accountOperationsProps = {
     accountName,
@@ -85,7 +90,10 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
     accountOperations,
     isAccountOperationsLoading,
     refetchAccountOperations,
-  } = useAccountOperations(accountOperationsProps as any, liveDataEnabled);
+  } = useAccountOperations(accountOperationsProps as any, liveDataEnabled, {
+    // This tab stays mounted while others are shown: fetch only when it is the one in view.
+    enabled: isOperationsTabActive,
+  });
 
   const {
     handleLoadNextBlocks,
@@ -174,11 +182,11 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
 
   const hasActiveFilters = Boolean(
     (filtersParam?.length ?? 0) ||
-      fromBlockParam ||
-      (paramsState.toBlock && paramsState.history.length < 2) ||
-      fromDateParam ||
-      toDateParam ||
-      paramsState.direction
+    fromBlockParam ||
+    (paramsState.toBlock && paramsState.history.length < 2) ||
+    fromDateParam ||
+    toDateParam ||
+    paramsState.direction
   );
 
   useEffect(() => {
@@ -195,8 +203,84 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
 
   const buttonLabel = `Value field can't be empty`;
 
+  const selectedTypeIds = convertBooleanArrayToIds(filtersParam ?? filters);
+  const typesTitle = getOperationButtonTitle(
+    selectedTypeIds,
+    accountOperationTypes
+  );
+  const hasTypeFilter = (selectedTypeIds?.length ?? 0) > 0;
+  const expandFilters = () => setIsVisible(true);
+
+  const resetRange = () => {
+    searchRanges.setRangeSelectKey("none");
+    searchRanges.setTimeUnitSelectKey(undefined);
+    searchRanges.setLastTimeUnitValue(undefined);
+    searchRanges.setLastBlocksValue(undefined);
+    setParams({
+      ...paramsState,
+      fromBlock: undefined,
+      toBlock: undefined,
+      fromDate: undefined,
+      toDate: undefined,
+      lastBlocks: undefined,
+      lastTime: undefined,
+      timeUnit: undefined,
+      rangeSelectKey: "none",
+      history: [],
+      page: undefined,
+    });
+  };
+
+  const chips: FilterChip[] = [
+    {
+      key: "types",
+      label:
+        (selectedTypeIds?.length ?? 0) > 1
+          ? typesTitle
+          : t("activeFilters.labelValue", {
+              label: t("operationTypesDialog.operationTypes"),
+              value: hasTypeFilter ? typesTitle : t("operationTypesDialog.all"),
+            }),
+      onRemove: hasTypeFilter ? () => handleOperationSelect(null) : undefined,
+    },
+    {
+      key: "direction",
+      label: t("activeFilters.labelValue", {
+        label: t("operations.participationMode"),
+        value: t(
+          direction === "include"
+            ? "operations.outgoing"
+            : direction === "exclude"
+              ? "operations.incoming"
+              : "operations.all"
+        ),
+      }),
+      onRemove: direction
+        ? () =>
+            setParams({ ...paramsState, page: undefined, direction: undefined })
+        : undefined,
+    },
+    buildRangeChip(
+      {
+        ...paramsState,
+        // Paging through blocks sets toBlock on its own; that is not a filter.
+        toBlock:
+          paramsState.history.length < 2 ? paramsState.toBlock : undefined,
+      },
+      t,
+      resetRange,
+      expandFilters
+    ),
+  ];
+
   return (
     <TabsContent value="operations">
+      <FilterChipsBar
+        sticky
+        chips={chips}
+        onExpand={expandFilters}
+        isLoading={isAccountOperationsLoading}
+      />
       <Card
         className={cn(
           "mb-0 pb-0 overflow-hidden transition-all duration-500 ease-in max-h-0 opacity-0",
@@ -206,7 +290,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
         )}
       >
         <CardHeader>
-          <CardTitle className="text-left">{t("common.filters")}</CardTitle>
+          <CardTitle className="text-start">{t("common.filters")}</CardTitle>
         </CardHeader>
         <CardContent>
           <SearchRanges
@@ -217,8 +301,8 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
             <div className="text-sm font-medium">
               {t("operations.participationMode")}
             </div>
-            <div className="flex space-x-4">
-              <label className="flex items-center space-x-2">
+            <div className="flex space-x-4 rtl:space-x-reverse">
+              <label className="flex items-center space-x-2 rtl:space-x-reverse">
                 <input
                   type="radio"
                   name="participationMode"
@@ -234,7 +318,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
                 />
                 <span className="text-sm">{t("operations.all")}</span>
               </label>
-              <label className="flex items-center space-x-2">
+              <label className="flex items-center space-x-2 rtl:space-x-reverse">
                 <input
                   type="radio"
                   name="participationMode"
@@ -250,7 +334,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
                 />
                 <span className="text-sm">{t("operations.incoming")}</span>
               </label>
-              <label className="flex items-center space-x-2">
+              <label className="flex items-center space-x-2 rtl:space-x-reverse">
                 <input
                   type="radio"
                   name="participationMode"
@@ -288,12 +372,12 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
               <Button
                 onClick={handleSearch}
                 data-testid="apply-filters"
-                className="mr-2 my-2"
+                className="me-2 my-2"
                 disabled={isSearchButtonDisabled}
               >
                 {t("common.search")}
                 {isAccountOperationsLoading && (
-                  <Loader2 className="ml-2 animate-spin h-4 w-4" />
+                  <Loader2 className="ms-2 animate-spin h-4 w-4" />
                 )}
               </Button>
 
@@ -303,10 +387,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
                 </label>
               ) : null}
             </div>
-            <Button
-              onClick={handleClearFilter}
-              data-testid="clear-filters"
-            >
+            <Button onClick={handleClearFilter} data-testid="clear-filters">
               {t("common.clear")}
             </Button>
           </div>

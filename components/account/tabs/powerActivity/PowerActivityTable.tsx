@@ -19,7 +19,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/hybrid-tooltip";
 import CopyButton from "@/components/ui/CopyButton";
-import CustomPagination from "@/components/CustomPagination";
+import AccountPagination from "@/components/account/AccountPagination";
 import DataCountMessage from "@/components/DataCountMessage";
 import DataExport from "@/components/DataExport";
 import NoResult from "@/components/NoResult";
@@ -55,7 +55,7 @@ interface PowerActivityTableProps {
   filter: Hive.VestingHistoryFilter;
   onFilterChange: (filter: Hive.VestingHistoryFilter) => void;
   page: number | undefined;
-  onPageChange: (page: number) => void;
+  onPageChange: (page: number | undefined) => void;
   fromBlock?: Date | number | undefined;
   toBlock?: Date | number | undefined;
 }
@@ -174,18 +174,22 @@ const PowerActivityTable: React.FC<PowerActivityTableProps> = ({
   const totalOperations = accountVestingHistory?.total_operations ?? 0;
   const totalPages = accountVestingHistory?.total_pages ?? 0;
   const operations = useMemo(
-    () => accountVestingHistory?.operations_result ?? [],
-    [accountVestingHistory]
+    () =>
+      totalOperations > 0
+        ? (accountVestingHistory?.operations_result ?? [])
+        : [],
+    [accountVestingHistory, totalOperations]
   );
 
   const isLoading =
     isAccountVestingHistoryLoading || isAccountVestingHistoryFetching;
 
-  const updatePageInUrl = (newPage: number) => {
+  const updatePageInUrl = (newPage: number | undefined) => {
     onPageChange(newPage);
+    const { page: _page, ...rest } = router.query;
     router.push({
       pathname: router.pathname,
-      query: { ...router.query, page: newPage.toString() },
+      query: newPage ? { ...rest, page: newPage.toString() } : rest,
     });
   };
 
@@ -273,13 +277,10 @@ const PowerActivityTable: React.FC<PowerActivityTableProps> = ({
     <div>
       {totalPages > 1 && (
         <div className="sticky z-20 top-[7rem] md:top-[7.5rem] scroll-mt-[7.5rem]">
-          <CustomPagination
-            currentPage={page ?? 1}
-            onPageChange={updatePageInUrl}
-            pageSize={config.standardPaginationSize}
-            totalCount={totalOperations}
-            className="rounded"
-            isMirrored={false}
+          <AccountPagination
+            page={page ?? totalPages}
+            setPage={updatePageInUrl}
+            operationsCount={totalOperations}
           />
         </div>
       )}
@@ -293,7 +294,7 @@ const PowerActivityTable: React.FC<PowerActivityTableProps> = ({
           count={totalOperations}
           dataType="common.operations"
         />
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 ms-auto">
           <div
             className="inline-flex items-stretch rounded-full border border-navbar-border overflow-hidden text-xs"
             role="group"
@@ -311,9 +312,9 @@ const PowerActivityTable: React.FC<PowerActivityTableProps> = ({
                   aria-pressed={isActive}
                   className={cn(
                     "font-medium transition-colors px-2.5 py-0.5",
-                    !isLast && "border-r border-navbar-border",
-                    isFirst && "rounded-l-full",
-                    isLast && "rounded-r-full",
+                    !isLast && "border-e border-navbar-border",
+                    isFirst && "rounded-s-full",
+                    isLast && "rounded-e-full",
                     isActive
                       ? "bg-blue-500 text-white"
                       : "bg-theme hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -433,13 +434,13 @@ const PowerActivityTable: React.FC<PowerActivityTableProps> = ({
                   >
                     <div className="flex justify-start items-center rounded">
                       <span
-                        className={cn("rounded w-4 mr-2", operationBgColor)}
+                        className={cn("rounded w-4 me-2", operationBgColor)}
                       />
                       <EventIcon type={op.direction} />
-                      <span className="ml-1.5">{eventLabel}</span>
+                      <span className="ms-1.5">{eventLabel}</span>
                     </div>
                     {opTypeName && (
-                      <div className=" text-[11px] text-gray-500 dark:text-gray-400 ml-6">
+                      <div className=" text-[11px] text-gray-500 dark:text-gray-400 ms-6">
                         {opTypeName}
                       </div>
                     )}

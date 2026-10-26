@@ -24,28 +24,34 @@ const n = (v: unknown): number =>
 
 export const buildWealthComposition = (
   dollars: Record<string, unknown>
-): WealthComposition => ({
-  staked: n(dollars.vesting_shares),
-  savings:
-    n(dollars.savings_balance) +
-    n(dollars.hbd_saving_balance) +
-    n(dollars.savings_pending_amount_hive) +
-    n(dollars.savings_pending_amount_hbd),
-  liquid: n(dollars.balance) + n(dollars.hbd_balance),
-  unclaimed:
-    n(dollars.reward_hive_balance) +
-    n(dollars.reward_hbd_balance) +
-    n(dollars.reward_vesting_balance),
-  openOrders:
-    n(dollars.open_orders_hive_amount) + n(dollars.open_orders_hbd_amount),
-  locked:
-    n(dollars.conversion_pending_amount_hive) +
-    n(dollars.conversion_pending_amount_hbd),
-  escrow:
-    n(dollars.escrow_pending_amount_hive) +
-    n(dollars.escrow_pending_amount_hbd),
-  poweringDown: n(dollars.vesting_withdraw_rate),
-});
+): WealthComposition => {
+  const vesting = n(dollars.vesting_shares);
+  // The weekly power-down instalment is its own segment, so it leaves staked.
+  // Capped at vesting so the two never add up to more than was staked.
+  const poweringDown = Math.min(vesting, n(dollars.vesting_withdraw_rate));
+  return {
+    staked: vesting - poweringDown,
+    savings:
+      n(dollars.savings_balance) +
+      n(dollars.hbd_saving_balance) +
+      n(dollars.savings_pending_amount_hive) +
+      n(dollars.savings_pending_amount_hbd),
+    liquid: n(dollars.balance) + n(dollars.hbd_balance),
+    unclaimed:
+      n(dollars.reward_hive_balance) +
+      n(dollars.reward_hbd_balance) +
+      n(dollars.reward_vesting_balance),
+    openOrders:
+      n(dollars.open_orders_hive_amount) + n(dollars.open_orders_hbd_amount),
+    locked:
+      n(dollars.conversion_pending_amount_hive) +
+      n(dollars.conversion_pending_amount_hbd),
+    escrow:
+      n(dollars.escrow_pending_amount_hive) +
+      n(dollars.escrow_pending_amount_hbd),
+    poweringDown,
+  };
+};
 
 export const WEALTH_SEGMENTS: {
   key: WealthSegmentKey;

@@ -5,8 +5,10 @@ import {
 } from "@/utils/compare/wealth";
 
 // Every `dollars.*` entry that useConvertedAccountDetails folds into
-// account_value, except the two it deliberately skips (delegated/received
-// vesting). Values are the formatted HBD strings the real object carries.
+// account_value. Delegated/received vesting are skipped, and the weekly
+// power-down instalment is already inside vesting_shares, so it is carved out
+// of staked instead of being added. Values are the formatted HBD strings the
+// real object carries.
 const dollars = {
   account_value: "0 HBD",
   vesting_shares: "1,000.000 HBD",
@@ -31,7 +33,7 @@ const dollars = {
   received_vesting_shares: "600.000 HBD",
 };
 
-const SUM_OF_PARTS = 1000 + 32 + 67 + 27 + 23 + 27 + 31 + 17;
+const SUM_OF_PARTS = 1000 + 32 + 67 + 27 + 23 + 27 + 31;
 
 describe("compare wealth composition", () => {
   it("covers all eight segments the account card draws", () => {
@@ -50,7 +52,7 @@ describe("compare wealth composition", () => {
   it("splits every dollars entry into exactly one segment", () => {
     const c = buildWealthComposition(dollars);
     expect(c).toEqual({
-      staked: 1000,
+      staked: 983,
       savings: 32,
       liquid: 67,
       unclaimed: 27,
@@ -66,6 +68,16 @@ describe("compare wealth composition", () => {
   // shown right above it.
   it("reconciles with the account_value the header displays", () => {
     expect(wealthTotal(buildWealthComposition(dollars))).toBe(SUM_OF_PARTS);
+  });
+
+  it("caps powering down at the staked value", () => {
+    const c = buildWealthComposition({
+      vesting_shares: "10.000 HBD",
+      vesting_withdraw_rate: "12.000 HBD",
+    });
+    expect(c.staked).toBe(0);
+    expect(c.poweringDown).toBe(10);
+    expect(wealthTotal(c)).toBe(10);
   });
 
   it("leaves delegated and received vesting out of the breakdown", () => {

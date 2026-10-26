@@ -369,7 +369,11 @@ const useCompareAccount = (
       lifetimePosts: fad.post_count != null ? Number(fad.post_count) : null,
       lastPostMs: isFinite(lastPostRaw) ? lastPostRaw : null,
       totalHp,
-      effectiveHp: totalHp + receivedHp - delegatedOutHp,
+      // Floored: the rounded-up last power-down week would read "-0.00".
+      effectiveHp: Math.max(
+        0,
+        totalHp + receivedHp - delegatedOutHp - num(fad.vesting_withdraw_rate)
+      ),
       receivedHp,
       delegatedOutHp,
       liquidHive: num(fad.balance),

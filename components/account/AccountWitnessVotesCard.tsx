@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback, Fragment } from "react";
-import { ArrowDown, ArrowUp } from "lucide-react";
+import { useCallback, Fragment } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { ArrowDown, ArrowUp, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableRow, TableCell } from "../ui/table";
@@ -8,6 +9,7 @@ import { config } from "@/Config";
 import fetchingService from "@/services/FetchingService";
 import { useI18n } from "@/i18n/i18n";
 import DataExport from "../DataExport";
+import useCollapsedState from "@/hooks/common/useCollapsedState";
 
 type AccountWitnessVotesCardProps = {
   voters: string[];
@@ -23,7 +25,7 @@ const buildTableBody = (voters: string[], isProxy: boolean) => {
       <Fragment key={index}>
         <TableRow>
           <TableCell>{index + 1}</TableCell>
-          <TableCell className="text-right">
+          <TableCell className="text-end">
             <Link
               className={cn("text-link", { italic: isProxy })} // Apply italic class conditionally
               href={`/@${voter}`}
@@ -45,10 +47,8 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
 }) => {
   const { t } = useI18n();
   const [isPropertiesHidden, setIsPropertiesHidden] =
-    useState(!isInitiallyOpen);
+    useCollapsedState(isInitiallyOpen);
   const voters = [...initialVoters];
-  const [votersForProxy, setVotersForProxy] = useState<any[]>([]);
-  const [allProxies, setAllProxies] = useState<string[]>([]);
 
   const handlePropertiesVisibility = () => {
     setIsPropertiesHidden(!isPropertiesHidden);
@@ -95,21 +95,27 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
     []
   );
 
-  useEffect(() => {
-    if (!proxy) return;
-    const getVotersForProxy = async () => {
-      const proxiesList: string[] = []; // Local list to track all proxy names
+  const {
+    data: proxyChain,
+    isLoading: isProxyChainLoading,
+    isError: isProxyChainError,
+  } = useQuery({
+    queryKey: ["witness_votes_proxy_chain", proxy],
+    queryFn: async () => {
+      const proxies: string[] = [];
       const votes = await fetchWitnessVotes(
         proxy,
         1,
         config.maxProxyDepth,
-        proxiesList
+        proxies
       );
-      setVotersForProxy(votes);
-      setAllProxies(proxiesList); // Update state with the complete list of proxies
-    };
-    getVotersForProxy();
-  }, [proxy, fetchWitnessVotes]);
+      return { votes, proxies };
+    },
+    enabled: !!proxy,
+    refetchOnWindowFocus: false,
+  });
+  const votersForProxy: string[] = proxyChain?.votes ?? [];
+  const allProxies = proxyChain?.proxies ?? [];
 
   if (proxy != null && proxy.length > 0) {
     return (
@@ -122,7 +128,7 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
             <div className="text-lg">
               {t("accountWitnessVotesCard.witnessVotesProxy")}
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 rtl:space-x-reverse">
               <DataExport
                 data={prepareExportData(votersForProxy)}
                 filename={`${accountName}_${t("accountWitnessVotesCard.witnessVotesProxyExport")}`}
@@ -133,41 +139,51 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
           </div>
         </CardHeader>
         <CardContent hidden={isPropertiesHidden}>
-          <div>
-            <Link className="text-link" href={`/@${accountName}`}>
-              @{accountName}
-            </Link>
-            <span> {t("accountWitnessVotesCard.uses")} </span>
-
-            {allProxies.map((proxyName, index) => (
-              <span key={index}>
-                <Link className="text-link" href={`/@${proxyName}`}>
-                  @{proxyName}
-                </Link>
-                {index < allProxies.length - 1 && (
-                  <span>, {t("accountWitnessVotesCard.whoUses")} </span>
-                )}
-              </span>
-            ))}
-
-            <span> {t("accountWitnessVotesCard.asVotingProxy")}</span>
-            <br />
-            <br />
-            <h3>
-              {t("accountWitnessVotesCard.votesOf")}{" "}
-              <Link
-                className="text-link"
-                href={`/@${allProxies[allProxies.length - 1]}`}
-              >
-                @{allProxies[allProxies.length - 1]}
+          {isProxyChainLoading ? (
+            <div className="flex justify-center py-4">
+              <Loader2 className="animate-spin h-6 w-6" />
+            </div>
+          ) : isProxyChainError || !allProxies.length ? (
+            <p className="text-sm text-center text-red-500">
+              {t("common.errorLoadingData")}
+            </p>
+          ) : (
+            <div>
+              <Link className="text-link" href={`/@${accountName}`}>
+                @{accountName}
               </Link>
-            </h3>
-            <Table>
-              <TableBody className="text-sm">
-                {buildTableBody(votersForProxy, true)}
-              </TableBody>
-            </Table>
-          </div>
+              <span> {t("accountWitnessVotesCard.uses")} </span>
+
+              {allProxies.map((proxyName, index) => (
+                <span key={index}>
+                  <Link className="text-link" href={`/@${proxyName}`}>
+                    @{proxyName}
+                  </Link>
+                  {index < allProxies.length - 1 && (
+                    <span>, {t("accountWitnessVotesCard.whoUses")} </span>
+                  )}
+                </span>
+              ))}
+
+              <span> {t("accountWitnessVotesCard.asVotingProxy")}</span>
+              <br />
+              <br />
+              <h3>
+                {t("accountWitnessVotesCard.votesOf")}{" "}
+                <Link
+                  className="text-link"
+                  href={`/@${allProxies[allProxies.length - 1]}`}
+                >
+                  @{allProxies[allProxies.length - 1]}
+                </Link>
+              </h3>
+              <Table>
+                <TableBody className="text-sm">
+                  {buildTableBody(votersForProxy, true)}
+                </TableBody>
+              </Table>
+            </div>
+          )}
         </CardContent>
       </Card>
     );
@@ -185,7 +201,7 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
             {t("accountWitnessVotesCard.witnessVotes")} ({voters.length} /{" "}
             {config.maxWitnessVotes})
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 rtl:space-x-reverse">
             <DataExport
               data={prepareExportData(voters)}
               filename={`${accountName}_${t("accountWitnessVotesCard.witnessVotesExport")}`}

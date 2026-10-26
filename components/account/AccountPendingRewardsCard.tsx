@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   ArrowDown,
   ArrowUp,
@@ -23,6 +23,7 @@ import {
 import { useI18n } from "@/i18n/i18n";
 import { useAuth } from "@/contexts/AuthContext";
 import Hive from "@/types/Hive";
+import useCollapsedState from "@/hooks/common/useCollapsedState";
 import usePendingRewardsSummary from "@/hooks/api/accountPage/usePendingRewardsSummary";
 import { naiAssetToFloat, formatNaiAsset } from "@/utils/Calculations";
 import Explorer from "@/types/Explorer";
@@ -98,12 +99,7 @@ const AccountPendingRewardsCard: React.FC<AccountPendingRewardsCardProps> = ({
 }) => {
   const { t, locale } = useI18n();
   const { username, isInitializing } = useAuth();
-  const [isHidden, setIsHidden] = useState(!isInitiallyOpen);
-
-  // Re-sync when the wallet tab is expanded/collapsed, like the sibling cards.
-  useEffect(() => {
-    setIsHidden(!isInitiallyOpen);
-  }, [isInitiallyOpen]);
+  const [isHidden, setIsHidden] = useCollapsedState(isInitiallyOpen);
   const [currency, setCurrency] = useState<Currency>("HBD");
 
   const {

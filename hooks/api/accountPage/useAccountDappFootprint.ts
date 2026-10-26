@@ -10,7 +10,8 @@ const useAccountDappFootprint = (
 ) => {
   const {
     data: dappFootprint,
-    isLoading: isDappFootprintLoading,
+    isLoading,
+    isPreviousData,
     isError: isDappFootprintError,
   }: UseQueryResult<Hive.AccountDappFootprintResponse | undefined> = useQuery({
     queryKey: ["account_dapp_footprint", accountName, fromDate, toDate],
@@ -21,6 +22,10 @@ const useAccountDappFootprint = (
     staleTime: 30 * 60 * 1000,
     refetchOnWindowFocus: false,
   });
+
+  // Data kept from the previous range counts as loading, so a report never
+  // shows the old numbers under the newly selected range.
+  const isDappFootprintLoading = isLoading || isPreviousData;
 
   return {
     dappFootprint,
