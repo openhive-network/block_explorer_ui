@@ -17,7 +17,6 @@ ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
 ENV PATH=$PATH:/home/node/.npm-global/bin
 RUN <<-EOF
     npm install -g @beam-australia/react-env@3.1.1
-    npm install -g sharp@0.32.4
     npm install -g pnpm@10.33.0
 EOF
 COPY --chown=node package.json pnpm-lock.yaml ./
@@ -69,7 +68,6 @@ USER node
 RUN mkdir ~/.npm-global
 ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
 ENV PATH=$PATH:/home/node/.npm-global/bin
-ENV NEXT_SHARP_PATH=/home/node/.npm-global/lib/node_modules/sharp
 
 COPY --from=deps --chown=node /home/node/.npm-global /home/node/.npm-global
 COPY --from=builder --chown=node /home/node/app/.next/standalone ./
