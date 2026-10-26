@@ -13,6 +13,7 @@ const useWitnesses = (
     data: witnessesData,
     isLoading: isWitnessDataLoading,
     isError: isWitnessDataError,
+    isPreviousData: isWitnessDataPreviousData,
   } = useQuery({
     queryKey: ["witnesses", witnessesLimit, orderBy, orderIs, page],
     queryFn: () =>
@@ -22,7 +23,12 @@ const useWitnesses = (
     enabled: enabled,
   });
 
-  return { witnessesData, isWitnessDataLoading, isWitnessDataError };
+  return {
+    witnessesData,
+    isWitnessDataLoading,
+    isWitnessDataError,
+    isWitnessDataPreviousData,
+  };
 };
 
 export default useWitnesses;

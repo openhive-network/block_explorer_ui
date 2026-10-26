@@ -44,6 +44,8 @@ export const config = {
   // the voted set grows, and replace this with the server-side voter filter as
   // soon as the API offers one.
   votedWitnessesLimit: 400,
+  // Most producers one missed-blocks call returns (the API maximum).
+  witnessMissedBlocksLimit: 1000,
   topHolders: {
     totalCount: 2000, // Total number of top holders
     pageSize: 100, // Page size for pagination
@@ -68,6 +70,8 @@ export const config = {
   // these at the account interval is all cost and no freshness.
   contentRefreshInterval: 120000,
   marketHistoryRefreshInterval: 60000,
+  // Moves the rolling 24h/7d missed-blocks windows forward on a long-open page.
+  witnessMissedBlocksRefreshInterval: 300000,
   lastBlocksForWidget: 20,
   firstBlockTime: "2016-03-24T16:05:00",
   popularCommunitiesCount: 10,

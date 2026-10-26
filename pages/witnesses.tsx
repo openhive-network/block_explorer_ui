@@ -26,12 +26,14 @@ import DataCountMessage from "@/components/DataCountMessage";
 import DataExport from "@/components/DataExport";
 import { Card } from "@/components/ui/card";
 import useWitnessVoteChain from "@/hooks/api/common/useWitnessVoteChain";
+import useRecentMissedBlocks from "@/hooks/api/common/useRecentMissedBlocks";
 import { useAuth } from "@/contexts/AuthContext";
 import VoterFilterBanner from "@/components/Witnesses/VoterFilterBanner";
 import useCompareSelection from "@/hooks/common/useCompareSelection";
 import CompareSelectionBar from "@/components/compare/CompareSelectionBar";
 import WitnessesTable, {
   SORT_KEY_BY_CELL,
+  MISSED_SORT_FIELDS,
 } from "@/components/Witnesses/WitnessesTable";
 import AutocompleteInput from "@/components/ui/AutoCompleteInput";
 import WitnessScheduleIcon from "@/components/WitnessScheduleIcon";
@@ -211,21 +213,46 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
 
   // When filtering by voter, fetch a larger window so lower-ranked
   // witnesses can still resolve.
-  const { witnessesData, isWitnessDataLoading } = useWitnesses(
-    voterFilter ? config.votedWitnessesLimit : pageSize,
-    voterFilter ? SORT_KEY_BY_CELL["rank"] : sort.orderBy,
-    voterFilter ? "asc" : sort.isOrderAscending ? "asc" : "desc",
-    true,
-    voterFilter ? 1 : page
-  );
+  // Missed 24h/7d come from another API, so for those sorts the top of the list
+  // is loaded at once and sorted and paged here.
+  const isMissedSort =
+    !voterFilter && MISSED_SORT_FIELDS.includes(sort.orderBy);
+  const isClientList = !!voterFilter || isMissedSort;
+  const { witnessesData, isWitnessDataLoading, isWitnessDataPreviousData } =
+    useWitnesses(
+      isClientList ? config.votedWitnessesLimit : pageSize,
+      isClientList ? SORT_KEY_BY_CELL["rank"] : sort.orderBy,
+      isClientList ? "asc" : sort.isOrderAscending ? "asc" : "desc",
+      true,
+      isClientList ? 1 : page
+    );
 
   const { latestVersion, totalWitnesses } = useLatestWitnessVersion();
+  const recentMissed = useRecentMissedBlocks();
+  const { getRecentMissed } = recentMissed;
+
+  // Switching between the server-paged list and the 400-row list keeps the old
+  // rows until the new list arrives; showing them re-sorted would mislead.
+  const [loadedAsClientList, setLoadedAsClientList] = useState(isClientList);
+  useEffect(() => {
+    if (witnessesData && !isWitnessDataPreviousData)
+      setLoadedAsClientList(isClientList);
+  }, [witnessesData, isWitnessDataPreviousData, isClientList]);
+  const isSwitchingList =
+    isWitnessDataPreviousData && loadedAsClientList !== isClientList;
+
+  // The missed columns vanish when the node can't serve them; don't leave the
+  // table in a sort nobody can see.
+  useEffect(() => {
+    if (isMissedSort && !recentMissed.isAvailable)
+      setSort({ orderBy: SORT_KEY_BY_CELL["rank"], isOrderAscending: true });
+  }, [isMissedSort, recentMissed.isAvailable]);
 
   useEffect(() => {
-    if (!totalWitnesses || voterFilter) return;
+    if (!totalWitnesses || isClientList) return;
     const lastPage = Math.max(1, Math.ceil(totalWitnesses / pageSize));
     if (page > lastPage) setPage(lastPage);
-  }, [totalWitnesses, page, pageSize, voterFilter]);
+  }, [totalWitnesses, page, pageSize, isClientList]);
 
   const { hiveChain } = useHiveChainContext();
   const { dynamicGlobalData } = useDynamicGlobal() as any;
@@ -297,8 +324,19 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
   ]);
 
   const sortedFilteredWitnesses = useMemo(() => {
-    if (!voterFilter || filteredWitnesses.length === 0)
+    if (!isClientList || filteredWitnesses.length === 0)
       return filteredWitnesses;
+    if (MISSED_SORT_FIELDS.includes(sort.orderBy)) {
+      const missed = (w: any) => {
+        const recent = getRecentMissed(w.witness_name);
+        const row = sort.orderBy === "missed_24h" ? recent.day : recent.week;
+        return row?.missed_count ?? 0;
+      };
+      const dir = sort.isOrderAscending ? 1 : -1;
+      return [...filteredWitnesses].sort(
+        (a: any, b: any) => (missed(a) - missed(b)) * dir || a.rank - b.rank
+      );
+    }
     const apiFieldToObjField: Record<string, string> = {
       rank: "rank",
       witness: "witness_name",
@@ -328,7 +366,18 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
         String(av).localeCompare(String(bv), undefined, { numeric: true }) * dir
       );
     });
-  }, [filteredWitnesses, voterFilter, sort]);
+  }, [filteredWitnesses, isClientList, sort, getRecentMissed]);
+
+  const pagedWitnesses = useMemo(
+    () =>
+      isMissedSort
+        ? sortedFilteredWitnesses.slice((page - 1) * pageSize, page * pageSize)
+        : sortedFilteredWitnesses,
+    [isMissedSort, sortedFilteredWitnesses, page, pageSize]
+  );
+  const totalListed = isMissedSort
+    ? sortedFilteredWitnesses.length
+    : witnessesData?.total_witnesses;
 
   // Exports the page on screen — the same rows, in the same order, as the table.
   // Vests are converted to HP so the file reads like the table rather than raw
@@ -352,7 +401,7 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
     Number(value ?? 0).toLocaleString(locale);
 
   const prepareExportData = () =>
-    sortedFilteredWitnesses.map((witness: any) => ({
+    pagedWitnesses.map((witness: any) => ({
       [t("common.rank")]: num(witness.rank),
       [t("common.name")]: witness.witness_name,
       [t("witnesses.votes")]: toHp(witness.vests),
@@ -368,6 +417,14 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
       [t("witnesses.voters")]: num(witness.voters_num),
       [t("witnesses.votersChange")]: num(witness.voters_num_daily_change),
       [t("witnesses.missedblocks")]: num(witness.missed_blocks),
+      ...(recentMissed.isAvailable && {
+        [t("witnesses.missed24h")]: recentMissed.isDayUnknown
+          ? "--"
+          : num(getRecentMissed(witness.witness_name).day?.missed_count),
+        [t("witnesses.missed7d")]: recentMissed.isWeekUnknown
+          ? "--"
+          : num(getRecentMissed(witness.witness_name).week?.missed_count),
+      }),
       [t("witnesses.blocksize")]: num(witness.block_size),
       [t("witnesses.apr")]: formatPercent(witness.hbd_interest_rate, locale),
       [t("witnesses.pricefeed")]: num(witness.price_feed),
@@ -383,10 +440,11 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
     setPage(1);
     setSort((prevSort) => ({
       orderBy: apiFieldForSort,
+      // Most misses first is the useful first view.
       isOrderAscending:
         apiFieldForSort === prevSort.orderBy
           ? !prevSort.isOrderAscending
-          : true,
+          : !MISSED_SORT_FIELDS.includes(apiFieldForSort),
     }));
   };
 
@@ -473,6 +531,7 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
             )}
 
             {isWitnessDataLoading ||
+            isSwitchingList ||
             !router.isReady ||
             (voterFilter && isFilterLoading) ? (
               <div className="flex justify-center items-center py-12">
@@ -494,7 +553,7 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
                   liveDataEnabled={false}
                 />
 
-                {!voterFilter && !!witnessesData.total_witnesses && (
+                {!voterFilter && !!totalListed && (
                   <div className="flex justify-center w-full mt-4">
                     <div className="flex w-full justify-center items-center flex-wrap bg-theme">
                       <div className="flex items-center justify-center w-full md:ms-auto md:w-3/4">
@@ -502,14 +561,14 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
                           currentPage={page}
                           onPageChange={setPage}
                           pageSize={pageSize}
-                          totalCount={witnessesData.total_witnesses}
+                          totalCount={totalListed}
                         />
                       </div>
                       <div className="flex items-center mt-2 md:ms-auto w-full md:w-auto justify-center md:justify-end mb-2">
                         <JumpToPage
                           currentPage={page}
                           onPageChange={setPage}
-                          totalCount={witnessesData.total_witnesses}
+                          totalCount={totalListed}
                           pageSize={pageSize}
                         />
                       </div>
@@ -538,7 +597,7 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
 
                 <Card className="w-full rounded">
                   <WitnessesTable
-                    witnesses={sortedFilteredWitnesses}
+                    witnesses={pagedWitnesses}
                     sort={sort}
                     onSortBy={handleSortBy}
                     showVoteColumn={showVoteColumn}
@@ -546,6 +605,7 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
                     hiveChain={hiveChain}
                     totalVestingFundHive={totalVestingFundHive}
                     totalVestingShares={totalVestingShares}
+                    recentMissed={recentMissed}
                     onOpenVoters={(name) => {
                       setVoterAccount(name);
                       setIsVotersOpen(true);
