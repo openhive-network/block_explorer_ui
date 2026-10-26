@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import Link from "next/link";
 import {
   ShieldOff,
@@ -16,6 +16,15 @@ import { useI18n } from "@/i18n/i18n";
 import { cn } from "@/lib/utils";
 import { formatAndDelocalizeFromTime } from "@/utils/TimeUtils";
 import HiveAvatar from "@/components/ui/HiveAvatar";
+import useRecentMissedBlocks from "@/hooks/api/common/useRecentMissedBlocks";
+import { formatLocalePercent } from "@/utils/chartUtils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipPortal,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type SortKey = "name" | "rank" | "missed" | "feedAge";
 type SortDir = "asc" | "desc";
@@ -120,6 +129,15 @@ const WitnessHealthWidget = () => {
   } = useWitnessVoteChain(isLoggedIn ? username || "" : "");
   const { witnesses, isLoading: isHealthLoading } =
     useWatchedWitnesses(witnessVotes);
+  // Health is about recent misses; lifetime stays as the fallback and in the tooltip.
+  const recentMissed = useRecentMissedBlocks();
+  const showRecent = recentMissed.isAvailable && !recentMissed.isWeekUnknown;
+  const { getRecentMissed } = recentMissed;
+  const missedOf = useCallback(
+    (name: string, lifetime: number) =>
+      showRecent ? (getRecentMissed(name).week?.missed_count ?? 0) : lifetime,
+    [showRecent, getRecentMissed]
+  );
 
   const hasProxy = proxyChain.length > 0;
 
@@ -138,7 +156,11 @@ const WitnessHealthWidget = () => {
         case "name":
           return a.name.localeCompare(b.name) * dir;
         case "missed":
-          return (a.missedBlocks - b.missedBlocks) * dir;
+          return (
+            (missedOf(a.name, a.missedBlocks) -
+              missedOf(b.name, b.missedBlocks)) *
+              dir || a.rank - b.rank
+          );
         case "feedAge": {
           const aT = a.feedUpdatedAt?.getTime() ?? 0;
           const bT = b.feedUpdatedAt?.getTime() ?? 0;
@@ -149,7 +171,7 @@ const WitnessHealthWidget = () => {
       }
     });
     return list;
-  }, [witnesses, sortKey, sortDir]);
+  }, [witnesses, sortKey, sortDir, missedOf]);
 
   return (
     <Card className="col-span-12 lg:col-span-3 overflow-hidden mb-2">
@@ -213,7 +235,8 @@ const WitnessHealthWidget = () => {
               <div className="flex items-center gap-1.5 px-2 py-1 mb-1.5 rounded-md bg-slate-50 dark:bg-slate-800/50 text-xs text-slate-600 dark:text-slate-400 flex-wrap">
                 <span>
                   <span className="font-semibold text-slate-800 dark:text-slate-200">
-                    {witnessVotes.length}/30
+                    {witnessVotes.length.toLocaleString(locale)}/
+                    {(30).toLocaleString(locale)}
                   </span>{" "}
                   {t("watchlist.witnesses.votesUsed")}
                 </span>
@@ -223,7 +246,8 @@ const WitnessHealthWidget = () => {
                       ·
                     </span>
                     <span className="text-green-600 dark:text-green-400">
-                      {activeCount} {t("watchlist.witnesses.active")}
+                      {activeCount.toLocaleString(locale)}{" "}
+                      {t("watchlist.witnesses.active")}
                     </span>
                     {inactiveCount > 0 && (
                       <>
@@ -231,7 +255,8 @@ const WitnessHealthWidget = () => {
                           ·
                         </span>
                         <span className="text-red-500 dark:text-red-400">
-                          {inactiveCount} {t("watchlist.witnesses.inactive")}
+                          {inactiveCount.toLocaleString(locale)}{" "}
+                          {t("watchlist.witnesses.inactive")}
                         </span>
                       </>
                     )}
@@ -278,7 +303,11 @@ const WitnessHealthWidget = () => {
                         sortKey === col.key && "text-primary dark:text-primary"
                       )}
                     >
-                      {t(col.labelKey)}
+                      {t(
+                        col.key === "missed" && showRecent
+                          ? "witnesses.missed7d"
+                          : col.labelKey
+                      )}
                       <SortIcon
                         col={col.key}
                         sortKey={sortKey}
@@ -288,87 +317,149 @@ const WitnessHealthWidget = () => {
                   ))}
                 </div>
 
-                <ul className="space-y-0.5 max-h-72 overflow-y-auto pt-0.5 pr-0.5">
-                  {sorted.map((w) => {
-                    const stale = isFeedStale(w.feedUpdatedAt);
-                    return (
-                      <li
-                        key={w.name}
-                        className={cn(
-                          "flex items-center gap-1 px-2 py-1 rounded border",
-                          w.isActive
-                            ? "bg-slate-50 dark:bg-slate-900 border-transparent dark:border-slate-800"
-                            : "bg-red-50/60 dark:bg-red-950/20 border-red-200/60 dark:border-red-900/30"
-                        )}
-                      >
-                        <HiveAvatar
-                          accountName={w.name}
-                          size={18}
-                          alt={w.name}
-                          className="rounded-full flex-shrink-0"
-                        />
-                        <span
-                          title={
-                            w.isLoading
-                              ? ""
-                              : w.isActive
-                                ? t("watchlist.witnesses.active")
-                                : t("watchlist.witnesses.inactive")
-                          }
+                <TooltipProvider>
+                  <ul className="space-y-0.5 max-h-72 overflow-y-auto pt-0.5 pr-0.5">
+                    {sorted.map((w) => {
+                      const stale = isFeedStale(w.feedUpdatedAt);
+                      return (
+                        <li
+                          key={w.name}
                           className={cn(
-                            "h-1.5 w-1.5 rounded-full flex-shrink-0",
-                            w.isLoading
-                              ? "bg-slate-300 animate-pulse"
-                              : w.isActive
-                                ? "bg-green-500"
-                                : "bg-red-500"
+                            "flex items-center gap-1 px-2 py-1 rounded border",
+                            w.isActive
+                              ? "bg-slate-50 dark:bg-slate-900 border-transparent dark:border-slate-800"
+                              : "bg-red-50/60 dark:bg-red-950/20 border-red-200/60 dark:border-red-900/30"
                           )}
-                        />
-                        <Link
-                          href={`/@${w.name}`}
-                          className="flex-1 min-w-0 text-xs font-medium text-link hover:underline truncate"
                         >
-                          @{w.name}
-                        </Link>
+                          <HiveAvatar
+                            accountName={w.name}
+                            size={18}
+                            alt={w.name}
+                            className="rounded-full flex-shrink-0"
+                          />
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span
+                                className={cn(
+                                  "h-1.5 w-1.5 rounded-full flex-shrink-0",
+                                  w.isLoading
+                                    ? "bg-slate-300 animate-pulse"
+                                    : w.isActive
+                                      ? "bg-green-500"
+                                      : "bg-red-500"
+                                )}
+                              />
+                            </TooltipTrigger>
+                            {!w.isLoading && (
+                              <TooltipPortal>
+                                <TooltipContent className="bg-theme text-text text-xs">
+                                  {w.isActive
+                                    ? t("watchlist.witnesses.active")
+                                    : t("watchlist.witnesses.inactive")}
+                                </TooltipContent>
+                              </TooltipPortal>
+                            )}
+                          </Tooltip>
+                          <Link
+                            href={`/@${w.name}`}
+                            className="flex-1 min-w-0 text-xs font-medium text-link hover:underline break-all"
+                          >
+                            @{w.name}
+                          </Link>
 
-                        <span className="w-9 text-center flex-shrink-0 text-[0.6rem] font-semibold text-slate-500 dark:text-slate-400">
-                          {w.rank > 0 ? `#${w.rank}` : "—"}
-                        </span>
+                          <span className="w-9 text-center flex-shrink-0 text-[0.6rem] font-semibold text-slate-500 dark:text-slate-400">
+                            {w.rank > 0
+                              ? `#${w.rank.toLocaleString(locale)}`
+                              : "—"}
+                          </span>
 
-                        <span
-                          className={cn(
-                            "w-14 text-right flex-shrink-0 text-[0.6rem] font-medium",
-                            w.missedBlocks > 500
-                              ? "text-red-500 dark:text-red-400"
-                              : w.missedBlocks > 0
-                                ? "text-amber-600 dark:text-amber-400"
+                          {(() => {
+                            const recent = getRecentMissed(w.name);
+                            const missed = missedOf(w.name, w.missedBlocks);
+                            const value = (
+                              <span
+                                className={cn(
+                                  "w-14 text-right flex-shrink-0 text-[0.6rem] font-medium",
+                                  showRecent
+                                    ? missed > 0
+                                      ? "text-red-500 dark:text-red-400"
+                                      : "text-slate-300 dark:text-slate-600"
+                                    : missed > 500
+                                      ? "text-red-500 dark:text-red-400"
+                                      : missed > 0
+                                        ? "text-amber-600 dark:text-amber-400"
+                                        : "text-slate-300 dark:text-slate-600"
+                                )}
+                              >
+                                {missed > 0
+                                  ? missed.toLocaleString(locale)
+                                  : "—"}
+                              </span>
+                            );
+                            if (!showRecent) return value;
+                            return (
+                              <Tooltip>
+                                <TooltipTrigger asChild>{value}</TooltipTrigger>
+                                <TooltipPortal>
+                                  <TooltipContent className="bg-theme text-text text-xs">
+                                    {t("witnesses.missedSummary", {
+                                      day: recentMissed.isDayUnknown
+                                        ? "--"
+                                        : (
+                                            recent.day?.missed_count ?? 0
+                                          ).toLocaleString(locale),
+                                      week: (
+                                        recent.week?.missed_count ?? 0
+                                      ).toLocaleString(locale),
+                                      lifetime:
+                                        w.missedBlocks.toLocaleString(locale),
+                                    })}
+                                    {recent.week &&
+                                      recent.week.missed_count > 0 && (
+                                        <div className="mt-0.5 opacity-80">
+                                          {t("witnesses.missedRateTooltip", {
+                                            rate: formatLocalePercent(
+                                              recent.week.rate * 100,
+                                              locale,
+                                              2
+                                            ),
+                                            missed:
+                                              recent.week.missed_count.toLocaleString(
+                                                locale
+                                              ),
+                                            scheduled: (
+                                              recent.week.missed_count +
+                                              recent.week.produced_count
+                                            ).toLocaleString(locale),
+                                          })}
+                                        </div>
+                                      )}
+                                  </TooltipContent>
+                                </TooltipPortal>
+                              </Tooltip>
+                            );
+                          })()}
+
+                          <span
+                            className={cn(
+                              "w-20 text-right flex-shrink-0 text-[0.6rem] font-medium truncate",
+                              stale && w.isActive
+                                ? "text-orange-500 dark:text-orange-400"
                                 : "text-slate-300 dark:text-slate-600"
-                          )}
-                        >
-                          {w.missedBlocks > 0
-                            ? w.missedBlocks.toLocaleString()
-                            : "—"}
-                        </span>
-
-                        <span
-                          className={cn(
-                            "w-20 text-right flex-shrink-0 text-[0.6rem] font-medium truncate",
-                            stale && w.isActive
-                              ? "text-orange-500 dark:text-orange-400"
-                              : "text-slate-300 dark:text-slate-600"
-                          )}
-                        >
-                          {w.feedUpdatedAt
-                            ? formatAndDelocalizeFromTime(
-                                w.feedUpdatedAt,
-                                locale
-                              )
-                            : "—"}
-                        </span>
-                      </li>
-                    );
-                  })}
-                </ul>
+                            )}
+                          >
+                            {w.feedUpdatedAt
+                              ? formatAndDelocalizeFromTime(
+                                  w.feedUpdatedAt,
+                                  locale
+                                )
+                              : "—"}
+                          </span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </TooltipProvider>
               </>
             )}
           </>
