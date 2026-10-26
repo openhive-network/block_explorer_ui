@@ -10,6 +10,7 @@ import AccountDetailsCard from "./AccountDetailsCard";
 import JSONCard from "../JSONCard";
 import AccountAuthoritiesCard from "./AccountAuthoritiesCard";
 import AccountWitnessVotesCard from "./AccountWitnessVotesCard";
+import AccountWitnessMissedBlocksCard from "./AccountWitnessMissedBlocksCard";
 const VotersDialog = dynamic(() => import("../Witnesses/VotersDialog"), {
   ssr: false,
 });
@@ -305,6 +306,15 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
         isInitiallyOpen={isInitiallyOpen}
         dynamicGlobalData={dynamicGlobalData}
       />
+      {accountDetails.is_witness &&
+        !isWitnessDetailsError &&
+        !!witnessDetails && (
+          <AccountWitnessMissedBlocksCard
+            accountName={accountName}
+            lifetimeMissed={witnessDetails.missed_blocks}
+            isInitiallyOpen={isInitiallyOpen}
+          />
+        )}
       {accountDetails.is_witness &&
         !isWitnessDetailsError &&
         !!witnessDetails && (
@@ -608,6 +618,15 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
                     isInitiallyOpen={tabExpandedStates.governance}
                     dynamicGlobalData={dynamicGlobalData}
                   />
+                  {accountDetails.is_witness &&
+                    !isWitnessDetailsError &&
+                    !!witnessDetails && (
+                      <AccountWitnessMissedBlocksCard
+                        accountName={accountName}
+                        lifetimeMissed={witnessDetails.missed_blocks}
+                        isInitiallyOpen={tabExpandedStates.governance}
+                      />
+                    )}
                   {accountDetails.is_witness &&
                     !isWitnessDetailsError &&
                     !!witnessDetails && (
