@@ -21,7 +21,7 @@ Web-based GUI for exploring Hive blockchain data. Features include:
 - **Blockchain**: @hiveio/wax 2.0.1, @hiveio/hb-healthchecker-component
 - **Charts**: ECharts 5.6.0, Recharts 2.9.2
 - **Testing**: Playwright 1.64.1 (Chromium, Firefox, WebKit)
-- **Runtime**: Node.js 24.21.0+
+- **Runtime**: Node.js 24 (exact version from hive/common-ci-configuration's `NODE_VERSION`)
 
 ## Directory Structure
 
@@ -81,7 +81,7 @@ npm run pw:test:local:webkit   # WebKit only
 
 **Docker:**
 ```bash
-scripts/build_instance.sh "$(pwd)"
+scripts/build_instance.sh --node-version=<version> "$(pwd)"
 scripts/run_instance.sh --image=<img> --api-endpoint=<api> --port=5000
 
 # Or with Docker Compose

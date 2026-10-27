@@ -15,6 +15,9 @@ variable "GIT_CURRENT_BRANCH" {}
 variable "GIT_LAST_LOG_MESSAGE" {}
 variable "GIT_LAST_COMMITTER" {}
 variable "GIT_LAST_COMMIT_DATE" {}
+# Node version of the base image. common-ci-configuration sets it in CI;
+# scripts/build_instance.sh requires it locally.
+variable "NODE_IMAGE_VERSION" {}
 variable "NPM_CONFIG_REGISTRY" {
   default = ""
 }
@@ -44,6 +47,7 @@ target "local-build" {
     GIT_LAST_COMMITTER = "${GIT_LAST_COMMITTER}",
     GIT_LAST_COMMIT_DATE = "${GIT_LAST_COMMIT_DATE}",
     NPM_CONFIG_REGISTRY = "${NPM_CONFIG_REGISTRY}",
+    NODE_VERSION = "${NODE_IMAGE_VERSION}",
   }
   output = [
     "type=docker"
