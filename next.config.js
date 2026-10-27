@@ -38,35 +38,10 @@ const nextConfig = {
       "./node_modules/.pnpm/@resvg+resvg-wasm@*/node_modules/@resvg/resvg-wasm/index_bg.wasm",
     ],
   },
-  images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "images.hive.blog",
-        pathname: "**",
-      },
-      {
-        protocol: "https",
-        hostname: "files.steempeak.com",
-        pathname: "**",
-      },
-      {
-        protocol: "https",
-        hostname: "files.peakd.com",
-        pathname: "**",
-      },
-      {
-        protocol: "https",
-        hostname: "images.ecency.com",
-        pathname: "**",
-      },
-      {
-        protocol: "https",
-        hostname: "images.leofinance.io",
-        pathname: "**",
-      },
-    ],
-  },
+  // Security (#835): the image optimizer stays off so /_next/image never fetches
+  // or decodes images. Use plain <img> (next/image imports fail lint) and never
+  // re-enable the optimizer or add remotePatterns.
+  images: { unoptimized: true },
 };
 
 module.exports = nextConfig;
