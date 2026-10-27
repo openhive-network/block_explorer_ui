@@ -30,17 +30,9 @@ const nextConfig = {
   publicRuntimeConfig: {
     basePath: basePath,
   },
-  // The OG routes read the resvg wasm with fs, which tracing cannot detect.
-  // The glob names pnpm's real directory: it does not follow the
-  // node_modules/@resvg/resvg-wasm symlink, and standalone recreates that link.
-  outputFileTracingIncludes: {
-    "/api/og/**": [
-      "./node_modules/.pnpm/@resvg+resvg-wasm@*/node_modules/@resvg/resvg-wasm/index_bg.wasm",
-    ],
-  },
-  // Security (#835): the image optimizer stays off so /_next/image never fetches
-  // or decodes images. Use plain <img> (next/image imports fail lint) and never
-  // re-enable the optimizer or add remotePatterns.
+  // Security (#835): the server must never fetch or decode images. Use plain
+  // <img> (next/image imports fail lint) and never re-enable the optimizer or
+  // add remotePatterns.
   images: { unoptimized: true },
 };
 

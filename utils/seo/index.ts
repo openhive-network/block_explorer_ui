@@ -98,26 +98,25 @@ export const serializeJsonLd = (jsonLd: unknown): string =>
     (c) => "\\u" + c.charCodeAt(0).toString(16).padStart(4, "0")
   );
 
-// Default share image for pages without their own. Falls back to the generated
-// cover route (/api/og/cover); deployments can override with an absolute URL or
-// a site-relative path via NEXT_PUBLIC_DEFAULT_OG_IMAGE / REACT_APP_DEFAULT_OG_IMAGE.
-export const defaultOgImage = (base: string): string => {
+// Default share image for every page: the static public/og-cover.png, which
+// deployments can override with an absolute URL or a site-relative path via
+// NEXT_PUBLIC_DEFAULT_OG_IMAGE / REACT_APP_DEFAULT_OG_IMAGE. Unfurlers need an
+// absolute URL, so without a known origin no image is declared.
+export const defaultOgImage = (base: string): string | null => {
   const img =
     process.env.NEXT_PUBLIC_DEFAULT_OG_IMAGE ||
     process.env.REACT_APP_DEFAULT_OG_IMAGE ||
     "";
-  if (img) {
-    return /^https?:\/\//i.test(img)
-      ? img
-      : `${base}${img.startsWith("/") ? img : `/${img}`}`;
-  }
-  return `${base}/api/og/cover`;
+  if (/^https?:\/\//i.test(img)) return img;
+  if (!/^https?:\/\//i.test(base)) return null;
+  if (img) return `${base}${img.startsWith("/") ? img : `/${img}`}`;
+  return `${base}/og-cover.png`;
 };
 
 export const clamp = (s: string, n = 160): string =>
   s.length > n ? `${s.slice(0, n - 1).trimEnd()}…` : s;
 
-// Both generated share images render at this size; unfurlers need it declared.
+// Size of public/og-cover.png; unfurlers need it declared.
 export const OG_IMAGE_WIDTH = 1200;
 export const OG_IMAGE_HEIGHT = 630;
 
