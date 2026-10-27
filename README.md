@@ -4,7 +4,7 @@ This project is a GUI for the Block Explorer. You can use it to go through block
 
 ## Getting Started
 
-To run the application you have to install Node JS (24.21.0 or higher is preferable). Then after getting the repo use:
+To run the application you have to install Node JS 24. Then after getting the repo use:
 
 ```bash
 npm install
@@ -88,10 +88,10 @@ The deployment is done manually in pipelines.
 To build a Docker image of the app run the following command:
 
 ```bash
-scripts/build_instance.sh "$(pwd)"
+scripts/build_instance.sh --node-version=<version> "$(pwd)"
 ```
 
-All the options available can be displayed by running `scripts/build_instance.sh --help`.
+`<version>` is the Node.js version CI uses: `NODE_VERSION` (without the `v`) in hive/common-ci-configuration's `docker-bake.hcl`. All the options available can be displayed by running `scripts/build_instance.sh --help`.
 
 ### Running
 
