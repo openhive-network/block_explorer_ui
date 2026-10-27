@@ -1,7 +1,10 @@
 # syntax=docker/dockerfile:1.5
 # Build with: docker buildx bake --progress=plain local-build
 
-FROM node:24.21.0-alpine3.23 AS base
+# Node comes from hive/common-ci-configuration: CI passes its NODE_IMAGE_VERSION
+# (see docker-bake.hcl and scripts/build_instance.sh), so there is no default here.
+ARG NODE_VERSION
+FROM node:${NODE_VERSION}-alpine AS base
 
 FROM base AS deps
 

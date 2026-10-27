@@ -13,6 +13,8 @@ OPTIONS:
   --tag=TAG             Docker tag to be build (default: 'latest')
   --base-path=PATH      Base path for subdirectory deployment (e.g., '/explorer')
   --progress=TYPE       Determines how to display build progress (default: 'auto')
+  --node-version=VER    Node.js version of the node:<VER>-alpine base image (default: \$NODE_IMAGE_VERSION,
+                        which common-ci-configuration sets in CI; required outside CI)
   --help|-h|-?          Display this help screen and exit
 EOF
 }
@@ -20,6 +22,7 @@ EOF
 export CI_REGISTRY_IMAGE=${CI_REGISTRY_IMAGE:-"registry.gitlab.syncad.com/hive/block_explorer_ui"}
 export TAG=${TAG:-"latest"}
 export BASE_PATH=${BASE_PATH:-""}
+export NODE_IMAGE_VERSION=${NODE_IMAGE_VERSION:-""}
 PROGRESS_DISPLAY=${PROGRESS_DISPLAY:-"auto"}
 
 while [ $# -gt 0 ]; do
@@ -40,6 +43,10 @@ while [ $# -gt 0 ]; do
         arg="${1#*=}"
         PROGRESS_DISPLAY="$arg"
         ;;
+    --node-version=*)
+        arg="${1#*=}"
+        export NODE_IMAGE_VERSION="$arg"
+        ;;
     --help|-h|-?)
         print_help
         exit 0
@@ -58,6 +65,12 @@ while [ $# -gt 0 ]; do
     esac
     shift
 done
+
+if [ -z "$NODE_IMAGE_VERSION" ]; then
+  echo "ERROR: no Node.js version: pass --node-version=VER or set NODE_IMAGE_VERSION"
+  echo "(CI takes it from hive/common-ci-configuration, NODE_VERSION in its docker-bake.hcl)"
+  exit 2
+fi
 
 TARGET="local-build"
 if [ -n "${CI:-}" ];
