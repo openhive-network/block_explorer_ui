@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { Loader2 } from "lucide-react";
 
 import { useI18n } from "@/i18n/i18n";
@@ -42,7 +41,7 @@ const SeoFallback: React.FC<SeoFallbackProps> = ({ meta }) => {
     >
       <div className="w-full max-w-2xl">
         <Link href="/" className="mb-6 flex items-center gap-2">
-          <Image
+          <img
             src={getImageSrc("/hive-logo.png")}
             alt="Hive logo"
             width={32}

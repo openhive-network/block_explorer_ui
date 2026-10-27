@@ -1,6 +1,5 @@
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { config } from "@/Config";
 import { useAddressesContext } from "../contexts/AddressesContext";
 import useHafbeVersion from "@/hooks/api/common/useHafbeVersion";
@@ -19,29 +18,34 @@ const Footer = () => {
   const { hafbeVersionData } = useHafbeVersion();
   const { nodeAddress, apiAddress, setNodeAddress, setApiAddress } =
     useAddressesContext();
-  const {nodeHealthCheckerService, restApiHealthCheckerService} = useHealthCheckerContext();
+  const { nodeHealthCheckerService, restApiHealthCheckerService } =
+    useHealthCheckerContext();
 
   const { theme } = useTheme();
 
   const isDarkMode = theme === "dark"; // Check if the theme is dark
 
   return (
-    <footer className="w-full bg-theme mt-5 border-t border-gray-200 dark:border-gray-700" data-testid="footer">
+    <footer
+      className="w-full bg-theme mt-5 border-t border-gray-200 dark:border-gray-700"
+      data-testid="footer"
+    >
       <div className="container py-4">
         {/* Container for content */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-4">
           {/* Top section */}
           <div className="flex items-center">
             <Link href={"/"} className="relative pr-2">
-              <Image
+              <img
                 src={getImageSrc("/hive-logo.png")}
                 alt="Hive logo"
                 width={20}
                 height={20}
-                priority
               />
             </Link>
-            <div className="text-sm font-semibold" data-testid="footer-head">HIVE Block Explorer</div>
+            <div className="text-sm font-semibold" data-testid="footer-head">
+              HIVE Block Explorer
+            </div>
           </div>
 
           {/* Social Icons */}
@@ -54,8 +58,10 @@ const Footer = () => {
                 className="hover:opacity-75"
                 aria-label="X (Twitter)"
               >
-                <Image
-                  src={getImageSrc(isDarkMode ? "/icons/x_dark.png" : "/icons/x.png")}
+                <img
+                  src={getImageSrc(
+                    isDarkMode ? "/icons/x_dark.png" : "/icons/x.png"
+                  )}
                   alt="X (Twitter)"
                   width={20}
                   height={20}
@@ -68,7 +74,7 @@ const Footer = () => {
                 className="hover:opacity-75"
                 aria-label="Telegram"
               >
-                <Image
+                <img
                   src={getImageSrc(
                     isDarkMode
                       ? "/icons/telegram_dark.png"
@@ -87,12 +93,12 @@ const Footer = () => {
                 className="hover:opacity-75"
                 aria-label="Discord"
               >
-                <Image
-                  src={
+                <img
+                  src={getImageSrc(
                     isDarkMode
                       ? "/icons/discord_dark.png"
                       : "/icons/discord.png"
-                  }
+                  )}
                   alt="Discord"
                   width={20}
                   height={20}
@@ -106,7 +112,7 @@ const Footer = () => {
                 className="hover:opacity-75"
                 aria-label="Facebook"
               >
-                <Image
+                <img
                   src={getImageSrc(
                     isDarkMode
                       ? "/icons/facebook_dark.png"
@@ -124,7 +130,7 @@ const Footer = () => {
                 className="hover:opacity-75"
                 aria-label="Instagram"
               >
-                <Image
+                <img
                   src={getImageSrc(
                     isDarkMode
                       ? "/icons/instagram_dark.png"
@@ -142,7 +148,7 @@ const Footer = () => {
                 className="hover:opacity-75"
                 aria-label="YouTube"
               >
-                <Image
+                <img
                   src={getImageSrc(
                     isDarkMode
                       ? "/icons/youtube_dark.png"
@@ -202,8 +208,9 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                  <Link href="/top-holders" className="hover:opacity-75">
-                                  {t("pageTitle.topHolders")}</Link>
+                <Link href="/top-holders" className="hover:opacity-75">
+                  {t("pageTitle.topHolders")}
+                </Link>
               </li>
             </ul>
           </div>
@@ -281,18 +288,33 @@ const Footer = () => {
                 <span>{t("footer.hafbeVersion")}#: </span>
                 {hafbeVersionData}
               </li>
-              {!! nodeHealthCheckerService &&
-                <li><HealthCheckerDialog trigerText={t("footer.hiveNode")} apiAddress={nodeAddress} healthCheckerService={nodeHealthCheckerService} /></li>
-              }
-              {!! restApiHealthCheckerService &&
-                <li><HealthCheckerDialog trigerText={t("footer.explorerBackendApi")} apiAddress={apiAddress} healthCheckerService={restApiHealthCheckerService} /></li>
-              }
+              {!!nodeHealthCheckerService && (
+                <li>
+                  <HealthCheckerDialog
+                    trigerText={t("footer.hiveNode")}
+                    apiAddress={nodeAddress}
+                    healthCheckerService={nodeHealthCheckerService}
+                  />
+                </li>
+              )}
+              {!!restApiHealthCheckerService && (
+                <li>
+                  <HealthCheckerDialog
+                    trigerText={t("footer.explorerBackendApi")}
+                    apiAddress={apiAddress}
+                    healthCheckerService={restApiHealthCheckerService}
+                  />
+                </li>
+              )}
             </ul>
           </div>
         </div>
 
         <div className="mt-4 text-left text-xs">
-          <p>© {currentYear} HIVE Block Explorer. {t("footer.allRightsReserved")}.</p>
+          <p>
+            © {currentYear} HIVE Block Explorer. {t("footer.allRightsReserved")}
+            .
+          </p>
         </div>
       </div>
     </footer>

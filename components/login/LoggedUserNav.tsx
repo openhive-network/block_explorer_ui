@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
 import { useI18n } from "@/i18n/i18n";
 import HiveAvatar from "@/components/ui/HiveAvatar";
@@ -216,8 +215,8 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
                   <div className="flex items-center gap-2.5 cursor-help">
                     <div className="w-8 h-8 rounded-lg bg-white dark:bg-slate-900 border border-black/5 flex items-center justify-center shadow-sm">
                       {config && (
-                        <Image
-                          src={config.logo}
+                        <img
+                          src={config.logo.src}
                           alt="logo"
                           width={20}
                           height={20}
