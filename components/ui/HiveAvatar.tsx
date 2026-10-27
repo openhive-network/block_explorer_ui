@@ -35,7 +35,6 @@ const HiveAvatar: React.FC<HiveAvatarProps> = ({
 
   return (
     // Plain img: long re-keyed lists skip the Next optimizer.
-    // eslint-disable-next-line @next/next/no-img-element
     <img
       src={src}
       alt={alt ?? accountName ?? ""}
