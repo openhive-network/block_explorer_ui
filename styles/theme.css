@@ -1,9 +1,163 @@
-@import "react-grid-layout/css/styles.css";
-@import "react-resizable/css/styles.css";
+@import 'tailwindcss';
+@import 'react-grid-layout/css/styles.css' layer(base);
+@import 'react-resizable/css/styles.css' layer(base);
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Automatic source detection skips node_modules; the health checker's dialog
+   is styled with this app's utilities. */
+@source '../node_modules/@hiveio/healthchecker-component';
+@source not '../npm-common-config';
+
+@plugin 'tailwindcss-animate';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@utility container {
+  margin-inline: auto;
+  padding-inline: 2rem;
+  @media (width >= --theme(--breakpoint-sm)) {
+    max-width: none;
+  }
+  @media (width >= 1400px) {
+    max-width: 1400px;
+  }
+}
+
+@theme inline {
+  --color-theme: var(--color-background);
+  --color-rowOdd: var(--color-row-odd);
+  --color-rowEven: var(--color-row-even);
+  --color-rowHover: var(--color-row-hover);
+  --color-buttonBg: var(--color-button);
+  --color-buttonText: var(--color-button-text);
+  --color-buttonHover: var(--color-button-hover);
+  --color-text: var(--color-text);
+  --color-link: var(--color-link);
+  --color-operationPerspectiveIncoming: var(
+    --color-operation-perspective-incoming
+  );
+
+  --color-switch-button: var(--color-switch-button);
+  --color-switch-off: var(--color-switch-off);
+  --color-switch-on: var(--color-switch-on);
+
+  --color-blocked: var(--color-blocked);
+
+  --color-explorer-operations-account-management: var(
+    --color-operation-account-management
+  );
+  --color-explorer-operations-witness-management: var(
+    --color-operation-witness-management
+  );
+  --color-explorer-operations-witness-voting: var(
+    --color-operation-witness-voting
+  );
+  --color-explorer-operations-posting: var(--color-operation-posting);
+  --color-explorer-operations-curation: var(--color-operation-curation);
+  --color-explorer-operations-transfer: var(--color-operation-transfer);
+  --color-explorer-operations-market: var(--color-operation-market);
+  --color-explorer-operations-vesting: var(--color-operation-vesting);
+  --color-explorer-operations-proposal: var(--color-operation-proposal);
+  --color-explorer-operations-custom: var(--color-operation-custom);
+  --color-explorer-operations-other: var(--color-operation-other);
+
+  --color-explorer-bg-start: var(--background-start-rgb);
+  --color-explorer-yellow: var(--color-yellow);
+  --color-explorer-light-blue: var(--color-light-blue);
+  --color-explorer-dark-blue: var(--color-dark-blue);
+  --color-explorer-blue: var(--color-blue);
+  --color-explorer-turquoise: var(--color-turquoise);
+  --color-explorer-red: var(--color-red);
+  --color-explorer-orange: var(--color-orange);
+  --color-explorer-light-green: var(--color-light-green);
+  --color-explorer-light-gray: var(--color-light-gray);
+  --color-explorer-dark-gray: var(--color-dark-gray);
+  --color-explorer-extra-light-gray: var(--color-extra-light-gray);
+  --color-explorer-slate: var(--color-slate);
+  --color-explorer-slate-text: var(--color-slate-text);
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: rgba(255, 255, 255, 0.5);
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  --color-navbar: var(--color-navbar-icon);
+  --color-navbar-hover: var(--color-navbar-icon-hover);
+  --color-navbar-border: var(--color-navbar-icon-border);
+  --color-navbar-listHover: var(--color-navbar-icon-list-hover);
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  --flex-2: 2 2 0%;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+/* Tailwind CSS v4 leaves buttons on the default cursor; keep v3's pointer. */
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
 
 /* For widgets that auto-resize (e.g. searches): drop height from the transition so
    the grid item expands instantly instead of animating visibly. Position (transform)

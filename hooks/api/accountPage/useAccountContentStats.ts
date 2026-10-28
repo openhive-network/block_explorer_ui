@@ -1,4 +1,8 @@
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useQuery,
+  UseQueryResult,
+} from "@tanstack/react-query";
 
 import fetchingService from "@/services/FetchingService";
 import { config } from "@/Config";
@@ -14,8 +18,8 @@ const useAccountContentStats = (
 ) => {
   const {
     data: accountContentStats,
-    isLoading,
-    isPreviousData,
+    isPending: isLoading,
+    isPlaceholderData: isPreviousData,
     isError: isAccountContentStatsError,
   }: UseQueryResult<Hive.AccountContentStatsResponse[] | undefined> = useQuery({
     queryKey: [
@@ -35,7 +39,7 @@ const useAccountContentStats = (
     enabled: !!accountName && enabled,
     refetchInterval: liveDataEnabled ? config.mainRefreshInterval : false,
     refetchOnWindowFocus: false,
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     staleTime: 30 * 60 * 1000,
   });
 

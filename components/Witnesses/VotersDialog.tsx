@@ -306,8 +306,8 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
               <div className="w-full flex flex-col mt-2">
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 border rounded-md mb-4">
                   {/* Search Input Group */}
-                  <div className="w-full sm:w-auto sm:flex-grow">
-                    <div className="flex rounded-md shadow-sm focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 gap-x-2">
+                  <div className="w-full sm:w-auto sm:grow">
+                    <div className="flex rounded-md shadow-xs focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 gap-x-2">
                       <AutoCompleteInput
                         value={voterNameInput}
                         onChange={setVoterNameInput}
@@ -315,7 +315,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                           "votesHistoryDialog.voterNamePlaceholder"
                         )}
                         inputType="account_name"
-                        className="flex-grow rounded-none rounded-l-md border-r-0 focus:ring-0 bg-theme dark:bg-theme"
+                        className="grow rounded-none rounded-l-md border-r-0 focus:ring-0 bg-theme dark:bg-theme"
                       />
                       <Button
                         onClick={handleSearch}

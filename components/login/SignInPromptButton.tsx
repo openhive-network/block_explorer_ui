@@ -86,7 +86,7 @@ const SignInPromptButton: React.FC<SignInPromptButtonProps> = ({
                     "group-hover:-translate-y-5 group-hover:opacity-0"
                   )}
                 >
-                  <Icon className={cn("flex-shrink-0", shape.icon)} />
+                  <Icon className={cn("shrink-0", shape.icon)} />
                   {showLabel && <span>{label}</span>}
                 </span>
                 <span
@@ -96,7 +96,7 @@ const SignInPromptButton: React.FC<SignInPromptButtonProps> = ({
                     "translate-y-5 opacity-0 group-hover:translate-y-0 group-hover:opacity-100"
                   )}
                 >
-                  <LogIn className={cn("flex-shrink-0", shape.icon)} />
+                  <LogIn className={cn("shrink-0", shape.icon)} />
                   {showLabel && <span>{signInLabel}</span>}
                 </span>
               </span>

@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
 import Hive from "@/types/Hive";
 
@@ -13,13 +13,13 @@ const useFinancialSummary = (
     queryFn: () =>
       fetchingService.getFinancialSummary(account, from, to, granularity),
     enabled: !!account,
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     refetchOnWindowFocus: false,
   });
 
   // Data kept from the previous range counts as loading, so a report never
   // shows the old numbers under the newly selected range.
-  return { ...query, isLoading: query.isLoading || query.isPreviousData };
+  return { ...query, isLoading: query.isPending || query.isPlaceholderData };
 };
 
 export default useFinancialSummary;

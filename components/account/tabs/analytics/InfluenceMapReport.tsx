@@ -1031,7 +1031,7 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
           variant="outline"
           size="sm"
           onClick={toggleExpandAll}
-          className="absolute top-2 end-2 z-10"
+          className="absolute top-2 inset-e-2 z-10"
         >
           {isFullyExpanded
             ? t("analyticsDashboard.collapseAll")

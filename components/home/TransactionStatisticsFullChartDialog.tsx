@@ -254,7 +254,7 @@ const TransactionStatisticsFullChartDialog: React.FC<
             />
           )}
 
-          <div className="h-[55vh] w-[100%] flex items-center justify-center">
+          <div className="h-[55vh] w-full flex items-center justify-center">
             {isChartLoading ? (
               <div className="flex justify-center items-center">
                 <Loader2 className="animate-spin mt-1 h-16 w-10 ml-10 dark:text-white" />

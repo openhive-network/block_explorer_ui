@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import moment from "moment";
 
 import fetchingService from "@/services/FetchingService";
@@ -33,7 +33,7 @@ const useBalanceHistory = (
 
   const {
     data: accountBalanceHistory,
-    isLoading: isAccountBalanceHistoryLoading,
+    isPending: isAccountBalanceHistoryLoading,
     isFetching: isAccountBalanceHistoryFetching,
     isError: isAccountBalanceHistoryError,
   }: any = useQuery({
@@ -48,7 +48,7 @@ const useBalanceHistory = (
       toDate,
     ],
     queryFn: fetchBalanceHist,
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     enabled: !!accountName,
     refetchOnWindowFocus: false,
   });

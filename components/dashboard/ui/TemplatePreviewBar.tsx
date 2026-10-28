@@ -49,7 +49,7 @@ const TemplatePreviewBar: React.FC<TemplatePreviewBarProps> = ({
 
   const actionClasses = cn(
     "flex shrink-0 items-center justify-center gap-1.5 rounded border transition-colors",
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
+    "focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
     accent.chip,
     accent.text,
     accent.ring,
@@ -68,7 +68,7 @@ const TemplatePreviewBar: React.FC<TemplatePreviewBarProps> = ({
       >
         <span
           aria-hidden="true"
-          className={cn("absolute inset-y-0 start-0 w-[3px]", accent.spine)}
+          className={cn("absolute inset-y-0 inset-s-0 w-[3px]", accent.spine)}
         />
 
         <div
@@ -132,7 +132,7 @@ const TemplatePreviewBar: React.FC<TemplatePreviewBarProps> = ({
         <DialogContent className="max-w-md overflow-hidden">
           <span
             aria-hidden="true"
-            className={cn("absolute inset-y-0 start-0 w-[3px]", accent.spine)}
+            className={cn("absolute inset-y-0 inset-s-0 w-[3px]", accent.spine)}
           />
 
           <DialogHeader className="text-start">

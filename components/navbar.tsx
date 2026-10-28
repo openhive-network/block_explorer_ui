@@ -56,7 +56,7 @@ export default function Navbar() {
                 height={40}
               />
             </Link>
-            <div className="flex-grow flex items-center justify-end gap-x-1 w-[90%]">
+            <div className="grow flex items-center justify-end gap-x-1 w-[90%]">
               <SearchBar
                 open={searchBarOpen}
                 onChange={setSearchBarOpen}
@@ -68,7 +68,7 @@ export default function Navbar() {
                 height={34}
                 width={34}
                 onClick={() => setMenuOpen(true)}
-                className="flex-shrink-0 cursor-pointer"
+                className="shrink-0 cursor-pointer"
               />
             </div>
             <div
@@ -159,7 +159,7 @@ export default function Navbar() {
                       onClick={() => setMenuOpen(false)}
                     >
                       <Boxes
-                        className="flex-shrink-0 text-slate-500 dark:text-slate-400"
+                        className="shrink-0 text-slate-500 dark:text-slate-400"
                         size={20}
                       />
                       <span className="text-base">
@@ -172,7 +172,7 @@ export default function Navbar() {
                       onClick={() => setMenuOpen(false)}
                     >
                       <Users
-                        className="flex-shrink-0 text-slate-500 dark:text-slate-400"
+                        className="shrink-0 text-slate-500 dark:text-slate-400"
                         size={20}
                       />
                       <span className="text-base">
@@ -185,7 +185,7 @@ export default function Navbar() {
                       onClick={() => setMenuOpen(false)}
                     >
                       <Award
-                        className="flex-shrink-0 text-slate-500 dark:text-slate-400"
+                        className="shrink-0 text-slate-500 dark:text-slate-400"
                         size={20}
                       />
                       <span className="text-base">
@@ -201,7 +201,7 @@ export default function Navbar() {
                       onClick={() => setMenuOpen(false)}
                     >
                       <Vote
-                        className="flex-shrink-0 text-slate-500 dark:text-slate-400"
+                        className="shrink-0 text-slate-500 dark:text-slate-400"
                         size={20}
                       />
                       <span className="text-base">
@@ -214,7 +214,7 @@ export default function Navbar() {
                       onClick={() => setMenuOpen(false)}
                     >
                       <UserCheck
-                        className="flex-shrink-0 text-slate-500 dark:text-slate-400"
+                        className="shrink-0 text-slate-500 dark:text-slate-400"
                         size={20}
                       />
                       <span className="text-base">
@@ -227,7 +227,7 @@ export default function Navbar() {
                       onClick={() => setMenuOpen(false)}
                     >
                       <CalendarClock
-                        className="flex-shrink-0 text-slate-500 dark:text-slate-400"
+                        className="shrink-0 text-slate-500 dark:text-slate-400"
                         size={20}
                       />
                       <span className="text-base">
@@ -241,7 +241,7 @@ export default function Navbar() {
                       onClick={() => setMenuOpen(false)}
                     >
                       <Wrench
-                        className="flex-shrink-0 text-slate-500 dark:text-slate-400"
+                        className="shrink-0 text-slate-500 dark:text-slate-400"
                         size={20}
                       />
                       <span className="text-base">{t("tools.title")}</span>
@@ -252,7 +252,7 @@ export default function Navbar() {
                       onClick={() => setMenuOpen(false)}
                     >
                       <SettingsIcon
-                        className="flex-shrink-0 text-slate-500 dark:text-slate-400"
+                        className="shrink-0 text-slate-500 dark:text-slate-400"
                         size={20}
                       />
                       <span className="text-base">

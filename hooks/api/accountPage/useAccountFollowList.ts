@@ -17,22 +17,23 @@ const useAccountFollowList = (
 
   const {
     data,
-    isLoading,
+    isPending: isLoading,
     isError,
     isFetching,
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
     refetch,
-  } = useInfiniteQuery<string[]>({
+  } = useInfiniteQuery({
     queryKey: ["account_follow_list", type, accountName],
-    queryFn: ({ pageParam = "" }) =>
+    queryFn: ({ pageParam }) =>
       fetchingService.getAccountFollowPage(
         type,
         accountName,
         pageParam,
         FOLLOW_LIST_BATCH_SIZE
       ),
+    initialPageParam: "",
     // A later batch is one short when the node repeats the start name.
     getNextPageParam: (lastPage, pages) =>
       lastPage.length >= FOLLOW_LIST_BATCH_SIZE - (pages.length > 1 ? 1 : 0)

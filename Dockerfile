@@ -22,7 +22,10 @@ RUN <<-EOF
     npm install -g @beam-australia/react-env@3.1.1
     npm install -g pnpm@10.33.0
 EOF
-COPY --chown=node package.json pnpm-lock.yaml ./
+# The catalogs pnpm-workspace.yaml links from ccc, and the registry of their
+# @hiveio builds (.npmrc).
+COPY --chown=node package.json pnpm-lock.yaml .npmrc ./
+COPY --chown=node npm-common-config/pnpm-config/pnpm-workspace.yaml ./
 RUN HUSKY=0 pnpm install --frozen-lockfile
 
 FROM base AS builder

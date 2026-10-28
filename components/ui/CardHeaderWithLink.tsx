@@ -60,7 +60,7 @@ const CardHeaderWithLink: React.FC<CardHeaderWithLinkProps> = ({
         className
       )}
     >
-      <CardTitle className="w-auto max-w-full shrink-0 break-words text-start text-base font-semibold">
+      <CardTitle className="w-auto max-w-full shrink-0 wrap-break-word text-start text-base font-semibold">
         {title}
       </CardTitle>
 

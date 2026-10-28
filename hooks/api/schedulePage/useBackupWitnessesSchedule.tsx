@@ -1,5 +1,9 @@
 import { useMemo } from "react";
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useQuery,
+  UseQueryResult,
+} from "@tanstack/react-query";
 
 import { config } from "@/Config";
 import Hive from "@/types/Hive";
@@ -22,7 +26,7 @@ const useBackupWitnessesSchedule = (
 
   const {
     data,
-    isLoading: isBackupWitnessScheduleLoading,
+    isPending: isBackupWitnessScheduleLoading,
     isError: isBackupWitnessScheduleError,
     refetch: refetchBackupWitnessSchedule,
   }: UseQueryResult<Hive.WitnessesByVote[]> = useQuery({
@@ -31,7 +35,7 @@ const useBackupWitnessesSchedule = (
       fetchingService.getWitnessesByScheduleTime(SCHEDULE_QUEUE_LIMIT),
     refetchOnWindowFocus: false,
     refetchInterval: config.mainRefreshInterval,
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
   });
 
   const backupWitnessScheduleData = useMemo(

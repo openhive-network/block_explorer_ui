@@ -58,7 +58,7 @@ const ProfileBannerWidget: React.FC<ProfileBannerWidgetProps> = ({
   );
   const spine = (
     <span
-      className={cn("absolute inset-y-0 start-0 w-[3px]", accent.spine)}
+      className={cn("absolute inset-y-0 inset-s-0 w-[3px]", accent.spine)}
       aria-hidden="true"
     />
   );
@@ -123,7 +123,7 @@ const ProfileBannerWidget: React.FC<ProfileBannerWidgetProps> = ({
                   onBlur={() => onTaglineChange(tagline)}
                   onMouseDown={(e) => e.stopPropagation()}
                   placeholder={t("profileBannerWidget.taglinePlaceholder")}
-                  className="w-64 max-w-full rounded border bg-white px-2 py-0.5 text-xs text-gray-900 outline-none dark:bg-gray-700 dark:text-white"
+                  className="w-64 max-w-full rounded border bg-white px-2 py-0.5 text-xs text-gray-900 outline-hidden dark:bg-gray-700 dark:text-white"
                 />
                 <div
                   className="flex shrink-0 items-center gap-1"
@@ -205,7 +205,7 @@ const ProfileBannerWidget: React.FC<ProfileBannerWidgetProps> = ({
               </span>
               <ArrowRight
                 size={13}
-                className="transition-transform group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5"
+                className="transition-transform group-hover:translate-x-0.5 rtl:rotate-180 group-hover:rtl:-translate-x-0.5"
               />
             </Link>
           )}

@@ -111,13 +111,13 @@ const MyNotificationsWidget: React.FC = () => {
   return (
     <Card className="col-span-12 lg:col-span-3 mb-2 flex h-full flex-col overflow-hidden">
       <CardHeaderWithLink
-        className="flex-shrink-0"
+        className="shrink-0"
         href={`/@${username}`}
         title={t("widgets.myNotificationsName")}
       />
 
       {options.length > 1 && (
-        <div className="flex-shrink-0 px-2 pt-2">
+        <div className="shrink-0 px-2 pt-2">
           <SegmentedToggle<Category>
             options={options}
             value={category}

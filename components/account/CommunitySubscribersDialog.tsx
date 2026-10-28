@@ -271,7 +271,7 @@ const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
                 href={`/@${row.name}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2.5 rounded-md px-2 py-1.5 hover:bg-rowHover focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500"
+                className="flex items-center gap-2.5 rounded-md px-2 py-1.5 hover:bg-rowHover focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-indigo-500"
               >
                 <HiveAvatar accountName={row.name} alt="" size={28} />
                 <span className="whitespace-nowrap text-sm text-link">
@@ -387,7 +387,7 @@ const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
                 placeholder={t("CommunitySubscribersDialog.findPlaceholder")}
                 inputType="account_name"
                 className="w-full"
-                inputClassName="focus:!bg-transparent"
+                inputClassName="focus:bg-transparent!"
               />
             </div>
             {isLookupLoading && <Loader2 className="h-4 w-4 animate-spin" />}

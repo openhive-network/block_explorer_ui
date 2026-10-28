@@ -6,7 +6,7 @@ import Hive from "@/types/Hive";
 const usePendingAuthorRewards = (accountName: string) => {
   const {
     data: pendingAuthorRewards,
-    isLoading: isPendingAuthorRewardsLoading,
+    isPending: isPendingAuthorRewardsLoading,
     isError: isPendingAuthorRewardsError,
   }: UseQueryResult<Hive.PendingAuthorRewardsResponse> = useQuery({
     queryKey: ["pending_author_rewards", accountName],

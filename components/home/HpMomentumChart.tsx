@@ -118,7 +118,7 @@ const HpMomentumChart: React.FC<HpMomentumChartProps> = ({
       (showNet && power_down_init > 0);
 
     return (
-      <div className="bg-theme rounded shadow-sm py-1.5 px-2 text-[0.6rem] min-w-[180px]">
+      <div className="bg-theme rounded shadow-xs py-1.5 px-2 text-[0.6rem] min-w-[180px]">
         <p className="text-gray-400 mb-0.5 text-center">
           {showYear
             ? moment(date).format("YYYY")

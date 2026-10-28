@@ -248,7 +248,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
                   </div>
                 </div>
                 <div
-                  className="p-2 flex-grow relative"
+                  className="p-2 grow relative"
                   style={{ minHeight: "300px" }}
                 >
                   {gateUnavailable ? (
@@ -303,7 +303,7 @@ const ResetLayoutButton: React.FC<{ onReset: () => void }> = ({ onReset }) => {
             type="button"
             aria-label={t("analyticsDashboard.resetLayout")}
             onClick={handleClick}
-            className="flex items-center justify-center rounded-full bg-red-600 p-3 text-white shadow-lg transition-colors hover:bg-red-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+            className="flex items-center justify-center rounded-full bg-red-600 p-3 text-white shadow-lg transition-colors hover:bg-red-700 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
           >
             <RotateCcw size={20} />
           </button>

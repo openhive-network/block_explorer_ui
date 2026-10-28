@@ -209,7 +209,7 @@ const NetworkRcUtilizationCard = () => {
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <span className="text-gray-400 hover:text-gray-500 cursor-help flex-shrink-0">
+                        <span className="text-gray-400 hover:text-gray-500 cursor-help shrink-0">
                           <Info size={11} />
                         </span>
                       </TooltipTrigger>

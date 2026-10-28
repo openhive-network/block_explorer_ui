@@ -35,15 +35,15 @@ const DashboardControls: React.FC<DashboardControlsProps> = ({
   return (
     // :focus-visible, not focus-within — a mouse click leaves the button
     // focused and held the cluster solid long afterwards.
-    // "end-4" rather than "right-4" so it follows the board in Arabic.
+    // "inset-e-4" rather than "right-4" so it follows the board in Arabic.
     <div
       className={cn(
-        "fixed top-[19rem] end-4 z-50 flex flex-col items-center gap-2",
+        "fixed top-76 inset-e-4 z-50 flex flex-col items-center gap-2",
         "transition-opacity duration-200 motion-reduce:transition-none",
         // A pending undo is easy to miss, so the cluster stays solid.
         isEditMode || hasBoardUndo || hasRestoreUndo
           ? "opacity-100"
-          : "opacity-35 hover:opacity-100 has-[:focus-visible]:opacity-100"
+          : "opacity-35 hover:opacity-100 has-focus-visible:opacity-100"
       )}
     >
       {showEditControls && (

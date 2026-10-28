@@ -125,7 +125,7 @@ const NetworkHpDistributionCard: React.FC = () => {
   return (
     <div className="bg-theme rounded mb-2 shadow-md overflow-hidden h-[372px] flex flex-col">
       <CardHeaderWithLink
-        className="flex-shrink-0"
+        className="shrink-0"
         title={t("networkHpDistributionCard.title")}
         actions={
           <SegmentedToggle

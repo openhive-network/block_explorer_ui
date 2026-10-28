@@ -87,7 +87,7 @@ const buildTableBody = (
             <TableCell>{operation_id}</TableCell>
             <TableCell className="text-wrap whitespace-nowrap max-w-36">
               <Link
-                className="text-link break-words"
+                className="text-link wrap-break-word"
                 target="_blank"
                 href={`/@${accountName}/${permlink}`}
                 onClick={(e) => e.stopPropagation()}
@@ -194,7 +194,7 @@ const CommentPermlinkResultTable = ({
         </div>
       </div>
       <div className="flex w-full overflow-auto">
-        <div className="text-text w-[100%] bg-theme dark:bg-theme p-5 rounded">
+        <div className="text-text w-full bg-theme dark:bg-theme p-5 rounded">
           <Table
             enableMobileScrollArrows
             data-testid="table-body"

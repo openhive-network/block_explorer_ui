@@ -154,7 +154,7 @@ const AccountSubscriptionsDialog: React.FC<SubscriptionsDialogProps> = ({
                       href={`/@${community.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex min-w-0 items-center gap-3 rounded-md px-2 py-2 hover:bg-rowHover focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500"
+                      className="flex min-w-0 items-center gap-3 rounded-md px-2 py-2 hover:bg-rowHover focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-indigo-500"
                     >
                       <HiveAvatar accountName={community.id} alt="" size={36} />
                       <span className="min-w-0 flex-1">

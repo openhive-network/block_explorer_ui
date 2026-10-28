@@ -44,7 +44,7 @@ const ReportLibrary: React.FC<ReportLibraryProps> = ({
             <PopoverTrigger asChild>
               <button
                 aria-label={t("analyticsDashboard.addReport")}
-                className="group flex items-center justify-center rounded-full bg-gray-600 p-3 text-white shadow-lg transition-colors hover:bg-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+                className="group flex items-center justify-center rounded-full bg-gray-600 p-3 text-white shadow-lg transition-colors hover:bg-gray-700 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
               >
                 <Plus
                   size={20}

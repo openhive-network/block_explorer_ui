@@ -129,11 +129,11 @@ const QuickLinksWidget: React.FC<QuickLinksWidgetProps> = ({
             onBlur={() => onTitleChange(title)}
             onMouseDown={(e) => e.stopPropagation()}
             placeholder={t("quickLinksWidget.titlePlaceholder")}
-            className="min-w-0 flex-1 rounded border bg-white px-2 py-0.5 text-sm font-semibold text-gray-900 outline-none dark:bg-gray-700 dark:text-white"
+            className="min-w-0 flex-1 rounded border bg-white px-2 py-0.5 text-sm font-semibold text-gray-900 outline-hidden dark:bg-gray-700 dark:text-white"
           />
         </div>
 
-        <div className="flex-grow space-y-1.5 overflow-y-auto p-2.5">
+        <div className="grow space-y-1.5 overflow-y-auto p-2.5">
           {links.map((link, index) => {
             const broken = link.url.trim() !== "" && !willRender(link.url);
             return (
@@ -156,7 +156,7 @@ const QuickLinksWidget: React.FC<QuickLinksWidgetProps> = ({
                     }
                     onBlur={() => onLinksChange(links)}
                     placeholder={t("quickLinksWidget.labelPlaceholder")}
-                    className="min-w-0 flex-1 rounded border bg-white px-1.5 py-0.5 text-sm font-medium text-gray-900 outline-none dark:bg-gray-800 dark:text-white"
+                    className="min-w-0 flex-1 rounded border bg-white px-1.5 py-0.5 text-sm font-medium text-gray-900 outline-hidden dark:bg-gray-800 dark:text-white"
                   />
                   <button
                     onClick={() => handleMoveLink(index, -1)}
@@ -188,7 +188,7 @@ const QuickLinksWidget: React.FC<QuickLinksWidgetProps> = ({
                   onChange={(e) => handleEditLink(index, "url", e.target.value)}
                   onBlur={() => onLinksChange(links)}
                   placeholder={t("quickLinksWidget.urlPlaceholder")}
-                  className="mt-1 w-full rounded border bg-white px-1.5 py-0.5 font-mono text-[11px] text-gray-700 outline-none dark:bg-gray-800 dark:text-gray-200"
+                  className="mt-1 w-full rounded border bg-white px-1.5 py-0.5 font-mono text-[11px] text-gray-700 outline-hidden dark:bg-gray-800 dark:text-gray-200"
                 />
                 {broken && (
                   <p className="mt-1 text-[11px] text-red-500">
@@ -208,14 +208,14 @@ const QuickLinksWidget: React.FC<QuickLinksWidgetProps> = ({
             value={newLabel}
             onChange={(e) => setNewLabel(e.target.value)}
             placeholder={t("quickLinksWidget.labelPlaceholder")}
-            className="w-full rounded border bg-white p-1 text-sm outline-none dark:bg-gray-800"
+            className="w-full rounded border bg-white p-1 text-sm outline-hidden dark:bg-gray-800"
           />
           <input
             type="text"
             value={newUrl}
             onChange={(e) => setNewUrl(e.target.value)}
             placeholder={t("quickLinksWidget.urlPlaceholder")}
-            className="w-full rounded border bg-white p-1 text-sm outline-none dark:bg-gray-800"
+            className="w-full rounded border bg-white p-1 text-sm outline-hidden dark:bg-gray-800"
           />
           <Button
             size="sm"

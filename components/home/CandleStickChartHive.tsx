@@ -70,7 +70,7 @@ const CustomTooltip = ({
   ];
 
   return (
-    <div className="rounded-md border border-gray-200 bg-white/95 px-2 py-1.5 text-explorer-dark-gray shadow-md backdrop-blur-sm dark:border-gray-700 dark:bg-gray-900/95 dark:text-text">
+    <div className="rounded-md border border-gray-200 bg-white/95 px-2 py-1.5 text-explorer-dark-gray shadow-md backdrop-blur-xs dark:border-gray-700 dark:bg-gray-900/95 dark:text-text">
       <div className="mb-1 flex items-center gap-1.5">
         <span
           className="h-1.5 w-1.5 shrink-0 rounded-full"

@@ -15,10 +15,11 @@ Web-based GUI for exploring Hive blockchain data. Features include:
 
 ## Tech Stack
 
-- **Framework**: Next.js 15.3.3, React 18.3.1, TypeScript 5.9.3 (strict mode)
-- **Styling**: Tailwind CSS 3.4.12, Shadcn UI (Radix UI primitives)
-- **Data Fetching**: React Query (TanStack Query) 4.29.25
-- **Blockchain**: @hiveio/wax 2.0.1, @hiveio/hb-healthchecker-component
+- **Framework**: Next.js 16 (built with `--webpack`), React 19, TypeScript 5.9 (strict mode)
+- **Styling**: Tailwind CSS 4 (CSS-first config in `styles/theme.css`), Shadcn UI (Radix UI primitives)
+- **Data Fetching**: React Query (TanStack Query) 5
+- **Blockchain**: @hiveio/wax 1.28.8 (Hive release line), @hiveio/healthchecker-component
+- **Versions**: ccc's pnpm catalogs (`catalog:<name>` in `package.json`; `pnpm-workspace.yaml` links `npm-common-config/pnpm-config/pnpm-workspace.yaml`). Bump a catalogued package in ccc, not here
 - **Charts**: ECharts 5.6.0, Recharts 2.9.2
 - **Testing**: Playwright 1.64.1 (Chromium, Firefox, WebKit)
 - **Runtime**: Node.js 24 (exact version from hive/common-ci-configuration's `NODE_VERSION`)
@@ -50,7 +51,7 @@ docker/             # Docker configuration
 ## Working in an AIDEV workflow
 When AIDEV runs you on an issue, no one is there to answer questions. GitLab CI doesn't run for AIDEV branches; the checks below are the verification.
 
-- **Check your change:** run `aidev test run --slot quick` once, after your last edit. It runs `next lint`, `tsc --noEmit` and the Jest unit tests. `--slot full` adds `next build`.
+- **Check your change:** run `aidev test run --slot quick` once, after your last edit. It runs `eslint .`, `tsc --noEmit` and the Jest unit tests. `--slot full` adds `next build`.
 - **Iterate:** `.aidev/run-checks.sh dev unit` (or `lint` / `typecheck` / `build`) runs one step.
 - **Package manager:** pnpm 10.33 (`pnpm-lock.yaml`), not npm.
 - **Dependencies:** a change to `pnpm-lock.yaml` or `.npmrc` needs a new test image, built on ccc's `node-test-tools:develop`. Run `.aidev/runtime/build.sh --push` and put the printed reference in `.aidev/project.yaml` `environment.image` in the same commit (see `.aidev/README.md`).
@@ -59,8 +60,9 @@ When AIDEV runs you on an issue, no one is there to answer questions. GitLab CI 
 ## Development Commands
 
 ```bash
-# Install
-npm install
+# Install (versions come from the npm-common-config submodule's catalogs)
+git submodule update --init
+pnpm install
 
 # Development
 npm run dev                    # Start dev server (localhost:5000)
@@ -94,7 +96,7 @@ cd docker && docker compose up --detach
 |------|---------|
 | `Config.ts` | API endpoints, pagination sizes, precision settings, refresh intervals |
 | `next.config.js` | Next.js config (standalone output, image domains, base path) |
-| `tailwind.config.js` | Tailwind config with custom theme colors |
+| `styles/theme.css` | Tailwind CSS 4 config (`@theme`) and theme color variables |
 | `tsconfig.json` | TypeScript config (strict mode, path aliases `@/*`) |
 | `playwright.config.ts` | E2E test configuration |
 | `.gitlab-ci.yml` | CI/CD pipeline definition |
@@ -119,7 +121,7 @@ export default MyComponent;
 
 **Hooks**: Custom API hooks use React Query with `useQuery`:
 - `queryKey` arrays for cache management
-- `keepPreviousData: true` for smooth pagination
+- `placeholderData: keepPreviousData` for smooth pagination
 - `enabled` for conditional fetching
 
 **Naming**:

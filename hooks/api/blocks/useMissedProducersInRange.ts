@@ -45,7 +45,7 @@ const useMissedProducersInRange = (gapBlocks: number[]) => {
   return {
     missedProducersByBlock,
     missedOperationByBlock,
-    isMissedProducersLoading: results.some((result) => result.isLoading),
+    isMissedProducersLoading: results.some((result) => result.isPending),
   };
 };
 

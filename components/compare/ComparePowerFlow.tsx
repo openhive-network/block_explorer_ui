@@ -23,7 +23,7 @@ const FlowBar: React.FC<{
   locale: string;
 }> = ({ label, value, max, color, locale }) => (
   <div className="flex items-center gap-2">
-    <span className="w-24 flex-shrink-0 text-[11px] text-slate-500 dark:text-slate-400">
+    <span className="w-24 shrink-0 text-[11px] text-slate-500 dark:text-slate-400">
       {label}
     </span>
     <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700/60">
@@ -32,7 +32,7 @@ const FlowBar: React.FC<{
         style={{ width: `${max > 0 ? clamp((value ?? 0) / max) * 100 : 0}%` }}
       />
     </div>
-    <span className="w-20 flex-shrink-0 text-end text-[11px] font-semibold tabular-nums text-slate-700 dark:text-slate-200">
+    <span className="w-20 shrink-0 text-end text-[11px] font-semibold tabular-nums text-slate-700 dark:text-slate-200">
       {formatCompareValue(value, "hp", locale)}
     </span>
   </div>

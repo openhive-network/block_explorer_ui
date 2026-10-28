@@ -46,7 +46,7 @@ const buildTableBody = (
           }
         >
           <TableCell>{offset + index + 1}</TableCell>
-          <TableCell className="text-end break-words">
+          <TableCell className="text-end wrap-break-word">
             <Link
               className="text-link"
               href={`/@${delegation.delegatee}`}
@@ -55,7 +55,7 @@ const buildTableBody = (
               {delegation.delegatee}
             </Link>
           </TableCell>
-          <TableCell className="text-end break-words">
+          <TableCell className="text-end wrap-break-word">
             {formatNumber(delegation.max_rc, false, true, 0)}
           </TableCell>
         </TableRow>

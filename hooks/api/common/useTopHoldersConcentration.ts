@@ -32,7 +32,7 @@ const useTopHoldersConcentration = (
       ...(page2.data?.holders_result ?? []),
     ],
     totalAccounts: page1.data?.total_accounts ?? 0,
-    isLoading: page1.isLoading || page2.isLoading,
+    isLoading: page1.isPending || page2.isPending,
     isError: (page1.error ?? page2.error) as Error | null,
   };
 };

@@ -31,7 +31,7 @@ const useMissedProducers = (
     roundLength > 0;
   const roundEndBlock = roundStartBlock ? roundStartBlock + roundLength - 1 : 0;
 
-  const { data, isLoading } = useQuery({
+  const { data, isPending: isLoading } = useQuery({
     queryKey: ["missed_producers", roundStartBlock, roundEndBlock, opTypeId],
     queryFn: () =>
       fetchingService.getMissedProducers(

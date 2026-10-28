@@ -71,7 +71,7 @@ const CommentPermlinkSearchResults = () => {
               urlParams={permlinkSearchProps}
             />
           </div>
-          <div className="flex justify-center items-center text-text sticky z-20 pt-0 top-[3.2rem] md:top-[4rem]">
+          <div className="flex justify-center items-center text-text sticky z-20 pt-0 top-[3.2rem] md:top-16">
             <CustomPagination
               currentPage={permlinkPaginationPage}
               totalCount={permlinkSearchData.total_permlinks}

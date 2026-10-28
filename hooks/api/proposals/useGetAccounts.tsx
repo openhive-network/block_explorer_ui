@@ -5,7 +5,7 @@ const useGetAccounts = (accounts: string[]) => {
   const {
     data: accountsData,
     isFetching: isAccountsDataFetching,
-    isLoading: isAccountsDataLoading,
+    isPending: isAccountsDataLoading,
     isError: isAccountDataError,
   } = useQuery({
     queryKey: ["getAccounts", accounts],

@@ -313,7 +313,7 @@ const NetworkTopAccountsCard: React.FC = () => {
             value={metric}
             onValueChange={(v) => setMetric(v as Hive.TopAccountsMetric)}
           >
-            <SelectTrigger className="h-8 flex-1 gap-1.5 rounded-full border-0 bg-indigo-50 px-3.5 text-xs font-semibold text-indigo-700 shadow-sm ring-1 ring-inset ring-indigo-200 transition-colors hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:bg-indigo-500/15 dark:text-indigo-200 dark:ring-indigo-500/30 dark:hover:bg-indigo-500/25">
+            <SelectTrigger className="h-8 flex-1 gap-1.5 rounded-full border-0 bg-indigo-50 px-3.5 text-xs font-semibold text-indigo-700 shadow-xs ring-1 ring-inset ring-indigo-200 transition-colors hover:bg-indigo-100 focus:outline-hidden focus:ring-2 focus:ring-indigo-400 dark:bg-indigo-500/15 dark:text-indigo-200 dark:ring-indigo-500/30 dark:hover:bg-indigo-500/25">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="rounded-xl">
@@ -343,7 +343,7 @@ const NetworkTopAccountsCard: React.FC = () => {
         </div>
       </div>
 
-      <CardContent className="px-2 py-3 flex-grow">
+      <CardContent className="px-2 py-3 grow">
         {isTopAccountsLoading ? (
           <div className="flex items-center justify-center min-h-[220px]">
             <Loader2 className="animate-spin h-6 w-6" />
@@ -366,7 +366,7 @@ const NetworkTopAccountsCard: React.FC = () => {
                   </p>
                 )}
                 {metricUsesDate(metric) && (
-                  <span className="ms-auto flex-shrink-0 text-[10px] text-gray-400">
+                  <span className="ms-auto shrink-0 text-[10px] text-gray-400">
                     {t("topAccountsCard.last30d")}
                   </span>
                 )}
@@ -388,7 +388,7 @@ const NetworkTopAccountsCard: React.FC = () => {
                     className="rounded-full"
                   />
                 </Link>
-                <div className="flex flex-col flex-grow min-w-0">
+                <div className="flex flex-col grow min-w-0">
                   <Link
                     href={`/@${row.account}`}
                     className="text-link text-sm truncate"

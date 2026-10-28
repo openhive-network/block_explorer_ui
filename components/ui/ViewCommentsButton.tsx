@@ -26,7 +26,7 @@ const ViewCommentsButton: React.FC<ViewCommentsButtonProps> = ({ onClick }) => {
             type="button"
             aria-label={label}
             onClick={onClick}
-            className="flex h-8 w-8 items-center justify-center rounded-md transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+            className="flex h-8 w-8 items-center justify-center rounded-md transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500"
           >
             <MessageSquareText size={18} />
           </button>

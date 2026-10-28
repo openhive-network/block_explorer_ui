@@ -53,8 +53,8 @@ const MyHpDelegationsWidget: React.FC = () => {
   const isEmpty = outgoingLen === 0 && incomingLen === 0;
 
   return (
-    <Card className="col-span-12 lg:col-span-3 overflow-hidden mb-2 h-full flex flex-col [&_td]:!text-[0.8rem] [&_th]:!text-[0.8rem] [&_td]:!px-2 [&_th]:!px-2 [&_td]:!tabular-nums [&_td]:!whitespace-nowrap [&_td]:!break-normal">
-      <CardHeader className="flex justify-between items-center border-b px-3 py-2.5 flex-shrink-0">
+    <Card className="col-span-12 lg:col-span-3 overflow-hidden mb-2 h-full flex flex-col [&_td]:text-[0.8rem]! [&_th]:text-[0.8rem]! [&_td]:px-2! [&_th]:px-2! [&_td]:tabular-nums! [&_td]:whitespace-nowrap! [&_td]:break-normal!">
+      <CardHeader className="flex justify-between items-center border-b px-3 py-2.5 shrink-0">
         <CardTitle>{t("widgets.myHpDelegationsName")}</CardTitle>
         <Link
           href={`/@${username}`}

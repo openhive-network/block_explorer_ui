@@ -16,7 +16,7 @@ interface LoginControlProps {
 const AuthLoadingSkeleton = ({ isMobile }: { isMobile?: boolean }) => (
   <div
     className={cn(
-      "animate-pulse bg-secondary/20 border-navbar-border border-[1px] rounded-[6px] flex items-center justify-center",
+      "animate-pulse bg-secondary/20 border-navbar-border border rounded-[6px] flex items-center justify-center",
       isMobile ? "w-[35px] h-[35px]" : "w-[110px] h-[35px]"
     )}
   >
@@ -145,7 +145,7 @@ const LoginControl: React.FC<LoginControlProps> = ({ isMobile }) => {
       <DialogTrigger asChild>
         <button
           className={cn(
-            "flex items-center h-[35px] rounded-[6px] border-navbar-border border-[1px] overflow-hidden bg-navbar hover:bg-secondary/50 transition-colors shadow-sm active:scale-95",
+            "flex items-center h-[35px] rounded-[6px] border-navbar-border border overflow-hidden bg-navbar hover:bg-secondary/50 transition-colors shadow-xs active:scale-95",
             isMobile ? "w-[35px] justify-center px-0" : "px-4"
           )}
         >

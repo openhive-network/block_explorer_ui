@@ -54,7 +54,7 @@ const LabeledDividerWidget: React.FC<LabeledDividerWidgetProps> = ({
           onBlur={() => onLabelChange(label)}
           onMouseDown={(e) => e.stopPropagation()}
           placeholder={t("labeledDividerWidget.placeholder")}
-          className="w-32 shrink-0 rounded border bg-white px-2 py-0.5 text-xs font-semibold uppercase tracking-[0.1em] text-gray-900 outline-none dark:bg-gray-700 dark:text-white"
+          className="w-32 shrink-0 rounded border bg-white px-2 py-0.5 text-xs font-semibold uppercase tracking-widest text-gray-900 outline-hidden dark:bg-gray-700 dark:text-white"
         />
         <input
           type="text"
@@ -63,7 +63,7 @@ const LabeledDividerWidget: React.FC<LabeledDividerWidgetProps> = ({
           onBlur={() => onHintChange(hint)}
           onMouseDown={(e) => e.stopPropagation()}
           placeholder={t("labeledDividerWidget.hintPlaceholder")}
-          className="min-w-0 flex-1 rounded border bg-white px-2 py-0.5 text-xs text-gray-900 outline-none dark:bg-gray-700 dark:text-white"
+          className="min-w-0 flex-1 rounded border bg-white px-2 py-0.5 text-xs text-gray-900 outline-hidden dark:bg-gray-700 dark:text-white"
         />
         <div
           className="flex shrink-0 items-center gap-1"
@@ -103,7 +103,7 @@ const LabeledDividerWidget: React.FC<LabeledDividerWidgetProps> = ({
           >
             {label || t("labeledDividerWidget.defaultText")}
           </span>
-          <hr className="flex-grow border-gray-200 dark:border-slate-700/70" />
+          <hr className="grow border-gray-200 dark:border-slate-700/70" />
         </div>
         {hint && (
           <p className="mt-1 truncate text-xs text-gray-500 dark:text-gray-400">

@@ -5,7 +5,7 @@ import fetchingService from "@/services/FetchingService";
 const useHafbeVersion = () => {
   const {
     data: hafbeVersionData,
-    isLoading: hafbeVersionDataLoading,
+    isPending: hafbeVersionDataLoading,
     isError: hafbeVersionDataError,
   } = useQuery({
     queryKey: ["hafbeVersion"],

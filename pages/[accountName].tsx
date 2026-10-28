@@ -156,7 +156,7 @@ export default function Account() {
           <div
             className={cn(
               "fixed top-0 left-0 p-5 bg-theme dark:bg-theme w-full h-full -translate-x-full duration-500 z-50 overflow-auto",
-              { "-translate-x-0": showMobileAccountDetails }
+              { "translate-x-0": showMobileAccountDetails }
             )}
           >
             <div className="w-full flex items-center justify-end">

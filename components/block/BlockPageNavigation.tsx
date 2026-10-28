@@ -115,7 +115,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
 
   return (
     <Card
-      className="w-full md:max-w-screen-2xl m-auto"
+      className="w-full md:max-w-(--breakpoint-2xl) m-auto"
       data-testid="block-page-search"
     >
       <CardHeader className="px-4">
@@ -181,7 +181,8 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
               buttonClassName="bg-buttonBg"
               triggerTitle={getOperationButtonTitle(
                 convertBooleanArrayToIds(selectedOperationIds),
-                operationTypes
+                operationTypes,
+                t
               )}
             />
           </div>

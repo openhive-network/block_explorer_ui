@@ -12,7 +12,7 @@ const useAccountRecurrentTransfers = (
   const { hiveChain } = useHiveChainContext();
   const {
     data,
-    isLoading: isRecurrentTransfersDataLoading,
+    isPending: isRecurrentTransfersDataLoading,
     isError: isRecurrentTransfersDataError,
   }: UseQueryResult<Hive.AccountRecurrentBalanceTransfersResponse> = useQuery({
     queryKey: ["account_recurrent_transfers", accountName, liveDataEnabled],

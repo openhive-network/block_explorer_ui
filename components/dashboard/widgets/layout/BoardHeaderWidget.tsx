@@ -91,7 +91,7 @@ const BoardHeaderWidget: React.FC<BoardHeaderWidgetProps> = ({
   );
   const spine = (
     <span
-      className={cn("absolute inset-y-0 start-0 w-[3px]", accent.spine)}
+      className={cn("absolute inset-y-0 inset-s-0 w-[3px]", accent.spine)}
       aria-hidden="true"
     />
   );
@@ -109,7 +109,7 @@ const BoardHeaderWidget: React.FC<BoardHeaderWidgetProps> = ({
               onBlur={() => onEyebrowChange(eyebrow)}
               onMouseDown={(e) => e.stopPropagation()}
               placeholder={t("boardHeaderWidget.eyebrowPlaceholder")}
-              className="w-28 shrink-0 rounded border bg-white px-1.5 py-0.5 text-[11px] uppercase tracking-[0.14em] text-gray-900 outline-none dark:bg-gray-700 dark:text-white"
+              className="w-28 shrink-0 rounded border bg-white px-1.5 py-0.5 text-[11px] uppercase tracking-[0.14em] text-gray-900 outline-hidden dark:bg-gray-700 dark:text-white"
             />
             <input
               type="text"
@@ -118,7 +118,7 @@ const BoardHeaderWidget: React.FC<BoardHeaderWidgetProps> = ({
               onBlur={() => onTitleChange(title)}
               onMouseDown={(e) => e.stopPropagation()}
               placeholder={t("boardHeaderWidget.titlePlaceholder")}
-              className="min-w-0 flex-1 rounded border bg-white px-2 py-0.5 text-base font-semibold text-gray-900 outline-none dark:bg-gray-700 dark:text-white"
+              className="min-w-0 flex-1 rounded border bg-white px-2 py-0.5 text-base font-semibold text-gray-900 outline-hidden dark:bg-gray-700 dark:text-white"
             />
           </div>
           <div className="flex items-center gap-2">
@@ -129,7 +129,7 @@ const BoardHeaderWidget: React.FC<BoardHeaderWidgetProps> = ({
               onBlur={() => onSubtitleChange(subtitle)}
               onMouseDown={(e) => e.stopPropagation()}
               placeholder={t("boardHeaderWidget.subtitlePlaceholder")}
-              className="min-w-0 flex-1 rounded border bg-white px-2 py-0.5 text-xs text-gray-900 outline-none dark:bg-gray-700 dark:text-white"
+              className="min-w-0 flex-1 rounded border bg-white px-2 py-0.5 text-xs text-gray-900 outline-hidden dark:bg-gray-700 dark:text-white"
             />
             <div
               className="flex shrink-0 items-center gap-1"

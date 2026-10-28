@@ -17,7 +17,7 @@ const formatTimeUnlessEpoch = (raw?: string | Date | null): string => {
 const useAccountDetails = (accountName: string, liveDataEnabled: boolean) => {
   const {
     data: accountDetails,
-    isLoading: isAccountDetailsLoading,
+    isPending: isAccountDetailsLoading,
     isError: isAccountDetailsError,
   }: UseQueryResult<Explorer.FormattedAccountDetails> = useQuery({
     queryKey: ["account_details", accountName, liveDataEnabled],

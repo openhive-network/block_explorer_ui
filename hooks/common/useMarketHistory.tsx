@@ -1,4 +1,8 @@
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useQuery,
+  UseQueryResult,
+} from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
 import Hive from "@/types/Hive";
 
@@ -9,12 +13,12 @@ const useMarketHistory = (
 ) => {
   const {
     data: marketHistory,
-    isLoading: isMarketHistoryLoading,
+    isPending: isMarketHistoryLoading,
     isError: isMarketHistoryError,
   }: UseQueryResult<Hive.MarketHistory> = useQuery({
     queryKey: ["market_history", bucketSeconds, start, end],
     queryFn: () => fetchingService.getMarketHistory(bucketSeconds, start, end),
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     refetchOnWindowFocus: false,
   });
 

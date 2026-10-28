@@ -10,7 +10,7 @@ const useAccountWithdrawRoutes = (
 ) => {
   const {
     data,
-    isLoading: isWithdrawRoutesLoading,
+    isPending: isWithdrawRoutesLoading,
     isError: isWithdrawRoutesError,
   }: UseQueryResult<Hive.WithdrawVestingRoutesResponse> = useQuery({
     queryKey: ["account_withdraw_routes", accountName, liveDataEnabled],

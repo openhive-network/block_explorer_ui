@@ -66,12 +66,12 @@ const MyPostingActivityWidget: React.FC = () => {
   return (
     <Card className="col-span-12 lg:col-span-3 mb-2 flex h-full flex-col overflow-hidden">
       <CardHeaderWithLink
-        className="flex-shrink-0"
+        className="shrink-0"
         href={`/@${username}`}
         title={t("widgets.myPostingActivityName")}
       />
 
-      <div className="flex-shrink-0 px-2 pt-2">
+      <div className="shrink-0 px-2 pt-2">
         <SegmentedToggle<ContentFeedKind>
           options={KINDS.map((value) => ({
             value,
@@ -168,7 +168,7 @@ const MyPostingActivityWidget: React.FC = () => {
 
       {/* Say the list stopped early rather than implying it is everything. */}
       {truncated && !!entries?.length && (
-        <p className="flex-shrink-0 border-t px-2 py-1.5 text-center text-[11px] text-gray-400 dark:text-gray-500">
+        <p className="shrink-0 border-t px-2 py-1.5 text-center text-[11px] text-gray-400 dark:text-gray-500">
           {t("widgets.myPostingActivityReblogsScanned").replace(
             "{count}",
             String(scannedEntries)

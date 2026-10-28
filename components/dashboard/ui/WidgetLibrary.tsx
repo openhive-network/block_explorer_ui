@@ -191,7 +191,7 @@ const WidgetLibrary: React.FC<WidgetLibraryProps> = ({
   return (
     <div
       data-testid="widget-library"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs"
       onClick={onClose}
     >
       <div
@@ -215,7 +215,7 @@ const WidgetLibrary: React.FC<WidgetLibraryProps> = ({
           <div className="relative">
             <Search
               size={16}
-              className="pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-gray-400"
+              className="pointer-events-none absolute inset-s-3 top-1/2 -translate-y-1/2 text-gray-400"
             />
             <input
               type="text"
@@ -223,7 +223,7 @@ const WidgetLibrary: React.FC<WidgetLibraryProps> = ({
               placeholder={t("widgetLibrary.searchWidget")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full rounded-xl border border-gray-200 bg-gray-50 py-2.5 pe-3 ps-9 text-sm outline-none transition-colors focus:border-indigo-400 focus:ring-2 focus:ring-indigo-400/40 dark:border-gray-700 dark:bg-gray-800/50"
+              className="w-full rounded-xl border border-gray-200 bg-gray-50 py-2.5 pe-3 ps-9 text-sm outline-hidden transition-colors focus:border-indigo-400 focus:ring-2 focus:ring-indigo-400/40 dark:border-gray-700 dark:bg-gray-800/50"
               autoFocus
             />
           </div>
@@ -282,7 +282,7 @@ const WidgetLibrary: React.FC<WidgetLibraryProps> = ({
           </p>
           <button
             onClick={onClose}
-            className="shrink-0 rounded-lg bg-indigo-500 px-4 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-1"
+            className="shrink-0 rounded-lg bg-indigo-500 px-4 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-600 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-1"
           >
             {t("widgetLibrary.done")}
           </button>

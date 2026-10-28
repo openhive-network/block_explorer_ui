@@ -1,11 +1,15 @@
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useQuery,
+  UseQueryResult,
+} from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
 import Hive from "@/types/Hive";
 
 const useNetworkAuthorRetention = (from?: Date, to?: Date, enabled = true) => {
   const {
     data: authorRetention,
-    isLoading: isAuthorRetentionLoading,
+    isPending: isAuthorRetentionLoading,
     isError: isAuthorRetentionError,
   }: UseQueryResult<
     Hive.NetworkAuthorRetentionResponse[] | undefined
@@ -18,7 +22,7 @@ const useNetworkAuthorRetention = (from?: Date, to?: Date, enabled = true) => {
     queryFn: () => fetchingService.getNetworkAuthorRetention(from, to),
     enabled,
     staleTime: 5 * 60 * 1000,
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
   });
 
   return {

@@ -182,7 +182,7 @@ const WitnessHealthWidget = () => {
           <>
             {hasProxy && username && (
               <div className="flex items-start gap-1.5 px-2 py-1 mb-1.5 rounded-md bg-amber-50 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-900/30 text-xs text-amber-800 dark:text-amber-300">
-                <Handshake className="h-3 w-3 flex-shrink-0 mt-0.5" />
+                <Handshake className="h-3 w-3 shrink-0 mt-0.5" />
                 <span className="leading-snug">
                   <Link
                     href={`/@${username}`}
@@ -305,7 +305,7 @@ const WitnessHealthWidget = () => {
                           accountName={w.name}
                           size={18}
                           alt={w.name}
-                          className="rounded-full flex-shrink-0"
+                          className="rounded-full shrink-0"
                         />
                         <span
                           title={
@@ -316,7 +316,7 @@ const WitnessHealthWidget = () => {
                                 : t("watchlist.witnesses.inactive")
                           }
                           className={cn(
-                            "h-1.5 w-1.5 rounded-full flex-shrink-0",
+                            "h-1.5 w-1.5 rounded-full shrink-0",
                             w.isLoading
                               ? "bg-slate-300 animate-pulse"
                               : w.isActive
@@ -331,13 +331,13 @@ const WitnessHealthWidget = () => {
                           @{w.name}
                         </Link>
 
-                        <span className="w-9 text-center flex-shrink-0 text-[0.6rem] font-semibold text-slate-500 dark:text-slate-400">
+                        <span className="w-9 text-center shrink-0 text-[0.6rem] font-semibold text-slate-500 dark:text-slate-400">
                           {w.rank > 0 ? `#${w.rank}` : "—"}
                         </span>
 
                         <span
                           className={cn(
-                            "w-14 text-right flex-shrink-0 text-[0.6rem] font-medium",
+                            "w-14 text-right shrink-0 text-[0.6rem] font-medium",
                             w.missedBlocks > 500
                               ? "text-red-500 dark:text-red-400"
                               : w.missedBlocks > 0
@@ -352,7 +352,7 @@ const WitnessHealthWidget = () => {
 
                         <span
                           className={cn(
-                            "w-20 text-right flex-shrink-0 text-[0.6rem] font-medium truncate",
+                            "w-20 text-right shrink-0 text-[0.6rem] font-medium truncate",
                             stale && w.isActive
                               ? "text-orange-500 dark:text-orange-400"
                               : "text-slate-300 dark:text-slate-600"

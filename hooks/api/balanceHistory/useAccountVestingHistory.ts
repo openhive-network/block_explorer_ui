@@ -1,4 +1,8 @@
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useQuery,
+  UseQueryResult,
+} from "@tanstack/react-query";
 
 import fetchingService from "@/services/FetchingService";
 import Hive from "@/types/Hive";
@@ -14,7 +18,7 @@ const useAccountVestingHistory = (
 ) => {
   const {
     data: accountVestingHistory,
-    isLoading: isAccountVestingHistoryLoading,
+    isPending: isAccountVestingHistoryLoading,
     isFetching: isAccountVestingHistoryFetching,
     isError: isAccountVestingHistoryError,
   }: UseQueryResult<Hive.AccountVestingHistoryResponse | undefined> = useQuery({
@@ -39,7 +43,7 @@ const useAccountVestingHistory = (
         toDate
       ),
     enabled: !!accountName,
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     refetchOnWindowFocus: false,
   });
 

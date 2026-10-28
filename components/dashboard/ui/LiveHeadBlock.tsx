@@ -56,7 +56,7 @@ const LiveHeadBlock: React.FC<LiveHeadBlockProps> = ({
             <Box size={14} className={glyph} aria-hidden="true" />
             <span
               className={cn(
-                "absolute -end-0.5 -top-0.5 h-1.5 w-1.5 rounded-full ring-2 ring-theme",
+                "absolute -inset-e-0.5 -top-0.5 h-1.5 w-1.5 rounded-full ring-2 ring-theme",
                 settings.liveData
                   ? cn("animate-pulse motion-reduce:animate-none", dotClass)
                   : "bg-gray-300 dark:bg-gray-600"

@@ -171,7 +171,7 @@ const CustomTooltip = ({ active, payload }: any) => {
     return (
       <div className="rounded-lg p-3 shadow-xl border border-slate-200/50 bg-theme dark:border-slate-800/50 dark:bg-slate-900">
         <div className="flex items-center gap-3">
-          <div className="flex-shrink-0">
+          <div className="shrink-0">
             {data.name === "Others" ? (
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-200 dark:bg-slate-700">
                 <Users className="h-6 w-6 text-slate-500" />

@@ -109,7 +109,7 @@ const WitnessSchedule: React.FC<WitnessScheduleProps> = ({
             <div
               key={witness.producerName}
               className={cn(
-                "relative w-full grid grid-cols-[2.25rem_1fr_auto] items-center gap-x-2 gap-y-0.5 px-2 py-1 shadow-sm text-xs rounded",
+                "relative w-full grid grid-cols-[2.25rem_1fr_auto] items-center gap-x-2 gap-y-0.5 px-2 py-1 shadow-xs text-xs rounded",
                 isCurrent
                   ? "bg-green-500 text-white"
                   : isMissed

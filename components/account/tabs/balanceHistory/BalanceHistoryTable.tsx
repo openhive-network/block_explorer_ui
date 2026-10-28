@@ -348,7 +348,7 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
     <>
       <div
         ref={paginationRef}
-        className="sticky z-20 top-[7rem] md:top-[7.5rem] scroll-mt-[7.5rem]"
+        className="sticky z-20 top-28 md:top-30 scroll-mt-30"
       >
         <CustomPagination
           currentPage={current_page ? current_page : total_pages}

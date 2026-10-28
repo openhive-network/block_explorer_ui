@@ -27,9 +27,6 @@ const nextConfig = {
   basePath: basePath,
   // assetPrefix must match basePath for proper asset serving
   assetPrefix: basePath,
-  publicRuntimeConfig: {
-    basePath: basePath,
-  },
   // The OG routes read the resvg wasm with fs, which tracing cannot detect.
   // The glob names pnpm's real directory: it does not follow the
   // node_modules/@resvg/resvg-wasm symlink, and standalone recreates that link.

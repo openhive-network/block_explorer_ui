@@ -129,7 +129,7 @@ const DailyActiveUsersChart: React.FC<DailyActiveUsersChartProps> = ({
     if (!active || !payload?.length) return null;
     const { period, active_accounts, operations } = payload[0].payload;
     return (
-      <div className="bg-theme rounded shadow-sm py-1 px-2 text-[0.6rem]">
+      <div className="bg-theme rounded shadow-xs py-1 px-2 text-[0.6rem]">
         <p className="text-gray-400 mb-0.5 text-center">
           {moment(period).format(dateFormat ?? "MMM D, YYYY")}
         </p>

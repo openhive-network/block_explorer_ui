@@ -206,7 +206,8 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
   const selectedTypeIds = convertBooleanArrayToIds(filtersParam ?? filters);
   const typesTitle = getOperationButtonTitle(
     selectedTypeIds,
-    accountOperationTypes
+    accountOperationTypes,
+    t
   );
   const hasTypeFilter = (selectedTypeIds?.length ?? 0) > 0;
   const expandFilters = () => setIsVisible(true);
@@ -363,7 +364,8 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
               buttonClassName="bg-theme"
               triggerTitle={getOperationButtonTitle(
                 convertBooleanArrayToIds(filtersParam ?? filters),
-                accountOperationTypes
+                accountOperationTypes,
+                t
               )}
             />
           </div>
@@ -402,7 +404,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
         loadPreviousBlocks={handleLoadPreviousBlocks}
         loadNextBlocks={handleLoadNextBlocks}
         urlParams={paramsState}
-        className="w-full mb-[-1px] relative z-10 rounded-t"
+        className="w-full -mb-px relative z-10 rounded-t"
       />
       <AccountOperationsSection
         accountOperations={accountOperations}

@@ -312,7 +312,7 @@ export default function Block({ meta }: { meta: SeoMeta }) {
               <JSONView
                 data-testid="json-view"
                 json={rawBlockdata || {}}
-                className="w-full m-auto py-2 px-4 bg-theme dark:bg-theme rounded text-white text-xs break-words break-all"
+                className="w-full m-auto py-2 px-4 bg-theme dark:bg-theme rounded text-white text-xs wrap-break-word break-all"
                 isPrettyView={settings.prettyJsonView}
               />
             </div>
@@ -323,7 +323,7 @@ export default function Block({ meta }: { meta: SeoMeta }) {
             >
               {!!totalOperations?.total_operations &&
                 totalOperations?.total_operations > 1000 && (
-                  <div className="my-4 w-full sticky z-20 top-[3.2rem] md:top-[4rem] rounded">
+                  <div className="my-4 w-full sticky z-20 top-[3.2rem] md:top-16 rounded">
                     <CustomPagination
                       currentPage={paramsState.page}
                       onPageChange={(newPage: number) =>
@@ -335,7 +335,7 @@ export default function Block({ meta }: { meta: SeoMeta }) {
                     />
                   </div>
                 )}
-              <div className="w-full max-w-screen-2xl flex flex-col">
+              <div className="w-full max-w-(--breakpoint-2xl) flex flex-col">
                 {!!convertedTotalOperations.length && (
                   <OperationsTable
                     operationCount={totalOperations?.total_operations || 0}

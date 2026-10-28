@@ -23,7 +23,7 @@ const useWitnessVotesHistory = (
 
   const {
     data: votesHistory,
-    isLoading: isVotesHistoryLoading,
+    isPending: isVotesHistoryLoading,
     isError: isVotesHistoryError,
   }: any = useQuery({
     queryKey: [

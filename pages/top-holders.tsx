@@ -172,7 +172,7 @@ const FindAccountInput: React.FC<FindAccountInputProps> = ({
       placeholder={placeholder}
       inputType="account_name"
       className="w-full"
-      inputClassName="!rounded !border !border-solid !border-gray-300 !bg-white dark:!border-gray-600 dark:!bg-gray-800"
+      inputClassName="rounded! border! border-solid! border-gray-300! bg-white! dark:border-gray-600! dark:bg-gray-800!"
     />
   );
 };
@@ -651,13 +651,13 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
                 accountName={account}
                 size={30}
                 alt={`${account}'s profile`}
-                className="flex-shrink-0 rounded-full"
+                className="shrink-0 rounded-full"
               />
               <Link className="break-all text-link" href={`/@${account}`}>
                 {account}
               </Link>
               {(label || isYou) && (
-                <span className="flex flex-shrink-0 -translate-y-2 items-center gap-1 sm:translate-y-0">
+                <span className="flex shrink-0 -translate-y-2 items-center gap-1 sm:translate-y-0">
                   {label && <AccountLabelBadge label={label} compactOnMobile />}
                   {isYou && (
                     <span className="inline-flex items-center rounded-full border border-violet-200 bg-violet-100 px-1.5 py-0.5 text-[10px] font-semibold text-violet-700 dark:border-violet-800 dark:bg-violet-950 dark:text-violet-300">
@@ -771,7 +771,7 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
                 {currentUnitLabel} · {balanceLabel}
               </p>
             </div>
-            <div className="flex flex-shrink-0 items-center gap-2 mt-3.5 pe-6">
+            <div className="flex shrink-0 items-center gap-2 mt-3.5 pe-6">
               <FilterSectionToggle
                 isFiltersActive={filtersChanged}
                 toggleFilters={() => setIsFiltersVisible(!isFiltersVisible)}
@@ -1130,7 +1130,7 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
             )}
         </Card>
 
-        <div className="fixed bottom-[10px] end-0 flex flex-col items-end justify-end px-3 md:px-12">
+        <div className="fixed bottom-[10px] inset-e-0 flex flex-col items-end justify-end px-3 md:px-12">
           <ScrollTopButton />
         </div>
 

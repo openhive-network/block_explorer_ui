@@ -27,7 +27,7 @@ const useProposalVotesHistory = (
 
   const {
     data: votesHistory,
-    isLoading: isVotesHistoryLoading,
+    isPending: isVotesHistoryLoading,
     isError: isVotesHistoryError,
   } = useQuery({
     queryKey: [

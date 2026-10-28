@@ -206,7 +206,7 @@ const VotesHistoryDialog: React.FC<VotesHistoryDialogProps> = ({
 
           <div className="flex-1 overflow-y-auto p-4 pt-0">
             {/* Filters Section  */}
-            <div className="flex-shrink-0 space-y-1 p-6  rounded-md ">
+            <div className="shrink-0 space-y-1 p-6  rounded-md ">
               <Label className="text-lg">{t("common.filters")}</Label>
               <div className="flex flex-col">
                 <div className="w-full md:w-1/3">

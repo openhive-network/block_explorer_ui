@@ -72,7 +72,7 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
       <div className="flex justify-between items-center">
         <div className="flex justify-start items-center gap-x-4">
           {!skipBlock && (
-            <div className="flex-shrink-0">
+            <div className="shrink-0">
               Block{" "}
               <Link
                 className="text-explorer-turquoise"
@@ -83,7 +83,7 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
             </div>
           )}
           {transactionId && !skipTrx && (
-            <div className="flex-shrink-0">
+            <div className="shrink-0">
               Trx{" "}
               <Link
                 className="text-explorer-turquoise"

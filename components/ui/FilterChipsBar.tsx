@@ -90,11 +90,11 @@ const FilterChipsBar: React.FC<FilterChipsBarProps> = ({
   return (
     <div
       className={cn(
-        sticky && "sticky top-[3.2rem] md:top-[4rem] z-30 bg-theme pb-3",
+        sticky && "sticky top-[3.2rem] md:top-16 z-30 bg-theme pb-3",
         className
       )}
     >
-      <div className="flex flex-wrap items-center gap-2 bg-theme rounded-md border border-gray-200 dark:border-gray-700 shadow-sm px-3 py-2">
+      <div className="flex flex-wrap items-center gap-2 bg-theme rounded-md border border-gray-200 dark:border-gray-700 shadow-xs px-3 py-2">
         <span className="text-sm text-gray-500">
           {t("activeFilters.title")}:
         </span>
@@ -114,7 +114,7 @@ const FilterChipsBar: React.FC<FilterChipsBarProps> = ({
               type="button"
               onClick={chip.onClick ?? onExpand}
               className={cn(
-                "min-w-0 py-0.5 text-start [overflow-wrap:anywhere] rounded-full text-current hover:bg-blue-200 dark:hover:bg-blue-900 transition-colors cursor-pointer",
+                "min-w-0 py-0.5 text-start wrap-anywhere rounded-full text-current hover:bg-blue-200 dark:hover:bg-blue-900 transition-colors cursor-pointer",
                 chip.onRemove ? "ps-3 pe-2" : "px-3"
               )}
               aria-label={t("activeFilters.edit", { value: chip.label })}

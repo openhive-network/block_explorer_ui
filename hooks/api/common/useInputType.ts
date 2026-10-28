@@ -5,7 +5,7 @@ import fetchingService from "@/services/FetchingService";
 const useInputType = (input: string) => {
   const {
     data: inputTypeData,
-    isLoading: inputTypeDataLoading,
+    isPending: inputTypeDataLoading,
     isError: inputTypeDataError,
   } = useQuery({
     queryKey: ["inputType", input],

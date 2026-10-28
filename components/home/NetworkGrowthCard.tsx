@@ -160,13 +160,13 @@ const NetworkGrowthCard = () => {
         </div>
 
         {/* Cumulative Growth Chart (last 30 days) */}
-        <div className="flex-[2] min-w-[220px] bg-explorer-extra-light-gray rounded-lg p-2.5 shadow-md flex flex-col">
+        <div className="flex-2 min-w-[220px] bg-explorer-extra-light-gray rounded-lg p-2.5 shadow-md flex flex-col">
           {isWindowLoading ? (
-            <div className="flex items-center justify-center flex-grow min-h-[100px]">
+            <div className="flex items-center justify-center grow min-h-[100px]">
               <Loader2 className="animate-spin h-5 w-5" />
             </div>
           ) : (
-            <div className="flex-grow min-h-[100px] overflow-hidden">
+            <div className="grow min-h-[100px] overflow-hidden">
               <NetworkGrowthChart
                 data={chartData}
                 tickCount={4}

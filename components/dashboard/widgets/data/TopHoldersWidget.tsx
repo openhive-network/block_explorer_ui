@@ -106,14 +106,14 @@ const TopHoldersWidget: React.FC = () => {
                   key={h.account}
                   className="flex items-center gap-2 px-2 py-1 rounded hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
                 >
-                  <span className="w-5 text-center text-[0.65rem] font-semibold text-slate-500 dark:text-slate-400 flex-shrink-0">
+                  <span className="w-5 text-center text-[0.65rem] font-semibold text-slate-500 dark:text-slate-400 shrink-0">
                     {rank}
                   </span>
                   <HiveAvatar
                     accountName={h.account}
                     size={18}
                     alt={h.account}
-                    className="rounded-full flex-shrink-0"
+                    className="rounded-full shrink-0"
                   />
                   <Link
                     href={`/@${h.account}`}
@@ -121,7 +121,7 @@ const TopHoldersWidget: React.FC = () => {
                   >
                     @{h.account}
                   </Link>
-                  <span className="text-[0.6rem] font-medium text-slate-600 dark:text-slate-300 flex-shrink-0 whitespace-nowrap">
+                  <span className="text-[0.6rem] font-medium text-slate-600 dark:text-slate-300 shrink-0 whitespace-nowrap">
                     {formatBalance(h.value)}
                   </span>
                 </li>

@@ -67,7 +67,7 @@ const RcFootprintKpiStrip: React.FC<RcFootprintKpiStripProps> = ({
           label={label}
           icon={<Icon className="h-3 w-3 shrink-0" />}
           infoText={info}
-          valueClassName="whitespace-normal break-words"
+          valueClassName="whitespace-normal wrap-break-word"
           value={
             exact ? (
               <TooltipProvider>

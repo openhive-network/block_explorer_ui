@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 import { config } from "@/Config";
 import Hive from "@/types/Hive";
@@ -9,17 +8,17 @@ const useLastBlocks = (
   headBlockNum?: number,
   limit: number = config.lastBlocksForWidget
 ) => {
-  const [lastBlocks, setLastBlocks] = useState<Hive.LastBlocksTypeResponse[]>(
-    []
-  );
-
-  const { isLoading: lastBlocksDataLoading, isError: lastBlocksDataError } =
-    useQuery({
-      queryKey: ["lastBlocks", headBlockNum, limit],
-      queryFn: () => fetchingService.getLastBlocks(limit),
-      refetchOnWindowFocus: false,
-      onSuccess: (data: Hive.LastBlocksTypeResponse[]) => setLastBlocks(data),
-    });
+  const {
+    data: lastBlocks = [],
+    isPending: lastBlocksDataLoading,
+    isError: lastBlocksDataError,
+  } = useQuery({
+    queryKey: ["lastBlocks", headBlockNum, limit],
+    queryFn: () => fetchingService.getLastBlocks(limit),
+    refetchOnWindowFocus: false,
+    // Each head block is a new key; keep showing the previous list meanwhile.
+    placeholderData: keepPreviousData,
+  });
 
   return {
     lastBlocksData: lastBlocks,

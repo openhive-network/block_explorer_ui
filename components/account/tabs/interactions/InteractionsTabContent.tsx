@@ -103,7 +103,11 @@ const InteractionsTabContent: React.FC<InteractionsTabContentProps> = ({
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paramsState, isFiltersActive]);
 
-  const typesTitle = getOperationButtonTitle(selectedTypeIds, operationsTypes);
+  const typesTitle = getOperationButtonTitle(
+    selectedTypeIds,
+    operationsTypes,
+    t
+  );
   const hasTypeFilter = (selectedTypeIds?.length ?? 0) > 0;
   const permlink: string | undefined = paramsState.permlink;
 

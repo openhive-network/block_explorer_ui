@@ -96,7 +96,7 @@ const ProposalsPage = ({ meta }: { meta: SeoMeta }) => {
   useEffect(() => {
     if (!router.isReady || !router.query.hs_voted) return;
     if (username) {
-      queryClient.invalidateQueries(["voterProposals", username]);
+      queryClient.invalidateQueries({ queryKey: ["voterProposals", username] });
     }
     // Capture hash before router.replace strips it
     const hash = window.location.hash.replace("#", "");
@@ -441,11 +441,11 @@ const ProposalsPage = ({ meta }: { meta: SeoMeta }) => {
             className="flex items-center text-center my-10"
             aria-hidden="true"
           >
-            <div className="flex-grow border-t border-slate-200 dark:border-slate-700" />
-            <span className="flex-shrink mx-4 text-sm font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            <div className="grow border-t border-slate-200 dark:border-slate-700" />
+            <span className="shrink mx-4 text-sm font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
               {t("proposalsPage.unfundedSeparatorTitle")}
             </span>
-            <div className="flex-grow border-t border-slate-200 dark:border-slate-700" />
+            <div className="grow border-t border-slate-200 dark:border-slate-700" />
           </div>
         )}
 
@@ -519,7 +519,7 @@ const ProposalsPage = ({ meta }: { meta: SeoMeta }) => {
           />
           {voterFilter && (
             <div className="flex items-center gap-2 px-3 py-2 -mt-px bg-blue-50 dark:bg-blue-950/20 border border-t-0 border-blue-200 dark:border-blue-800/30 rounded-b-[8px] text-sm text-blue-700 dark:text-blue-300">
-              <HeartHandshake className="h-4 w-4 flex-shrink-0" />
+              <HeartHandshake className="h-4 w-4 shrink-0" />
               <span>
                 {t("proposalsPage.voterFilterBanner", {
                   username: voterFilter,

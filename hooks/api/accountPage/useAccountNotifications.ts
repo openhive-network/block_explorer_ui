@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 import Hive from "@/types/Hive";
 import { config } from "@/Config";
@@ -12,14 +12,14 @@ const useAccountNotifications = (
 ) => {
   const {
     data: notifications,
-    isLoading,
+    isPending: isLoading,
     isError,
   } = useQuery<Hive.AccountNotification[]>({
     queryKey: ["account_notifications", accountName, limit],
     queryFn: () => fetchingService.getAccountNotifications(accountName!, limit),
     refetchInterval: liveDataEnabled ? config.accountRefreshInterval : false,
     refetchOnWindowFocus: false,
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     enabled: !!accountName,
   });
 

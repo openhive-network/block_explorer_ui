@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 import Hive from "@/types/Hive";
 import { config } from "@/Config";
@@ -14,7 +14,7 @@ const useAccountTopPosts = (
 ) => {
   const {
     data: topPosts,
-    isLoading,
+    isPending: isLoading,
     isError,
   } = useQuery<Hive.AccountPostSummary[]>({
     // Poll interval only — see useAccountNotifications.
@@ -29,7 +29,7 @@ const useAccountTopPosts = (
     },
     refetchInterval: liveDataEnabled ? config.contentRefreshInterval : false,
     refetchOnWindowFocus: false,
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     enabled: !!accountName,
   });
 

@@ -67,7 +67,7 @@ export const HeadBlockContextProvider: React.FC<{
 
   const {
     data: headBlockNumberData,
-    isLoading: headBlockNumberDataLoading,
+    isPending: headBlockNumberDataLoading,
     isError: headBlockNumberDataError,
     refetch,
   } = useQuery({

@@ -7,7 +7,8 @@ This project is a GUI for the Block Explorer. You can use it to go through block
 To run the application you have to install Node JS 24. Then after getting the repo use:
 
 ```bash
-npm install
+git submodule update --init
+pnpm install
 ```
 
 ## Add .env file with the following

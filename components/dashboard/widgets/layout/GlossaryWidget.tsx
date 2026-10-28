@@ -48,7 +48,7 @@ const GlossaryWidget: React.FC<GlossaryWidgetProps> = ({
             onBlur={() => onTitleChange(title)}
             onMouseDown={(e) => e.stopPropagation()}
             placeholder={t("glossaryWidget.titlePlaceholder")}
-            className="w-full rounded border bg-white px-2 py-1 text-sm font-semibold text-gray-900 outline-none dark:bg-gray-700 dark:text-white"
+            className="w-full rounded border bg-white px-2 py-1 text-sm font-semibold text-gray-900 outline-hidden dark:bg-gray-700 dark:text-white"
           />
           <textarea
             value={terms}
@@ -56,7 +56,7 @@ const GlossaryWidget: React.FC<GlossaryWidgetProps> = ({
             onBlur={() => onTermsChange(terms)}
             onMouseDown={(e) => e.stopPropagation()}
             placeholder={t("glossaryWidget.termsPlaceholder")}
-            className="min-h-[120px] w-full flex-1 resize-none rounded border bg-white p-2 text-xs leading-relaxed text-gray-900 outline-none dark:bg-gray-700 dark:text-white"
+            className="min-h-[120px] w-full flex-1 resize-none rounded border bg-white p-2 text-xs leading-relaxed text-gray-900 outline-hidden dark:bg-gray-700 dark:text-white"
           />
         </div>
       </div>
@@ -82,7 +82,7 @@ const GlossaryWidget: React.FC<GlossaryWidgetProps> = ({
             <div key={index} className="px-3 py-2">
               <dt
                 className={cn(
-                  "text-[11px] font-semibold uppercase tracking-[0.1em]",
+                  "text-[11px] font-semibold uppercase tracking-widest",
                   accent.text
                 )}
               >

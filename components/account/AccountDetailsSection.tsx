@@ -437,7 +437,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
 
             <TabsContent value="wallet">
               <div className="flex items-center gap-4">
-                <div className="flex-grow border-t border-slate-200 dark:border-slate-700"></div>
+                <div className="grow border-t border-slate-200 dark:border-slate-700"></div>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -506,7 +506,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
             {hasDelegationsContent && (
               <TabsContent value="delegations">
                 <div className="flex items-center gap-4">
-                  <div className="flex-grow border-t border-slate-200 dark:border-slate-700"></div>
+                  <div className="grow border-t border-slate-200 dark:border-slate-700"></div>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -574,7 +574,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
             {hasGovernanceContent && (
               <TabsContent value="governance">
                 <div className="flex items-center gap-4">
-                  <div className="flex-grow border-t border-slate-200 dark:border-slate-700"></div>
+                  <div className="grow border-t border-slate-200 dark:border-slate-700"></div>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -624,7 +624,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
 
             <TabsContent value="profile">
               <div className="flex items-center gap-4">
-                <div className="flex-grow border-t border-slate-200 dark:border-slate-700"></div>
+                <div className="grow border-t border-slate-200 dark:border-slate-700"></div>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -706,7 +706,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
             />
           </div>
           <div className="flex items-center gap-4 my-4">
-            <div className="flex-grow border-t border-slate-200 dark:border-slate-700"></div>
+            <div className="grow border-t border-slate-200 dark:border-slate-700"></div>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>

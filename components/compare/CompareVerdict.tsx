@@ -49,8 +49,8 @@ const CompareVerdict: React.FC<CompareVerdictProps> = ({
   );
 
   return (
-    <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 border-t border-slate-100 bg-gradient-to-r from-amber-50/70 to-transparent px-3 py-2.5 text-[13px] dark:border-slate-800 dark:from-amber-950/20 sm:px-5">
-      <Trophy className="h-4 w-4 flex-shrink-0 text-amber-500" />
+    <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 border-t border-slate-100 bg-linear-to-r from-amber-50/70 to-transparent px-3 py-2.5 text-[13px] dark:border-slate-800 dark:from-amber-950/20 sm:px-5">
+      <Trophy className="h-4 w-4 shrink-0 text-amber-500" />
       {v.leader ? (
         <>
           <span className="font-medium text-slate-600 dark:text-slate-300">

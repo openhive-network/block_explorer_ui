@@ -52,7 +52,7 @@ const LanguageSelector = () => {
             isRTL && "flex-row-reverse"
           )}
         > 
-          <EarthIcon className="h-5 w-5 flex-shrink-0" />
+          <EarthIcon className="h-5 w-5 shrink-0" />
           <span className="font-medium text-xs sm:text-sm whitespace-nowrap">
             {locale.toUpperCase()}
           </span>
@@ -77,7 +77,7 @@ const LanguageSelector = () => {
                 }}
                 aria-label={option.flagCode}
               />
-              <span className="flex-grow">{t(option.labelKey)}</span>
+              <span className="grow">{t(option.labelKey)}</span>
               <span className="text-explorer-light-gray">({option.value.toUpperCase()})</span>
             </div>
           </SelectItem>

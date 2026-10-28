@@ -15,7 +15,11 @@ const usePostDiscussion = (
 ): PostDiscussionResult => {
   const trimAccount = author?.replace("@", "");
 
-  const { data, isLoading, isError } = useQuery({
+  const {
+    data,
+    isPending: isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["post discussion", trimAccount, permlink, observer],
     queryFn: () => fetchPostContentReplies(trimAccount, permlink, observer),
     refetchOnWindowFocus: false,

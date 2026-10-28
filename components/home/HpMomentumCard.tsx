@@ -194,7 +194,7 @@ const HpMomentumCard = () => {
         </div>
 
         {/* Right: 30-day trend chart */}
-        <div className="flex-[2] min-w-[260px]">
+        <div className="flex-2 min-w-[260px]">
           <div className="bg-explorer-extra-light-gray rounded-lg p-3 shadow-md h-full flex flex-col">
             <h3 className="text-[10px] font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-1">
               {t("hpMomentumCard.last30Days")}
@@ -204,7 +204,7 @@ const HpMomentumCard = () => {
                 <Loader2 className="animate-spin h-6 w-6" />
               </div>
             ) : (
-              <div className="flex-grow min-h-[240px]">
+              <div className="grow min-h-[240px]">
                 <HpMomentumChart
                   data={chartData}
                   unit={unit}

@@ -410,7 +410,7 @@ const AccountRetentionFunnelCard: React.FC = () => {
         )}
 
         {/* Chart panel */}
-        <div className="flex-[3] min-w-[220px] bg-explorer-extra-light-gray rounded-lg p-2.5 shadow-md flex flex-col">
+        <div className="flex-3 min-w-[220px] bg-explorer-extra-light-gray rounded-lg p-2.5 shadow-md flex flex-col">
           <div className="flex justify-between items-center mb-1">
             <div className="flex gap-1">
               {(["rates", "counts"] as HeatmapViewMode[]).map((mode) => (
@@ -432,12 +432,12 @@ const AccountRetentionFunnelCard: React.FC = () => {
             </div>
           </div>
           {isAccountFunnelLoading ? (
-            <div className="flex items-center justify-center flex-grow min-h-[100px]">
+            <div className="flex items-center justify-center grow min-h-[100px]">
               <Loader2 className="animate-spin h-5 w-5" />
             </div>
           ) : (
             <>
-              <div className="flex-grow min-h-[100px] overflow-hidden">
+              <div className="grow min-h-[100px] overflow-hidden">
                 <AccountRetentionHeatmap
                   data={sortedData}
                   compact

@@ -80,7 +80,7 @@ const AccountLabelBadge: React.FC<Props> = ({ label, compactOnMobile }) => {
             {!iconOnly && (
               <span
                 className={cn(
-                  "max-w-[7rem] truncate",
+                  "max-w-28 truncate",
                   compactOnMobile && "hidden sm:inline",
                   isInactive && "line-through"
                 )}

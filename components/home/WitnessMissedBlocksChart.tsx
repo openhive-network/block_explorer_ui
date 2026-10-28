@@ -49,7 +49,7 @@ const WitnessMissedBlocksChart: React.FC<WitnessMissedBlocksChartProps> = ({
     const { period, missed, rate } = payload[0].payload;
     const isProvisional = Boolean(provisionalFrom && period >= provisionalFrom);
     return (
-      <div className="bg-theme rounded shadow-sm py-1 px-2 text-[0.6rem]">
+      <div className="bg-theme rounded shadow-xs py-1 px-2 text-[0.6rem]">
         <p className="text-gray-400 mb-0.5 text-center">
           {moment(period).format("MMM D, YYYY")}
           {isProvisional && " · " + t("witnessMissedBlocksCard.soFar")}
