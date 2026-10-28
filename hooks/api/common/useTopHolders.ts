@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
 import Hive from "@/types/Hive";
 
@@ -14,7 +14,7 @@ const useTopHolders = (
 ) => {
   const {
     data: holdersData,
-    isLoading: isTopHoldersLoading,
+    isPending: isTopHoldersLoading,
     error: isTopHoldersError,
   } = useQuery<Hive.TopHoldersResponse>({
     queryKey: [
@@ -34,7 +34,7 @@ const useTopHolders = (
         maxBalance
       ),
     enabled: !(coinType === "VESTS" && balanceType !== "balance"),
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
   });

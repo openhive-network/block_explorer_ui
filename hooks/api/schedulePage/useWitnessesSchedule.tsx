@@ -21,7 +21,7 @@ const useWitnessesSchedule = (
 ) => {
   const {
     data,
-    isLoading: isWitnessScheduleLoading,
+    isPending: isWitnessScheduleLoading,
     isError: isWitnessScheduleError,
     refetch: refetchWitnessSchedule,
   } = useQuery({

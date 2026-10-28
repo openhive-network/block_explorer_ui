@@ -37,7 +37,7 @@ function SegmentedToggle<T extends string>({
       role="group"
       aria-label={ariaLabel}
       className={cn(
-        "flex flex-shrink-0 overflow-hidden font-medium",
+        "flex shrink-0 overflow-hidden font-medium",
         isPill
           ? "items-stretch rounded-full border border-navbar-border"
           : "rounded border border-gray-200 dark:border-gray-700",

@@ -1,4 +1,8 @@
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useQuery,
+  UseQueryResult,
+} from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
 import Hive from "@/types/Hive";
 
@@ -13,7 +17,7 @@ const useNetworkCustomJsonUsage = (
 ) => {
   const {
     data: customJsonUsage,
-    isLoading: isCustomJsonUsageLoading,
+    isPending: isCustomJsonUsageLoading,
     isError: isCustomJsonUsageError,
   }: UseQueryResult<Hive.NetworkCustomJsonUsageRow[] | undefined> = useQuery({
     queryKey: ["networkCustomJsonUsage", jsonId, from, to, granularity],
@@ -25,7 +29,7 @@ const useNetworkCustomJsonUsage = (
         granularity,
       }),
     enabled: !!jsonId,
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     refetchOnWindowFocus: false,
     meta: { skipNodeSupportGate },
   });

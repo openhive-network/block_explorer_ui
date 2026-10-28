@@ -77,7 +77,7 @@ const TimeInput: React.FC<TimeInputProps> = ({
       value={currentValue}
       onChange={(e) => handleValueChange(e.target.value)}
       className={cn(
-        "outline-none bg-theme dark:bg-theme text-white w-5 mx-1",
+        "outline-hidden bg-theme dark:bg-theme text-white w-5 mx-1",
         className
       )}
       onFocus={() => setFocused(true)}

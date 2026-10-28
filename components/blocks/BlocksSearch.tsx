@@ -352,7 +352,8 @@ const BlocksSearch = ({
               buttonClassName="bg-gray-500"
               triggerTitle={getOperationButtonTitle(
                 convertBooleanArrayToIds(paramsState.filters ?? []),
-                operationsTypes
+                operationsTypes,
+                t
               )}
             />
           </div>

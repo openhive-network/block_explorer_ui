@@ -5,7 +5,7 @@ import fetchingService from "@/services/FetchingService";
 const useBlockChainProperties = () => {
   const {
     data: blockChainPropertiesData,
-    isLoading: blockChainPropertiesDataLoading,
+    isPending: blockChainPropertiesDataLoading,
     isError: blockChainPropertiesDataError,
   } = useQuery({
     queryKey: ["blockChainPropertiesData"],

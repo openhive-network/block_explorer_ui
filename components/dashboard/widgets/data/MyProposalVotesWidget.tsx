@@ -51,7 +51,7 @@ const MyProposalVotesWidget: React.FC = () => {
   return (
     <Card className="col-span-12 lg:col-span-3 mb-2 flex h-full flex-col overflow-hidden">
       <CardHeaderWithLink
-        className="flex-shrink-0"
+        className="shrink-0"
         href={`/proposals?voter=${username}&status=all`}
         title={
           <span className="flex items-center gap-2">

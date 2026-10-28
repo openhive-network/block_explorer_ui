@@ -27,7 +27,7 @@ const SeparatorWidget: React.FC<SeparatorWidgetProps> = ({
       ? initialVariant
       : "line";
   const accent = resolveAccent(initialAccent);
-  const rule = "flex-grow border-t border-gray-200 dark:border-slate-700";
+  const rule = "grow border-t border-gray-200 dark:border-slate-700";
 
   if (isEditMode) {
     return (

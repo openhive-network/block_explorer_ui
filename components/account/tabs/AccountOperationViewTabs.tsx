@@ -140,7 +140,7 @@ const AccountOperationViewTabs: React.FC<AccountOperationViewTabs> = ({
     >
       <div className="flex w-full justify-between items-end gap-2 border-b border-gray-200 dark:border-gray-700">
         <TabsList
-          className="inline-flex items-end gap-0.5 bg-transparent p-0 h-auto rounded-none overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="inline-flex items-end gap-0.5 bg-transparent p-0 h-auto rounded-none overflow-x-auto overflow-y-hidden scrollbar-none [&::-webkit-scrollbar]:hidden"
           role="group"
         >
           {(

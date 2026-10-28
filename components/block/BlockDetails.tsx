@@ -54,7 +54,7 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
         )}
       >
         <div
-          className="font-medium md:w-[360px] md:flex-shrink-0 text-start"
+          className="font-medium md:w-[360px] md:shrink-0 text-start"
           data-testid={`${dataTestId}-label`}
         >
           {label}:
@@ -71,7 +71,7 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
 
   return (
     <Card
-      className="flex flex-col w-full md:max-w-screen-2xl m-auto"
+      className="flex flex-col w-full md:max-w-(--breakpoint-2xl) m-auto"
       data-testid="block-page-block-details"
     >
       <CardHeader className="px-4 pt-4 pb-2">

@@ -7,7 +7,7 @@ import fetchingService from "@/services/FetchingService";
 // single small response, where reading it off the current page would make the
 // badge depend on which page you happen to be looking at.
 const useLatestWitnessVersion = (enabled: boolean = true) => {
-  const { data: latestVersion, isLoading: isLatestVersionLoading } = useQuery({
+  const { data: latestVersion, isPending: isLatestVersionLoading } = useQuery({
     queryKey: ["latestWitnessVersion"],
     queryFn: async () => {
       const response = await fetchingService.getWitnesses(

@@ -35,7 +35,7 @@ const CompareSelectToggle: React.FC<CompareSelectToggleProps> = ({
           aria-label={t("compare.select.toggle")}
           aria-pressed={selected}
           className={cn(
-            "inline-flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border transition-colors",
+            "inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border transition-colors",
             selected
               ? "border-indigo-500 bg-indigo-500 text-white"
               : "border-slate-300 text-slate-400 hover:border-indigo-400 hover:text-indigo-500 dark:border-slate-600 dark:text-slate-500"

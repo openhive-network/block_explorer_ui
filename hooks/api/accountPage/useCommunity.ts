@@ -5,7 +5,7 @@ import Hive from "@/types/Hive";
 const useCommunity = (communityName: string | null | undefined) => {
   const {
     data: communityDetails,
-    isLoading: isCommunityDetailsLoading,
+    isPending: isCommunityDetailsLoading,
     isError: isCommunityDetailsError,
   } = useQuery<Hive.CommunityDetails, Error>({
     queryKey: ["community", communityName],

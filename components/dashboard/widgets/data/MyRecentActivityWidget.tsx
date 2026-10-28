@@ -293,7 +293,7 @@ const MyRecentActivityWidget: React.FC = () => {
     <TooltipProvider>
       <Card className="col-span-12 lg:col-span-3 overflow-hidden mb-2 h-full flex flex-col">
         <CardHeaderWithLink
-          className="flex-shrink-0"
+          className="shrink-0"
           href={`/@${username}`}
           title={
             <span className="flex items-center gap-2 min-w-0">
@@ -314,7 +314,7 @@ const MyRecentActivityWidget: React.FC = () => {
           }
         />
 
-        <div className="px-2 pt-2 flex-shrink-0">
+        <div className="px-2 pt-2 shrink-0">
           <div className="flex gap-1 flex-wrap">
             {FILTER_CHIPS.map(({ key, labelKey }) => (
               <button
@@ -388,7 +388,7 @@ const MyRecentActivityWidget: React.FC = () => {
                       )}
                     >
                       <span
-                        className={`h-1.5 w-1.5 mt-1.5 rounded-full flex-shrink-0 ${dotClass}`}
+                        className={`h-1.5 w-1.5 mt-1.5 rounded-full shrink-0 ${dotClass}`}
                         aria-hidden
                       />
                       <div className="flex-1 min-w-0">
@@ -404,7 +404,7 @@ const MyRecentActivityWidget: React.FC = () => {
                               <TooltipTrigger asChild>
                                 <Link
                                   href={href}
-                                  className="font-mono text-[0.55rem] tracking-tight text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-1 py-px rounded hover:text-primary transition-colors flex-shrink-0"
+                                  className="font-mono text-[0.55rem] tracking-tight text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-1 py-px rounded hover:text-primary transition-colors shrink-0"
                                 >
                                   {trxShort}
                                 </Link>
@@ -415,12 +415,12 @@ const MyRecentActivityWidget: React.FC = () => {
                             </Tooltip>
                           )}
                           {/* No tooltip: it would only restate the number shown. */}
-                          <span className="font-mono text-[0.55rem] tracking-tight text-slate-400 dark:text-slate-500 flex-shrink-0">
+                          <span className="font-mono text-[0.55rem] tracking-tight text-slate-400 dark:text-slate-500 shrink-0">
                             #{op.block.toLocaleString(locale)}
                           </span>
                         </div>
                         {detail != null && (
-                          <div className="text-[0.65rem] text-slate-500 dark:text-slate-400 break-words line-clamp-2">
+                          <div className="text-[0.65rem] text-slate-500 dark:text-slate-400 wrap-break-word line-clamp-2">
                             {detail}
                           </div>
                         )}
@@ -430,7 +430,7 @@ const MyRecentActivityWidget: React.FC = () => {
                           {/* A span, not TimeAgo itself: asChild needs a ref the
                             third-party component does not forward. */}
                           <TooltipTrigger asChild>
-                            <span className="text-[0.6rem] text-slate-400 dark:text-slate-500 flex-shrink-0 whitespace-nowrap mt-0.5">
+                            <span className="text-[0.6rem] text-slate-400 dark:text-slate-500 shrink-0 whitespace-nowrap mt-0.5">
                               <TimeAgo locale={locale} datetime={created} />
                             </span>
                           </TooltipTrigger>
@@ -446,7 +446,7 @@ const MyRecentActivityWidget: React.FC = () => {
         </CardContent>
 
         {recentCount > 0 && (
-          <div className="border-t bg-background px-2 py-1.5 flex-shrink-0 text-[0.6rem] text-slate-400 dark:text-slate-500 flex items-center justify-center gap-1.5 flex-wrap">
+          <div className="border-t bg-background px-2 py-1.5 shrink-0 text-[0.6rem] text-slate-400 dark:text-slate-500 flex items-center justify-center gap-1.5 flex-wrap">
             <span>
               {t("widgets.myRecentActivityFooter", {
                 shown: String(formattedOps.length),

@@ -10,7 +10,7 @@ const useAccountAuthorities = (
 ) => {
   const {
     data: accountAuthoritiesData,
-    isLoading: accountAuthoritiesDataLoading,
+    isPending: accountAuthoritiesDataLoading,
     isError: accountAuthoritiesDataError,
   }: UseQueryResult<Hive.AccountAuthoritiesData> = useQuery({
     queryKey: ["account_authorities", accountName, liveDataEnabled],

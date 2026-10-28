@@ -292,7 +292,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
         />
       </div>
       <div className="flex w-full overflow-auto rounded">
-        <div className="text-text w-[100%] bg-theme">
+        <div className="text-text w-full bg-theme">
           <Table enableMobileScrollArrows enableCompactToggle>
             <TableHeader>
               <TableRow rowVariant="header">
@@ -452,7 +452,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                         </div>
                       </TableCell>
                       <TableCell
-                        className="min-w-[200px] break-words"
+                        className="min-w-[200px] wrap-break-word"
                         data-testid="operation-content"
                       >
                         {renderOperationContent(

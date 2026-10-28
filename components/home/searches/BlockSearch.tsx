@@ -185,7 +185,8 @@ const BlockSearch = () => {
           buttonClassName="bg-gray-500"
           triggerTitle={getOperationButtonTitle(
             selectedOperationTypes,
-            operationsTypes
+            operationsTypes,
+            t
           )}
         />
       </div>
@@ -236,7 +237,7 @@ const BlockSearch = () => {
                 </div>
               )}
             </SelectTrigger>
-            <SelectContent className="rounded-sm max-h-[31rem] overflow-y-scroll">
+            <SelectContent className="rounded-sm max-h-124 overflow-y-scroll">
               {operationKeysData?.map((keys, index) => (
                 <SelectItem
                   className="m-1 text-center"

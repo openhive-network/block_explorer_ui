@@ -97,7 +97,7 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
 
   const {
     data: proxyChain,
-    isLoading: isProxyChainLoading,
+    isPending: isProxyChainLoading,
     isError: isProxyChainError,
   } = useQuery({
     queryKey: ["witness_votes_proxy_chain", proxy],

@@ -12,7 +12,7 @@ const useNetworkVoteStats = (
 ) => {
   const {
     data: voteStats,
-    isLoading: isVoteStatsLoading,
+    isPending: isVoteStatsLoading,
     isError: isVoteStatsError,
   }: UseQueryResult<Hive.NetworkVoteStatsResponse[] | undefined> = useQuery({
     queryKey: ["get_network_vote_stats", from, to, granularity],

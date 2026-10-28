@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 import { adjustDynamicGlobalBlockData } from "@/utils/QueryDataSelectors";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
@@ -16,7 +16,7 @@ const useDynamicGlobal = (headBlockNum?: number) => {
   }
   const {
     data: dynamicGlobalData,
-    isLoading: dynamicGlobalLoading,
+    isPending: dynamicGlobalLoading,
     isError: dynamicGlobalError,
   } = useQuery({
     queryKey: [`global`, headBlockNum],
@@ -29,7 +29,7 @@ const useDynamicGlobal = (headBlockNum?: number) => {
         hiveChain!
       ),
     refetchOnWindowFocus: false,
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
   });
 
   return { dynamicGlobalData, dynamicGlobalLoading, dynamicGlobalError };

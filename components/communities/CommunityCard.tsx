@@ -40,7 +40,7 @@ const CommunityCard = ({
   };
 
   return (
-    <div className="group block h-full w-full rounded-lg border bg-theme p-3.5 shadow-sm transition-all duration-300 ease-in-out hover:shadow-lg hover:-translate-y-0.5 border-slate-200 dark:border-slate-800">
+    <div className="group block h-full w-full rounded-lg border bg-theme p-3.5 shadow-xs transition-all duration-300 ease-in-out hover:shadow-lg hover:-translate-y-0.5 border-slate-200 dark:border-slate-800">
       <div className="flex h-full flex-col">
         {/* Header Section */}
         <Link
@@ -51,7 +51,7 @@ const CommunityCard = ({
             accountName={community.name}
             size={44}
             alt={community.name}
-            className="h-11 w-11 flex-shrink-0 rounded-full border-2 object-cover border-slate-200 dark:border-slate-700"
+            className="h-11 w-11 shrink-0 rounded-full border-2 object-cover border-slate-200 dark:border-slate-700"
           />
           <div className="flex-1 overflow-hidden">
             <h3 className="truncate text-[15px] font-bold leading-tight transition-colors">
@@ -62,7 +62,7 @@ const CommunityCard = ({
         </Link>
 
         {/* About Section */}
-        <p className="mt-2 mb-2.5 flex-grow text-xs leading-snug text-explorer-dark-gray dark:text-white line-clamp-3">
+        <p className="mt-2 mb-2.5 grow text-xs leading-snug text-explorer-dark-gray dark:text-white line-clamp-3">
           {community.about}
         </p>
 
@@ -126,16 +126,16 @@ const CommunityCard = ({
 };
 
 export const CommunityCardSkeleton = () => (
-  <div className="h-full w-full rounded-lg border border-slate-200 bg-theme p-3.5 shadow-sm dark:border-slate-800">
+  <div className="h-full w-full rounded-lg border border-slate-200 bg-theme p-3.5 shadow-xs dark:border-slate-800">
     <div className="flex h-full animate-pulse flex-col">
       <div className="flex items-center gap-2.5">
-        <div className="h-11 w-11 flex-shrink-0 rounded-full bg-slate-200 dark:bg-slate-700"></div>
+        <div className="h-11 w-11 shrink-0 rounded-full bg-slate-200 dark:bg-slate-700"></div>
         <div className="flex-1 space-y-1.5">
           <div className="h-4 w-3/4 rounded bg-slate-200 dark:bg-slate-700"></div>
           <div className="h-3 w-1/2 rounded bg-slate-200 dark:bg-slate-700"></div>
         </div>
       </div>
-      <div className="mt-2 mb-2.5 flex-grow space-y-1.5">
+      <div className="mt-2 mb-2.5 grow space-y-1.5">
         <div className="h-3 w-full rounded bg-slate-200 dark:bg-slate-700"></div>
         <div className="h-3 w-full rounded bg-slate-200 dark:bg-slate-700"></div>
         <div className="h-3 w-5/6 rounded bg-slate-200 dark:bg-slate-700"></div>

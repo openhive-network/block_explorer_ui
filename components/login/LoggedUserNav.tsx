@@ -171,7 +171,7 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
         aria-label={
           hasUnclaimedRewards ? t("auth.unclaimedRewards") : undefined
         }
-        className="flex items-center gap-2 rounded-full border border-navbar-border bg-secondary/20 p-1 pr-3 hover:bg-secondary/40 transition-all outline-none"
+        className="flex items-center gap-2 rounded-full border border-navbar-border bg-secondary/20 p-1 pr-3 hover:bg-secondary/40 transition-all outline-hidden"
       >
         <span className="relative shrink-0">
           <HiveAvatar
@@ -181,7 +181,7 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
             className="w-7 h-7 border border-border/50"
           />
           {hasUnclaimedRewards && (
-            <span className="absolute -end-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-amber-500 ring-2 ring-theme" />
+            <span className="absolute -inset-e-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-amber-500 ring-2 ring-theme" />
           )}
         </span>
         {!isMobile && (
@@ -197,7 +197,7 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
 
       {/* Dropdown */}
       {isOpen && (
-        <div className="absolute top-full mt-2 w-60 bg-theme border border-navbar-border rounded-2xl shadow-xl z-[100] p-1.5 animate-in fade-in zoom-in-95 slide-in-from-top-1 duration-150 end-0">
+        <div className="absolute top-full mt-2 w-60 bg-theme border border-navbar-border rounded-2xl shadow-xl z-100 p-1.5 animate-in fade-in zoom-in-95 slide-in-from-top-1 duration-150 inset-e-0">
           {/* Header Card */}
           <div
             className={cn(
@@ -214,7 +214,7 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
               <Tooltip delayDuration={100}>
                 <TooltipTrigger asChild>
                   <div className="flex items-center gap-2.5 cursor-help">
-                    <div className="w-8 h-8 rounded-lg bg-white dark:bg-slate-900 border border-black/5 flex items-center justify-center shadow-sm">
+                    <div className="w-8 h-8 rounded-lg bg-white dark:bg-slate-900 border border-black/5 flex items-center justify-center shadow-xs">
                       {config && (
                         <Image
                           src={config.logo}

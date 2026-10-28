@@ -427,13 +427,13 @@ const CommunityActivityReport: React.FC<
           />
           <KpiTile
             label={t("communityActivity.kpiTopCommunity")}
-            valueClassName="whitespace-normal break-words"
+            valueClassName="whitespace-normal wrap-break-word"
             value={stats.top ? stats.top.title : "—"}
             sub={stats.top ? stats.top.total.toLocaleString(locale) : undefined}
           />
           <KpiTile
             label={t("communityActivity.kpiSplit")}
-            valueClassName="whitespace-normal break-words"
+            valueClassName="whitespace-normal wrap-break-word"
             value={`${stats.totalPosts.toLocaleString(locale)} / ${stats.totalComments.toLocaleString(locale)}`}
           />
         </div>
@@ -480,7 +480,7 @@ const CommunityActivityReport: React.FC<
                 <tr className="border-b border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400">
                   <th
                     scope="col"
-                    className="text-start font-medium py-1.5 pe-2 sticky start-0 z-10 bg-theme border-e border-gray-200 dark:border-gray-700"
+                    className="text-start font-medium py-1.5 pe-2 sticky inset-s-0 z-10 bg-theme border-e border-gray-200 dark:border-gray-700"
                   >
                     {t("communityActivity.colCommunity")}
                   </th>
@@ -494,7 +494,7 @@ const CommunityActivityReport: React.FC<
                       <button
                         type="button"
                         onClick={() => toggleSort(k)}
-                        className="inline-flex items-center justify-end w-full gap-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 rounded"
+                        className="inline-flex items-center justify-end w-full gap-1 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-400 rounded"
                       >
                         {t(
                           `communityActivity.col${k[0].toUpperCase()}${k.slice(1)}`
@@ -522,7 +522,7 @@ const CommunityActivityReport: React.FC<
                           "cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/40"
                       )}
                     >
-                      <td className="py-1.5 pe-2 sticky start-0 z-10 bg-theme border-e border-gray-200 dark:border-gray-700">
+                      <td className="py-1.5 pe-2 sticky inset-s-0 z-10 bg-theme border-e border-gray-200 dark:border-gray-700">
                         <span className="inline-flex items-center gap-1.5">
                           {clickable ? (
                             <>
@@ -568,7 +568,7 @@ const CommunityActivityReport: React.FC<
               </tbody>
               <tfoot>
                 <tr className="border-t-2 border-gray-300 dark:border-gray-600 font-semibold">
-                  <td className="py-1.5 pe-2 sticky start-0 z-10 bg-theme border-e border-gray-200 dark:border-gray-700">
+                  <td className="py-1.5 pe-2 sticky inset-s-0 z-10 bg-theme border-e border-gray-200 dark:border-gray-700">
                     {t("communityActivity.colTotal")}
                   </td>
                   <td

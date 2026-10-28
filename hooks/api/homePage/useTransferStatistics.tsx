@@ -14,7 +14,7 @@ const useTransferStatistics = (
 ) => {
   const {
     data: transferStatistics,
-    isLoading: isTransferStatisticsLoading,
+    isPending: isTransferStatisticsLoading,
     isError: isTransferStatisticsError,
   }: UseQueryResult<Hive.TransferStatisticsResponse[] | undefined> = useQuery({
     queryKey: [

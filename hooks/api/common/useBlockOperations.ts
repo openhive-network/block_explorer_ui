@@ -13,7 +13,7 @@ const useBlockOperations = (
 ) => {
   const {
     data: blockOperations,
-    isLoading: trxLoading,
+    isPending: trxLoading,
     error: trxError,
   }: UseQueryResult<Hive.TotalOperationsResponse> = useQuery({
     queryKey: [

@@ -11,7 +11,7 @@ const useRcDelegations = (
 ) => {
   const {
     data,
-    isLoading: isRcDelegationsLoading,
+    isPending: isRcDelegationsLoading,
     isError: isRcDelegationsError,
   }: UseQueryResult<Hive.RcDelegationsApiResponse> = useQuery({
     queryKey: ["RcDelegations", accountName, liveDataEnabled],

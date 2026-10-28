@@ -140,7 +140,7 @@ const PostContentCard: React.FC<PostContentCardProps> = ({
 
       <CardContent className="p-4">
         {!isComment && title && (
-          <h2 className="text-2xl font-bold mb-4 break-words">
+          <h2 className="text-2xl font-bold mb-4 wrap-break-word">
             {title}
             <CopyButton
               text={body}
@@ -150,7 +150,7 @@ const PostContentCard: React.FC<PostContentCardProps> = ({
           </h2>
         )}
         <div className="prose dark:prose-invert max-w-none">
-          <pre className="text-base whitespace-pre-wrap font-sans break-words">
+          <pre className="text-base whitespace-pre-wrap font-sans wrap-break-word">
             {body}
           </pre>
         </div>

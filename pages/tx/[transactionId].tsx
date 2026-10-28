@@ -192,7 +192,7 @@ export default function Transaction({ meta }: { meta: SeoMeta }) {
                   ...trxData.transaction_json,
                   transactionSize,
                 }}
-                className="w-full m-auto py-2 px-4 bg-theme rounded text-xs break-words break-all"
+                className="w-full m-auto py-2 px-4 bg-theme rounded text-xs wrap-break-word break-all"
                 isPrettyView={settings.prettyJsonView}
               />
             ) : (

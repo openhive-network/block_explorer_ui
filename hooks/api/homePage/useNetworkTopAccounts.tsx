@@ -11,7 +11,7 @@ const useNetworkTopAccounts = (
 ) => {
   const {
     data: topAccounts,
-    isLoading: isTopAccountsLoading,
+    isPending: isTopAccountsLoading,
     isError: isTopAccountsError,
   }: UseQueryResult<Hive.TopAccountsResponse[] | undefined> = useQuery({
     queryKey: ["network_top_accounts", metric, fromDate, toDate, limitCount],

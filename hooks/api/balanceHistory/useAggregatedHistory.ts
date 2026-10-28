@@ -30,7 +30,7 @@ const useAggregatedBalanceHistory = (
 
   const {
     data: aggregatedAccountBalanceHistory,
-    isLoading: isAggregatedAccountBalanceHistoryLoading,
+    isPending: isAggregatedAccountBalanceHistoryLoading,
     isFetching: isAggregatedAccountBalanceHistoryFetching,
     isError: isAggregatedAccountBalanceHistoryError,
   }: any = useQuery({

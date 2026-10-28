@@ -38,7 +38,7 @@ const SeoFallback: React.FC<SeoFallbackProps> = ({ meta }) => {
     // the served HTML throughout, so a crawler is unaffected by the delay.
     <main
       dir={dir}
-      className="flex min-h-screen w-full flex-col items-center bg-theme px-4 py-10 text-gray-900 dark:text-white animate-in fade-in [animation-duration:300ms] [animation-delay:500ms] [animation-fill-mode:backwards] motion-reduce:animate-none"
+      className="flex min-h-screen w-full flex-col items-center bg-theme px-4 py-10 text-gray-900 dark:text-white animate-in fade-in [animation-duration:300ms] [animation-delay:500ms] fill-mode-backwards motion-reduce:animate-none"
     >
       <div className="w-full max-w-2xl">
         <Link href="/" className="mb-6 flex items-center gap-2">

@@ -57,11 +57,11 @@ const BoardTabs: React.FC<BoardTabsProps> = ({
     <div className="page-container">
       <div
         data-testid="board-tabs"
-        className="relative -mb-[2px] mx-1 overflow-hidden rounded-t border border-b-0 border-gray-200 bg-theme dark:border-gray-700"
+        className="relative mb-[-2px] mx-1 overflow-hidden rounded-t border border-b-0 border-gray-200 bg-theme dark:border-gray-700"
       >
         <span
           className={cn(
-            "absolute inset-y-0 start-0 w-[3px]",
+            "absolute inset-y-0 inset-s-0 w-[3px]",
             activeAccent.spine
           )}
           aria-hidden="true"
@@ -71,7 +71,7 @@ const BoardTabs: React.FC<BoardTabsProps> = ({
             <SelectTrigger
               aria-label={label}
               className={cn(
-                "h-[35px] w-full rounded-[6px] border px-3 text-sm font-semibold shadow-sm focus:ring-offset-0",
+                "h-[35px] w-full rounded-[6px] border px-3 text-sm font-semibold shadow-xs focus:ring-offset-0",
                 activeAccent.ring,
                 activeAccent.chip,
                 activeAccent.text,
@@ -118,7 +118,7 @@ const BoardTabs: React.FC<BoardTabsProps> = ({
 
         <nav
           aria-label={label}
-          className="relative hidden items-center overflow-x-auto pe-2 ps-3 sm:flex [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="relative hidden items-center overflow-x-auto pe-2 ps-3 sm:flex scrollbar-none [&::-webkit-scrollbar]:hidden"
         >
           {BOARDS.map((board) => {
             const Icon = board.icon;
@@ -133,7 +133,7 @@ const BoardTabs: React.FC<BoardTabsProps> = ({
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
                   "relative flex shrink-0 items-center gap-1.5 whitespace-nowrap px-3 py-2.5 text-sm font-semibold transition-colors",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
+                  "focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
                   isActive
                     ? a.text
                     : "text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"

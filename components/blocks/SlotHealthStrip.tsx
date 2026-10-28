@@ -88,7 +88,7 @@ const SlotHealthStrip: React.FC<SlotHealthStripProps> = ({
       </div>
       <TooltipProvider>
         {/* Transparent y-borders keep the 10px bar but give a 20px tap target. */}
-        <div className="flex h-5 w-full gap-[1px] overflow-hidden rounded">
+        <div className="flex h-5 w-full gap-px overflow-hidden rounded">
           {timeline.map((delta) => (
             <Tooltip key={delta.blockNum}>
               <TooltipTrigger asChild>
@@ -98,7 +98,7 @@ const SlotHealthStrip: React.FC<SlotHealthStripProps> = ({
                   aria-label={`${t("common.block")} ${delta.blockNum}`}
                   onClick={() => router.push(blockHref(delta))}
                   className={cn(
-                    "block h-full min-w-[2px] flex-1 border-y-[5px] border-transparent bg-clip-content focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500",
+                    "block h-full min-w-[2px] flex-1 border-y-[5px] border-transparent bg-clip-content focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-slate-500",
                     cellClass(delta)
                   )}
                 />

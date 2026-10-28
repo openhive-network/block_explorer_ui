@@ -270,7 +270,7 @@ const NetworkOpMixCard: React.FC = () => {
         </div>
 
         {/* Chart panel — bar + legend in a contained background */}
-        <div className="bg-explorer-extra-light-gray rounded-lg shadow-sm p-2">
+        <div className="bg-explorer-extra-light-gray rounded-lg shadow-xs p-2">
           {isOperationTypeStatisticsLoading ? (
             <div className="flex items-center justify-center h-9">
               <Loader2 className="animate-spin h-4 w-4" />
@@ -303,7 +303,7 @@ const NetworkOpMixCard: React.FC = () => {
                     >
                       <span
                         className={cn(
-                          "inline-block w-2 h-2 rounded-full flex-shrink-0",
+                          "inline-block w-2 h-2 rounded-full shrink-0",
                           getOpColorClass(opName)
                         )}
                       />

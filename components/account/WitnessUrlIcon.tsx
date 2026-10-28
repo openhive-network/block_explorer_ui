@@ -53,7 +53,7 @@ const WitnessUrlIcon: React.FC<WitnessUrlIconProps> = ({
           {href ? (
             <p>{t("accountMainCard.witnessLink")}</p>
           ) : (
-            <p dir="auto" className="max-w-xs break-words">
+            <p dir="auto" className="max-w-xs wrap-break-word">
               {url}
             </p>
           )}

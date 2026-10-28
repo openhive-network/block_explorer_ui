@@ -155,7 +155,8 @@ const CommentsSearch = () => {
           buttonClassName="bg-buttonBg"
           triggerTitle={getOperationButtonTitle(
             selectedCommentSearchOperationTypes,
-            operationsTypes
+            operationsTypes,
+            t
           )}
         />
       </div>

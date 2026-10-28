@@ -10,7 +10,7 @@ const useAccountOpenOrders = (
 
   const {
     data: openOrders,
-    isLoading: isOpenOrdersLoading,
+    isPending: isOpenOrdersLoading,
     isError: isOpenOrdersError,
   }: UseQueryResult<Hive.OpenOrder[]> = useQuery({
     queryKey: ["account_open_orders", accountName],

@@ -89,7 +89,7 @@ const TopWitnessesCard = ({
         href="/witnesses"
         linkTestId="see-witnesses-link"
       />
-      <CardContent className="px-2 py-2 overflow-y-auto flex-grow">
+      <CardContent className="px-2 py-2 overflow-y-auto grow">
         <div className="flex flex-col gap-1">
           {isLoading
             ? Array.from({ length: 10 }).map((_, i) => (
@@ -121,7 +121,7 @@ const TopWitnessesCard = ({
                       href={`/@${name}`}
                       title={name}
                       className={cn(
-                        "text-sm truncate flex-grow min-w-0 text-link",
+                        "text-sm truncate grow min-w-0 text-link",
                         isInactive && "opacity-50 line-through"
                       )}
                     >

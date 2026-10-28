@@ -12,8 +12,8 @@ see `.gitlab-ci.yml` `workflow:`.
 
 | Step | What |
 |---|---|
-| `lint` | `next lint` (CI's lint job) |
-| `typecheck` | `tsc --noEmit` |
+| `lint` | `eslint .` (CI's lint job) |
+| `typecheck` | `next typegen` (writes `next-env.d.ts`), then `tsc --noEmit` |
 | `unit` | Jest (`test:unit`) |
 | `build` | `next build`. The commit hash comes from `AIDEV_COMMIT_SHORT_SHA` or git, not `helpers/versions.js` |
 

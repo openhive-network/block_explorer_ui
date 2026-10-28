@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 import { config } from "@/Config";
 import fetchingService from "@/services/FetchingService";
@@ -19,7 +19,11 @@ const useAccountContentFeed = (
   liveDataEnabled: boolean,
   limit: number = 20
 ) => {
-  const { data, isLoading, isError } = useQuery<ContentFeed>({
+  const {
+    data,
+    isPending: isLoading,
+    isError,
+  } = useQuery<ContentFeed>({
     queryKey: ["account_content_feed", accountName, kind, limit],
     queryFn: async () => {
       if (kind !== "reblogs") {
@@ -44,7 +48,7 @@ const useAccountContentFeed = (
     },
     refetchInterval: liveDataEnabled ? config.contentRefreshInterval : false,
     refetchOnWindowFocus: false,
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     enabled: !!accountName,
   });
 

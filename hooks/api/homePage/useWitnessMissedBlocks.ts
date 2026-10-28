@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 import fetchingService from "@/services/FetchingService";
 import Hive from "@/types/Hive";
@@ -32,8 +32,8 @@ const useWitnessMissedBlocks = ({
 }: UseWitnessMissedBlocksOptions) => {
   const {
     data: missedBlocksData,
-    isLoading: isMissedBlocksLoading,
-    isPreviousData,
+    isPending: isMissedBlocksLoading,
+    isPlaceholderData: isPreviousData,
     isFetching,
     isError: isMissedBlocksError,
   } = useQuery({
@@ -57,7 +57,7 @@ const useWitnessMissedBlocks = ({
           : { order_by: orderBy, limit_count: limitCount }),
       }),
     refetchOnWindowFocus: false,
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     // to_date is optional; the API defaults it to now.
     enabled: enabled && Boolean(fromDate),
   });

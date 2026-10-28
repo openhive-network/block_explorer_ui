@@ -30,7 +30,7 @@ const CompositionBar: React.FC<{
         <span className={cn("truncate text-[13px] font-bold", SIDE_TEXT[side])}>
           @{d.account}
         </span>
-        <span className="flex-shrink-0 text-[13px] font-extrabold tabular-nums text-slate-700 dark:text-slate-200">
+        <span className="shrink-0 text-[13px] font-extrabold tabular-nums text-slate-700 dark:text-slate-200">
           {formatCompareValue(d.totalValueUsd, "usd", locale)}
         </span>
       </div>
@@ -90,7 +90,7 @@ const CompareWealthComposition: React.FC<CompareWealthCompositionProps> = ({
               className="flex items-center gap-1.5 text-[11px] font-medium text-slate-500 dark:text-slate-400"
             >
               <span
-                className="h-2.5 w-2.5 flex-shrink-0 rounded-sm"
+                className="h-2.5 w-2.5 shrink-0 rounded-sm"
                 style={{ backgroundColor: seg.color }}
               />
               {t(seg.labelKey)}

@@ -14,15 +14,15 @@ export interface EnrichedProposalVote extends Hive.ProposalVote {
 const useProposalVotes = (proposalId: number, enabled: boolean) => {
   const {
     data,
-    isLoading,
+    isPending: isLoading,
     isError,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useInfiniteQuery<EnrichedProposalVote[], Error>({
+  } = useInfiniteQuery({
     queryKey: ["proposalVotesWithDetails", proposalId],
-    queryFn: async ({ pageParam }) => {
-      const startVoter = pageParam || "";
+    queryFn: async ({ pageParam }): Promise<EnrichedProposalVote[]> => {
+      const startVoter = pageParam;
       const start: (string | number)[] = [proposalId, startVoter];
       
       // Step 1: Fetch the raw data
@@ -57,6 +57,7 @@ const useProposalVotes = (proposalId: number, enabled: boolean) => {
       return enrichedPage;
     },
 
+    initialPageParam: "",
     getNextPageParam: (lastPage) => {
       if (lastPage.length < VOTE_LIMIT) {
         return undefined;

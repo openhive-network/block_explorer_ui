@@ -43,7 +43,7 @@ const buildTableBody = (
           }
         >
           <TableCell>{index + 1}</TableCell>
-          <TableCell className="text-end break-words">
+          <TableCell className="text-end wrap-break-word">
             {direction === "outgoing" ? (
               <Link
                 className="text-link"
@@ -62,7 +62,7 @@ const buildTableBody = (
               </Link>
             )}
           </TableCell>
-          <TableCell className="text-end break-words">
+          <TableCell className="text-end wrap-break-word">
             {delegation.vesting_shares}
           </TableCell>
         </TableRow>

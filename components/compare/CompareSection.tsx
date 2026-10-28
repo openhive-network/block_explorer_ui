@@ -64,7 +64,7 @@ const CompareSectionView: React.FC<CompareSectionProps> = ({
           </span>
         )}
       </div>
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-theme shadow-sm dark:border-slate-700">
+      <div className="overflow-hidden rounded-xl border border-slate-200 bg-theme shadow-xs dark:border-slate-700">
         {allGated ? (
           <p className="px-4 py-5 text-center text-xs italic text-slate-400 dark:text-slate-500">
             {t("compare.unavailable")}

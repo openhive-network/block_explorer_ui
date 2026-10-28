@@ -29,7 +29,7 @@ const GuestSectionTitle: React.FC<GuestSectionTitleProps> = ({
         >
           {label}
         </span>
-        <hr className="flex-grow border-gray-200 dark:border-slate-700/70" />
+        <hr className="grow border-gray-200 dark:border-slate-700/70" />
       </div>
       {hint && (
         <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">{hint}</p>

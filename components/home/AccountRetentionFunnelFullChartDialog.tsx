@@ -35,7 +35,7 @@ const KpiTile: React.FC<{
   sub?: React.ReactNode;
   tooltip?: string;
 }> = ({ label, value, sub, tooltip }) => (
-  <div className="rounded-md border border-gray-200 dark:border-gray-700 bg-theme px-3 py-2 shadow-sm">
+  <div className="rounded-md border border-gray-200 dark:border-gray-700 bg-theme px-3 py-2 shadow-xs">
     <div className="flex items-center gap-1 text-[11px] text-gray-500 dark:text-gray-400 mb-0.5 uppercase tracking-wide leading-none">
       <span>{label}</span>
       {tooltip && (
@@ -288,7 +288,7 @@ const AccountRetentionFunnelFullChartDialog: React.FC<
           {/* Data completeness note */}
           {hasPendingData && (
             <div className="flex items-start gap-2 mb-4 text-[11px] text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 rounded p-2">
-              <Info className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
+              <Info className="h-3.5 w-3.5 mt-0.5 shrink-0" />
               <span>{t("accountRetentionFunnelFullChart.dataNote")}</span>
             </div>
           )}

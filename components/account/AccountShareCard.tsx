@@ -86,7 +86,7 @@ const AccountShareCard: React.FC<Props> = ({ accountName, accountDetails }) => {
     return d;
   }, []);
 
-  const { data: rawAccount, isLoading: isAccountLoading } = useQuery({
+  const { data: rawAccount, isPending: isAccountLoading } = useQuery({
     queryKey: ["share_card_account", accountName],
     queryFn: () => fetchingService.getAccount(accountName),
     enabled: !!accountName,
@@ -106,7 +106,7 @@ const AccountShareCard: React.FC<Props> = ({ accountName, accountDetails }) => {
     undefined,
     "month"
   );
-  const { data: vestsHistory, isLoading: isVestsHistoryLoading } = useQuery({
+  const { data: vestsHistory, isPending: isVestsHistoryLoading } = useQuery({
     queryKey: ["share_card_vests_hist", accountName],
     queryFn: () =>
       fetchingService.geAccountAggregatedtBalanceHistory(
@@ -367,7 +367,7 @@ const AccountShareCard: React.FC<Props> = ({ accountName, accountDetails }) => {
         dir="ltr"
         title={t("accountShareCard.cta")}
         className="block w-full cursor-pointer overflow-hidden rounded-2xl shadow-md transition-shadow hover:shadow-lg [&>svg]:block [&>svg]:h-auto [&>svg]:w-full"
-        // eslint-disable-next-line react/no-danger
+         
         dangerouslySetInnerHTML={{ __html: svg }}
       />
       <div className="flex flex-wrap gap-2">

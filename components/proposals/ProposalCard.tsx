@@ -56,7 +56,7 @@ const MatchIndicators = ({
   t: (key: string) => string;
 }) => {
   return (
-    <div className="flex items-center flex-shrink-0 gap-2">
+    <div className="flex items-center shrink-0 gap-2">
       {matchDetails.isCreatorMatch && (
         <Tooltip>
           <TooltipTrigger asChild>
@@ -342,7 +342,7 @@ export const ProposalCard = ({
       <div
         id={`proposal-${proposal.proposal_id}`}
         className={cn(
-          "group rounded-xl border bg-slate-50 shadow-sm transition-all duration-300 hover:shadow-lg dark:bg-theme dark:border-slate-800",
+          "group rounded-xl border bg-slate-50 shadow-xs transition-all duration-300 hover:shadow-lg dark:bg-theme dark:border-slate-800",
           "border-l-4",
           highlightClass
         )}
@@ -359,7 +359,7 @@ export const ProposalCard = ({
                 >
                   {proposal.subject}
                 </Link>
-                <span className="flex-shrink-0 text-xl font-bold text-slate-400 dark:text-slate-500">
+                <span className="shrink-0 text-xl font-bold text-slate-400 dark:text-slate-500">
                   #{proposal.proposal_id}
                 </span>
               </div>
@@ -397,7 +397,7 @@ export const ProposalCard = ({
               ) : null}
             </div>
             <div className="mt-2 flex items-center gap-2 text-base text-explorer-dark-gray">
-              <Calendar className="h-4 w-4 flex-shrink-0" color="#94a3b8" />
+              <Calendar className="h-4 w-4 shrink-0" color="#94a3b8" />
               <span>{`${formatDateToLocale(
                 proposal.start_date,
                 locale
@@ -545,7 +545,7 @@ export const ProposalCard = ({
 // --- SKELETON COMPONENT ---
 
 export const ProposalCardSkeleton = () => (
-  <div className="w-full rounded-xl border border-slate-200 bg-slate-50 shadow-sm dark:border-slate-800 dark:bg-theme">
+  <div className="w-full rounded-xl border border-slate-200 bg-slate-50 shadow-xs dark:border-slate-800 dark:bg-theme">
     <div className="flex animate-pulse flex-col md:grid md:grid-cols-12">
       <div className="flex flex-col p-4 md:col-span-7 lg:col-span-8">
         <div className="h-7 w-4/5 rounded bg-slate-200 dark:bg-slate-700"></div>
@@ -650,7 +650,7 @@ export const ReturnProposalCard = ({
     <TooltipProvider delayDuration={200}>
       <div
         className={cn(
-          "group rounded-xl border border-slate-200 bg-green-100/80 shadow-sm transition-all duration-300 hover:shadow-md dark:border-slate-800 dark:bg-slate-800/40 border-l-4",
+          "group rounded-xl border border-slate-200 bg-green-100/80 shadow-xs transition-all duration-300 hover:shadow-md dark:border-slate-800 dark:bg-slate-800/40 border-l-4",
           highlightClass
         )}
       >
@@ -666,7 +666,7 @@ export const ReturnProposalCard = ({
                 >
                   {proposal.subject}
                 </Link>
-                <span className="flex-shrink-0 text-xl font-bold">
+                <span className="shrink-0 text-xl font-bold">
                   #{proposal.proposal_id}
                 </span>
               </div>
@@ -703,7 +703,7 @@ export const ReturnProposalCard = ({
             </div>
 
             <div className="mt-2 flex items-center gap-2 text-base text-explorer-dark-gray">
-              <Calendar className="h-4 w-4 flex-shrink-0" color="#94a3b8" />
+              <Calendar className="h-4 w-4 shrink-0" color="#94a3b8" />
               <span>{`${formatDateToLocale(
                 proposal.start_date,
                 locale
@@ -729,7 +729,7 @@ export const ReturnProposalCard = ({
                 <ProposalStatusBadge {...currentStatusConfig} />
               )}
             </div>
-            <div className="flex flex-grow flex-col justify-center">
+            <div className="flex grow flex-col justify-center">
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div>

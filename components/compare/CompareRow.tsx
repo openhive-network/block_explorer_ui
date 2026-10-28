@@ -32,9 +32,9 @@ const StackedBars: React.FC<{ a: number; b: number }> = ({ a, b }) => {
     return () => cancelAnimationFrame(id);
   }, []);
   const fill =
-    "h-full rounded-full transition-[width] duration-700 ease-out motion-reduce:!transition-none";
+    "h-full rounded-full transition-[width] duration-700 ease-out motion-reduce:transition-none!";
   return (
-    <div aria-hidden className="flex w-16 flex-shrink-0 flex-col gap-1 sm:w-24">
+    <div aria-hidden className="flex w-16 shrink-0 flex-col gap-1 sm:w-24">
       <div className="h-1.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700/60">
         <div
           className={cn(fill, "bg-red-500")}
@@ -76,7 +76,7 @@ const Val: React.FC<ValProps> = ({ side, row, text, isWinner, locale }) => {
       {isWinner && side === "b" && (
         <span className={cn(CARET, "text-blue-500")}>◂</span>
       )}
-      <span className="min-w-0 break-words">
+      <span className="min-w-0 wrap-break-word">
         <span className={cn("block", isWinner && SIDE_TEXT[side])}>{text}</span>
         {secondary && (
           <span className="block text-[10px] font-medium text-slate-400 dark:text-slate-500">
@@ -166,7 +166,7 @@ const CompareRowView: React.FC<CompareRowProps> = ({
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <span className="flex-shrink-0 cursor-help text-slate-300 dark:text-slate-600">
+                  <span className="shrink-0 cursor-help text-slate-300 dark:text-slate-600">
                     <Ban className="h-3 w-3" />
                   </span>
                 </TooltipTrigger>
@@ -183,7 +183,7 @@ const CompareRowView: React.FC<CompareRowProps> = ({
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <span className="flex-shrink-0 cursor-help text-slate-300 dark:text-slate-600">
+                  <span className="shrink-0 cursor-help text-slate-300 dark:text-slate-600">
                     <Info className="h-3 w-3" />
                   </span>
                 </TooltipTrigger>
@@ -219,14 +219,14 @@ const CompareRowView: React.FC<CompareRowProps> = ({
       {row.unavailable ? (
         <div
           aria-hidden
-          className="flex items-center justify-end sm:order-2 sm:w-[280px] sm:flex-shrink-0 sm:justify-center"
+          className="flex items-center justify-end sm:order-2 sm:w-[280px] sm:shrink-0 sm:justify-center"
         >
           <span className="text-xs italic text-slate-400 dark:text-slate-500">
             {t("compare.unavailable")}
           </span>
         </div>
       ) : (
-        <div className="col-span-2 flex items-center gap-2 sm:order-2 sm:col-span-1 sm:flex-shrink-0">
+        <div className="col-span-2 flex items-center gap-2 sm:order-2 sm:col-span-1 sm:shrink-0">
           <Val
             side="a"
             row={row}

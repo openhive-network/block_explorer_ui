@@ -38,7 +38,7 @@ const GuestBoardHeader: React.FC<GuestBoardHeaderProps> = ({
     <div className="page-container">
       <div className="relative mb-3 overflow-hidden rounded border border-gray-200 bg-theme dark:border-gray-700">
         <span
-          className={cn("absolute inset-y-0 start-0 w-1", a.spine)}
+          className={cn("absolute inset-y-0 inset-s-0 w-1", a.spine)}
           aria-hidden="true"
         />
         <GuestViewTabs />

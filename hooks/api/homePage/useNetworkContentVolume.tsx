@@ -1,4 +1,8 @@
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useQuery,
+  UseQueryResult,
+} from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
 import Hive from "@/types/Hive";
 
@@ -10,7 +14,7 @@ const useNetworkContentVolume = (
 ) => {
   const {
     data: networkContentVolume,
-    isLoading: isNetworkContentVolumeLoading,
+    isPending: isNetworkContentVolumeLoading,
     isError: isNetworkContentVolumeError,
   }: UseQueryResult<Hive.NetworkContentVolumeResponse[] | undefined> = useQuery(
     {
@@ -22,7 +26,7 @@ const useNetworkContentVolume = (
           granularity
         ),
       enabled,
-      keepPreviousData: true,
+      placeholderData: keepPreviousData,
       refetchOnWindowFocus: false,
     }
   );

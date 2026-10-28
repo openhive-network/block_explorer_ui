@@ -294,7 +294,7 @@ const BlocksPage = ({ meta }: { meta: SeoMeta }) => {
           <div className="min-w-0 flex-1">
             <PageTitle titleKey="pageTitle.hiveBlocks" className="py-4" />
           </div>
-          <div className="flex flex-shrink-0 items-center gap-1 py-4">
+          <div className="flex shrink-0 items-center gap-1 py-4">
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>

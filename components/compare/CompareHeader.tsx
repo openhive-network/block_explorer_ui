@@ -66,7 +66,7 @@ const Identity: React.FC<{
       accountName={d.account}
       size={36}
       alt={d.account}
-      className={`h-9 w-9 flex-shrink-0 rounded-full ring-2 sm:h-11 sm:w-11 ${RING[side]}`}
+      className={`h-9 w-9 shrink-0 rounded-full ring-2 sm:h-11 sm:w-11 ${RING[side]}`}
     />
   );
   // No isWitness fallback — the descriptor below already says "Witness #N".
@@ -118,7 +118,7 @@ const Identity: React.FC<{
       type="button"
       onClick={onRemove}
       aria-label={t("compare.removeAccount").replace("{account}", d.account)}
-      className="flex-shrink-0 rounded-full p-1 text-slate-300 transition-colors hover:bg-rose-50 hover:text-rose-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400 dark:text-slate-600 dark:hover:bg-rose-950/30 dark:hover:text-rose-400"
+      className="shrink-0 rounded-full p-1 text-slate-300 transition-colors hover:bg-rose-50 hover:text-rose-500 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-rose-400 dark:text-slate-600 dark:hover:bg-rose-950/30 dark:hover:text-rose-400"
     >
       <X className="h-3.5 w-3.5" />
     </button>
@@ -191,7 +191,7 @@ const RangeTabs: React.FC<{
         onClick={() => onChange(r)}
         aria-pressed={range === r}
         className={cn(
-          "whitespace-nowrap px-2.5 py-1 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-400",
+          "whitespace-nowrap px-2.5 py-1 text-xs font-semibold transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-400",
           range === r
             ? "bg-indigo-500 text-white"
             : "text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
@@ -297,7 +297,7 @@ const CompareHeader: React.FC<CompareHeaderProps> = ({
 
       <div
         ref={headerRef}
-        className="mb-5 overflow-hidden rounded-xl border border-slate-200 bg-theme shadow-sm dark:border-slate-700"
+        className="mb-5 overflow-hidden rounded-xl border border-slate-200 bg-theme shadow-xs dark:border-slate-700"
       >
         {/* Identities */}
         <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
@@ -415,7 +415,7 @@ const CompareHeader: React.FC<CompareHeaderProps> = ({
             <button
               type="button"
               onClick={copyShareLink}
-              className="inline-flex items-center gap-1 rounded-lg border border-slate-300 px-2.5 py-1 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
+              className="inline-flex items-center gap-1 rounded-lg border border-slate-300 px-2.5 py-1 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-400 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
             >
               <Link2 className="h-3.5 w-3.5" />
               {t("compare.share.copyLink")}

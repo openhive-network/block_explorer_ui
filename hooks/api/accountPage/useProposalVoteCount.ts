@@ -7,7 +7,7 @@ const VOTE_FETCH_LIMIT = 1000;
 const useProposalVoteCount = (accountName: string) => {
   const {
     data: voteCount,
-    isLoading,
+    isPending: isLoading,
     isError,
   } = useQuery<number, Error>({
     queryKey: ["proposalVoteCount", accountName],

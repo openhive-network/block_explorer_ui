@@ -543,7 +543,7 @@ const SocialInteractionsReport: React.FC<
           />
           <KpiTile
             label={t("socialInteractions.kpiTopPartner")}
-            valueClassName="whitespace-normal break-words"
+            valueClassName="whitespace-normal wrap-break-word"
             value={stats.topPartner ? `@${stats.topPartner.account}` : "—"}
             sub={
               stats.topPartner
@@ -553,7 +553,7 @@ const SocialInteractionsReport: React.FC<
           />
           <KpiTile
             label={t("socialInteractions.kpiDominantType")}
-            valueClassName="whitespace-normal break-words"
+            valueClassName="whitespace-normal wrap-break-word"
             value={
               stats.dominantType
                 ? t(`socialInteractions.type.${stats.dominantType}`)
@@ -605,7 +605,7 @@ const SocialInteractionsReport: React.FC<
                 aria-pressed={on}
                 onClick={() => !disabled && toggleType(type)}
                 className={cn(
-                  "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400",
+                  "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-colors focus:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-400",
                   disabled
                     ? "cursor-not-allowed border-gray-200 dark:border-gray-700 opacity-40"
                     : on
@@ -660,7 +660,7 @@ const SocialInteractionsReport: React.FC<
                 <tr className="border-b border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400">
                   <th
                     scope="col"
-                    className="text-start font-medium py-1.5 pe-2 sticky start-0 z-10 bg-theme border-e border-gray-200 dark:border-gray-700"
+                    className="text-start font-medium py-1.5 pe-2 sticky inset-s-0 z-10 bg-theme border-e border-gray-200 dark:border-gray-700"
                   >
                     {t("socialInteractions.colPartner")}
                   </th>
@@ -674,7 +674,7 @@ const SocialInteractionsReport: React.FC<
                       <button
                         type="button"
                         onClick={() => toggleSort(ty)}
-                        className="inline-flex items-center gap-1 justify-end w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 rounded"
+                        className="inline-flex items-center gap-1 justify-end w-full focus:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-400 rounded"
                       >
                         <span
                           className="h-2 w-2 rounded-full"
@@ -695,7 +695,7 @@ const SocialInteractionsReport: React.FC<
                     <button
                       type="button"
                       onClick={() => toggleSort("total")}
-                      className="inline-flex items-center justify-end w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 rounded"
+                      className="inline-flex items-center justify-end w-full focus:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-400 rounded"
                     >
                       {t("socialInteractions.colTotal")}
                       {sortArrow("total")}
@@ -710,7 +710,7 @@ const SocialInteractionsReport: React.FC<
                     onClick={() => router.push(`/@${r.account}`)}
                     className="border-b border-gray-100 dark:border-gray-800 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/40"
                   >
-                    <td className="py-1.5 pe-2 sticky start-0 z-10 bg-theme border-e border-gray-200 dark:border-gray-700">
+                    <td className="py-1.5 pe-2 sticky inset-s-0 z-10 bg-theme border-e border-gray-200 dark:border-gray-700">
                       <span className="inline-flex items-center gap-1.5">
                         <HiveAvatar
                           accountName={r.account}
@@ -755,7 +755,7 @@ const SocialInteractionsReport: React.FC<
                 ))}
                 {othersInfo.total > 0 && (
                   <tr className="italic text-gray-500 dark:text-gray-400">
-                    <td className="py-1.5 pe-2 sticky start-0 z-10 bg-theme border-e border-gray-200 dark:border-gray-700">
+                    <td className="py-1.5 pe-2 sticky inset-s-0 z-10 bg-theme border-e border-gray-200 dark:border-gray-700">
                       {t("socialInteractions.others")}
                     </td>
                     {tableColumns.map((ty) => (

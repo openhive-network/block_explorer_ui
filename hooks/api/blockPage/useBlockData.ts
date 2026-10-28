@@ -6,7 +6,7 @@ import Hive from "@/types/Hive";
 const useBlockData = (blockNumber: number | string) => {
   const {
     data: blockDetails,
-    isLoading: blockDetailsLoading,
+    isPending: blockDetailsLoading,
     error: blockDetailsError,
   }: UseQueryResult<Hive.BlockDetails> = useQuery({
     queryKey: ["block_details", blockNumber],

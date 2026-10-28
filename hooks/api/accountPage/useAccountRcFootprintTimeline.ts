@@ -20,7 +20,7 @@ const useAccountRcFootprintTimeline = (
   enabled = true
 ) => {
   const { appFilter, opTypeFilter } = filters;
-  const query = useInfiniteQuery<Hive.AccountRcFootprintTimelineRow[]>({
+  const query = useInfiniteQuery({
     queryKey: [
       "account_rc_footprint_timeline",
       accountName,
@@ -36,8 +36,9 @@ const useAccountRcFootprintTimeline = (
         fromDate,
         toDate,
         limitCount: FETCH_COUNT,
-        beforeSeq: pageParam as number | undefined,
+        beforeSeq: pageParam,
       }),
+    initialPageParam: undefined as number | undefined,
     // Keyset cursor from the last DISPLAYED row's op_seq. More rows than
     // PAGE_SIZE means the sentinel came back → there's a next page.
     getNextPageParam: (lastPage) =>
@@ -52,7 +53,7 @@ const useAccountRcFootprintTimeline = (
 
   return {
     rows,
-    isLoading: query.isLoading,
+    isLoading: query.isPending,
     isError: query.isError,
     fetchNextPage: query.fetchNextPage,
     hasNextPage: query.hasNextPage ?? false,

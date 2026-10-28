@@ -25,12 +25,12 @@ const CompareChartPanel: React.FC<CompareChartPanelProps> = ({
   const [open, setOpen] = useState(defaultOpen);
 
   return (
-    <div className="-mt-2 mb-4 overflow-hidden rounded-xl border border-slate-200 bg-theme shadow-sm dark:border-slate-700">
+    <div className="-mt-2 mb-4 overflow-hidden rounded-xl border border-slate-200 bg-theme shadow-xs dark:border-slate-700">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
-        className="flex w-full items-center justify-between gap-2 px-4 py-2.5 text-start hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-400 dark:hover:bg-slate-800/50"
+        className="flex w-full items-center justify-between gap-2 px-4 py-2.5 text-start hover:bg-slate-50 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-400 dark:hover:bg-slate-800/50"
       >
         <span className="flex items-center gap-1.5 text-[13px] font-bold text-slate-700 dark:text-slate-200">
           <Icon className={cn("h-4 w-4", iconColor)} />
@@ -38,7 +38,7 @@ const CompareChartPanel: React.FC<CompareChartPanelProps> = ({
         </span>
         <ChevronDown
           className={cn(
-            "h-4 w-4 flex-shrink-0 text-slate-400 transition-transform",
+            "h-4 w-4 shrink-0 text-slate-400 transition-transform",
             open && "rotate-180"
           )}
         />

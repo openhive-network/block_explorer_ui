@@ -6,7 +6,7 @@ import fetchingService from "@/services/FetchingService";
 const useOperationsTypes = () => {
   const {
     data: operationsTypes,
-    isLoading: operationsTypesLoading,
+    isPending: operationsTypesLoading,
     error: operationsTypesError,
   }: UseQueryResult<Explorer.ExtendedOperationTypePattern[]> = useQuery({
     queryKey: ["operation_types"],

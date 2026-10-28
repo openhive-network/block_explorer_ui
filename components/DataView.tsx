@@ -51,14 +51,14 @@ const DataView: React.FC<DataViewProps> = ({ isMobile }) => {
   };
 
   const ViewIconsSegmented = () => {
-    const buttonBaseClass = "px-2.5 h-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 relative";
+    const buttonBaseClass = "px-2.5 h-full transition-colors duration-200 focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 relative";
     const selectedClass = "bg-white dark:bg-explorer-light-gray"; 
     const notSelectedClass = "hover:bg-white";
   
     return (
       <TooltipProvider>
         <div 
-          className="flex  items-center h-[35px] rounded-[6px] border-navbar-border border-[1px] overflow-hidden bg-navbar"
+          className="flex  items-center h-[35px] rounded-[6px] border-navbar-border border overflow-hidden bg-navbar"
           role="group"
           aria-label="Data view selection"
         >
@@ -134,7 +134,7 @@ const DataView: React.FC<DataViewProps> = ({ isMobile }) => {
             <div
               onClick={handleCycle}
               className={cn(
-                "w-[140px] h-[35px] rounded-[6px] text-sm text-center cursor-pointer flex justify-center items-center p-2 bg-navbar hover:bg-navbar-hover border-navbar-border border-[1px] transition-colors duration-200",
+                "w-[140px] h-[35px] rounded-[6px] text-sm text-center cursor-pointer flex justify-center items-center p-2 bg-navbar hover:bg-navbar-hover border-navbar-border border transition-colors duration-200",
                 { "p-1 m-0 text-sm justify-normal": isMobile }
               )}
             >
@@ -155,7 +155,7 @@ const DataView: React.FC<DataViewProps> = ({ isMobile }) => {
       <PopoverTrigger asChild>
         <div
           className={cn(
-            "w-[110px] h-[35px] rounded-[6px] text-sm text-center cursor-pointer flex justify-center items-center p-2 bg-navbar hover:bg-navbar-hover border-navbar-border border-[1px] transition-colors duration-200",
+            "w-[110px] h-[35px] rounded-[6px] text-sm text-center cursor-pointer flex justify-center items-center p-2 bg-navbar hover:bg-navbar-hover border-navbar-border border transition-colors duration-200",
             { "p-1 m-0 text-sm justify-normal": isMobile }
           )}
           data-testid="data-view-dropdown"

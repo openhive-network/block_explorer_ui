@@ -22,7 +22,7 @@ const useWitnessDetails = (accountName: string, isWitness: boolean) => {
 
   const {
     data: witnessDetails,
-    isLoading: isWitnessDetailsLoading,
+    isPending: isWitnessDetailsLoading,
     isError: isWitnessDetailsError,
   }: UseQueryResult<Explorer.Witness> = useQuery({
     queryKey: ["witness_details", accountName],

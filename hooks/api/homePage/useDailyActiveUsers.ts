@@ -11,7 +11,7 @@ const useDailyActiveUsers = (
 ) => {
   const {
     data: dailyActiveUsers,
-    isLoading: isDailyActiveUsersLoading,
+    isPending: isDailyActiveUsersLoading,
     isError: isDailyActiveUsersError,
   }: UseQueryResult<Hive.DailyActiveUsersResponse[] | undefined> = useQuery({
     queryKey: [

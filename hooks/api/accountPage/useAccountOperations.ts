@@ -22,7 +22,7 @@ const useAccountOperations = (
   const {
     data: accountOperations,
     isFetching: isAccountOperationsFetching,
-    isLoading: isAccountOperationsLoading,
+    isPending: isAccountOperationsLoading,
     isError: isAccountOperationsError,
     refetch: refetchAccountOperations,
   }: UseQueryResult<Hive.AccountOperationsResponse> = useQuery({

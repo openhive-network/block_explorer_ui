@@ -199,7 +199,7 @@ const AccountRecurrentTransfersCard: React.FC<
                       <dt className="text-gray-500 dark:text-gray-400">
                         {t("accountRecurrentTransfersCard.memo")}
                       </dt>
-                      <dd className="min-w-0 [overflow-wrap:anywhere]">
+                      <dd className="min-w-0 wrap-anywhere">
                         {transfer.memo}
                       </dd>
                     </>

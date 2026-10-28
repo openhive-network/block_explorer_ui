@@ -161,7 +161,7 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
     TABLE_CELL_CONFIGS.map((cellConfig, index) => {
       const isRightAligned = !!cellConfig.isRightAligned;
       const isUnsortable = !!cellConfig.isUnsortable;
-      const className = "text-center !bg-navbar py-2 whitespace-nowrap";
+      const className = "text-center bg-navbar! py-2 whitespace-nowrap";
       const buttonClassName = `w-full flex items-center ${
         isRightAligned ? "justify-end text-right" : "justify-start text-left"
       } ${cellConfig.displayKey === "witnesses.version" ? "pr-2" : ""}`;
@@ -202,7 +202,7 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
         <TableRow rowVariant="header">
           {buildHeader()}
           {showVoteColumn && (
-            <TableCell className="text-center !bg-navbar py-2">
+            <TableCell className="text-center bg-navbar! py-2">
               <span>{t("witnesses.actions")}</span>
             </TableCell>
           )}

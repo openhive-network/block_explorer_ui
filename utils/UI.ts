@@ -1,4 +1,3 @@
-import { useI18n } from "@/i18n/i18n";
 import Hive from "@/types/Hive";
 import { MutableRefObject } from "react";
 
@@ -8,9 +7,9 @@ export const scrollTo = (ref: MutableRefObject<any>) => {
 
 export const getOperationButtonTitle = (
   selectedOperationTypes: number[] | null,
-  operationsTypes?: Hive.OperationPattern[]
+  operationsTypes: Hive.OperationPattern[] | undefined,
+  t: (key: string) => string
 ): string => {
-  const { t } = useI18n();
   if (!selectedOperationTypes) return "";
 
   if (selectedOperationTypes && selectedOperationTypes.length === 1) {

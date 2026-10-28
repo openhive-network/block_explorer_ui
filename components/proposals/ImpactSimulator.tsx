@@ -30,7 +30,7 @@ const ImpactSimulator: React.FC<ImpactSimulatorProps> = ({
   const { dynamicGlobalData } = useDynamicGlobal();
   const { votedProposalIds } = useVoterProposals(username ?? "");
 
-  const { data: findAccountData, isLoading: isAccountLoading, isError: isAccountError } = useQuery({
+  const { data: findAccountData, isPending: isAccountLoading, isError: isAccountError } = useQuery({
     queryKey: ["findAccount", username],
     queryFn: () => fetchingService.findAccounts([username ?? ""]),
     enabled: !!username && isLoggedIn,
@@ -88,7 +88,7 @@ const ImpactSimulator: React.FC<ImpactSimulatorProps> = ({
 
   return (
     <div className="group/impact flex items-center gap-1 text-xs cursor-default select-none min-h-[18px]">
-      <Icon className={cn("h-3.5 w-3.5 flex-shrink-0 transition-colors duration-150 text-slate-300 dark:text-slate-600", hoverIconColor)} />
+      <Icon className={cn("h-3.5 w-3.5 shrink-0 transition-colors duration-150 text-slate-300 dark:text-slate-600", hoverIconColor)} />
       <span className={cn("transition-colors duration-150 text-slate-300 dark:text-slate-600", hoverTextColor)}>
         {actionLabel}&nbsp;<span className="font-medium">{sign}{userHpDisplayStr}</span>
       </span>

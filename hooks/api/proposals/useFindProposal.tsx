@@ -6,7 +6,7 @@ import { convertToUTCDate } from "@/utils/TimeUtils";
 const useFindProposal = (proposalId: number | null) => {
   const {
     data: foundProposalData,
-    isLoading: isFindProposalLoading,
+    isPending: isFindProposalLoading,
     isError: isFindProposalError,
   }: UseQueryResult<Hive.Proposal[]> = useQuery({
     queryKey: ["find_proposal", proposalId],

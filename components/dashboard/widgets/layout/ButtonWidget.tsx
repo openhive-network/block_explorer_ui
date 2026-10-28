@@ -37,7 +37,7 @@ const ButtonWidget: React.FC<ButtonWidgetProps> = ({
           onBlur={() => onLabelChange(label)}
           onMouseDown={(e) => e.stopPropagation()}
           placeholder={t("buttonWidget.labelPlaceholder")}
-          className="w-full rounded border bg-white dark:bg-gray-700 p-1.5 text-sm text-gray-900 dark:text-white outline-none"
+          className="w-full rounded border bg-white dark:bg-gray-700 p-1.5 text-sm text-gray-900 dark:text-white outline-hidden"
         />
         <input
           type="text"
@@ -46,7 +46,7 @@ const ButtonWidget: React.FC<ButtonWidgetProps> = ({
           onBlur={() => onUrlChange(url)}
           onMouseDown={(e) => e.stopPropagation()}
           placeholder={t("buttonWidget.urlPlaceholder")}
-          className="w-full rounded border bg-white dark:bg-gray-700 p-1.5 font-mono text-[11px] text-gray-700 dark:text-gray-200 outline-none"
+          className="w-full rounded border bg-white dark:bg-gray-700 p-1.5 font-mono text-[11px] text-gray-700 dark:text-gray-200 outline-hidden"
         />
       </div>
     );

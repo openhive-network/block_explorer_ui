@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 import Explorer from "@/types/Explorer";
 import fetchingService from "@/services/FetchingService";
@@ -14,7 +14,7 @@ const useAllBlocksSearch = (
     data: blocksSearchData,
     isFetching: blocksSearchDataLoading,
     isError: blocksSearchDataError,
-    isPreviousData: blocksSearchShowingPrevious,
+    isPlaceholderData: blocksSearchShowingPrevious,
     refetch: refetchBlockSearchData,
   } = useQuery({
     queryKey: ["blockSearch", allBlockSearchProps, page, liveDataEnabled],
@@ -24,7 +24,7 @@ const useAllBlocksSearch = (
     // Paging keeps the current rows on screen instead of blanking to a spinner.
     // This search runs on a longer timeout than the rest of the app, so the
     // wait it covers can be seconds long.
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     // A call that outlives config.blockSearchTimeout is not a blip worth
     // doubling the wait for; surface it instead of retrying.
     retry: false,

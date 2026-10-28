@@ -1,17 +1,17 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 import fetchingService from "@/services/FetchingService";
 
 const useHeadBlock = (headBlockNum?: number) => {
   const {
     data: headBlockData,
-    isLoading: headBlockDataLoading,
+    isPending: headBlockDataLoading,
     isError: headBlockDataError,
   } = useQuery({
     queryKey: ["headBlockData", headBlockNum],
     queryFn: () => fetchBlockGlobalState(headBlockNum),
     refetchOnWindowFocus: false,
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
   });
 
   const fetchBlockGlobalState = async (headBlockNum: number | undefined) => {

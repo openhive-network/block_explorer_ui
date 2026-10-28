@@ -108,14 +108,14 @@ const DauStackedChart: React.FC<DauStackedChartProps> = ({
     const period = payload[0]?.payload?.period as string;
     const total = payload.reduce((s, p) => s + (p.value ?? 0), 0);
     return (
-      <div className="bg-theme rounded shadow-sm py-1.5 px-2.5 text-[0.6rem]">
+      <div className="bg-theme rounded shadow-xs py-1.5 px-2.5 text-[0.6rem]">
         <p className="text-gray-400 mb-1 text-center">
           {moment(period).format(dateFormat ?? "MMM D, YYYY")}
         </p>
         {[...payload].reverse().map((p) => (
           <div key={p.dataKey} className="flex items-center gap-1.5 mb-0.5">
             <span
-              className="inline-block w-2 h-2 rounded-sm flex-shrink-0"
+              className="inline-block w-2 h-2 rounded-sm shrink-0"
               style={{ backgroundColor: p.color }}
             />
             <span className="text-gray-500 flex-1">{labelMap[p.dataKey]}</span>

@@ -11,7 +11,7 @@ const useAccountBalances = (
 ) => {
   const {
     data: accountBalancesData,
-    isLoading: accountBalancesDataLoading,
+    isPending: accountBalancesDataLoading,
     isError: accountBalancesDataError,
   }: UseQueryResult<Hive.AccountBalancesResponse> = useQuery({
     queryKey: ["account_balances", accountName],

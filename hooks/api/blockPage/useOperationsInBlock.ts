@@ -6,7 +6,7 @@ import fetchingService from "@/services/FetchingService";
 const useOperationsCountInBlock = (blockNumber: number | string) => {
   const {
     data: operationsCountInBlock,
-    isLoading: operationsCountInBlockLoading,
+    isPending: operationsCountInBlockLoading,
     error: operationsCountInBlockError,
   }: UseQueryResult<Hive.LastBlocksTypeResponse> = useQuery({
     queryKey: ["operations_by_blocks", blockNumber],

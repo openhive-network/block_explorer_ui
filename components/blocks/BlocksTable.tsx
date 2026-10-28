@@ -198,8 +198,8 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
             key={index}
             scope="col"
             className={cn(
-              // start-0 rather than left-0: in RTL the frozen column belongs on the right.
-              index === 0 ? "sticky start-0 z-10 bg-theme" : "",
+              // inset-s-0 rather than left-0: in RTL the frozen column belongs on the right.
+              index === 0 ? "sticky inset-s-0 z-10 bg-theme" : "",
               numericColumns.has(index) ? "text-end" : "text-start"
             )}
           >
@@ -311,7 +311,7 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
   return (
     <>
       {totalCount > config.standardPaginationSize ? (
-        <div className="flex flex-wrap justify-between items-center bg-theme sticky z-20 top-[3.2rem] md:top-[4rem]">
+        <div className="flex flex-wrap justify-between items-center bg-theme sticky z-20 top-[3.2rem] md:top-16">
           {isMainPageTable ? (
             <div className="flex justify-center w-full md:w-auto md:justify-start bg-theme">
               <Link href={allBlocksPageLink ?? "/blocks"} target="_blank">
@@ -464,7 +464,7 @@ const TableRowComponent: React.FC<TableRowComponentProps> = ({
       <TableRow
         className={`text-start ${bgColor} hover:bg-rowHover border-b-2 transition-colors duration-300 ease-in-out ${newRowAccent}`}
       >
-        <TableCell className="whitespace-nowrap sticky start-0 z-10 bg-inherit p-4">
+        <TableCell className="whitespace-nowrap sticky inset-s-0 z-10 bg-inherit p-4">
           <div className="flex items-center space-x-2">
             {/* Rendered on every row so the number never shifts as it fades. */}
             <LiveBeacon

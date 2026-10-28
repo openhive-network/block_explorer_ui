@@ -48,7 +48,7 @@ const MyCommunitiesWidget: React.FC = () => {
   return (
     <Card className="col-span-12 lg:col-span-3 mb-2 flex h-full flex-col overflow-hidden">
       <CardHeaderWithLink
-        className="flex-shrink-0"
+        className="shrink-0"
         href="/communities"
         title={
           <span className="flex items-center gap-2">

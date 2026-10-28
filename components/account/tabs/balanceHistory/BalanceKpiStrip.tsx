@@ -163,7 +163,7 @@ const KpiCard: React.FC<{
     title={title}
     className={cn(
       "rounded-md border border-gray-200 dark:border-gray-700",
-      "bg-theme px-4 py-3 shadow-sm"
+      "bg-theme px-4 py-3 shadow-xs"
     )}
   >
     <div className="text-xs text-gray-500 mb-1">{label}</div>

@@ -17,16 +17,17 @@ const useCommunities = (
 ) => {
   const {
     data,
-    isLoading,
+    isPending: isLoading,
     isError,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useInfiniteQuery<Hive.CommunityList, Error>({
+  } = useInfiniteQuery({
     queryKey: ["communities", query, sort, limit],
     queryFn: ({ pageParam }) =>
       fetchingService.getCommunitiesList(pageParam, limit, query, sort),
     enabled: enabled,
+    initialPageParam: "",
     getNextPageParam: (lastPage) => {
       const pageAsArray = Object.values(lastPage);
       if (pageAsArray.length < limit) {

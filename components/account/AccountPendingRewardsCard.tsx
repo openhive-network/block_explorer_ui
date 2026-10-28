@@ -367,7 +367,7 @@ const AccountPendingRewardsCard: React.FC<AccountPendingRewardsCardProps> = ({
                       <div className="px-1 py-1.5 space-y-0.5">
                         <RewardRow
                           icon={
-                            <CircleDollarSign className="h-3.5 w-3.5 text-amber-500 flex-shrink-0" />
+                            <CircleDollarSign className="h-3.5 w-3.5 text-amber-500 shrink-0" />
                           }
                           label={t("pendingRewardsCard.grossPending")}
                           value={toDisplay(author.gross_reward_basis)}
@@ -377,7 +377,7 @@ const AccountPendingRewardsCard: React.FC<AccountPendingRewardsCardProps> = ({
                           <>
                             <RewardRow
                               icon={
-                                <User className="h-3 w-3 text-teal-500 flex-shrink-0" />
+                                <User className="h-3 w-3 text-teal-500 shrink-0" />
                               }
                               label={authorShareLabel}
                               value={toDisplay(
@@ -391,7 +391,7 @@ const AccountPendingRewardsCard: React.FC<AccountPendingRewardsCardProps> = ({
                         {beneficiariesTotalHbd > 0 && (
                           <RewardRow
                             icon={
-                              <Users className="h-3 w-3 text-blue-400 flex-shrink-0" />
+                              <Users className="h-3 w-3 text-blue-400 shrink-0" />
                             }
                             label={beneficiariesShareLabel}
                             value={toDisplay(
@@ -404,7 +404,7 @@ const AccountPendingRewardsCard: React.FC<AccountPendingRewardsCardProps> = ({
                           <>
                             <RewardRow
                               icon={
-                                <Award className="h-3 w-3 text-violet-400 flex-shrink-0" />
+                                <Award className="h-3 w-3 text-violet-400 shrink-0" />
                               }
                               label={curatorsShareLabel}
                               value={toDisplay(
@@ -457,7 +457,7 @@ const AccountPendingRewardsCard: React.FC<AccountPendingRewardsCardProps> = ({
                     <div className="px-1 py-1.5">
                       <RewardRow
                         icon={
-                          <CircleDollarSign className="h-3.5 w-3.5 text-violet-500 flex-shrink-0" />
+                          <CircleDollarSign className="h-3.5 w-3.5 text-violet-500 shrink-0" />
                         }
                         label={t("pendingRewardsCard.estimatedPayout")}
                         value={toDisplay(curation.curation_reward_basis.total)}
@@ -473,7 +473,7 @@ const AccountPendingRewardsCard: React.FC<AccountPendingRewardsCardProps> = ({
                 <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 overflow-hidden">
                   <RewardRow
                     icon={
-                      <Wallet className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
+                      <Wallet className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
                     }
                     label={takeLabel}
                     value={toDisplayRaw(yourTakeHbd)}

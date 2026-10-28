@@ -69,7 +69,7 @@ const NetworkRcUtilizationChart: React.FC<NetworkRcUtilizationChartProps> = ({
     return (
       <div
         dir={isRTL ? "rtl" : "ltr"}
-        className="bg-theme rounded shadow-sm py-1 px-2 text-[0.6rem]"
+        className="bg-theme rounded shadow-xs py-1 px-2 text-[0.6rem]"
       >
         <p className="text-gray-400 mb-0.5 text-center">
           {moment(label).format("MMM D, YYYY")}

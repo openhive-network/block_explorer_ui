@@ -334,12 +334,12 @@ const NetworkAuthorRetentionCard: React.FC = () => {
             </div>
           </div>
           {isAuthorRetentionLoading ? (
-            <div className="flex items-center justify-center flex-grow min-h-[100px]">
+            <div className="flex items-center justify-center grow min-h-[100px]">
               <Loader2 className="animate-spin h-5 w-5" />
             </div>
           ) : (
             <>
-              <div className="flex-grow min-h-[100px] overflow-hidden">
+              <div className="grow min-h-[100px] overflow-hidden">
                 <NetworkAuthorRetentionHeatmap
                   data={sortedData}
                   compact

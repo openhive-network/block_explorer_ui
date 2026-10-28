@@ -15,7 +15,7 @@ const useAccountConversionRequests = (
 
   const {
     data: conversionRequests,
-    isLoading: isConversionRequestsLoading,
+    isPending: isConversionRequestsLoading,
     isError: isConversionRequestsError,
   }: UseQueryResult<AccountConversionRequests> = useQuery({
     queryKey: ["account_conversion_requests", accountName],

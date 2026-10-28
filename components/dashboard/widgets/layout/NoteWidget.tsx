@@ -101,7 +101,7 @@ const NoteWidget: React.FC<NoteWidgetProps> = ({
             onChange={(e) => setTitle(e.target.value)}
             onBlur={() => onTitleChange(title)}
             placeholder={t("noteWidget.titlePlaceholder")}
-            className="min-w-0 flex-1 rounded border bg-white/70 px-2 py-0.5 text-xs font-semibold text-gray-900 outline-none dark:bg-black/20 dark:text-white"
+            className="min-w-0 flex-1 rounded border bg-white/70 px-2 py-0.5 text-xs font-semibold text-gray-900 outline-hidden dark:bg-black/20 dark:text-white"
           />
         </div>
         <textarea
@@ -110,7 +110,7 @@ const NoteWidget: React.FC<NoteWidgetProps> = ({
           onBlur={() => onTextChange(text)}
           onMouseDown={(e) => e.stopPropagation()}
           placeholder={t("noteWidget.placeholder")}
-          className="flex-grow w-full resize-none rounded border bg-white/70 dark:bg-black/20 p-2 text-sm text-gray-900 dark:text-white outline-none"
+          className="grow w-full resize-none rounded border bg-white/70 dark:bg-black/20 p-2 text-sm text-gray-900 dark:text-white outline-hidden"
         />
       </div>
     );
@@ -137,7 +137,7 @@ const NoteWidget: React.FC<NoteWidgetProps> = ({
         )}
         <p
           className={cn(
-            "text-sm leading-relaxed whitespace-pre-wrap break-words",
+            "text-sm leading-relaxed whitespace-pre-wrap wrap-break-word",
             text
               ? "text-gray-700 dark:text-gray-200"
               : "text-gray-500 dark:text-gray-400"

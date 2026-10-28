@@ -41,7 +41,7 @@ const useDauBreakdown = (
     })),
   });
 
-  const isBreakdownLoading = results.some((r) => r.isLoading);
+  const isBreakdownLoading = results.some((r) => r.isPending);
   const isBreakdownError = results.every((r) => r.isError);
 
   const breakdownData = useMemo<DauBreakdownPoint[]>(() => {
@@ -66,7 +66,7 @@ const useDauBreakdown = (
     return Array.from(merged.values()).sort((a, b) =>
       a.period < b.period ? -1 : 1
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [results, isBreakdownLoading]);
 
   return { breakdownData, isBreakdownLoading, isBreakdownError };

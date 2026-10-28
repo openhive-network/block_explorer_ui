@@ -1,4 +1,8 @@
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useQuery,
+  UseQueryResult,
+} from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
 import Hive from "@/types/Hive";
 
@@ -12,8 +16,8 @@ const useAccountInteractions = (
 ) => {
   const {
     data: interactions,
-    isLoading,
-    isPreviousData,
+    isPending: isLoading,
+    isPlaceholderData: isPreviousData,
     isError: isInteractionsError,
   }: UseQueryResult<Hive.AccountInteractionRow[] | undefined> = useQuery({
     queryKey: [
@@ -33,7 +37,7 @@ const useAccountInteractions = (
         typeFilter
       ),
     enabled: enabled && !!accountName,
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     staleTime: 30 * 60 * 1000,
     refetchOnWindowFocus: false,
   });

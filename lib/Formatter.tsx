@@ -323,7 +323,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
     if (!memo) return "";
 
     return (
-      <p className="break-words">
+      <p className="wrap-break-word">
         {this.i18n.t("formatter.getOperationMemo.prefix")}
         <span className="bg-gray-200 dark:bg-gray-700 text-red-500 px-1">
           {memo}

@@ -205,7 +205,7 @@ const Table = React.forwardRef<HTMLTableElement, TableProps>(
         >
           <div className="relative">
             {enableCompactToggle && (
-              <div className="absolute -top-10 end-0 z-10 mt-10">
+              <div className="absolute -top-10 inset-e-0 z-10 mt-10">
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -312,7 +312,7 @@ const TableBody = React.forwardRef<
   <tbody
     ref={ref}
     className={cn(
-      "[&_tr:last-child]:border-0 bg-theme dark:bg-theme max-w-[100%]",
+      "[&_tr:last-child]:border-0 bg-theme dark:bg-theme max-w-full",
       className
     )}
     {...props}
@@ -354,13 +354,13 @@ TableRow.displayName = "TableRow";
 
 const TableHead = withSticky(
   "th",
-  "h-12 px-4 align-middle font-medium bg-theme text-text [&:has([role=checkbox])]:pr-0"
+  "h-12 px-4 align-middle font-medium bg-theme text-text has-[[role=checkbox]]:pr-0"
 );
 TableHead.displayName = "TableHead";
 
 const TableCell = withSticky(
   "td",
-  "px-4 align-middle text-text [&:has([role=checkbox])]:pr-0"
+  "px-4 align-middle text-text has-[[role=checkbox]]:pr-0"
 );
 TableCell.displayName = "TableCell";
 

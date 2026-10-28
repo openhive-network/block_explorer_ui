@@ -60,7 +60,7 @@ const SingleOperationTypeDialog: React.FC<SingleOperationTypeDialogProps> = ({
         onClick={() => {
           setSelectedOperationId(operation.op_type_id);
         }}
-        className="col-span-3 pl-2 md:col-span-1 flex items-center font-bold text-base rounded-lg bg-inherit hover:border-2-gray group hover:shadow dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white "
+        className="col-span-3 pl-2 md:col-span-1 flex items-center font-bold text-base rounded-lg bg-inherit hover:border-2-gray group hover:shadow-sm dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white "
       >
         <RadioGroupItem
           className="text-black"

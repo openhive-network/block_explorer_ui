@@ -340,13 +340,13 @@ const WidgetIndex = () => {
 
       const editControls = finalIsEditMode && (
         <>
-          <div className="absolute top-2 start-2 z-20 text-white/50 pointer-events-none">
+          <div className="absolute top-2 inset-s-2 z-20 text-white/50 pointer-events-none">
             <Move size={20} />
           </div>
           <button
             onMouseDown={(e) => e.stopPropagation()}
             onClick={() => handleRemoveWidget(widget.i)}
-            className="absolute top-2 end-2 z-20 w-7 h-7 flex items-center justify-center bg-slate-300 dark:bg-slate-700 text-white rounded-full shadow-lg hover:bg-slate-400 dark:hover:bg-slate-800 transition-all"
+            className="absolute top-2 inset-e-2 z-20 w-7 h-7 flex items-center justify-center bg-slate-300 dark:bg-slate-700 text-white rounded-full shadow-lg hover:bg-slate-400 dark:hover:bg-slate-800 transition-all"
             aria-label={`Remove ${widget.type} widget`}
           >
             <X size={18} strokeWidth={2.5} />
@@ -372,7 +372,7 @@ const WidgetIndex = () => {
               className={cn(
                 "w-full overflow-hidden",
                 widgetConfig.matchRowHeight &&
-                  "flex flex-col [&>*]:mb-0 [&>*]:flex-1"
+                  "flex flex-col *:mb-0 *:flex-1"
               )}
               style={
                 widgetConfig.matchRowHeight && rowMatchPx[widget.i]

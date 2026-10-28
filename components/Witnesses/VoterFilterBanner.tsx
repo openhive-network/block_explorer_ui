@@ -67,11 +67,11 @@ const VoterFilterBanner: React.FC<VoterFilterBannerProps> = ({
       )}
     >
       <div className="flex items-start gap-2 min-w-0">
-        {hasProxy && <Handshake className="h-4 w-4 flex-shrink-0 mt-0.5" />}
+        {hasProxy && <Handshake className="h-4 w-4 shrink-0 mt-0.5" />}
         {hasProxy ? proxyMessage : noProxyMessage}
       </div>
       {hasProxy && isOwnView && (
-        <div className="flex items-center gap-2 flex-shrink-0">
+        <div className="flex items-center gap-2 shrink-0">
           <SetProxyButton witnessName={proxyChain[0]} variant="compact" />
         </div>
       )}

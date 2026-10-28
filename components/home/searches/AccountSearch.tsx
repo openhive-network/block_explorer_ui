@@ -131,7 +131,8 @@ const AccountSearch = () => {
           buttonClassName="bg-gray-500"
           triggerTitle={getOperationButtonTitle(
             selectedOperationTypes,
-            operationsTypes
+            operationsTypes,
+            t
           )}
         />
       </div>
