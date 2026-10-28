@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
 
-const VOTE_PAGE_SIZE = 1000;
+const VOTE_PAGE_SIZE = 100;
 
 const useVoterProposals = (accountName: string) => {
   const {

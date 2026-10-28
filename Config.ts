@@ -31,7 +31,7 @@ export const config = {
   // hivemind's bridge rejects anything above 20 with an assert, not an empty page.
   bridgePageMax: 20,
   expandedPaginationSize: 20000,
-  proposalVotesSize: 500,
+  proposalVotesSize: 100,
   blockPagePaginationSize: 2000, // Temporary 2000 until cache problem solved
   witnessesPerPages: {
     witnesses: 100,
