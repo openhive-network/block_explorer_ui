@@ -7,7 +7,7 @@ const ThemeToggle = () => {
     <div className="flex items-center">
       <button
         onClick={toggleTheme}
-        className="h-[34px] w-[34px] p-2 border-navbar-border border-[1px] bg-navbar rounded-full shadow-sm hover:bg-navbar-hover transition-colors duration-200 flex items-center justify-center"
+        className="h-[34px] w-[34px] p-2 border-navbar-border border bg-navbar rounded-full shadow-xs hover:bg-navbar-hover transition-colors duration-200 flex items-center justify-center"
         aria-label="Toggle Theme"
       >
         {theme === "dark" ? (

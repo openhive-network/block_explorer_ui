@@ -24,7 +24,7 @@ interface UseProposalsProps {
 const useProposals = ({ status, orderBy, direction, enabled = true }: UseProposalsProps) => {
   const {
     data: proposalsData,
-    isLoading: isProposalsLoading,
+    isPending: isProposalsLoading,
     isError: isProposalsError,
   } = useQuery<ProcessedProposal[], Error>({
     queryKey: ["proposals", status, orderBy, direction],

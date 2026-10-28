@@ -27,7 +27,7 @@ const CompareSelectionBar: React.FC<CompareSelectionBarProps> = ({
   return (
     <div className="fixed inset-x-0 bottom-[68px] z-50 flex justify-center px-3 sm:bottom-4">
       <div className="flex w-full max-w-full items-center gap-2 rounded-full border border-slate-200 bg-theme px-3 py-2 shadow-lg dark:border-slate-700 sm:w-auto">
-        <span className="hidden flex-shrink-0 text-xs font-semibold text-slate-500 dark:text-slate-400 sm:inline">
+        <span className="hidden shrink-0 text-xs font-semibold text-slate-500 dark:text-slate-400 sm:inline">
           {t("compare.select.title")}
         </span>
         <div className="flex min-w-0 flex-1 items-center gap-1.5">
@@ -41,7 +41,7 @@ const CompareSelectionBar: React.FC<CompareSelectionBarProps> = ({
                 type="button"
                 onClick={() => remove(acc)}
                 aria-label={t("compare.select.remove")}
-                className="flex-shrink-0 rounded-full p-0.5 hover:bg-slate-200 dark:hover:bg-slate-700"
+                className="shrink-0 rounded-full p-0.5 hover:bg-slate-200 dark:hover:bg-slate-700"
               >
                 <X className="h-3 w-3" />
               </button>
@@ -58,7 +58,7 @@ const CompareSelectionBar: React.FC<CompareSelectionBarProps> = ({
           onClick={go}
           disabled={!ready}
           aria-label={t("compare.entry.button")}
-          className="inline-flex flex-shrink-0 items-center gap-1 rounded-full bg-indigo-500 px-3 py-1 text-xs font-bold text-white transition-colors hover:bg-indigo-600 disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex shrink-0 items-center gap-1 rounded-full bg-indigo-500 px-3 py-1 text-xs font-bold text-white transition-colors hover:bg-indigo-600 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <ArrowLeftRight className="h-3.5 w-3.5" />
           <span className="hidden sm:inline">{t("compare.entry.button")}</span>

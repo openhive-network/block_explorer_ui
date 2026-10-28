@@ -29,7 +29,7 @@ const MarkdownWidget: React.FC<MarkdownWidgetProps> = ({
         value={content}
         onChange={(e) => setContent(e.target.value)}
         onBlur={() => onContentChange(content)}
-        className="w-full h-full p-2 bg-gray-50 dark:bg-gray-900 border-none outline-none resize-none rounded-md"
+        className="w-full h-full p-2 bg-gray-50 dark:bg-gray-900 border-none outline-hidden resize-none rounded-md"
         placeholder={t("markdownWidget.placeholder")}
       />
     );

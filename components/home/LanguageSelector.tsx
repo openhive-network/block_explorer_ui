@@ -50,7 +50,7 @@ const LanguageSelector = () => {
             isRTL && "flex-row-reverse"
           )}
         >
-          <EarthIcon className="h-5 w-5 flex-shrink-0" />
+          <EarthIcon className="h-5 w-5 shrink-0" />
           <span className="font-medium text-xs sm:text-sm whitespace-nowrap">
             {locale.toUpperCase()}
           </span>
@@ -72,7 +72,7 @@ const LanguageSelector = () => {
               <div className="flex w-full items-center gap-2.5">
                 <span
                   className={cn(
-                    "inline-flex h-6 w-8 flex-shrink-0 items-center justify-center rounded text-[11px] font-bold tracking-wide",
+                    "inline-flex h-6 w-8 shrink-0 items-center justify-center rounded text-[11px] font-bold tracking-wide",
                     active
                       ? "bg-indigo-500 text-white"
                       : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"

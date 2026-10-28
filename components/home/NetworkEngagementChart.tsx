@@ -230,7 +230,7 @@ const NetworkEngagementChart: React.FC<NetworkEngagementChartProps> = ({
       ],
     ];
     return (
-      <div className="bg-theme rounded shadow-sm py-1.5 px-2 text-[0.6rem]">
+      <div className="bg-theme rounded shadow-xs py-1.5 px-2 text-[0.6rem]">
         <p className="text-gray-400 mb-1 text-center">
           {moment(d.period).format(dateFormat ?? "MMM D, YYYY")}
           {provisional && (

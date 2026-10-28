@@ -81,7 +81,7 @@ const KpiTile: React.FC<{
   value: React.ReactNode;
   sub?: string;
 }> = ({ label, value, sub }) => (
-  <div className="rounded-md border border-gray-200 dark:border-gray-700 bg-theme px-3 py-2 shadow-sm">
+  <div className="rounded-md border border-gray-200 dark:border-gray-700 bg-theme px-3 py-2 shadow-xs">
     <div className="text-[11px] text-gray-500 dark:text-gray-400 mb-0.5 uppercase tracking-wide leading-none">
       {label}
     </div>

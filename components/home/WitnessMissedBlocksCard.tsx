@@ -107,7 +107,7 @@ const WitnessMissedBlocksCard: React.FC = () => {
         }
       />
 
-      <CardContent className="px-2 py-3 flex-grow">
+      <CardContent className="px-2 py-3 grow">
         {isMissedBlocksLoading ? (
           <div className="flex items-center justify-center min-h-[220px]">
             <Loader2 className="animate-spin h-6 w-6" />
@@ -130,7 +130,7 @@ const WitnessMissedBlocksCard: React.FC = () => {
                 })}
               </p>
               {range === "today" && (
-                <span className="ms-auto flex-shrink-0 text-[10px] text-gray-400">
+                <span className="ms-auto shrink-0 text-[10px] text-gray-400">
                   {t("witnessMissedBlocksCard.soFar")}
                 </span>
               )}
@@ -149,7 +149,7 @@ const WitnessMissedBlocksCard: React.FC = () => {
                       />
                       <Link
                         href={"/@" + row.producer}
-                        className="min-w-0 flex-grow truncate text-link text-sm"
+                        className="min-w-0 grow truncate text-link text-sm"
                         onClick={(e) => e.stopPropagation()}
                       >
                         {row.producer}

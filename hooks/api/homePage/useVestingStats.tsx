@@ -13,7 +13,7 @@ const useVestingStats = (
 ) => {
   const {
     data: vestingStats,
-    isLoading: isVestingStatsLoading,
+    isPending: isVestingStatsLoading,
     isError: isVestingStatsError,
   }: UseQueryResult<Hive.VestingStatsResponse[] | undefined> = useQuery({
     queryKey: ["vestingStats", granularity, direction, fromDate, toDate],

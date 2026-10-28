@@ -54,7 +54,7 @@ const MyAccountSnapshotWidget: React.FC = () => {
     return (
       <Card className="col-span-12 lg:col-span-3 mb-2 flex h-full flex-col overflow-hidden">
         <CardHeaderWithLink
-          className="flex-shrink-0"
+          className="shrink-0"
           href={`/@${username}`}
           title={t("widgets.myAccountSnapshotName")}
         />
@@ -63,7 +63,7 @@ const MyAccountSnapshotWidget: React.FC = () => {
             {Array.from({ length: 6 }).map((_, i) => (
               <div
                 key={i}
-                className="h-[4.5rem] animate-pulse rounded-xl bg-slate-100 dark:bg-slate-800/50"
+                className="h-18 animate-pulse rounded-xl bg-slate-100 dark:bg-slate-800/50"
               />
             ))}
           </div>
@@ -121,7 +121,7 @@ const MyAccountSnapshotWidget: React.FC = () => {
     <>
       <Card className="col-span-12 lg:col-span-3 mb-2 flex h-full flex-col overflow-hidden">
         <CardHeaderWithLink
-          className="flex-shrink-0"
+          className="shrink-0"
           href={`/@${username}`}
           title={t("widgets.myAccountSnapshotName")}
         />

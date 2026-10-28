@@ -141,14 +141,14 @@ const KpiTile: React.FC<{
   sub?: string;
   infoText?: string;
 }> = ({ label, value, sub, infoText }) => (
-  <div className="rounded-md border border-gray-200 dark:border-gray-700 bg-theme px-3 py-2 shadow-sm">
+  <div className="rounded-md border border-gray-200 dark:border-gray-700 bg-theme px-3 py-2 shadow-xs">
     <div className="text-[11px] text-gray-500 dark:text-gray-400 mb-0.5 uppercase tracking-wide leading-none flex items-center gap-1">
       <span>{label}</span>
       {infoText && (
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <span className="text-gray-400 hover:text-gray-500 cursor-help flex-shrink-0">
+              <span className="text-gray-400 hover:text-gray-500 cursor-help shrink-0">
                 <Info size={10} />
               </span>
             </TooltipTrigger>

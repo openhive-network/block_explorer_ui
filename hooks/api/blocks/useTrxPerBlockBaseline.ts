@@ -10,7 +10,11 @@ const BASELINE_DAYS = 30;
 const useTrxPerBlockBaseline = (enabled: boolean = true) => {
   const dayKey = new Date().toISOString().slice(0, 10);
 
-  const { data, isLoading, error } = useQuery({
+  const {
+    data,
+    isPending: isLoading,
+    error,
+  } = useQuery({
     queryKey: ["blocks_trx_per_block_baseline", dayKey, BASELINE_DAYS],
     enabled,
     staleTime: Infinity,

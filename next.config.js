@@ -27,9 +27,6 @@ const nextConfig = {
   basePath: basePath,
   // assetPrefix must match basePath for proper asset serving
   assetPrefix: basePath,
-  publicRuntimeConfig: {
-    basePath: basePath,
-  },
   // Security (#835): the server must never fetch or decode images. Use plain
   // <img> (next/image imports fail lint) and never re-enable the optimizer or
   // add remotePatterns.

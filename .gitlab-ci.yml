@@ -16,9 +16,12 @@ variables:
   # Temporary: separate clone path prevents clone-strategy jobs from erasing
   # fetch workspaces during transition. Remove once all projects use fetch.
   GIT_CLONE_PATH: $CI_BUILDS_DIR/fetch/$CI_RUNNER_SHORT_TOKEN/$CI_CONCURRENT_ID/$CI_PROJECT_PATH
+  # npm-common-config is ccc's develop: pnpm-workspace.yaml links its catalogs.
+  GIT_SUBMODULE_STRATEGY: recursive
+  GIT_SUBMODULE_UPDATE_FLAGS: --remote
 
   # Source change detection patterns
-  SOURCE_CODE_PATTERNS: "^(pages/|components/|hooks/|services/|utils/|types/|contexts/|styles/|i18n/|public/|app/|lib/|helpers/|Config\\.ts|next\\.config\\.js|tailwind\\.config\\.js|postcss\\.config\\.js|tsconfig\\.json|components\\.json|package\\.json|pnpm-lock\\.yaml|Dockerfile|docker-bake\\.hcl|docker/)"
+  SOURCE_CODE_PATTERNS: "^(pages/|components/|hooks/|services/|utils/|types/|contexts/|styles/|i18n/|public/|app/|lib/|helpers/|Config\\.ts|next\\.config\\.js|tailwind\\.config\\.js|postcss\\.config\\.js|tsconfig\\.json|components\\.json|package\\.json|pnpm-lock\\.yaml|pnpm-workspace\\.yaml|\\.npmrc|npm-common-config|Dockerfile|docker-bake\\.hcl|docker/)"
   TEST_PATTERNS: "^(tests/|playwright\\.config\\.ts|playwright\\.local5000\\.config\\.ts)"
   CI_SCRIPT_PATTERNS: "^(\\.gitlab-ci\\.yml|scripts/)"
 
@@ -43,6 +46,9 @@ include:
   - project: "hive/common-ci-configuration"
     ref: develop
     file: "/templates/source_change_detection.gitlab-ci.yml"
+  - project: "hive/common-ci-configuration"
+    ref: develop
+    file: "/templates/npm_projects.gitlab-ci.yml"
 
 default:
   hooks:
@@ -130,7 +136,8 @@ find_cached_image:
         pages/ components/ hooks/ services/ utils/ types/ contexts/ styles/ \
         i18n/ public/ app/ lib/ helpers/ Config.ts next.config.js \
         tailwind.config.js postcss.config.js tsconfig.json components.json \
-        package.json pnpm-lock.yaml Dockerfile docker-bake.hcl docker/)
+        package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc npm-common-config \
+        Dockerfile docker-bake.hcl docker/)
       echo "Last source commit: $COMMIT"
 
       # Check root image
@@ -284,7 +291,10 @@ docker-build:
       # node-test-tools ships pnpm; the Playwright image gets it through corepack
       command -v pnpm >/dev/null || corepack enable
       pnpm config set store-dir .pnpm-store
-      HUSKY=0 pnpm install --frozen-lockfile
+      git submodule status --recursive  # which ccc catalog this job installs against
+      export HUSKY=0
+    - !reference [.pnpm_install_with_catalog_fallback, script]
+    - |
       echo -e "\e[0Ksection_end:$(date +%s):deps\r\e[0K"
   cache:
     key: block-explorer-ui-cache-1
@@ -326,6 +336,7 @@ lint:
       - "npm-lint.log"
       - "npm-typecheck.log"
       - "npm-validate-i18n.log"
+      - pnpm-lock.catalog-refreshed.yaml
 
 startup-test:
   extends: .docker_image_builder_job_template

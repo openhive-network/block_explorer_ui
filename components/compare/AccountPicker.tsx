@@ -39,7 +39,7 @@ const Field: React.FC<{
       placeholder={placeholder}
       inputType="account_name"
       className="w-full"
-      inputClassName="focus:!bg-transparent"
+      inputClassName="focus:bg-transparent!"
     />
   </div>
 );
@@ -64,7 +64,7 @@ const AccountPicker: React.FC<AccountPickerProps> = ({
   };
 
   return (
-    <div className="w-full rounded-xl border border-slate-200 bg-theme p-6 shadow-sm dark:border-slate-700">
+    <div className="w-full rounded-xl border border-slate-200 bg-theme p-6 shadow-xs dark:border-slate-700">
       <h2 className="text-center text-lg font-bold text-slate-800 dark:text-slate-100">
         {t("compare.pickerTitle")}
       </h2>
@@ -88,7 +88,7 @@ const AccountPicker: React.FC<AccountPickerProps> = ({
           variant="outline"
           size="icon"
           aria-label={t("compare.swap")}
-          className="flex-shrink-0 self-center sm:mb-1 sm:self-end"
+          className="shrink-0 self-center sm:mb-1 sm:self-end"
           onClick={() => {
             setA(b);
             setB(a);

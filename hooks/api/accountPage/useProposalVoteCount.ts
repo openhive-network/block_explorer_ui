@@ -4,7 +4,7 @@ import fetchingService from "@/services/FetchingService";
 const useProposalVoteCount = (accountName: string) => {
   const {
     data: voteCount,
-    isLoading,
+    isPending: isLoading,
     isError,
   } = useQuery<number, Error>({
     queryKey: ["proposalVoteCount", accountName],

@@ -415,7 +415,7 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
                   className="py-4"
                 />
 
-                <div className="flex items-center justify-end gap-2 mb-2 me-4 md:mb-0 md:mt-2.5 md:ms-4 md:justify-start flex-shrink-0">
+                <div className="flex items-center justify-end gap-2 mb-2 me-4 md:mb-0 md:mt-2.5 md:ms-4 md:justify-start shrink-0">
                   {/* Unified voter-lookup control: quick shortcuts + autocomplete search */}
                   {isLoggedIn && (
                     <div className="inline-flex items-stretch rounded-full border border-navbar-border bg-secondary/20 hover:bg-secondary/30 transition-colors">
@@ -445,13 +445,13 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
                         onSubmit={handleVoterSearchSubmit}
                         className="flex items-center pl-2.5 pr-1 rounded-full"
                       >
-                        <Search className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+                        <Search className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                         <AutocompleteInput
                           value={voterSearch}
                           onChange={handleVoterSearchChange}
                           placeholder={t("witnesses.searchVoterPlaceholder")}
                           inputType="account_name"
-                          className="!w-44 [&_input]:border-0 [&_input]:bg-transparent [&_input]:h-8 [&_input]:text-xs [&_input]:py-0 [&_input]:px-2 [&_input]:shadow-none [&_input]:focus-visible:ring-0"
+                          className="w-44! [&_input]:border-0 [&_input]:bg-transparent [&_input]:h-8 [&_input]:text-xs [&_input]:py-0 [&_input]:px-2 [&_input]:shadow-none focus-visible:[&_input]:ring-0"
                         />
                       </form>
                     </div>
@@ -567,7 +567,7 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
                 />
                 <Link
                   href="/witnesses"
-                  className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-explorer-blue text-white text-sm font-medium shadow-sm hover:bg-explorer-blue/90 hover:shadow-md transition-all"
+                  className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-explorer-blue text-white text-sm font-medium shadow-xs hover:bg-explorer-blue/90 hover:shadow-md transition-all"
                 >
                   {t("witnesses.browseAll")}
                   <ArrowRight
@@ -584,7 +584,7 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
             )}
           </main>
         </div>
-        <div className="fixed bottom-[10px] end-0 flex flex-col items-end justify-end px-3 md:px-12">
+        <div className="fixed bottom-[10px] inset-e-0 flex flex-col items-end justify-end px-3 md:px-12">
           <ScrollTopButton />
         </div>
 

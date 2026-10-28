@@ -1,4 +1,8 @@
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useQuery,
+  UseQueryResult,
+} from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
 import Hive from "@/types/Hive";
 
@@ -10,15 +14,15 @@ const useAccountDappFootprint = (
 ) => {
   const {
     data: dappFootprint,
-    isLoading,
-    isPreviousData,
+    isPending: isLoading,
+    isPlaceholderData: isPreviousData,
     isError: isDappFootprintError,
   }: UseQueryResult<Hive.AccountDappFootprintResponse | undefined> = useQuery({
     queryKey: ["account_dapp_footprint", accountName, fromDate, toDate],
     queryFn: () =>
       fetchingService.getAccountDappFootprint(accountName, fromDate, toDate),
     enabled: enabled && !!accountName,
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     staleTime: 30 * 60 * 1000,
     refetchOnWindowFocus: false,
   });

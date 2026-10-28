@@ -53,7 +53,7 @@ const BadActorsTool: React.FC = () => {
       </div>
 
       {/* Lookup */}
-      <div className="rounded-xl border border-slate-200 bg-theme p-4 shadow-sm dark:border-slate-700">
+      <div className="rounded-xl border border-slate-200 bg-theme p-4 shadow-xs dark:border-slate-700">
         <label
           htmlFor="bad-actor-lookup"
           className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400"
@@ -61,7 +61,7 @@ const BadActorsTool: React.FC = () => {
           {t("tools.badActors.lookupLabel")}
         </label>
         <div className="flex items-center gap-2 rounded-lg border border-slate-300 bg-theme px-2 focus-within:ring-2 focus-within:ring-indigo-400 dark:border-slate-600">
-          <Search className="h-4 w-4 flex-shrink-0 text-slate-400" />
+          <Search className="h-4 w-4 shrink-0 text-slate-400" />
           <Input
             id="bad-actor-lookup"
             value={lookup}
@@ -72,7 +72,7 @@ const BadActorsTool: React.FC = () => {
         </div>
         {verdict === "flagged" && (
           <div className="mt-3 flex items-start gap-2 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm dark:border-rose-900/50 dark:bg-rose-950/30">
-            <ShieldAlert className="mt-0.5 h-4 w-4 flex-shrink-0 text-rose-500" />
+            <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-rose-500" />
             <div>
               <p className="font-bold text-rose-700 dark:text-rose-300">
                 {fill(t("tools.badActors.flagged"), { account: lookupName })}
@@ -85,7 +85,7 @@ const BadActorsTool: React.FC = () => {
         )}
         {verdict === "clear" && (
           <div className="mt-3 flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm dark:border-emerald-900/50 dark:bg-emerald-950/30">
-            <ShieldCheck className="h-4 w-4 flex-shrink-0 text-emerald-500" />
+            <ShieldCheck className="h-4 w-4 shrink-0 text-emerald-500" />
             <p className="font-semibold text-emerald-700 dark:text-emerald-300">
               {fill(t("tools.badActors.notFlagged"), { account: lookupName })}
             </p>
@@ -94,7 +94,7 @@ const BadActorsTool: React.FC = () => {
       </div>
 
       {/* Browsable list, indexed A–Z */}
-      <div className="rounded-xl border border-slate-200 bg-theme shadow-sm dark:border-slate-700">
+      <div className="rounded-xl border border-slate-200 bg-theme shadow-xs dark:border-slate-700">
         <div className="border-b border-slate-100 px-4 py-3 dark:border-slate-800">
           <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">
             {fill(t("tools.badActors.count"), {
@@ -109,7 +109,7 @@ const BadActorsTool: React.FC = () => {
                 onClick={() => setActive(l)}
                 aria-pressed={active === l}
                 className={cn(
-                  "h-7 min-w-[28px] rounded-md px-2 text-xs font-bold uppercase transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-400",
+                  "h-7 min-w-[28px] rounded-md px-2 text-xs font-bold uppercase transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-400",
                   active === l
                     ? "bg-indigo-500 text-white"
                     : "text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"

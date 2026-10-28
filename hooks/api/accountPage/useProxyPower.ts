@@ -1,4 +1,8 @@
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useQuery,
+  UseQueryResult,
+} from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
 import Hive from "@/types/Hive";
 
@@ -11,7 +15,7 @@ const useProxyPower = (
 ) => {
   const {
     data: accountProxyPower,
-    isLoading: isAccountProxyPowerLoading,
+    isPending: isAccountProxyPowerLoading,
     isError: isAccountProxyPowerError,
     isFetching: isAccountProxyPowerFetching,
   }: UseQueryResult<Hive.ProxyPowerResponse[]> = useQuery({
@@ -19,7 +23,7 @@ const useProxyPower = (
     queryFn: () =>
       fetchingService.getProxyPower(accountName, page, sort, direction),
     refetchOnWindowFocus: false,
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     enabled: !!accountName && enabled,
   });
 

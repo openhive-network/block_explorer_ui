@@ -39,7 +39,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({
   return (
     <div className="overflow-hidden border-none bg-theme shadow-2xl rounded-3xl">
       {/* Decorative Top Bar */}
-      <div className="h-1.5 bg-gradient-to-r from-rose-500 via-red-600 to-amber-500 w-full" />
+      <div className="h-1.5 bg-linear-to-r from-rose-500 via-red-600 to-amber-500 w-full" />
 
       <div className="p-8">
         <DialogHeader className="mb-6 text-text text-left">
@@ -73,7 +73,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({
                 value={inputUsername}
                 onChange={(e) => setInputUsername(e.target.value.toLowerCase())}
                 placeholder={t("auth.usernamePlaceholder")}
-                className="w-full h-14 pl-12 pr-4 bg-secondary/20 rounded-2xl border border-border text-text placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-lg font-medium shadow-inner"
+                className="w-full h-14 pl-12 pr-4 bg-secondary/20 rounded-2xl border border-border text-text placeholder:text-gray-400 focus:outline-hidden focus:ring-2 focus:ring-primary/50 transition-all text-lg font-medium shadow-inner"
               />
             </div>
           </div>
@@ -84,13 +84,13 @@ const LoginDialog: React.FC<LoginDialogProps> = ({
               onClick={onKeychainLogin}
               disabled={loading || !inputUsername}
               className={cn(
-                "relative flex items-center justify-between p-5 rounded-2xl border border-border bg-secondary/30 transition-all duration-300 shadow-sm",
+                "relative flex items-center justify-between p-5 rounded-2xl border border-border bg-secondary/30 transition-all duration-300 shadow-xs",
                 "hover:bg-secondary/50 hover:border-primary/30 hover:shadow-xl hover:-translate-y-1 group active:scale-[0.98]",
                 "disabled:opacity-40 disabled:cursor-not-allowed"
               )}
             >
               <div className="flex items-center gap-5">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-sm group-hover:scale-110 transition-transform text-primary">
+                <div className="w-12 h-12 rounded-xl bg-linear-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-xs group-hover:scale-110 transition-transform text-primary">
                   {loading ? (
                     <Loader2 className="w-6 h-6 animate-spin" />
                   ) : (
@@ -118,13 +118,13 @@ const LoginDialog: React.FC<LoginDialogProps> = ({
               onClick={onHivesignerLogin}
               disabled={loading}
               className={cn(
-                "w-full relative flex items-center justify-between p-5 rounded-2xl border border-border bg-secondary/30 transition-all duration-300 shadow-sm",
+                "w-full relative flex items-center justify-between p-5 rounded-2xl border border-border bg-secondary/30 transition-all duration-300 shadow-xs",
                 "hover:bg-secondary/50 hover:border-blue-500/30 hover:shadow-xl hover:-translate-y-1 group active:scale-[0.98]",
                 "disabled:opacity-40"
               )}
             >
               <div className="flex items-center gap-5">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-500/5 flex items-center justify-center border border-blue-500/20 shadow-sm group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 rounded-xl bg-linear-to-br from-blue-500/20 to-blue-500/5 flex items-center justify-center border border-blue-500/20 shadow-xs group-hover:scale-110 transition-transform">
                   <img
                     alt="logo"
                     width={30}

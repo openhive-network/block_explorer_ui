@@ -181,7 +181,7 @@ const DataExport: React.FC<DataExportProps> = ({
   const DefaultTrigger = (
     <div
       className={cn(
-        "bg-buttonBg border-gray-300 shadow-sm hover:bg-buttonHover flex items-center gap-1 max-w-fit h-8 p-2 rounded cursor-pointer outline-none",
+        "bg-buttonBg border-gray-300 shadow-xs hover:bg-buttonHover flex items-center gap-1 max-w-fit h-8 p-2 rounded cursor-pointer outline-hidden",
         className,
         { "cursor-not-allowed opacity-50": data.length === 0 }
       )}

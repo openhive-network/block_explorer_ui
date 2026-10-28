@@ -83,7 +83,7 @@ const NetworkDappUsageLeaderboard: React.FC<Props> = ({
                 <td className="relative p-2 font-medium">
                   <span
                     aria-hidden
-                    className="absolute inset-y-0 left-0 -z-0 rounded-r opacity-15"
+                    className="absolute inset-y-0 left-0 z-0 rounded-r opacity-15"
                     style={{
                       width: `${barPct}%`,
                       background: getCategoryColor(r.category, isDark),

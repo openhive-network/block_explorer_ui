@@ -34,7 +34,7 @@ const resolveVoteChain = async (
 };
 
 const useWitnessVoteChain = (accountName: string) => {
-  const { data, isLoading } = useQuery({
+  const { data, isPending: isLoading } = useQuery({
     queryKey: ["witnessVoteChain", accountName],
     queryFn: () => resolveVoteChain(accountName),
     enabled: !!accountName,

@@ -79,7 +79,7 @@ export const ProposalControls = ({
                   className={`rounded-md px-4 py-1.5 text-sm font-semibold transition-colors duration-200
                     ${
                       currentStatus === option.value
-                        ? "bg-white text-blue-600 shadow-sm dark:bg-slate-700"
+                        ? "bg-white text-blue-600 shadow-xs dark:bg-slate-700"
                         : "text-slate-600 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
                     }`}
                   type="button"
@@ -89,13 +89,13 @@ export const ProposalControls = ({
               ))}
               {isLoggedIn && (
                 <>
-                  <div className="w-px h-5 bg-slate-300 dark:bg-slate-600 mx-0.5 flex-shrink-0" />
+                  <div className="w-px h-5 bg-slate-300 dark:bg-slate-600 mx-0.5 shrink-0" />
                   <button
                     type="button"
                     onClick={onFavoritesToggle}
                     className={`rounded-md px-3 py-1.5 flex items-center gap-1.5 text-sm font-semibold transition-colors duration-200 ${
                       favoritesOnly
-                        ? "bg-white text-amber-500 shadow-sm dark:bg-slate-700 dark:text-amber-400"
+                        ? "bg-white text-amber-500 shadow-xs dark:bg-slate-700 dark:text-amber-400"
                         : "text-slate-500 hover:text-amber-500 dark:text-slate-400 dark:hover:text-amber-400"
                     }`}
                     title={t("proposalControls.favorites")}
@@ -112,7 +112,7 @@ export const ProposalControls = ({
                     onClick={onVotedToggle}
                     className={`rounded-md px-3 py-1.5 flex items-center gap-1.5 text-sm font-semibold transition-colors duration-200 ${
                       votedOnly
-                        ? "bg-white text-red-500 shadow-sm dark:bg-slate-700 dark:text-red-400"
+                        ? "bg-white text-red-500 shadow-xs dark:bg-slate-700 dark:text-red-400"
                         : "text-slate-500 hover:text-red-400 dark:text-slate-400 dark:hover:text-red-400"
                     }`}
                     title={t("proposalControls.voted")}
@@ -128,7 +128,7 @@ export const ProposalControls = ({
               )}
               {!isLoggedIn && (
                 <>
-                  <div className="w-px h-5 bg-slate-300 dark:bg-slate-600 mx-0.5 flex-shrink-0" />
+                  <div className="w-px h-5 bg-slate-300 dark:bg-slate-600 mx-0.5 shrink-0" />
                   <SignInPromptButton
                     variant="toolbar"
                     colorClassName="text-slate-500 hover:text-amber-500 dark:text-slate-400 dark:hover:text-amber-400"
@@ -152,7 +152,7 @@ export const ProposalControls = ({
         </div>
 
         <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:gap-4 lg:w-1/2">
-          <div className="relative flex-grow">
+          <div className="relative grow">
             <div className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2">
               <Search className="h-5 w-5 text-slate-400" aria-hidden="true" />
             </div>
@@ -204,9 +204,9 @@ export const ProposalControls = ({
                   sortDirection === "descending" ? "ascending" : "descending"
                 )
               }
-              className={`inline-flex items-center justify-center rounded-[8px] border border-slate-300 bg-slate-50 px-3 py-2 text-sm font-medium transition-colors hover:bg-buttonBg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white ${
+              className={`inline-flex items-center justify-center rounded-[8px] border border-slate-300 bg-slate-50 px-3 py-2 text-sm font-medium transition-colors hover:bg-buttonBg focus:outline-hidden focus:ring-2 focus:ring-purple-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white ${
                 sortDirection === "descending"
-                  ? "shadow-sm dark:bg-slate-700"
+                  ? "shadow-xs dark:bg-slate-700"
                   : ""
               }`}
               title={

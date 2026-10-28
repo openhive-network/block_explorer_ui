@@ -456,7 +456,7 @@ const DetailRow = ({
         isAction ? "flex-nowrap" : "flex-wrap",
         {
           "hover:cursor-pointer": !!onClick,
-          "group hover:bg-slate-100 active:bg-slate-200 dark:hover:bg-slate-800/60 dark:active:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500":
+          "group hover:bg-slate-100 active:bg-slate-200 dark:hover:bg-slate-800/60 dark:active:bg-slate-800 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500":
             isAction,
         },
         className
@@ -488,7 +488,7 @@ const DetailRow = ({
       </div>
       <div
         id={isAction ? valueId : undefined}
-        className={cn("flex-grow text-end", { "shrink-0": isAction })}
+        className={cn("grow text-end", { "shrink-0": isAction })}
       >
         <div
           className={cn(
@@ -688,10 +688,10 @@ const AssetSection = ({
             </TooltipContent>
           </Tooltip>
         </div>
-        <div className="flex items-center space-x-2 rtl:space-x-reverse flex-shrink-0">
+        <div className="flex items-center space-x-2 rtl:space-x-reverse shrink-0">
           <span className="font-semibold text-sm">{assetTotalValue}</span>
           <ChevronUp
-            className={cn("h-5 w-5 flex-shrink-0", {
+            className={cn("h-5 w-5 shrink-0", {
               "transform rotate-180": !isOpen,
             })}
           />
@@ -859,7 +859,7 @@ const AssetSection = ({
                       key={field}
                       fieldKey={field}
                       className={cn(highlightClass, {
-                        "bg-gradient-to-r from-cyan-100 to-transparent dark:from-teal-900/50 dark:to-transparent":
+                        "bg-linear-to-r from-cyan-100 to-transparent dark:from-teal-900/50 dark:to-transparent":
                           isDefaultHighlighted,
                       })}
                       isHighlighted={!!highlightClass || isDefaultHighlighted}

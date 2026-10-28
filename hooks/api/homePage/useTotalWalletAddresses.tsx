@@ -13,7 +13,7 @@ const useTotalWalletAddresses = (
 ) => {
   const {
     data: walletStats,
-    isLoading: isWalletStatsLoading,
+    isPending: isWalletStatsLoading,
     isError: isWalletStatsError,
   }: UseQueryResult<Hive.WalletStatsResponse[] | undefined> = useQuery({
     queryKey: [

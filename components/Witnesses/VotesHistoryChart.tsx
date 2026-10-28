@@ -155,7 +155,7 @@ const VotesTooltip = ({
         <div className="mt-3">
           <div className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
             {t("votersChart.gained")}: +{formatValues(gainedVal, unit)}
-            <span className="px-2 !text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+            <span className="px-2 text-xs! font-semibold text-emerald-600 dark:text-emerald-400">
               {`(+${d.gainedListVests.length} ${t("votersChart.votes")})`}
             </span>
           </div>
@@ -192,7 +192,7 @@ const VotesTooltip = ({
         <div className="mt-3">
           <div className="text-xs font-semibold text-rose-600 dark:text-rose-400">
             {t("votersChart.lost")}: -{formatValues(lostVal, unit)}
-            <span className="px-2 !text-xs font-semibold text-rose-600 dark:text-rose-400">
+            <span className="px-2 text-xs! font-semibold text-rose-600 dark:text-rose-400">
               {`(-${d.lostListVests.length} ${t("votersChart.votes")})`}
             </span>
           </div>

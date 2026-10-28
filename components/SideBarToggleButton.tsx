@@ -23,7 +23,7 @@ export default function SidebarToggleButton({
         "text-slate-500 dark:text-slate-400",
         "transition-all duration-200 ease-in-out",
         "hover:bg-slate-200 dark:hover:bg-slate-800",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-400 dark:focus-visible:ring-slate-500 dark:focus-visible:ring-offset-slate-900",
+        "focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-400 dark:focus-visible:ring-slate-500 dark:focus-visible:ring-offset-slate-900",
         className
       )}
     >

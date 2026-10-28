@@ -90,7 +90,7 @@ const VoterList = ({ names }: { names: string[] }) => {
             accountName={name}
             size={20}
             alt={t("proposalVotesHistoryDialog.voterAvatarAlt")}
-            className="rounded-full flex-shrink-0"
+            className="rounded-full shrink-0"
           />
           <span className="text-sm truncate">{name}</span>
         </div>
@@ -196,7 +196,7 @@ const KpiChip = ({
 }) => (
   <div className="flex flex-col items-center justify-center rounded-xl border bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700 px-4 py-3 gap-1 min-w-0">
     <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 text-xs font-medium truncate">
-      <Icon className="h-3.5 w-3.5 flex-shrink-0" />
+      <Icon className="h-3.5 w-3.5 shrink-0" />
       <span>{label}</span>
     </div>
     <span className={`text-xl font-bold tabular-nums ${valueClass}`}>
@@ -425,7 +425,7 @@ export const ProposalVotesHistoryDialog: React.FC<
         </DialogHeader>
 
         {/* Filters */}
-        <div className="flex-shrink-0 space-y-1 rounded-md border border-slate-100 dark:border-slate-800 p-4">
+        <div className="shrink-0 space-y-1 rounded-md border border-slate-100 dark:border-slate-800 p-4">
           <Label className="text-base font-semibold">
             {t("common.filters")}
           </Label>
@@ -469,7 +469,7 @@ export const ProposalVotesHistoryDialog: React.FC<
         </div>
 
         {/* KPI strip */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 flex-shrink-0">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 shrink-0">
           {isChartLoading && !isChartError ? (
             Array.from({ length: 4 }).map((_, i) => (
               <div
@@ -511,7 +511,7 @@ export const ProposalVotesHistoryDialog: React.FC<
         </div>
 
         {/* Chart */}
-        <div className="h-[320px] w-full flex-shrink-0">
+        <div className="h-[320px] w-full shrink-0">
           {isChartLoading ? (
             <div className="h-full rounded-xl bg-slate-100 dark:bg-slate-800 animate-pulse" />
           ) : isChartError ? (

@@ -10,19 +10,20 @@ const VOTE_LIMIT = config.proposalVotesSize;
 const useProposalVotes = (proposalId: number, enabled: boolean) => {
   const {
     data,
-    isLoading,
+    isPending: isLoading,
     isError,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useInfiniteQuery<Hive.ProposalVotesResponse, Error>({
+  } = useInfiniteQuery({
     queryKey: ["proposalVotes", proposalId],
-    queryFn: ({ pageParam = 1 }) =>
+    queryFn: ({ pageParam }): Promise<Hive.ProposalVotesResponse> =>
       fetchingService.getProposalVotes({
         proposalId,
         page: pageParam,
         pageSize: VOTE_LIMIT,
       }),
+    initialPageParam: 1,
     getNextPageParam: (lastPage, pages) =>
       pages.length < lastPage.total_pages ? pages.length + 1 : undefined,
     enabled: enabled && typeof proposalId === "number",

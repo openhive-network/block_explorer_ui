@@ -154,7 +154,7 @@ const TopHoldersConcentrationStrip: React.FC<Props> = ({
         <div
           key={it.key}
           className={cn(
-            "rounded-xl border p-3.5 shadow-sm transition-shadow hover:shadow-md",
+            "rounded-xl border p-3.5 shadow-xs transition-shadow hover:shadow-md",
             it.hero
               ? "border-indigo-200 bg-indigo-50/60 dark:border-indigo-800/60 dark:bg-indigo-950/30"
               : "border-gray-200 bg-theme dark:border-gray-700"
@@ -163,7 +163,7 @@ const TopHoldersConcentrationStrip: React.FC<Props> = ({
           <div className="flex items-center gap-2">
             <span
               className={cn(
-                "flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg",
+                "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg",
                 it.iconClass
               )}
             >

@@ -27,7 +27,7 @@ const useProposalVotesHistoryChart = (
 
   const {
     data: firstPage,
-    isLoading: isFirstLoading,
+    isPending: isFirstLoading,
     isError: isFirstError,
   } = useQuery({
     queryKey: [
@@ -99,7 +99,7 @@ const useProposalVotesHistoryChart = (
   }, [firstPage, remainingQueries]);
 
   const isChartLoading =
-    isFirstLoading || remainingQueries.some((q) => q.isLoading);
+    isFirstLoading || remainingQueries.some((q) => q.isPending);
 
   const isChartError = isFirstError || remainingQueries.some((q) => q.isError);
 

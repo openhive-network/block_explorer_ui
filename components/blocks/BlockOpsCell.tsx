@@ -39,7 +39,7 @@ const BlockOpsCell: React.FC<BlockOpsCellProps> = ({
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <span className="flex min-w-[4.5rem] cursor-pointer flex-col items-end gap-1">
+          <span className="flex min-w-18 cursor-pointer flex-col items-end gap-1">
             <span className="tabular-nums">{total.toLocaleString(locale)}</span>
             {showBar ? <OpBucketBar buckets={buckets} order={order} /> : null}
           </span>

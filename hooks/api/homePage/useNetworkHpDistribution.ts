@@ -5,7 +5,7 @@ import Hive from "@/types/Hive";
 const useNetworkHpDistribution = () => {
   const {
     data: hpDistribution,
-    isLoading: isHpDistributionLoading,
+    isPending: isHpDistributionLoading,
     isError: isHpDistributionError,
   }: UseQueryResult<
     Hive.NetworkHpDistributionResponse[] | undefined

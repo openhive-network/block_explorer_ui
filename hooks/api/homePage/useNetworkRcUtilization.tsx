@@ -1,4 +1,8 @@
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useQuery,
+  UseQueryResult,
+} from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
 import Hive from "@/types/Hive";
 
@@ -10,7 +14,7 @@ const useNetworkRcUtilization = (
 ) => {
   const {
     data: networkRcUtilization,
-    isLoading: isNetworkRcUtilizationLoading,
+    isPending: isNetworkRcUtilizationLoading,
     isError: isNetworkRcUtilizationError,
   }: UseQueryResult<Hive.NetworkRcUtilizationResponse[] | undefined> = useQuery(
     {
@@ -18,7 +22,7 @@ const useNetworkRcUtilization = (
       queryFn: () =>
         fetchingService.getNetworkRcUtilization(fromDate, toDate, granularity),
       enabled,
-      keepPreviousData: true,
+      placeholderData: keepPreviousData,
       staleTime: 5 * 60 * 1000,
       refetchOnWindowFocus: false,
     }

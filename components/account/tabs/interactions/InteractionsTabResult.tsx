@@ -62,7 +62,7 @@ const InteractionsTabResult: React.FC<InteractionsTabResultProps> = ({
   return (
     <>
       <div>
-        <div className="flex flex-wrap justify-between items-center bg-theme p-2 sticky z-20 top-[3.2rem] md:top-[4rem] rounded-t">
+        <div className="flex flex-wrap justify-between items-center bg-theme p-2 sticky z-20 top-[3.2rem] md:top-16 rounded-t">
           <div className="flex justify-end w-full md:justify-end items-end">
             <Link href={commentPageLink}>
               <Button data-testid="go-to-result-page">

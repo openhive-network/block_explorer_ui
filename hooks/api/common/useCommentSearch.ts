@@ -9,7 +9,7 @@ const useCommentSearch = (
   const {
     data: commentSearchData,
     isFetching: isCommentSearchDataFetching,
-    isLoading: isCommentSearchDataLoading,
+    isPending: isCommentSearchDataLoading,
     isError: commentSearchDataError,
     refetch: refetchCommentSearchData,
   } = useQuery({

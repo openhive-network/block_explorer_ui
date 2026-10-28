@@ -5,7 +5,7 @@ import Hive from "@/types/Hive";
 const useGovernanceStakeConcentration = () => {
   const {
     data: concentration,
-    isLoading: isConcentrationLoading,
+    isPending: isConcentrationLoading,
     isError: isConcentrationError,
   }: UseQueryResult<
     Hive.GovernanceInfluenceConcentrationResponse[] | undefined

@@ -516,7 +516,7 @@ const WitnessMissedBlocksFullChartDialog: React.FC<
                             alt={row.producer}
                             className="shrink-0 rounded-full"
                           />
-                          <div className="flex min-w-0 flex-grow flex-col">
+                          <div className="flex min-w-0 grow flex-col">
                             <Link
                               href={"/@" + row.producer}
                               className="truncate text-link text-sm"

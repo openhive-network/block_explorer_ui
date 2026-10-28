@@ -12,7 +12,7 @@ const useVestingDelegations = (
 ) => {
   const {
     data: vestingDelegationsData,
-    isLoading: isVestingDelegationsLoading,
+    isPending: isVestingDelegationsLoading,
     isError: isVestingDelegationsError,
   }: UseQueryResult<Hive.TwoDirectionDelegations> = useQuery({
     queryKey: ["vestingDelegations", delegatorAccount, liveDataEnabled],

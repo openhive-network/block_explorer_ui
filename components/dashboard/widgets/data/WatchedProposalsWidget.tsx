@@ -276,7 +276,7 @@ const WatchedProposalsWidget = () => {
                         accountName={p.creator}
                         size={14}
                         alt={p.creator}
-                        className="rounded-full flex-shrink-0"
+                        className="rounded-full shrink-0"
                       />
                       <Link
                         href={`/@${p.creator}`}
@@ -297,7 +297,7 @@ const WatchedProposalsWidget = () => {
 
                     {/* End date */}
                     <div className="flex items-center gap-1 mt-1 text-xs text-slate-500 dark:text-slate-400">
-                      <Calendar className="h-2.5 w-2.5 flex-shrink-0" />
+                      <Calendar className="h-2.5 w-2.5 shrink-0" />
                       <span>{formatDateToLocale(p.end_date, locale)}</span>
                     </div>
                   </li>
@@ -336,7 +336,7 @@ const WatchedProposalsWidget = () => {
                     {hasChange && (
                       <span
                         title={t("smartReminders.needsAttention")}
-                        className="flex-shrink-0 inline-flex items-center justify-center h-5 w-5 rounded-md bg-orange-100 dark:bg-orange-900/40"
+                        className="shrink-0 inline-flex items-center justify-center h-5 w-5 rounded-md bg-orange-100 dark:bg-orange-900/40"
                       >
                         <AlertTriangle className="h-3 w-3 text-orange-500 dark:text-orange-400" />
                       </span>
@@ -348,7 +348,7 @@ const WatchedProposalsWidget = () => {
                       }}
                       title={t("watchlist.removeFromWatchlist")}
                       aria-label={t("watchlist.removeFromWatchlist")}
-                      className="flex-shrink-0 p-0.5 rounded text-slate-400 hover:text-red-500 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                      className="shrink-0 p-0.5 rounded text-slate-400 hover:text-red-500 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
                     >
                       <X className="h-3 w-3" />
                     </button>
@@ -360,7 +360,7 @@ const WatchedProposalsWidget = () => {
                       accountName={p.creator}
                       size={14}
                       alt={p.creator}
-                      className="rounded-full flex-shrink-0"
+                      className="rounded-full shrink-0"
                     />
                     <Link
                       href={`/@${p.creator}`}
@@ -405,7 +405,7 @@ const WatchedProposalsWidget = () => {
 
                   {/* End date */}
                   <div className="flex items-center gap-1 mt-1 text-xs text-slate-500 dark:text-slate-400">
-                    <Calendar className="h-2.5 w-2.5 flex-shrink-0" />
+                    <Calendar className="h-2.5 w-2.5 shrink-0" />
                     <span>{formatDateToLocale(p.end_date, locale)}</span>
                   </div>
 

@@ -105,15 +105,15 @@ const TeamMember = ({ memberTuple }: { memberTuple: TeamMemberTuple }) => {
         accountName={name}
         size={40}
         alt={`${name} avatar`}
-        className="rounded-full flex-shrink-0"
+        className="rounded-full shrink-0"
       />
       <div className="flex-1 min-w-0">
         <div className="min-w-0">
-          <p className="font-semibold text-gray-800 dark:text-gray-200 break-words">
+          <p className="font-semibold text-gray-800 dark:text-gray-200 wrap-break-word">
             {name}
           </p>
           {title && (
-            <p className="text-xs text-gray-500 dark:text-gray-400 break-words">
+            <p className="text-xs text-gray-500 dark:text-gray-400 wrap-break-word">
               {title}
             </p>
           )}
@@ -237,7 +237,7 @@ const CommunityMainCard: React.FC<CommunityMainCardProps> = ({
               src={getHiveCoverUrl(name)}
               alt={`${title} cover image`}
             />
-            <div className="absolute -bottom-10 start-4 z-10">
+            <div className="absolute -bottom-10 inset-s-4 z-10">
               <HiveAvatar
                 accountName={name}
                 size={80}

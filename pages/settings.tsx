@@ -41,7 +41,7 @@ const SettingSection: React.FC<SettingSectionProps> = ({
   children,
 }) => {
   return (
-    <div className="rounded-lg border bg-explorer-slate dark:border-slate-800 shadow-sm">
+    <div className="rounded-lg border bg-explorer-slate dark:border-slate-800 shadow-xs">
       <div className="flex items-start gap-2.5 px-4 py-3">
         <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-indigo-500/10 dark:bg-indigo-400/15">
           <Icon className="h-4 w-4 text-indigo-600 dark:text-indigo-300" />

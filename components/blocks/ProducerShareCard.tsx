@@ -82,14 +82,14 @@ const ProducerShareCard: React.FC<ProducerShareCardProps> = ({
             >
               <span className="flex min-w-0 items-center gap-1.5">
                 {entry.isOther ? (
-                  <span className="h-4 w-4 flex-shrink-0 rounded-full bg-slate-300 dark:bg-slate-600" />
+                  <span className="h-4 w-4 shrink-0 rounded-full bg-slate-300 dark:bg-slate-600" />
                 ) : (
                   <img
                     src={getHiveAvatarUrl(entry.producer)}
                     alt=""
                     width={16}
                     height={16}
-                    className="h-4 w-4 flex-shrink-0 rounded-full"
+                    className="h-4 w-4 shrink-0 rounded-full"
                   />
                 )}
                 {entry.isOther ? (
@@ -127,7 +127,7 @@ const ProducerShareCard: React.FC<ProducerShareCardProps> = ({
                 </span>
                 <span
                   className={cn(
-                    "inline-flex min-w-[3.5rem] items-center justify-end gap-1",
+                    "inline-flex min-w-14 items-center justify-end gap-1",
                     entry.missed
                       ? "font-medium text-amber-600 dark:text-amber-400"
                       : "text-explorer-light-gray/60"

@@ -43,7 +43,7 @@ const MyRecurringTransfersWidget: React.FC = () => {
 
   return (
     <Card className="col-span-12 lg:col-span-3 overflow-hidden mb-2 h-full flex flex-col">
-      <CardHeader className="flex justify-between items-center border-b px-3 py-2.5 flex-shrink-0">
+      <CardHeader className="flex justify-between items-center border-b px-3 py-2.5 shrink-0">
         <CardTitle>{t("widgets.myRecurringTransfersName")}</CardTitle>
         <Link
           href={`/@${username}`}

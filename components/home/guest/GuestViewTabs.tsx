@@ -73,7 +73,7 @@ const GuestViewTabs: React.FC = () => {
         <SelectTrigger
           aria-label={label}
           className={cn(
-            "h-[35px] w-full rounded-[6px] border px-3 text-sm font-semibold shadow-sm focus:ring-offset-0",
+            "h-[35px] w-full rounded-[6px] border px-3 text-sm font-semibold shadow-xs focus:ring-offset-0",
             activeAccent.ring,
             activeAccent.chip,
             activeAccent.text,
@@ -135,7 +135,7 @@ const GuestViewTabs: React.FC = () => {
       aria-label={label}
       className={cn(
         "relative hidden items-center overflow-x-auto pe-2 ps-3 sm:flex",
-        "[scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+        "scrollbar-none [&::-webkit-scrollbar]:hidden",
         edge
       )}
     >
@@ -153,7 +153,7 @@ const GuestViewTabs: React.FC = () => {
             aria-current={isActive ? "page" : undefined}
             className={cn(
               "relative flex shrink-0 items-center gap-1.5 whitespace-nowrap px-3 py-2.5 text-sm font-semibold transition-colors",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
+              "focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
               isActive
                 ? a.text
                 : "text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
@@ -186,7 +186,7 @@ const GuestViewTabs: React.FC = () => {
                 className={cn(
                   "relative flex shrink-0 items-center gap-1.5 whitespace-nowrap px-3 py-2.5 text-sm font-semibold transition-colors",
                   "text-gray-400 hover:text-gray-600 dark:text-gray-600 dark:hover:text-gray-400",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+                  "focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
                 )}
               >
                 <Lock size={13} strokeWidth={2} className="shrink-0" />

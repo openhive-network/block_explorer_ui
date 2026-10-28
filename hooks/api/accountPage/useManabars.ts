@@ -8,7 +8,7 @@ import fetchingService from "@/services/FetchingService";
 const useManabars = (accountName: string, liveDataEnabled: boolean) => {
   const {
     data: manabarsData,
-    isLoading: manabarsDataLoading,
+    isPending: manabarsDataLoading,
     isError: manabarsDataError,
   }: UseQueryResult<Explorer.Manabars | null> = useQuery({
     queryKey: ["manabars", accountName, liveDataEnabled],

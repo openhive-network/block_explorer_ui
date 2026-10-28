@@ -60,7 +60,7 @@ const TopCommunitiesCard = ({
                 onClick={() => handleSelectCommunity(community)}
                 onMouseEnter={() => handleSelectCommunity(community)}
                 className={cn(
-                  "group relative rounded-full ring-offset-2 ring-offset-white transition-all duration-200 ease-in-out hover:scale-110 focus:outline-none dark:ring-offset-slate-900",
+                  "group relative rounded-full ring-offset-2 ring-offset-white transition-all duration-200 ease-in-out hover:scale-110 focus:outline-hidden dark:ring-offset-slate-900",
                   activeCommunity?.name === community.name &&
                     "scale-110 ring-2 border-link"
                 )}
@@ -71,7 +71,7 @@ const TopCommunitiesCard = ({
                   alt={community.title}
                   className="rounded-full"
                 />
-                <div className="absolute -top-1 start-1 flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-slate-900/70 px-1 font-mono text-xs font-bold text-white backdrop-blur-sm">
+                <div className="absolute -top-1 inset-s-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-slate-900/70 px-1 font-mono text-xs font-bold text-white backdrop-blur-xs">
                   {index + 1}
                 </div>
               </button>
@@ -97,8 +97,8 @@ const TopCommunitiesCard = ({
                 </div>
                 <ChevronNavIcon
                   className={cn(
-                    "h-5 w-5 flex-shrink-0 transition-transform duration-200",
-                    "group-hover/link:translate-x-1 rtl:group-hover/link:-translate-x-1"
+                    "h-5 w-5 shrink-0 transition-transform duration-200",
+                    "group-hover/link:translate-x-1 group-hover/link:rtl:-translate-x-1"
                   )}
                 />
               </Link>

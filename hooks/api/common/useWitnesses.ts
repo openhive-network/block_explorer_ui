@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 import fetchingService from "@/services/FetchingService";
 
@@ -11,14 +11,14 @@ const useWitnesses = (
 ) => {
   const {
     data: witnessesData,
-    isLoading: isWitnessDataLoading,
+    isPending: isWitnessDataLoading,
     isError: isWitnessDataError,
   } = useQuery({
     queryKey: ["witnesses", witnessesLimit, orderBy, orderIs, page],
     queryFn: () =>
       fetchingService.getWitnesses(witnessesLimit, page, orderBy, orderIs),
     refetchOnWindowFocus: false,
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     enabled: enabled,
   });
 

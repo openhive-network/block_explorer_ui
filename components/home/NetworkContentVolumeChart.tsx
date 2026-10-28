@@ -138,7 +138,7 @@ const NetworkContentVolumeChart: React.FC<NetworkContentVolumeChartProps> = ({
             aria-pressed={!off}
             title={it.label}
             className={cn(
-              "group inline-flex cursor-pointer select-none items-center gap-1.5 rounded transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
+              "group inline-flex cursor-pointer select-none items-center gap-1.5 rounded transition-opacity focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500",
               off ? "opacity-40 hover:opacity-70" : "opacity-100"
             )}
           >
@@ -173,7 +173,7 @@ const NetworkContentVolumeChart: React.FC<NetworkContentVolumeChartProps> = ({
     if (!active || !payload?.length) return null;
     const { period, posts, comments, unique_authors } = payload[0].payload;
     return (
-      <div className="bg-theme rounded shadow-sm py-1 px-2 text-[0.6rem]">
+      <div className="bg-theme rounded shadow-xs py-1 px-2 text-[0.6rem]">
         <p className="text-gray-400 mb-0.5 text-center">
           {moment(period).format(dateFormat ?? "MMM D, YYYY")}
         </p>

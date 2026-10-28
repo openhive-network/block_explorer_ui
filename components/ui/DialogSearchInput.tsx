@@ -23,7 +23,7 @@ const DialogSearchInput: React.FC<DialogSearchInputProps> = ({
 
   return (
     <div className={cn("relative w-full sm:w-80", className)}>
-      <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+      <Search className="pointer-events-none absolute inset-s-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
       <Input
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -38,7 +38,7 @@ const DialogSearchInput: React.FC<DialogSearchInputProps> = ({
           type="button"
           onClick={() => onChange("")}
           aria-label={t("common.clear")}
-          className="absolute end-2 top-1/2 -translate-y-1/2 rounded-full p-1 text-gray-400 hover:text-text"
+          className="absolute inset-e-2 top-1/2 -translate-y-1/2 rounded-full p-1 text-gray-400 hover:text-text"
         >
           <X className="h-4 w-4" />
         </button>

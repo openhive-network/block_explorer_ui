@@ -21,7 +21,7 @@ const useAccountOperationTypes = (accountName: string) => {
 
   const {
     data: accountOperationTypes,
-    isLoading: isAccountOperationTypesLoading,
+    isPending: isAccountOperationTypesLoading,
     isError: isAccountOperationTypesError,
   }: UseQueryResult<Explorer.ExtendedOperationTypePattern[]> = useQuery({
     queryKey: ["account_operation_types", accountName],

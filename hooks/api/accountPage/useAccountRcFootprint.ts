@@ -1,4 +1,8 @@
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useQuery,
+  UseQueryResult,
+} from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
 import Hive from "@/types/Hive";
 
@@ -13,8 +17,8 @@ const useAccountRcFootprint = (
 ) => {
   const {
     data: rcFootprint,
-    isLoading,
-    isPreviousData,
+    isPending: isLoading,
+    isPlaceholderData: isPreviousData,
     isError: isRcFootprintError,
   }: UseQueryResult<Hive.AccountRcFootprintRow[] | undefined> = useQuery({
     queryKey: ["account_rc_footprint", accountName, fromDate, toDate, groupBy],
@@ -26,7 +30,7 @@ const useAccountRcFootprint = (
         groupBy
       ),
     enabled: enabled && !!accountName,
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     staleTime: 30 * 60 * 1000,
     refetchOnWindowFocus: false,
   });

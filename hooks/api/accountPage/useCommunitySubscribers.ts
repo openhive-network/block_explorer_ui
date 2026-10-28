@@ -25,16 +25,16 @@ const useCommunitySubscribers = (
 ) => {
   const {
     data,
-    isLoading: isCommunitySubscribersLoading,
+    isPending: isCommunitySubscribersLoading,
     isError: isCommunitySubscribersError,
     isFetching: isCommunitySubscribersFetching,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
     refetch,
-  } = useInfiniteQuery<Hive.CommunitySubscriber[]>({
+  } = useInfiniteQuery({
     queryKey: ["communitySubscribers", communityName, startAfter],
-    queryFn: async ({ pageParam = startAfter }) => {
+    queryFn: async ({ pageParam }) => {
       return toCommunitySubscribers(
         await fetchingService.getCommunitySubscribers(
           communityName,
@@ -43,6 +43,7 @@ const useCommunitySubscribers = (
         )
       );
     },
+    initialPageParam: startAfter,
     getNextPageParam: (lastPage) => {
       if (!lastPage || lastPage.length < SUBSCRIBERS_PAGE_LIMIT) {
         return undefined;

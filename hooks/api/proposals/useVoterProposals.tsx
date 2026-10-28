@@ -6,7 +6,7 @@ const VOTE_PAGE_SIZE = 100;
 const useVoterProposals = (accountName: string) => {
   const {
     data: votedProposalIds,
-    isLoading,
+    isPending: isLoading,
     isError,
   } = useQuery<number[], Error>({
     queryKey: ["voterProposals", accountName],

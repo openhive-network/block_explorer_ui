@@ -64,13 +64,13 @@ const TitleWidget: React.FC<TitleWidgetProps> = ({
           value={text}
           onChange={(e) => setText(e.target.value)}
           onBlur={handleTextBlur}
-          className="flex-grow h-full text-2xl font-bold tracking-tight bg-transparent focus:bg-black/5 dark:focus:bg-white/10 outline-none rounded-md px-2"
+          className="grow h-full text-2xl font-bold tracking-tight bg-transparent focus:bg-black/5 dark:focus:bg-white/10 outline-hidden rounded-md px-2"
           placeholder={t("titleWidget.placeholder")}
           onMouseDown={(e) => e.stopPropagation()}
         />
 
         <div
-          className="absolute top-2 end-10 flex items-center justify-center w-8 h-8"
+          className="absolute top-2 inset-e-10 flex items-center justify-center w-8 h-8"
           onMouseDown={(e) => e.stopPropagation()}
           title={t("titleWidget.colorTooltip")}
         >

@@ -270,7 +270,7 @@ const PowerActivityTable: React.FC<PowerActivityTableProps> = ({
   return (
     <div>
       {totalPages > 1 && (
-        <div className="sticky z-20 top-[7rem] md:top-[7.5rem] scroll-mt-[7.5rem]">
+        <div className="sticky z-20 top-28 md:top-30 scroll-mt-30">
           <AccountPagination
             page={page ?? totalPages}
             setPage={updatePageInUrl}

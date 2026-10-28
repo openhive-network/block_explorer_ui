@@ -34,9 +34,9 @@ const KpiTile: React.FC<KpiTileProps> = ({
 }) => (
   <div
     className={cn(
-      "rounded-md border border-gray-200 dark:border-gray-700 bg-theme px-3 py-2 shadow-sm",
+      "rounded-md border border-gray-200 dark:border-gray-700 bg-theme px-3 py-2 shadow-xs",
       onClick &&
-        "cursor-pointer transition-colors hover:border-indigo-300 dark:hover:border-indigo-500/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500",
+        "cursor-pointer transition-colors hover:border-indigo-300 dark:hover:border-indigo-500/50 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-indigo-500",
       isActive &&
         "border-indigo-500 ring-1 ring-indigo-500 dark:border-indigo-500",
       className
@@ -56,7 +56,7 @@ const KpiTile: React.FC<KpiTileProps> = ({
   >
     <div className="text-[11px] text-gray-500 dark:text-gray-400 mb-0.5 flex items-center gap-1 uppercase tracking-wide">
       {icon}
-      <span className="min-w-0 break-words">{label}</span>
+      <span className="min-w-0 wrap-break-word">{label}</span>
       {infoText && (
         <TooltipProvider>
           <Tooltip>
@@ -64,7 +64,7 @@ const KpiTile: React.FC<KpiTileProps> = ({
               <button
                 type="button"
                 aria-label={infoText}
-                className="text-gray-400 hover:text-gray-500 cursor-help flex-shrink-0"
+                className="text-gray-400 hover:text-gray-500 cursor-help shrink-0"
               >
                 <Info size={10} />
               </button>

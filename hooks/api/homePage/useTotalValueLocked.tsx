@@ -7,7 +7,7 @@ import Hive from "@/types/Hive";
 const useTotalValueLocked = (liveDataEnabled?: boolean) => {
   const {
     data: totalValueLocked,
-    isLoading: isTotalValueLockedLoading,
+    isPending: isTotalValueLockedLoading,
     isError: isTotalValueLockedError,
   }: UseQueryResult<Hive.TotalValueLocked | undefined> = useQuery({
     queryKey: ["get_total_value_locked"],

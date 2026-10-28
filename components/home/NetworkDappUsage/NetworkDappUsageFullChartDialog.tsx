@@ -40,7 +40,7 @@ const KpiTile: React.FC<{
   value: React.ReactNode;
   sub?: React.ReactNode;
 }> = ({ label, value, sub }) => (
-  <div className="rounded-md border border-gray-200 dark:border-gray-700 bg-theme px-3 py-2 shadow-sm">
+  <div className="rounded-md border border-gray-200 dark:border-gray-700 bg-theme px-3 py-2 shadow-xs">
     <div className="mb-0.5 text-[11px] uppercase leading-none tracking-wide text-gray-500 dark:text-gray-400">
       {label}
     </div>
@@ -666,7 +666,7 @@ const NetworkDappUsageFullChartDialog: React.FC<Props> = ({
                           }
                           placeholder={t("networkDappUsage.lookupPlaceholder")}
                           aria-label={t("networkDappUsage.lookupLabel")}
-                          className="h-7 w-44 rounded border border-gray-200 bg-theme px-2 text-xs outline-none focus:border-indigo-500 dark:border-gray-700"
+                          className="h-7 w-44 rounded border border-gray-200 bg-theme px-2 text-xs outline-hidden focus:border-indigo-500 dark:border-gray-700"
                         />
                         {showSuggestions && suggestions.length > 0 && (
                           <ul className="absolute right-0 top-full z-50 mt-1 max-h-60 w-56 overflow-auto rounded border border-gray-200 bg-theme py-1 shadow-lg dark:border-gray-700">

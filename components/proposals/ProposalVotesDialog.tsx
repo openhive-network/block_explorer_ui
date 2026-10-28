@@ -321,16 +321,16 @@ export const ProposalVotesDialog = ({
           </DialogTitle>
         </DialogHeader>
         {isLoading ? (
-          <div className="flex-grow flex justify-center items-center">
+          <div className="grow flex justify-center items-center">
             <Loader2 className="animate-spin h-10 w-10" />
           </div>
         ) : isError ? (
-          <div className="flex-grow flex justify-center items-center">
+          <div className="grow flex justify-center items-center">
             <ErrorMessage message={t("proposalVotesDialog.error")} />
           </div>
         ) : (
           <TooltipProvider>
-            <div className="flex-grow flex flex-col lg:flex-row gap-6 ">
+            <div className="grow flex flex-col lg:flex-row gap-6 ">
               <div className="lg:w-2/5 flex flex-col items-center justify-center lg:border-r lg:pr-6 lg:border-slate-200 lg:dark:border-slate-800">
                 <ProposalVotesChart
                   {...chartProps}
@@ -349,7 +349,7 @@ export const ProposalVotesDialog = ({
                       className="pl-9 w-full"
                     />
                   </div>
-                  <div className="flex items-center gap-2 w-full sm:w-auto flex-shrink-0">
+                  <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
                     <Select
                       onValueChange={(value) =>
                         setSortBy(value as "name" | "power")
@@ -412,7 +412,7 @@ export const ProposalVotesDialog = ({
                     </div>
                   </div>
                 </div>
-                <div className="relative flex-grow overflow-y-auto pr-1 mr-1 h-[60vh]">
+                <div className="relative grow overflow-y-auto pr-1 mr-1 h-[60vh]">
                   {filteredAndSortedVotes.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
                       {filteredAndSortedVotes.map((vote) => (
@@ -427,9 +427,9 @@ export const ProposalVotesDialog = ({
                               accountName={vote.voter}
                               size={32}
                               alt={vote.voter}
-                              className="rounded-full flex-shrink-0"
+                              className="rounded-full shrink-0"
                             />
-                            <div className="flex-grow min-w-0">
+                            <div className="grow min-w-0">
                               <p className="text-link">{vote.voter}</p>
                               <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                                 {vote.hasActiveProxy ? (

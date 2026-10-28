@@ -70,7 +70,7 @@ const WitnessScheduleWidget: React.FC<WitnessScheduleWidgetProps> = ({
   return (
     <div
       className={cn(
-        "[&>div]:rounded [&>div]:shadow-sm",
+        "[&>div]:rounded [&>div]:shadow-xs",
         fill ? "h-full [&>div]:h-full" : "mb-2"
       )}
     >

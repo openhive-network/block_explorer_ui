@@ -1,4 +1,8 @@
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useQuery,
+  UseQueryResult,
+} from "@tanstack/react-query";
 
 import Hive from "@/types/Hive";
 import { config } from "@/Config";
@@ -20,9 +24,9 @@ const useWitnessVoters = (
 
   const {
     data: witnessVoters,
-    isLoading: isWitnessVotersLoading,
+    isPending: isWitnessVotersLoading,
     isError: isWitnessVotersError,
-    isPreviousData: isWitnessVotersRefreshing,
+    isPlaceholderData: isWitnessVotersRefreshing,
   }: UseQueryResult<Hive.WitnessVotersResponse> = useQuery({
     queryKey: [
       "witness_voters",
@@ -44,7 +48,7 @@ const useWitnessVoters = (
       ),
     enabled: !!accountName && isModalOpen,
     // Keeps the dialog in place while a new page, sort or search loads.
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     refetchInterval: liveDataEnabled ? config.accountRefreshInterval : false,
     refetchOnWindowFocus: false,
   });

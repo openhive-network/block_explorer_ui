@@ -39,7 +39,7 @@ const BlockNavigation: React.FC<BlockNavigationProps> = ({
 
   const wrapperClasses = cn(
     "flex items-center justify-between",
-    "bg-gradient-to-b from-white to-slate-50",
+    "bg-linear-to-b from-white to-slate-50",
     "dark:from-slate-800 dark:to-slate-800/90",
     "px-5 py-2",
     "border-b border-slate-200 dark:border-slate-700",

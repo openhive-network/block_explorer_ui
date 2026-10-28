@@ -36,17 +36,17 @@ const GuestGovernanceHome = () => {
           hint={t("guestHome.governance.hintProducing")}
         />
         <div className="mb-3 grid grid-cols-12 items-stretch gap-3">
-          <div className="col-span-12 flex flex-col lg:col-span-5 [&>*]:mb-0 [&>*]:h-full">
+          <div className="col-span-12 flex flex-col lg:col-span-5 *:mb-0 *:h-full">
             <NodeSupportGate widgetId="witness-schedule">
               <WitnessScheduleWidget />
             </NodeSupportGate>
           </div>
-          <div className="col-span-12 flex flex-col md:col-span-6 lg:col-span-3 [&>*]:mb-0 [&>*]:h-full">
+          <div className="col-span-12 flex flex-col md:col-span-6 lg:col-span-3 *:mb-0 *:h-full">
             <NodeSupportGate widgetId="witness-missed-blocks">
               <WitnessMissedBlocksCard />
             </NodeSupportGate>
           </div>
-          <div className="col-span-12 flex flex-col md:col-span-6 lg:col-span-4 [&>*]:mb-0 [&>*]:h-full">
+          <div className="col-span-12 flex flex-col md:col-span-6 lg:col-span-4 *:mb-0 *:h-full">
             <NodeSupportGate widgetId="top-witnesses">
               <TopWitnessesCard
                 witnessesData={witnessesData}
@@ -62,12 +62,12 @@ const GuestGovernanceHome = () => {
           hint={t("guestHome.governance.hintVoting")}
         />
         <div className="mb-3 grid grid-cols-12 items-stretch gap-3">
-          <div className="col-span-12 flex flex-col lg:col-span-6 [&>*]:mb-0 [&>*]:h-full">
+          <div className="col-span-12 flex flex-col lg:col-span-6 *:mb-0 *:h-full">
             <NodeSupportGate widgetId="voting-activity">
               <NetworkVotingActivityCard />
             </NodeSupportGate>
           </div>
-          <div className="col-span-12 flex flex-col lg:col-span-6 [&>*]:mb-0 [&>*]:h-full">
+          <div className="col-span-12 flex flex-col lg:col-span-6 *:mb-0 *:h-full">
             <NodeSupportGate widgetId="network-hp-distribution">
               <NetworkHpDistributionCard />
             </NodeSupportGate>

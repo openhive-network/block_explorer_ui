@@ -129,7 +129,8 @@ const AccountPageInteractionSearch: React.FC<
           )}
           triggerTitle={getOperationButtonTitle(
             convertBooleanArrayToIds(paramsState.filters ?? []),
-            operationsTypes
+            operationsTypes,
+            t
           )}
         />
       </div>

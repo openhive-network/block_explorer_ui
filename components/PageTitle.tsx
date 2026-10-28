@@ -60,7 +60,7 @@ const PageTitle: React.FC<TitleProps> = ({
             aria-expanded={isInfoVisible}
             aria-controls={panelId}
             onClick={toggleInfoVisibility}
-            className="shrink-0 rounded-full text-gray-600 transition-colors hover:text-link focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 dark:text-gray-400 dark:hover:text-link"
+            className="shrink-0 rounded-full text-gray-600 transition-colors hover:text-link focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-slate-400 dark:text-gray-400 dark:hover:text-link"
           >
             <Info size={16} strokeWidth={2} />
           </button>

@@ -12,7 +12,7 @@ const useOperationTypeStatistics = (
 ) => {
   const {
     data: operationTypeStatistics,
-    isLoading: isOperationTypeStatisticsLoading,
+    isPending: isOperationTypeStatisticsLoading,
     isError: isOperationTypeStatisticsError,
   }: UseQueryResult<
     Hive.OperationTypeStatisticsResponse[] | undefined

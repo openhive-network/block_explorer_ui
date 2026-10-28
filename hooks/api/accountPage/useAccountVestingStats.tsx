@@ -1,4 +1,8 @@
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useQuery,
+  UseQueryResult,
+} from "@tanstack/react-query";
 
 import fetchingService from "@/services/FetchingService";
 import { config } from "@/Config";
@@ -14,7 +18,7 @@ const useAccountVestingStats = (
 ) => {
   const {
     data: accountVestingStats,
-    isLoading: isAccountVestingStatsLoading,
+    isPending: isAccountVestingStatsLoading,
     isError: isAccountVestingStatsError,
     refetch,
   }: UseQueryResult<Hive.AccountVestingStatsResponse[] | undefined> = useQuery({
@@ -37,7 +41,7 @@ const useAccountVestingStats = (
     enabled: !!accountName,
     refetchInterval: liveDataEnabled ? config.mainRefreshInterval : false,
     refetchOnWindowFocus: false,
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
   });
 
   return {

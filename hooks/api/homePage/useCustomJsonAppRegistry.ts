@@ -7,7 +7,7 @@ import Hive from "@/types/Hive";
 const useCustomJsonAppRegistry = (enabled = true) => {
   const {
     data: appRegistry,
-    isLoading: isAppRegistryLoading,
+    isPending: isAppRegistryLoading,
     isError: isAppRegistryError,
   }: UseQueryResult<Hive.CustomJsonAppRegistryRow[] | undefined> = useQuery({
     queryKey: ["customJsonAppRegistry"],

@@ -51,7 +51,7 @@ const CustomTooltip = ({
   const { tooltipDate, close, volume } = payload[0].payload;
 
   return (
-    <div className="rounded-md border border-gray-200 bg-white/95 px-2 py-1 text-explorer-dark-gray shadow-md backdrop-blur-sm dark:border-gray-700 dark:bg-gray-900/95 dark:text-text">
+    <div className="rounded-md border border-gray-200 bg-white/95 px-2 py-1 text-explorer-dark-gray shadow-md backdrop-blur-xs dark:border-gray-700 dark:bg-gray-900/95 dark:text-text">
       <div className="flex items-center gap-1.5">
         <span
           className="h-1.5 w-1.5 shrink-0 rounded-full"

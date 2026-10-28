@@ -92,7 +92,7 @@ const RcFootprintDappBar: React.FC<RcFootprintDappBarProps> = ({
             </div>
             <div className="relative mt-1 h-2.5 w-full overflow-hidden rounded bg-gray-200 dark:bg-gray-700">
               <div
-                className="absolute inset-y-0 start-0 rounded"
+                className="absolute inset-y-0 inset-s-0 rounded"
                 style={{
                   width: `${Math.max(2, (r.value / max) * 100)}%`,
                   backgroundColor: baseColor,

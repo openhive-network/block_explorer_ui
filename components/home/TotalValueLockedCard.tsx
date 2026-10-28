@@ -109,7 +109,7 @@ const TotalValueLockedCard = () => {
         ) : tvlDetails ? (
           <>
             <div className="mb-2.5 flex items-center gap-3 rounded-lg border border-emerald-200/70 bg-emerald-50/60 px-3.5 py-3 dark:border-emerald-500/25 dark:bg-emerald-500/10">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-white shadow-sm">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-white shadow-xs">
                 <Lock className="h-5 w-5" />
               </div>
               <div className="min-w-0">
@@ -153,7 +153,7 @@ const TotalValueLockedCard = () => {
               ].map((s) => (
                 <div
                   key={s.label}
-                  className={`rounded-lg border-l-2 ${s.accent} bg-explorer-extra-light-gray p-2.5 shadow-sm`}
+                  className={`rounded-lg border-l-2 ${s.accent} bg-explorer-extra-light-gray p-2.5 shadow-xs`}
                 >
                   <p className="truncate text-[10px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
                     {s.label}

@@ -120,7 +120,7 @@ const WorkspaceToastBody: React.FC<ToastBodyProps> = ({
 
   const action =
     "rounded px-3 py-1.5 text-xs font-semibold transition-colors " +
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-1";
+    "focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-1";
 
   return (
     <div
@@ -130,7 +130,7 @@ const WorkspaceToastBody: React.FC<ToastBodyProps> = ({
       {/* The board-header spine, so this reads as part of the same system. */}
       <span
         aria-hidden="true"
-        className="absolute inset-y-0 start-0 w-[3px] bg-indigo-500"
+        className="absolute inset-y-0 inset-s-0 w-[3px] bg-indigo-500"
       />
 
       <p className="text-sm font-semibold text-gray-900 dark:text-white">

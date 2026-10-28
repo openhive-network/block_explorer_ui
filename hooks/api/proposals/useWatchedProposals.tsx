@@ -5,7 +5,11 @@ import { convertToUTCDate } from "@/utils/TimeUtils";
 const useWatchedProposals = (ids: number[]) => {
   const sortedKey = [...ids].sort((a, b) => a - b).join(",");
 
-  const { data, isLoading, isError } = useQuery({
+  const {
+    data,
+    isPending: isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["watched_proposals", sortedKey],
     queryFn: async () => {
       const raw = await fetchingService.getProposal(ids);

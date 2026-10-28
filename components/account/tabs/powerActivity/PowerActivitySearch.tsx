@@ -323,7 +323,7 @@ const PowerActivitySearch: React.FC<PowerActivitySearchProps> = ({
             {t("powerActivitySearch.eventType")}:
           </span>
           <div
-            className="flex items-stretch self-start max-w-full overflow-x-auto rounded-full border border-navbar-border [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            className="flex items-stretch self-start max-w-full overflow-x-auto rounded-full border border-navbar-border scrollbar-none [&::-webkit-scrollbar]:hidden"
             role="group"
             aria-label={t("powerActivitySearch.eventType")}
           >
@@ -360,7 +360,7 @@ const PowerActivitySearch: React.FC<PowerActivitySearchProps> = ({
             {t("hpMomentumFullChartDialog.granularity")}:
           </span>
           <div
-            className="flex items-stretch self-start max-w-full overflow-x-auto rounded-full border border-navbar-border [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            className="flex items-stretch self-start max-w-full overflow-x-auto rounded-full border border-navbar-border scrollbar-none [&::-webkit-scrollbar]:hidden"
             role="group"
             aria-label={t("hpMomentumFullChartDialog.granularity")}
           >
@@ -396,7 +396,7 @@ const PowerActivitySearch: React.FC<PowerActivitySearchProps> = ({
             {t("balanceHistorySearch.quickRange")}:
           </span>
           <div
-            className="flex items-stretch self-start max-w-full overflow-x-auto rounded-full border border-navbar-border [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            className="flex items-stretch self-start max-w-full overflow-x-auto rounded-full border border-navbar-border scrollbar-none [&::-webkit-scrollbar]:hidden"
             role="group"
             aria-label={t("balanceHistorySearch.quickRangeAria")}
           >

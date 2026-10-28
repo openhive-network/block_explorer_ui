@@ -4,8 +4,9 @@
 #
 #   .aidev/run-checks.sh <suite> <step>...     steps: lint typecheck unit build
 #
-#   lint       `next lint` (package.json `lint`, CI's lint job)
-#   typecheck  tsc --noEmit
+#   lint       `eslint .` (package.json `lint`, CI's lint job)
+#   typecheck  tsc --noEmit, after `next typegen` writes the gitignored
+#              next-env.d.ts (image and route types) a build would otherwise leave
 #   unit       Jest (package.json `test:unit`), every test its own junit case in
 #              $out/unit-junit.xml (converted from Jest's --json report)
 #   build      `next build` of the app. package.json `build` first runs
@@ -42,9 +43,13 @@ step() {
     fi
 }
 
+type_check() {
+    pnpm exec next typegen && pnpm exec tsc --noEmit
+}
+
 next_build() {
     NEXT_PUBLIC_COMMIT_HASH="${AIDEV_COMMIT_SHORT_SHA:-$(git rev-parse --short HEAD 2>/dev/null || echo unknown)}" \
-        pnpm exec next build
+        pnpm exec next build --webpack
 }
 
 # Jest's JSON report -> junit, one case per test (no reporter dependency needed).
@@ -78,8 +83,8 @@ unit_tests() {
 
 for s in "$@"; do
     case "$s" in
-        lint) step lint pnpm exec next lint ;;
-        typecheck) step typecheck pnpm exec tsc --noEmit ;;
+        lint) step lint pnpm exec eslint . ;;
+        typecheck) step typecheck type_check ;;
         unit) step unit unit_tests ;;
         build) step build next_build ;;
         *) echo "unknown step: $s" >&2; exit 2 ;;

@@ -23,7 +23,7 @@ module.exports = async () => {
   const config = await createJestConfig(customJestConfig)();
   config.transformIgnorePatterns = config.transformIgnorePatterns.map(
     (pattern) =>
-      pattern.startsWith("/node_modules/")
+      pattern.startsWith("/node_modules")
         ? `^(?!.*@hiveio[+/]healthchecker-component).*${pattern}`
         : pattern
   );

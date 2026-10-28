@@ -13,7 +13,7 @@ const useTransactionStatistics = (
 ) => {
   const {
     data: transactionStatistics,
-    isLoading: isTransactionStatisticsLoading,
+    isPending: isTransactionStatisticsLoading,
     isError: isTransactionStatisticsError,
   }: UseQueryResult<
     Hive.TransactionStatisticsResponse[] | undefined

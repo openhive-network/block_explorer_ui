@@ -9,7 +9,7 @@ const useBlockRawData = (
 ) => {
   const {
     data: rawBlockdata,
-    isLoading: rawBlockdataLoading,
+    isPending: rawBlockdataLoading,
     error: rawBlockdataError,
   }: UseQueryResult<Hive.BlockDetails> = useQuery({
     queryKey: ["raw_block", blockNumber, includeVirtual],
