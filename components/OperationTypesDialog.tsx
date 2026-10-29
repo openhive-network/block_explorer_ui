@@ -291,6 +291,10 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
             "data-testid": `operation-type-checkbox-${operationType.operation_name}`,
           }}
           onChange={() => onFiltersSelect(operationType.op_type_id)}
+          // The row toggles on click too; without this a checkbox click
+          // toggles twice and only stays checked if both handlers read the
+          // same stale selection.
+          onClick={(e) => e.stopPropagation()}
           disabled={operationType.isDisabled}
         />
         <Label
