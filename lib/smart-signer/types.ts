@@ -1,4 +1,6 @@
-export type LoginMethod = "keychain" | "hivesigner";
+export const LOGIN_METHODS = ["keychain", "hivesigner"] as const;
+
+export type LoginMethod = (typeof LOGIN_METHODS)[number];
 
 export interface SmartSignerResponse {
   username: string;
