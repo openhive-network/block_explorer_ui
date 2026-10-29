@@ -20,7 +20,11 @@ pnpm install
 
 - NEXT_PUBLIC_HIVESIGNER_CALLBACK = your_url - Registered URL and whitelisted in Hivesigner
 - NEXT_PUBLIC_HIVESIGNER_APP=your_app_name - App name registered in Hivesigner
+- HIVESIGNER_APP=your_app_name - Same app name, read by the server
 - HIVESIGNER_SECRET=some_key - Secret Key for handshakes set in Hivesigner
+
+All four are needed. If any one is missing, the Hivesigner login does not
+appear (Keychain stays available) and the server logs which ones are missing.
 
 **Workspace Sync Encryption (optional but recommended for production)**
 
@@ -124,6 +128,46 @@ If you wish to change parameters (like API endpoints or port) when using the [Co
 edit the accompanying [.env file](docker/.env)
 
 To stop and delete the container use command `docker compose down`.
+
+## Deploying your own explorer
+
+Optional features are switched with runtime `REACT_APP_*` variables, so one
+image serves every deployment; restart the server after changing them.
+Leave everything blank for the full explorer, as on hivescan.info. Every
+setting, its values and what it needs or removes is listed in
+[.env.example](.env.example).
+
+**Full** (default):
+
+```
+REACT_APP_API_ADDRESS=https://api.hive.blog
+REACT_APP_HIVE_BLOG_API_ADDRESS=https://api.hive.blog
+```
+
+**Classic**: no login, dashboard, sync, Recent Visits, Tools, account Analytics,
+communities, proposals, Top Holders, CSV exports or language switcher, a single
+home board without tabs and a minimal footer. No Hivesigner or
+`WORKSPACE_ENCRYPTION_KEY` secrets are needed.
+
+```
+REACT_APP_API_ADDRESS=https://api.hive.blog
+REACT_APP_HIVE_BLOG_API_ADDRESS=https://api.hive.blog
+REACT_APP_EXPLORER_MODE=classic
+```
+
+Any single setting overrides the preset, e.g. classic with Keychain login only
+(this needs `WORKSPACE_ENCRYPTION_KEY` again, which protects Keychain logins):
+
+```
+REACT_APP_EXPLORER_MODE=classic
+REACT_APP_LOGIN=true
+REACT_APP_LOGIN_EXCLUDE=hivesigner
+```
+
+Unknown values are logged as warnings (errors for a list that removes every
+option) on the first request after the server starts; check the logs after
+changing a setting. Every `REACT_APP_*` value is public, since the browser
+reads it from `/__ENV.js`: never put secrets in them.
 
 ## Testing
 
