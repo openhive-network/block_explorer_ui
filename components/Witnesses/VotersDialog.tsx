@@ -307,7 +307,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 border rounded-md mb-4">
                   {/* Search Input Group */}
                   <div className="w-full sm:w-auto sm:grow">
-                    <div className="flex rounded-md shadow-xs focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 gap-x-2">
+                    <div className="flex rounded-md shadow-xs has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring has-[:focus-visible]:ring-offset-2 gap-x-2">
                       <AutoCompleteInput
                         value={voterNameInput}
                         onChange={setVoterNameInput}

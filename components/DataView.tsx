@@ -13,7 +13,13 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { ChevronDown, GalleryVerticalEnd, FileJson, ListTree, LucideProps } from "lucide-react"; 
+import {
+  ChevronDown,
+  GalleryVerticalEnd,
+  FileJson,
+  ListTree,
+  LucideProps,
+} from "lucide-react";
 import { useI18n } from "@/i18n/i18n";
 import { useSettings } from "@/contexts/SettingsContext";
 import { ForwardRefExoticComponent, RefAttributes } from "react";
@@ -24,9 +30,8 @@ interface DataViewProps {
 type ViewMode = "visualised-data" | "raw-json" | "pretty-json";
 
 const DataView: React.FC<DataViewProps> = ({ isMobile }) => {
-
   const { settings, updateSettings } = useSettings();
-  const displaySettings = settings; 
+  const displaySettings = settings;
 
   const { t } = useI18n();
   const [popoverOpen, setPopoverOpen] = useState(false);
@@ -38,7 +43,6 @@ const DataView: React.FC<DataViewProps> = ({ isMobile }) => {
     return "visualised-data";
   })();
 
- 
   const handleSelect = (value: string) => {
     if (value === "visualised-data") {
       updateSettings({ prettyJsonView: false, rawJsonView: false });
@@ -51,58 +55,78 @@ const DataView: React.FC<DataViewProps> = ({ isMobile }) => {
   };
 
   const ViewIconsSegmented = () => {
-    const buttonBaseClass = "px-2.5 h-full transition-colors duration-200 focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 relative";
-    const selectedClass = "bg-white dark:bg-explorer-light-gray"; 
+    const buttonBaseClass =
+      "px-2.5 h-full transition-colors duration-200 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 relative";
+    const selectedClass = "bg-white dark:bg-explorer-light-gray";
     const notSelectedClass = "hover:bg-white";
-  
+
     return (
       <TooltipProvider>
-        <div 
+        <div
           className="flex  items-center h-[35px] rounded-[6px] border-navbar-border border overflow-hidden bg-navbar"
           role="group"
           aria-label="Data view selection"
         >
           <Tooltip>
             <TooltipTrigger asChild>
-              <button 
+              <button
                 onClick={() => handleSelect("visualised-data")}
-                className={cn(buttonBaseClass, currentView === 'visualised-data' ? selectedClass : notSelectedClass)}
-                aria-pressed={currentView === 'visualised-data'}
+                className={cn(
+                  buttonBaseClass,
+                  currentView === "visualised-data"
+                    ? selectedClass
+                    : notSelectedClass
+                )}
+                aria-pressed={currentView === "visualised-data"}
               >
                 <GalleryVerticalEnd className="h-5 w-5" />
               </button>
             </TooltipTrigger>
-            <TooltipContent><p>{t("dataView.visualizedData")}</p></TooltipContent>
+            <TooltipContent>
+              <p>{t("dataView.visualizedData")}</p>
+            </TooltipContent>
           </Tooltip>
-  
+
           <div className="w-px h-4/5 bg-navbar-border"></div>
-  
+
           <Tooltip>
             <TooltipTrigger asChild>
-              <button 
+              <button
                 onClick={() => handleSelect("raw-json")}
-                className={cn(buttonBaseClass, currentView === 'raw-json' ? selectedClass : notSelectedClass)}
-                aria-pressed={currentView === 'raw-json'}
+                className={cn(
+                  buttonBaseClass,
+                  currentView === "raw-json" ? selectedClass : notSelectedClass
+                )}
+                aria-pressed={currentView === "raw-json"}
               >
                 <FileJson className="h-5 w-5" />
               </button>
             </TooltipTrigger>
-            <TooltipContent><p>{t("dataView.rawJson")}</p></TooltipContent>
+            <TooltipContent>
+              <p>{t("dataView.rawJson")}</p>
+            </TooltipContent>
           </Tooltip>
-  
+
           <div className="w-px h-4/5 bg-navbar-border"></div>
-  
+
           <Tooltip>
             <TooltipTrigger asChild>
-              <button 
+              <button
                 onClick={() => handleSelect("pretty-json")}
-                className={cn(buttonBaseClass, currentView === 'pretty-json' ? selectedClass : notSelectedClass)}
-                aria-pressed={currentView === 'pretty-json'}
+                className={cn(
+                  buttonBaseClass,
+                  currentView === "pretty-json"
+                    ? selectedClass
+                    : notSelectedClass
+                )}
+                aria-pressed={currentView === "pretty-json"}
               >
                 <ListTree className="h-5 w-5" />
               </button>
             </TooltipTrigger>
-            <TooltipContent><p>{t("dataView.prettyJson")}</p></TooltipContent>
+            <TooltipContent>
+              <p>{t("dataView.prettyJson")}</p>
+            </TooltipContent>
           </Tooltip>
         </div>
       </TooltipProvider>
@@ -111,8 +135,19 @@ const DataView: React.FC<DataViewProps> = ({ isMobile }) => {
 
   const ViewCycleButton = () => {
     const views: ViewMode[] = ["visualised-data", "raw-json", "pretty-json"];
-    const viewDetails: Record<ViewMode, { icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>; label: string; }> = {
-      "visualised-data": { icon: GalleryVerticalEnd, label: t("dataView.visualizedData") },
+    const viewDetails: Record<
+      ViewMode,
+      {
+        icon: ForwardRefExoticComponent<
+          Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
+        >;
+        label: string;
+      }
+    > = {
+      "visualised-data": {
+        icon: GalleryVerticalEnd,
+        label: t("dataView.visualizedData"),
+      },
       "raw-json": { icon: FileJson, label: t("dataView.rawJson") },
       "pretty-json": { icon: ListTree, label: t("dataView.prettyJson") },
     };
@@ -125,7 +160,8 @@ const DataView: React.FC<DataViewProps> = ({ isMobile }) => {
 
     const CurrentIcon = viewDetails[currentView].icon;
     const currentLabel = viewDetails[currentView].label;
-    const nextLabel = viewDetails[views[(views.indexOf(currentView) + 1) % views.length]].label;
+    const nextLabel =
+      viewDetails[views[(views.indexOf(currentView) + 1) % views.length]].label;
 
     return (
       <TooltipProvider>
@@ -166,23 +202,29 @@ const DataView: React.FC<DataViewProps> = ({ isMobile }) => {
       </PopoverTrigger>
       <PopoverContent
         className={cn(
-            "w-56 bg-theme text-white rounded-lg shadow-lg border border-gray-300 dark:border-gray-700",
-            isMobile ? "ml-[20px]" : ""
+          "w-56 bg-theme text-white rounded-lg shadow-lg border border-gray-300 dark:border-gray-700",
+          isMobile ? "ml-[20px]" : ""
         )}
       >
-        <RadioGroup
-          defaultValue={currentView}
-          onValueChange={handleSelect}
-        >
-          <Label htmlFor="r1" className="flex items-center space-x-2 p-2 hover:bg-navbar-listHover rounded-md transition-colors duration-200 cursor-pointer">
+        <RadioGroup defaultValue={currentView} onValueChange={handleSelect}>
+          <Label
+            htmlFor="r1"
+            className="flex items-center space-x-2 p-2 hover:bg-navbar-listHover rounded-md transition-colors duration-200 cursor-pointer"
+          >
             <RadioGroupItem value="visualised-data" id="r1" />
             <span>{t("dataView.visualizedData")}</span>
           </Label>
-          <Label htmlFor="r2" className="flex items-center space-x-2 p-2 hover:bg-navbar-listHover rounded-md transition-colors duration-200 cursor-pointer">
+          <Label
+            htmlFor="r2"
+            className="flex items-center space-x-2 p-2 hover:bg-navbar-listHover rounded-md transition-colors duration-200 cursor-pointer"
+          >
             <RadioGroupItem value="raw-json" id="r2" />
             <span>{t("dataView.rawJson")}</span>
           </Label>
-          <Label htmlFor="r3" className="flex items-center space-x-2 p-2 hover:bg-navbar-listHover rounded-md transition-colors duration-200 cursor-pointer">
+          <Label
+            htmlFor="r3"
+            className="flex items-center space-x-2 p-2 hover:bg-navbar-listHover rounded-md transition-colors duration-200 cursor-pointer"
+          >
             <RadioGroupItem value="pretty-json" id="r3" />
             <span>{t("dataView.prettyJson")}</span>
           </Label>
@@ -193,11 +235,11 @@ const DataView: React.FC<DataViewProps> = ({ isMobile }) => {
 
   // --- Main Render Logic ---
   switch (displaySettings.dataViewSwitchStyle) {
-    case 'icons':
+    case "icons":
       return <ViewIconsSegmented />;
-    case 'cycle':
+    case "cycle":
       return <ViewCycleButton />;
-    default: 
+    default:
       return <ViewPopover />;
   }
 };

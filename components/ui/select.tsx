@@ -18,7 +18,7 @@ const SelectTrigger = React.forwardRef<
     data-testid="dropdown-list"
     ref={ref}
     className={cn(
-      "flex h-10 w-full items-center justify-between rounded-md border border-input bg-theme px-3 py-2 text-sm ring-offset-background placeholder:text-text focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+      "flex h-10 w-full items-center justify-between rounded-md border border-input bg-theme px-3 py-2 text-sm ring-offset-background placeholder:text-text focus:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
       className
     )}
     {...props}

@@ -40,7 +40,7 @@ const LanguageSelector = () => {
           "h-[35px] px-2",
           "w-auto min-w-[80px]",
           "flex items-center justify-between gap-1",
-          "focus:ring-2 focus:ring-ring focus:ring-offset-1 focus:ring-offset-navbar"
+          "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-navbar"
         )}
         aria-label={t("languageSelector.selectLanguagePlaceholder")}
       >
