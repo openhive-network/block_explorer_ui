@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/tooltip";
 import DataExport from "@/components/DataExport";
 import { ReportExportDataset } from "./reportExports";
+import { withSection } from "@/utils/deploySettings";
 
 interface ReportExportMenuProps {
   datasets: ReportExportDataset[];
@@ -108,4 +109,4 @@ const ReportExportMenu: React.FC<ReportExportMenuProps> = ({ datasets }) => {
   );
 };
 
-export default ReportExportMenu;
+export default withSection(ReportExportMenu, "exports");

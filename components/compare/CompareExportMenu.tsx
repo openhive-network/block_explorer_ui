@@ -12,6 +12,7 @@ import {
   buildCompareExportRows,
   buildCompareExportJson,
 } from "@/utils/compare/export";
+import { withSection } from "@/utils/deploySettings";
 
 interface CompareExportMenuProps {
   a: CompareAccountData;
@@ -100,4 +101,4 @@ const CompareExportMenu: React.FC<CompareExportMenuProps> = ({
   );
 };
 
-export default CompareExportMenu;
+export default withSection(CompareExportMenu, "exports");
