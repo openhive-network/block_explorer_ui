@@ -8,6 +8,10 @@ import {
   verifyChallengeToken,
 } from "@/lib/smart-signer/serverSession";
 import { claimChallenge } from "@/lib/smart-signer/usedChallenges";
+import {
+  isLoginMethodEnabled,
+  rejectUnavailable,
+} from "@/utils/deploySettings";
 
 const hiveClient = new Client([config.nodeAddress]);
 
@@ -15,6 +19,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  if (!isLoginMethodEnabled("keychain")) return rejectUnavailable(res);
   if (req.method !== "POST") return res.status(405).end();
 
   const ip =
@@ -90,7 +95,7 @@ export default async function handler(
       return res.status(401).json({ error: "challenge_already_used" });
     }
 
-    const token = createSessionToken(username);
+    const token = createSessionToken(username, "keychain");
     if (!token) {
       // Encryption not configured — no session needed
       return res.status(200).json({ success: true });

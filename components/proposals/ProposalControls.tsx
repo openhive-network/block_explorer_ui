@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { useI18n } from "@/i18n/i18n";
 import SignInPromptButton from "@/components/login/SignInPromptButton";
+import { deploySettings } from "@/utils/deploySettings";
 
 export type ProposalStatusFilter = "all" | "active" | "inactive" | "expired";
 export type ProposalSortOrder =
@@ -126,7 +127,7 @@ export const ProposalControls = ({
                   </button>
                 </>
               )}
-              {!isLoggedIn && (
+              {!isLoggedIn && deploySettings.login && (
                 <>
                   <div className="w-px h-5 bg-slate-300 dark:bg-slate-600 mx-0.5 shrink-0" />
                   <SignInPromptButton

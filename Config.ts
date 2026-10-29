@@ -1,5 +1,16 @@
 import env from "@beam-australia/react-env";
 
+// Only a parsed http(s) URL is used: the value lands in image src attributes.
+function imageHostFrom(raw: string | undefined): string {
+  try {
+    const url = new URL(raw ?? "");
+    if (url.protocol === "https:" || url.protocol === "http:") {
+      return `${url.origin}${url.pathname}`.replace(/\/+$/, "");
+    }
+  } catch {}
+  return "https://images.hive.blog";
+}
+
 export const config = {
   nodeAddress: `${
     env("HIVE_BLOG_API_ADDRESS")
@@ -15,6 +26,8 @@ export const config = {
       ? env("HIVE_FRONTEND_ADDRESS")
       : "https://hive.blog"
   }`,
+  // Hive imagehoster serving /u/<account>/avatar and /u/<account>/cover.
+  imageHostUrl: imageHostFrom(env("IMAGE_HOST_URL")),
   // Where "Create account" sends visitors without a Hive account.
   signupUrl: `${
     env("SIGNUP_URL") ? env("SIGNUP_URL") : "https://signup.hive.io"
@@ -157,6 +170,17 @@ export const config = {
     ],
   },
 };
+
+// Server only: the browser cannot see HIVESIGNER_APP or HIVESIGNER_SECRET.
+export function missingHivesignerSettings(): string[] {
+  const settings: [string, string | undefined][] = [
+    ["NEXT_PUBLIC_HIVESIGNER_APP", config.hivesigner.app],
+    ["NEXT_PUBLIC_HIVESIGNER_CALLBACK", config.hivesigner.defaultCallBack],
+    ["HIVESIGNER_APP", process.env.HIVESIGNER_APP],
+    ["HIVESIGNER_SECRET", process.env.HIVESIGNER_SECRET],
+  ];
+  return settings.filter(([, value]) => !value?.trim()).map(([name]) => name);
+}
 
 /**
  * Validates Hivesigner env vars. Caller-driven (not module-load) so Next.js

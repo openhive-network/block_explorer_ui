@@ -40,6 +40,7 @@ import { config } from "@/Config";
 import NoResult from "@/components/NoResult";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import Hive from "@/types/Hive";
+import { deploySettings } from "@/utils/deploySettings";
 import PageTitle from "@/components/PageTitle";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 
@@ -263,7 +264,8 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
 
   // Hidden only while viewing someone else's votes: the actions would not be
   // theirs to take. Guests keep it, since the controls there prompt sign-in.
-  const showVoteColumn = !voterFilter || voterFilter === username;
+  const showVoteColumn =
+    deploySettings.login && (!voterFilter || voterFilter === username);
 
   // Local vote overrides so the filter reflects clicks before the chain commits.
   const [localVoteChanges, setLocalVoteChanges] = useState<
@@ -555,7 +557,9 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
                       setIsVotesHistoryOpen(true);
                     }}
                     onVoteChange={handleVoteChange}
-                    compareSelection={compareSelection}
+                    compareSelection={
+                      deploySettings.tools ? compareSelection : undefined
+                    }
                   />
                 </Card>
               </>

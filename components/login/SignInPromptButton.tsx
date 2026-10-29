@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { requestLogin } from "@/utils/loginPrompt";
+import { deploySettings } from "@/utils/deploySettings";
 
 export type SignInPromptVariant =
   | "pill"
@@ -60,6 +61,8 @@ const SignInPromptButton: React.FC<SignInPromptButtonProps> = ({
   variant = "compact",
   colorClassName,
 }) => {
+  if (!deploySettings.login) return null;
+
   const shape = SHAPES[variant];
   const showLabel = variant !== "compact" && variant !== "icon";
 

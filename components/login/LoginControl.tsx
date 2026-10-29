@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import LoggedUserNav from "./LoggedUserNav";
 import LoginDialog from "./LoginDialog";
 import { REQUEST_LOGIN_EVENT } from "@/utils/loginPrompt";
+import { deploySettings } from "@/utils/deploySettings";
 
 interface LoginControlProps {
   isMobile?: boolean;
@@ -122,6 +123,8 @@ const LoginControl: React.FC<LoginControlProps> = ({ isMobile }) => {
       setLoading(false);
     }
   };
+
+  if (!deploySettings.login) return null;
 
   // --- INITIALIZING VIEW (SKELETON) ---
   if (isInitializing) {

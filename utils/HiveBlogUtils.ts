@@ -3,7 +3,7 @@ import { getImageSrc } from "@/utils/PathUtils";
 
 export function getHiveAvatarUrl(userName?: string): string {
   if (userName) {
-    return `https://images.hive.blog/u/${userName}/avatar`;
+    return `${config.imageHostUrl}/u/${userName}/avatar`;
   } else {
     return "";
   }
@@ -11,7 +11,7 @@ export function getHiveAvatarUrl(userName?: string): string {
 
 // imagehoster serves a default cover when the account has none; see hasHiveCover.
 export function getHiveCoverUrl(userName: string): string {
-  return `https://images.hive.blog/u/${encodeURIComponent(userName)}/cover`;
+  return `${config.imageHostUrl}/u/${encodeURIComponent(userName)}/cover`;
 }
 
 const parseMetadata = (raw?: string) => {

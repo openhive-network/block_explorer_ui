@@ -1,4 +1,6 @@
 import crypto from "crypto";
+import { LOGIN_METHODS, LoginMethod } from "@/lib/smart-signer/types";
+import { isLoginMethodEnabled } from "@/utils/deploySettings";
 
 // Session tokens are HMAC-SHA256 signed payloads.
 // Format: base64url(JSON payload) + "." + base64url(HMAC signature)
@@ -20,15 +22,18 @@ function getChallengeKey(keyHex: string): Uint8Array {
   return deriveKey(keyHex, "hivescan_challenge_signing_v1");
 }
 
-export function createSessionToken(username: string): string | null {
+export function createSessionToken(
+  username: string,
+  method: LoginMethod
+): string | null {
   const keyHex = process.env.WORKSPACE_ENCRYPTION_KEY;
   if (!keyHex || keyHex.length !== 64) return null;
 
   const signingKey = getSigningKey(keyHex);
   const exp = Date.now() + 7 * 24 * 60 * 60 * 1000; // 7 days
-  const payload = Buffer.from(JSON.stringify({ sub: username, exp })).toString(
-    "base64url"
-  );
+  const payload = Buffer.from(
+    JSON.stringify({ sub: username, exp, method })
+  ).toString("base64url");
   const sig = crypto
     .createHmac("sha256", signingKey)
     .update(payload)
@@ -36,7 +41,9 @@ export function createSessionToken(username: string): string | null {
   return `${payload}.${sig}`;
 }
 
-export function verifySessionToken(token: string): string | null {
+export function verifySessionToken(
+  token: string
+): { username: string; method: LoginMethod | null } | null {
   const keyHex = process.env.WORKSPACE_ENCRYPTION_KEY;
   if (!keyHex || keyHex.length !== 64) return null;
 
@@ -56,16 +63,26 @@ export function verifySessionToken(token: string): string | null {
     if (expectedBuf.length !== actualBuf.length) return null;
     if (!crypto.timingSafeEqual(expectedBuf, actualBuf)) return null;
 
-    const { sub, exp } = JSON.parse(
+    const { sub, exp, method } = JSON.parse(
       Buffer.from(payload, "base64url").toString()
     );
     if (typeof sub !== "string" || typeof exp !== "number") return null;
     if (exp < Date.now()) return null;
-    return sub;
+    // Tokens issued before the method was recorded carry none.
+    if (method === undefined) return { username: sub, method: null };
+    if (!LOGIN_METHODS.includes(method)) return null;
+    return { username: sub, method };
   } catch {
     return null;
   }
 }
+
+// A session only counts while the method that created it is still allowed;
+// an unrecorded method needs every method allowed.
+const isSessionMethodEnabled = (method: LoginMethod | null): boolean =>
+  method
+    ? isLoginMethodEnabled(method)
+    : LOGIN_METHODS.every((m) => isLoginMethodEnabled(m));
 
 // Returns the authenticated username from the request cookies, or null if not authenticated.
 // Accepts hivescan_session (all methods) or hivescan_auth (Hivesigner legacy fallback).
@@ -74,13 +91,17 @@ export function getSessionUser(
 ): string | null {
   const sessionToken = cookies["hivescan_session"];
   if (sessionToken) {
-    const username = verifySessionToken(sessionToken);
-    if (username) return username;
+    const session = verifySessionToken(sessionToken);
+    if (session && isSessionMethodEnabled(session.method)) {
+      return session.username;
+    }
   }
   // Legacy fallback: Hivesigner users who logged in before session cookies were introduced.
   // hivescan_auth is HttpOnly and set only by our server, so its presence is trustworthy.
   // Returns a sentinel — callers must only use this for auth gating, not as a real username.
-  if (cookies["hivescan_auth"]) return "__hivesigner__";
+  if (cookies["hivescan_auth"] && isLoginMethodEnabled("hivesigner")) {
+    return "__hivesigner__";
+  }
   return null;
 }
 
