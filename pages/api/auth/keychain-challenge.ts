@@ -2,11 +2,16 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { challengeLimiter } from "@/utils/RateLimit";
 import { createChallengeToken } from "@/lib/smart-signer/serverSession";
 import { config } from "@/Config";
+import {
+  isLoginMethodEnabled,
+  rejectUnavailable,
+} from "@/utils/deploySettings";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  if (!isLoginMethodEnabled("keychain")) return rejectUnavailable(res);
   if (req.method !== "GET") return res.status(405).end();
 
   const ip =

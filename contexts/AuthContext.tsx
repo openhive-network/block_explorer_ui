@@ -23,6 +23,7 @@ import {
   WORKSPACE_CLOUD_DIFFERS_EVENT,
 } from "@/utils/workspaceSync";
 import { getLayoutStorageKey } from "@/components/dashboard/lib/dashboard.config";
+import { deploySettings, isLoginMethodEnabled } from "@/utils/deploySettings";
 
 const hiveClient = new Client([config.nodeAddress]);
 
@@ -89,7 +90,9 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
             const rawMeta = account.posting_json_metadata;
             if (rawMeta) {
               const meta = JSON.parse(rawMeta);
-              const cloudCompressed = meta[getInstanceMetadataKey()];
+              const cloudCompressed = deploySettings.dashboardSync
+                ? meta[getInstanceMetadataKey()]
+                : undefined;
               if (cloudCompressed) {
                 const bundle = await decompressBundle(
                   await decryptBundle(cloudCompressed)
@@ -190,7 +193,12 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
       }
       try {
         const { username: user, method: authMethod } = JSON.parse(saved);
-        if (user && user !== usernameRef.current) login(user, authMethod);
+        if (
+          user &&
+          user !== usernameRef.current &&
+          isLoginMethodEnabled(authMethod)
+        )
+          login(user, authMethod);
       } catch {
         // Malformed entry: leave the current session alone.
       }
@@ -205,6 +213,10 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
 
     const initializeAuth = async () => {
       if (typeof window === "undefined") return;
+      if (!deploySettings.login) {
+        setIsInitializing(false);
+        return;
+      }
       if (
         process.env.NODE_ENV === "development" &&
         process.env.NEXT_PUBLIC_MOCK_USER
@@ -224,7 +236,7 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
       let handledByHivesigner = false;
 
       // 1. Handle Hivesigner Authorization Code redirect
-      if (codeFromUrl && stateFromUrl) {
+      if (codeFromUrl && stateFromUrl && isLoginMethodEnabled("hivesigner")) {
         try {
           const state = JSON.parse(decodeURIComponent(stateFromUrl));
           const savedNonce = sessionStorage.getItem("hs_auth_nonce");
@@ -276,7 +288,7 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
           const saved = localStorage.getItem("hivescan_user");
           if (saved) {
             const { username, method } = JSON.parse(saved);
-            await login(username, method);
+            if (isLoginMethodEnabled(method)) await login(username, method);
           }
         } catch (e) {
           console.error("Auth initialization failure", e);

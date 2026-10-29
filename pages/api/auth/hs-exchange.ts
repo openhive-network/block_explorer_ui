@@ -4,11 +4,16 @@ import { loginLimiter } from "@/utils/RateLimit";
 import { config, validateHivesignerEnv } from "@/Config";
 import crypto from "crypto";
 import { createSessionToken } from "@/lib/smart-signer/serverSession";
+import {
+  isLoginMethodEnabled,
+  rejectUnavailable,
+} from "@/utils/deploySettings";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  if (!isLoginMethodEnabled("hivesigner")) return rejectUnavailable(res);
   validateHivesignerEnv();
 
   if (req.method !== "POST")
@@ -83,7 +88,7 @@ export default async function handler(
 
       const cookies = [authCookie, csrfCookie];
 
-      const sessionToken = createSessionToken(data.username);
+      const sessionToken = createSessionToken(data.username, "hivesigner");
       if (sessionToken) {
         cookies.push(
           serialize("hivescan_session", sessionToken, {

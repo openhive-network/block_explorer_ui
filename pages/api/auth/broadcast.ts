@@ -3,12 +3,17 @@ import { config } from "@/Config";
 import { parse } from "cookie";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { broadcastLimiter } from "@/utils/RateLimit";
+import {
+  isLoginMethodEnabled,
+  rejectUnavailable,
+} from "@/utils/deploySettings";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   try {
+    if (!isLoginMethodEnabled("hivesigner")) return rejectUnavailable(res);
     if (req.method !== "POST")
       return res.status(405).json({ error: "Method not allowed" });
 

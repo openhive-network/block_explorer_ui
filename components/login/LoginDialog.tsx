@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import ErrorMessage from "../ErrorMessage";
 import keychainLogo from "@/lib/smart-signer/logo/keychain.png";
 import Hslogo from "@/lib/smart-signer/logo/hivesigner.svg";
+import { isLoginMethodEnabled } from "@/utils/deploySettings";
 
 interface LoginDialogProps {
   inputUsername: string;
@@ -35,6 +36,8 @@ const LoginDialog: React.FC<LoginDialogProps> = ({
   onHivesignerLogin,
 }) => {
   const { t } = useI18n();
+  const keychainEnabled = isLoginMethodEnabled("keychain");
+  const hivesignerEnabled = isLoginMethodEnabled("hivesigner");
 
   return (
     <div className="overflow-hidden border-none bg-theme shadow-2xl rounded-3xl">
@@ -61,87 +64,95 @@ const LoginDialog: React.FC<LoginDialogProps> = ({
             isWarning={true}
           />
 
-          {/* Username Input Section */}
-          <div className="space-y-2">
-            <label className="text-xs text-explorer-dark-gray dark:text-white font-bold uppercase tracking-widest ml-1">
-              {t("auth.usernameLabel")}
-            </label>
-            <div className="relative group">
-              <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-explorer-dark-gray dark:text-text group-focus-within:text-primary transition-colors" />
-              <input
-                type="text"
-                value={inputUsername}
-                onChange={(e) => setInputUsername(e.target.value.toLowerCase())}
-                placeholder={t("auth.usernamePlaceholder")}
-                className="w-full h-14 pl-12 pr-4 bg-secondary/20 rounded-2xl border border-border text-text placeholder:text-gray-400 focus:outline-hidden focus:ring-2 focus:ring-primary/50 transition-all text-lg font-medium shadow-inner"
-              />
+          {/* Only Keychain asks for a username; Hivesigner picks the account itself. */}
+          {keychainEnabled && (
+            <div className="space-y-2">
+              <label className="text-xs text-explorer-dark-gray dark:text-white font-bold uppercase tracking-widest ml-1">
+                {t("auth.usernameLabel")}
+              </label>
+              <div className="relative group">
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-explorer-dark-gray dark:text-text group-focus-within:text-primary transition-colors" />
+                <input
+                  type="text"
+                  value={inputUsername}
+                  onChange={(e) =>
+                    setInputUsername(e.target.value.toLowerCase())
+                  }
+                  placeholder={t("auth.usernamePlaceholder")}
+                  className="w-full h-14 pl-12 pr-4 bg-secondary/20 rounded-2xl border border-border text-text placeholder:text-gray-400 focus:outline-hidden focus:ring-2 focus:ring-primary/50 transition-all text-lg font-medium shadow-inner"
+                />
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="grid gap-4">
             {/* Keychain Method Card */}
-            <button
-              onClick={onKeychainLogin}
-              disabled={loading || !inputUsername}
-              className={cn(
-                "relative flex items-center justify-between p-5 rounded-2xl border border-border bg-secondary/30 transition-all duration-300 shadow-xs",
-                "hover:bg-secondary/50 hover:border-primary/30 hover:shadow-xl hover:-translate-y-1 group active:scale-[0.98]",
-                "disabled:opacity-40 disabled:cursor-not-allowed"
-              )}
-            >
-              <div className="flex items-center gap-5">
-                <div className="w-12 h-12 rounded-xl bg-linear-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-xs group-hover:scale-110 transition-transform text-primary">
-                  {loading ? (
-                    <Loader2 className="w-6 h-6 animate-spin" />
-                  ) : (
-                    <img
-                      alt="logo"
-                      width={40}
-                      height={40}
-                      src={keychainLogo.src}
-                      style={{ height: "auto" }}
-                    />
-                  )}
+            {keychainEnabled && (
+              <button
+                onClick={onKeychainLogin}
+                disabled={loading || !inputUsername}
+                className={cn(
+                  "relative flex items-center justify-between p-5 rounded-2xl border border-border bg-secondary/30 transition-all duration-300 shadow-xs",
+                  "hover:bg-secondary/50 hover:border-primary/30 hover:shadow-xl hover:-translate-y-1 group active:scale-[0.98]",
+                  "disabled:opacity-40 disabled:cursor-not-allowed"
+                )}
+              >
+                <div className="flex items-center gap-5">
+                  <div className="w-12 h-12 rounded-xl bg-linear-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-xs group-hover:scale-110 transition-transform text-primary">
+                    {loading ? (
+                      <Loader2 className="w-6 h-6 animate-spin" />
+                    ) : (
+                      <img
+                        alt="logo"
+                        width={40}
+                        height={40}
+                        src={keychainLogo.src}
+                        style={{ height: "auto" }}
+                      />
+                    )}
+                  </div>
+                  <div className="text-left text-text">
+                    <p className="text-md font-bold">{t("auth.keychain")}</p>
+                    <p className="text-xs text-explorer-dark-gray dark:text-text">
+                      {t("auth.keychainDescription")}
+                    </p>
+                  </div>
                 </div>
-                <div className="text-left text-text">
-                  <p className="text-md font-bold">{t("auth.keychain")}</p>
-                  <p className="text-xs text-explorer-dark-gray dark:text-text">
-                    {t("auth.keychainDescription")}
-                  </p>
-                </div>
-              </div>
-              <ChevronRight className="w-5 h-5 text-explorer-dark-gray group-hover:text-primary transition-all group-hover:translate-x-1" />
-            </button>
+                <ChevronRight className="w-5 h-5 text-explorer-dark-gray group-hover:text-primary transition-all group-hover:translate-x-1" />
+              </button>
+            )}
 
             {/* Hivesigner Method Card */}
-            <button
-              onClick={onHivesignerLogin}
-              disabled={loading}
-              className={cn(
-                "w-full relative flex items-center justify-between p-5 rounded-2xl border border-border bg-secondary/30 transition-all duration-300 shadow-xs",
-                "hover:bg-secondary/50 hover:border-blue-500/30 hover:shadow-xl hover:-translate-y-1 group active:scale-[0.98]",
-                "disabled:opacity-40"
-              )}
-            >
-              <div className="flex items-center gap-5">
-                <div className="w-12 h-12 rounded-xl bg-linear-to-br from-blue-500/20 to-blue-500/5 flex items-center justify-center border border-blue-500/20 shadow-xs group-hover:scale-110 transition-transform">
-                  <img
-                    alt="logo"
-                    width={30}
-                    height={30}
-                    src={Hslogo.src}
-                    style={{ height: "auto" }}
-                  />
+            {hivesignerEnabled && (
+              <button
+                onClick={onHivesignerLogin}
+                disabled={loading}
+                className={cn(
+                  "w-full relative flex items-center justify-between p-5 rounded-2xl border border-border bg-secondary/30 transition-all duration-300 shadow-xs",
+                  "hover:bg-secondary/50 hover:border-blue-500/30 hover:shadow-xl hover:-translate-y-1 group active:scale-[0.98]",
+                  "disabled:opacity-40"
+                )}
+              >
+                <div className="flex items-center gap-5">
+                  <div className="w-12 h-12 rounded-xl bg-linear-to-br from-blue-500/20 to-blue-500/5 flex items-center justify-center border border-blue-500/20 shadow-xs group-hover:scale-110 transition-transform">
+                    <img
+                      alt="logo"
+                      width={30}
+                      height={30}
+                      src={Hslogo.src}
+                      style={{ height: "auto" }}
+                    />
+                  </div>
+                  <div className="text-left text-text">
+                    <p className="text-md font-bold">Hivesigner</p>
+                    <p className="text-xs text-explorer-dark-gray dark:text-text">
+                      {t("auth.hivesignermessage")}
+                    </p>
+                  </div>
                 </div>
-                <div className="text-left text-text">
-                  <p className="text-md font-bold">Hivesigner</p>
-                  <p className="text-xs text-explorer-dark-gray dark:text-text">
-                    {t("auth.hivesignermessage")}
-                  </p>
-                </div>
-              </div>
-              <ChevronRight className="w-5 h-5 text-explorer-dark-gray group-hover:text-primary transition-all group-hover:translate-x-1" />
-            </button>
+                <ChevronRight className="w-5 h-5 text-explorer-dark-gray group-hover:text-primary transition-all group-hover:translate-x-1" />
+              </button>
+            )}
           </div>
 
           <div className="pt-2 space-y-3">
