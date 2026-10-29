@@ -5,6 +5,7 @@ import { ArrowLeftRight, Box } from "lucide-react";
 import HiveAvatar from "@/components/ui/HiveAvatar";
 import { useRecentlyViewed } from "@/hooks/common/useRecentlyViewed";
 import { useI18n } from "@/i18n/i18n";
+import { deploySettings } from "@/utils/deploySettings";
 import { RecentEntry } from "@/utils/recentlyViewed";
 
 interface RecentlyViewedListProps {
@@ -24,7 +25,7 @@ const RecentlyViewedList: React.FC<RecentlyViewedListProps> = ({
   const { t, locale } = useI18n();
   const { entries, clear } = useRecentlyViewed();
 
-  if (!entries.length) return null;
+  if (!deploySettings.recentVisits || !entries.length) return null;
 
   const label = ({ kind, id }: RecentEntry) =>
     kind === "account"

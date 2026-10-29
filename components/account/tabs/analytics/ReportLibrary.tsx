@@ -14,6 +14,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { reportRegistry } from "./reportRegistry";
+import { isReportEnabled } from "@/utils/deploySettings";
 
 interface ReportLibraryProps {
   onAddWidget: (widgetType: string) => void;
@@ -60,32 +61,34 @@ const ReportLibrary: React.FC<ReportLibraryProps> = ({
       </TooltipProvider>
       <PopoverContent align="end" className="w-64 p-1">
         <div className="flex flex-col gap-0.5">
-          {Object.entries(reportRegistry).map(([widgetType, config]) => {
-            const Icon = config.icon;
-            const added = existingWidgetTypes.has(widgetType);
-            return (
-              <button
-                key={widgetType}
-                type="button"
-                onClick={() => !added && handleAdd(widgetType)}
-                disabled={added}
-                title={
-                  config.descriptionKey ? t(config.descriptionKey) : undefined
-                }
-                className="flex items-center gap-2 rounded px-2 py-1.5 text-start transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-60 disabled:cursor-not-allowed"
-              >
-                {Icon && (
-                  <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
-                )}
-                <span className="min-w-0 flex-1 truncate text-sm font-medium">
-                  {t(config.titleKey)}
-                </span>
-                {added && (
-                  <Check className="h-3.5 w-3.5 shrink-0 text-explorer-light-green" />
-                )}
-              </button>
-            );
-          })}
+          {Object.entries(reportRegistry)
+            .filter(([widgetType]) => isReportEnabled(widgetType))
+            .map(([widgetType, config]) => {
+              const Icon = config.icon;
+              const added = existingWidgetTypes.has(widgetType);
+              return (
+                <button
+                  key={widgetType}
+                  type="button"
+                  onClick={() => !added && handleAdd(widgetType)}
+                  disabled={added}
+                  title={
+                    config.descriptionKey ? t(config.descriptionKey) : undefined
+                  }
+                  className="flex items-center gap-2 rounded px-2 py-1.5 text-start transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {Icon && (
+                    <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
+                  )}
+                  <span className="min-w-0 flex-1 truncate text-sm font-medium">
+                    {t(config.titleKey)}
+                  </span>
+                  {added && (
+                    <Check className="h-3.5 w-3.5 shrink-0 text-explorer-light-green" />
+                  )}
+                </button>
+              );
+            })}
         </div>
       </PopoverContent>
     </Popover>

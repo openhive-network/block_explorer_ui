@@ -22,6 +22,7 @@ import { setLocalStorage, getLocalStorage } from "@/utils/LocalStorage";
 import { useI18n } from "@/i18n/i18n";
 import Explorer from "@/types/Explorer";
 import AnalyticsTabContent from "./analytics/AnalyticsTabContent";
+import { deploySettings } from "@/utils/deploySettings";
 
 interface AccountOperationViewTabs {
   accountName: string;
@@ -182,24 +183,29 @@ const AccountOperationViewTabs: React.FC<AccountOperationViewTabs> = ({
                 iconColor: "#10b981",
               },
             ] as const
-          ).map(({ value, icon: Icon, labelKey, iconColor }) => (
-            <TabsTrigger
-              key={value}
-              value={value}
-              className={cn(
-                "cursor-pointer px-3.5 py-2 text-sm font-medium transition-all flex items-center gap-1.5 whitespace-nowrap",
-                "rounded-tl-lg rounded-tr-lg -mb-px border border-transparent",
-                "text-gray-500 dark:text-gray-400",
-                "hover:text-gray-900 hover:bg-gray-100/60 dark:hover:text-gray-100 dark:hover:bg-gray-800/60",
-                "data-[state=active]:bg-theme data-[state=active]:text-foreground",
-                "data-[state=active]:border-gray-300 dark:data-[state=active]:border-gray-600",
-                "data-[state=active]:border-b-theme data-[state=active]:font-semibold data-[state=active]:shadow-[0_-1px_2px_rgba(0,0,0,0.03)]"
-              )}
-            >
-              <Icon className="h-3.5 w-3.5" color={iconColor} />
-              <span className="hidden sm:inline">{t(labelKey)}</span>
-            </TabsTrigger>
-          ))}
+          )
+            .filter(
+              ({ value }) =>
+                value !== "analytics" || deploySettings.accountAnalytics
+            )
+            .map(({ value, icon: Icon, labelKey, iconColor }) => (
+              <TabsTrigger
+                key={value}
+                value={value}
+                className={cn(
+                  "cursor-pointer px-3.5 py-2 text-sm font-medium transition-all flex items-center gap-1.5 whitespace-nowrap",
+                  "rounded-tl-lg rounded-tr-lg -mb-px border border-transparent",
+                  "text-gray-500 dark:text-gray-400",
+                  "hover:text-gray-900 hover:bg-gray-100/60 dark:hover:text-gray-100 dark:hover:bg-gray-800/60",
+                  "data-[state=active]:bg-theme data-[state=active]:text-foreground",
+                  "data-[state=active]:border-gray-300 dark:data-[state=active]:border-gray-600",
+                  "data-[state=active]:border-b-theme data-[state=active]:font-semibold data-[state=active]:shadow-[0_-1px_2px_rgba(0,0,0,0.03)]"
+                )}
+              >
+                <Icon className="h-3.5 w-3.5" color={iconColor} />
+                <span className="hidden sm:inline">{t(labelKey)}</span>
+              </TabsTrigger>
+            ))}
         </TabsList>
         {activeTab !== "analytics" && (
           <div className="pb-1 pe-1">

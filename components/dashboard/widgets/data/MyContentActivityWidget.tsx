@@ -1,4 +1,5 @@
 import React from "react";
+import { deploySettings } from "@/utils/deploySettings";
 import { Newspaper } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
@@ -27,7 +28,11 @@ const MyContentActivityWidget: React.FC = () => {
   return (
     <Card className="col-span-12 lg:col-span-6 overflow-hidden mb-2">
       <CardHeaderWithLink
-        href={`/@${username}?activeTab=analytics`}
+        href={
+          deploySettings.accountAnalytics
+            ? `/@${username}?activeTab=analytics`
+            : `/@${username}`
+        }
         title={t("widgets.myContentActivityName")}
       />
       <CardContent className="p-2">

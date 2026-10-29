@@ -10,6 +10,7 @@ import {
   readRecentViews,
   writeRecentViews,
 } from "@/utils/recentlyViewed";
+import { deploySettings } from "@/utils/deploySettings";
 
 export const useRecentlyViewed = () => {
   const { username } = useAuth();
@@ -37,7 +38,7 @@ export const useRecordRecentViews = () => {
   const { username, isInitializing } = useAuth();
 
   useEffect(() => {
-    if (isInitializing) return;
+    if (isInitializing || !deploySettings.recentVisits) return;
     const entry = pathToRecentEntry(asPath);
     if (!entry) return;
     writeRecentViews(
