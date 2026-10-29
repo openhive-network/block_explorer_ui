@@ -7,6 +7,7 @@ import useBlockOperationCounts from "@/hooks/common/useBlockOperationCounts";
 import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
 import useCommunities from "@/hooks/api/communities/useCommunities";
 import { useTheme } from "@/contexts/ThemeContext";
+import { isWidgetEnabled } from "@/utils/deploySettings";
 
 type ActiveWidgetList = Array<{ type: string }>;
 
@@ -39,7 +40,9 @@ export function useDashboardData(widgets: ActiveWidgetList) {
 
   // Create boolean flags to enable/disable the data-fetching hooks below.
   const isWitnessesActive = activeWidgetTypes.has("top-witnesses");
-  const isCommunitiesActive = activeWidgetTypes.has("top-communities");
+  const isCommunitiesActive =
+    activeWidgetTypes.has("top-communities") &&
+    isWidgetEnabled("top-communities");
 
   const { witnessesData, isWitnessDataLoading } = useWitnesses(
     config.witnessesPerPages.home,

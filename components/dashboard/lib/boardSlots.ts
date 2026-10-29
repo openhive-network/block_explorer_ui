@@ -1,5 +1,7 @@
 import { Layout, Layouts } from "react-grid-layout";
 import { WIDGET_LAYOUT_DEFAULTS } from "./widgetLayoutDefaults";
+import { DEFAULT_MASTER_LAYOUT, DEFAULT_WIDGETS } from "./dashboard.config";
+import { deploySettings, isTemplateEnabled } from "@/utils/deploySettings";
 import {
   BoardTemplate,
   MY_BOARD_KEY,
@@ -97,6 +99,22 @@ export function resolveBoard(key: string): BoardSlot | null {
   const template = getBoardTemplate(key);
   return template ? materializeTemplate(template) : null;
 }
+
+const OVERVIEW_BOARD: BoardSlot = {
+  widgets: DEFAULT_WIDGETS,
+  masterLayout: DEFAULT_MASTER_LAYOUT,
+  widgetStates: {},
+};
+
+// What a first sign-in and "restore default" build: Overview, or the
+// deployment's default template once Overview is excluded.
+export const DEFAULT_BOARD: BoardSlot = isTemplateEnabled("overview")
+  ? OVERVIEW_BOARD
+  : (resolveBoard(deploySettings.defaultTemplate) ?? OVERVIEW_BOARD);
+
+// Auto-add seeds are placed for Overview's columns; a template board keeps
+// them settled, as adopting one does.
+export const DEFAULT_BOARD_TAKES_SEEDS = DEFAULT_BOARD === OVERVIEW_BOARD;
 
 export function readActiveBoardKey(username: string): string {
   try {

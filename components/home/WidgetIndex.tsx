@@ -40,7 +40,10 @@ import {
   seedStorageKey,
   watchedProposalsDismissedKey,
 } from "@/components/dashboard/lib/widgetSeeds";
-import { DEFAULT_WIDGETS } from "@/components/dashboard/lib/dashboard.config";
+import {
+  DEFAULT_BOARD,
+  DEFAULT_BOARD_TAKES_SEEDS,
+} from "@/components/dashboard/lib/boardSlots";
 import { useWatchlist } from "@/contexts/WatchlistContext";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -49,6 +52,7 @@ import {
   readRestoreUndo,
 } from "@/utils/workspaceSync";
 import { cn } from "@/lib/utils";
+import { isWidgetEnabled } from "@/utils/deploySettings";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -188,9 +192,11 @@ const WidgetIndex = () => {
   const watchedProposalsCount = getWatched("proposals").size;
   useEffect(() => {
     if (!isLoaded || !username || !isOwnBoard) return;
+    if (!isWidgetEnabled("watched-proposals")) return;
     const dismissedKey = watchedProposalsDismissedKey(username);
-    // handleResetLayout sets widgets to the DEFAULT_WIDGETS reference.
-    if (widgets === DEFAULT_WIDGETS) localStorage.removeItem(dismissedKey);
+    // handleResetLayout sets widgets to the DEFAULT_BOARD.widgets reference.
+    if (widgets === DEFAULT_BOARD.widgets && DEFAULT_BOARD_TAKES_SEEDS)
+      localStorage.removeItem(dismissedKey);
     // Empty watchlist clears the dismiss flag, so watching again re-adds the widget.
     if (watchedProposalsCount === 0) {
       localStorage.removeItem(dismissedKey);
@@ -304,7 +310,7 @@ const WidgetIndex = () => {
   const widgetElements = useMemo(() => {
     return (widgets || []).map((widget) => {
       const widgetConfig = WIDGET_REGISTRY[widget.type];
-      if (!widgetConfig) return null;
+      if (!widgetConfig || !isWidgetEnabled(widget.type)) return null;
 
       const widgetState = resolvedStates[widget.i];
 
@@ -371,8 +377,7 @@ const WidgetIndex = () => {
               }}
               className={cn(
                 "w-full overflow-hidden",
-                widgetConfig.matchRowHeight &&
-                  "flex flex-col *:mb-0 *:flex-1"
+                widgetConfig.matchRowHeight && "flex flex-col *:mb-0 *:flex-1"
               )}
               style={
                 widgetConfig.matchRowHeight && rowMatchPx[widget.i]
@@ -481,7 +486,9 @@ const WidgetIndex = () => {
       <div
         data-testid="dashboard-grid"
         data-widget-count={
-          widgets.filter((w) => WIDGET_REGISTRY[w.type]).length
+          widgets.filter(
+            (w) => WIDGET_REGISTRY[w.type] && isWidgetEnabled(w.type)
+          ).length
         }
         style={{ display: "contents" }}
       >

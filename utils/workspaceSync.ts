@@ -5,8 +5,6 @@ import {
   getLayoutStorageKey,
   getWidgetsStorageKey,
   getWidgetStatesStorageKey,
-  DEFAULT_WIDGETS,
-  DEFAULT_MASTER_LAYOUT,
   generateDerivedLayouts,
 } from "@/components/dashboard/lib/dashboard.config";
 import {
@@ -17,6 +15,7 @@ import {
 import {
   clearBoardOrigin,
   clearBoardUndo,
+  DEFAULT_BOARD,
   selectMyBoard,
   writeAllOrNothing,
 } from "@/components/dashboard/lib/boardSlots";
@@ -236,9 +235,11 @@ export function buildBundle(username: string): WorkspaceBundle | null {
         // "restore defaults" removes the keys before React re-saves them).
         layout: layoutRaw
           ? JSON.parse(layoutRaw)
-          : generateDerivedLayouts(DEFAULT_MASTER_LAYOUT),
-        widgets: widgetsRaw ? JSON.parse(widgetsRaw) : DEFAULT_WIDGETS,
-        widgetStates: statesRaw ? JSON.parse(statesRaw) : {},
+          : generateDerivedLayouts(DEFAULT_BOARD.masterLayout),
+        widgets: widgetsRaw ? JSON.parse(widgetsRaw) : DEFAULT_BOARD.widgets,
+        widgetStates: statesRaw
+          ? JSON.parse(statesRaw)
+          : DEFAULT_BOARD.widgetStates,
       },
       watchlist: watchlistRaw ? JSON.parse(watchlistRaw) : {},
       proposalChanges: proposalChangesRaw ? JSON.parse(proposalChangesRaw) : [],

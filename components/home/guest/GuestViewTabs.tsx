@@ -15,6 +15,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { requestLogin } from "@/utils/loginPrompt";
+import { deploySettings } from "@/utils/deploySettings";
 import { GUEST_VIEWS, GUEST_VIEW_META, GuestView } from "./guestViews";
 import { resolveAccent } from "@/components/dashboard/lib/accents";
 
@@ -47,7 +48,8 @@ const GuestViewTabs: React.FC = () => {
   const { t, dir } = useI18n();
   const isRTL = dir === "rtl";
 
-  if (!switcher) return null;
+  if (!switcher || !deploySettings.homeTabs || GUEST_VIEWS.length < 2)
+    return null;
   const { value, onChange } = switcher;
 
   const label = t("guestHome.switcherLabel");
@@ -114,17 +116,19 @@ const GuestViewTabs: React.FC = () => {
               </SelectItem>
             );
           })}
-          <SelectItem value={LOCKED_DASHBOARD}>
-            <div
-              className={cn(
-                "flex w-full items-center gap-2 text-gray-400 dark:text-gray-500",
-                isRTL && "flex-row-reverse justify-end"
-              )}
-            >
-              <Lock size={14} className="shrink-0" />
-              <span>{t("guestHome.view.dashboard")}</span>
-            </div>
-          </SelectItem>
+          {deploySettings.dashboard && (
+            <SelectItem value={LOCKED_DASHBOARD}>
+              <div
+                className={cn(
+                  "flex w-full items-center gap-2 text-gray-400 dark:text-gray-500",
+                  isRTL && "flex-row-reverse justify-end"
+                )}
+              >
+                <Lock size={14} className="shrink-0" />
+                <span>{t("guestHome.view.dashboard")}</span>
+              </div>
+            </SelectItem>
+          )}
         </SelectContent>
       </Select>
     </div>
@@ -174,31 +178,33 @@ const GuestViewTabs: React.FC = () => {
         );
       })}
 
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <span>
-              <button
-                type="button"
-                data-testid="guest-view-tab-dashboard-locked"
-                onClick={requestLogin}
-                aria-label={t("guestHome.dashboardLockedTooltip")}
-                className={cn(
-                  "relative flex shrink-0 items-center gap-1.5 whitespace-nowrap px-3 py-2.5 text-sm font-semibold transition-colors",
-                  "text-gray-400 hover:text-gray-600 dark:text-gray-600 dark:hover:text-gray-400",
-                  "focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
-                )}
-              >
-                <Lock size={13} strokeWidth={2} className="shrink-0" />
-                {t("guestHome.view.dashboard")}
-              </button>
-            </span>
-          </TooltipTrigger>
-          <TooltipContent side="bottom" className="max-w-[220px] text-center">
-            <p>{t("guestHome.dashboardLockedTooltip")}</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      {deploySettings.dashboard && (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span>
+                <button
+                  type="button"
+                  data-testid="guest-view-tab-dashboard-locked"
+                  onClick={requestLogin}
+                  aria-label={t("guestHome.dashboardLockedTooltip")}
+                  className={cn(
+                    "relative flex shrink-0 items-center gap-1.5 whitespace-nowrap px-3 py-2.5 text-sm font-semibold transition-colors",
+                    "text-gray-400 hover:text-gray-600 dark:text-gray-600 dark:hover:text-gray-400",
+                    "focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+                  )}
+                >
+                  <Lock size={13} strokeWidth={2} className="shrink-0" />
+                  {t("guestHome.view.dashboard")}
+                </button>
+              </span>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" className="max-w-[220px] text-center">
+              <p>{t("guestHome.dashboardLockedTooltip")}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )}
     </nav>
   );
 

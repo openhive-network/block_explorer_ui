@@ -10,6 +10,9 @@ import { getWidgetNodeSupport } from "@/components/dashboard/lib/widgetNodeSuppo
 import { useNodeSupport } from "@/contexts/NodeSupportContext";
 import { useI18n } from "@/i18n/i18n";
 import { cn } from "@/lib/utils";
+import { isWidgetEnabled } from "@/utils/deploySettings";
+
+const ENABLED_WIDGETS = ALL_WIDGETS.filter((w) => isWidgetEnabled(w.id));
 
 interface WidgetLibraryProps {
   isOpen: boolean;
@@ -89,8 +92,8 @@ const WidgetLibrary: React.FC<WidgetLibraryProps> = ({
 
   const filteredWidgets = useMemo(() => {
     const q = searchTerm.trim().toLowerCase();
-    if (!q) return ALL_WIDGETS;
-    return ALL_WIDGETS.filter(
+    if (!q) return ENABLED_WIDGETS;
+    return ENABLED_WIDGETS.filter(
       (w) =>
         t(w.name).toLowerCase().includes(q) ||
         getDescription(w).toLowerCase().includes(q)
