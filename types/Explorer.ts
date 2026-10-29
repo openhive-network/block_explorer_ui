@@ -1,7 +1,7 @@
 import { GetDynamicGlobalPropertiesResponse } from "@hiveio/wax";
 import Hive from "./Hive";
 
-declare module Explorer {
+declare namespace Explorer {
   interface HeadBlockDetails {
     feedPrice: string;
     blockchainTime: string;
