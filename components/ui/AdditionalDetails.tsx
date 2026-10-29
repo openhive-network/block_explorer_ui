@@ -88,6 +88,9 @@ const AdditionalDetails: React.FC<AdditionalDetailsProps> = ({
             )}
             style={{
               transform: "none",
+              // DialogContent centers with Tailwind 4's `translate` property,
+              // which `transform: none` no longer cancels.
+              translate: "none",
             }}
             onOpenAutoFocus={(e) => e.preventDefault()}
           >

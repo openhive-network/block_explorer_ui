@@ -23,6 +23,12 @@
 }
 
 @theme inline {
+  /* Tailwind CSS v3's default; v4's no longer leads with ui-sans-serif and
+     system-ui, which changes the font on Linux. */
+  --font-sans:
+    ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol', 'Noto Color Emoji';
+
   --color-theme: var(--color-background);
   --color-rowOdd: var(--color-row-odd);
   --color-rowEven: var(--color-row-even);
@@ -297,432 +303,442 @@
   --cd-day-fg-selected: #fff;
 }
 
-* {
-  color: var(--color-text);
-}
-
-body {
-  background-color: var(--background-start-rgb);
-}
-
-/* Keep the page scrollbar while a modal is open so nothing shifts; wheel and
-   touch scrolling outside the modal are still blocked by the scroll lock. */
-html body[data-scroll-locked] {
-  overflow: visible !important;
-  margin-right: 0 !important;
-}
-
-pre {
-  white-space: pre-wrap;
-  /* Since CSS 2.1 */
-  white-space: -moz-pre-wrap;
-  /* Mozilla, since 1999 */
-  white-space: -pre-wrap;
-  /* Opera 4-6 */
-  white-space: -o-pre-wrap;
-  /* Opera 7 */
-  word-wrap: break-word;
-  /* Internet Explorer 5.5+ */
-}
-
-.rdp-dropdown {
-  background-color: rgb(255, 255, 255) !important;
-  color: rgb(0, 0, 0) !important;
-}
-
-.rdp-dropdown option {
-  background-color: rgb(255, 255, 255) !important;
-  color: rgb(0, 0, 0) !important;
-}
-
-/*PageTitle accent rule*/
-@keyframes page-title-rule {
-  from {
-    transform: scaleX(0);
-    opacity: 0;
+/* Tailwind CSS v4 puts its CSS in cascade layers, and an unlayered rule beats
+   every layered one, so unlayered `* { color }` would override every `text-*`
+   utility. v3 had no layers and ordered everything by specificity, then source
+   order. Element rules go after the preflight in `base`, so the preflight's
+   `button { color: inherit }` still beats `*`; class rules go after the
+   generated utilities in `utilities`, so they still win a same-specificity tie. */
+@layer base {
+  * {
+    color: var(--color-text);
   }
-  to {
-    transform: scaleX(1);
-    opacity: 1;
+
+  body {
+    background-color: var(--background-start-rgb);
+  }
+
+  /* Keep the page scrollbar while a modal is open so nothing shifts; wheel and
+     touch scrolling outside the modal are still blocked by the scroll lock. */
+  html body[data-scroll-locked] {
+    overflow: visible !important;
+    margin-right: 0 !important;
+  }
+
+  pre {
+    white-space: pre-wrap;
+    /* Since CSS 2.1 */
+    white-space: -moz-pre-wrap;
+    /* Mozilla, since 1999 */
+    white-space: -pre-wrap;
+    /* Opera 4-6 */
+    white-space: -o-pre-wrap;
+    /* Opera 7 */
+    word-wrap: break-word;
+    /* Internet Explorer 5.5+ */
   }
 }
 
-.page-title-rule {
-  transform-origin: left center;
-  animation: page-title-rule 1s cubic-bezier(0.2, 0.7, 0.2, 1) both;
-}
+@layer utilities {
+  .rdp-dropdown {
+    background-color: rgb(255, 255, 255) !important;
+    color: rgb(0, 0, 0) !important;
+  }
 
-[dir="rtl"] .page-title-rule {
-  transform-origin: right center;
-}
+  .rdp-dropdown option {
+    background-color: rgb(255, 255, 255) !important;
+    color: rgb(0, 0, 0) !important;
+  }
 
-@media (prefers-reduced-motion: reduce) {
+  /*PageTitle accent rule*/
+  @keyframes page-title-rule {
+    from {
+      transform: scaleX(0);
+      opacity: 0;
+    }
+    to {
+      transform: scaleX(1);
+      opacity: 1;
+    }
+  }
+
   .page-title-rule {
-    animation: none;
+    transform-origin: left center;
+    animation: page-title-rule 1s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   }
-}
-/*End PageTitle accent rule*/
 
-/*AutoCompleteInput Styles*/
-.scrollbar-autocomplete {
-  scrollbar-width: thin;
-  scrollbar-color: var(--scrollbar-bg) var(--scrollbar-thumb);
-}
+  [dir="rtl"] .page-title-rule {
+    transform-origin: right center;
+  }
 
-.scrollbar-autocomplete::-webkit-scrollbar {
-  width: 8px;
-}
+  @media (prefers-reduced-motion: reduce) {
+    .page-title-rule {
+      animation: none;
+    }
+  }
+  /*End PageTitle accent rule*/
 
-.scrollbar-autocomplete::-webkit-scrollbar-track {
-  background: var(--scrollbar-bg);
-}
+  /*AutoCompleteInput Styles*/
+  .scrollbar-autocomplete {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-bg) var(--scrollbar-thumb);
+  }
 
-.scrollbar-autocomplete::-webkit-scrollbar-thumb {
-  background-color: var(--scrollbar-thumb);
-  border-radius: 10px;
-  border: 3px solid var(--scrollbar-bg);
-}
+  .scrollbar-autocomplete::-webkit-scrollbar {
+    width: 8px;
+  }
 
-.overflow-hidden {
-  overflow: hidden;
-}
+  .scrollbar-autocomplete::-webkit-scrollbar-track {
+    background: var(--scrollbar-bg);
+  }
 
-.autocomplete_input {
-  padding: 0.5rem 0.75rem;
-  font-size: 1rem;
-  background-color: transparent;
-  border: none;
-  transition:
-    border-bottom-color 0.3s ease,
-    background-color 0.3s ease;
-  outline: none;
-}
+  .scrollbar-autocomplete::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb);
+    border-radius: 10px;
+    border: 3px solid var(--scrollbar-bg);
+  }
 
-.autocomplete_input:focus {
-  border-bottom-color: var(--color-navbar-icon-border);
-  background-color: var(--color-extra-light-gray);
-}
+  .overflow-hidden {
+    overflow: hidden;
+  }
 
-.autocomplete_input::placeholder {
-  opacity: 1;
-  /* Ensures placeholder is fully opaque */
-  transition: color 0.3s ease;
-}
+  .autocomplete_input {
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+    background-color: transparent;
+    border: none;
+    transition:
+      border-bottom-color 0.3s ease,
+      background-color 0.3s ease;
+    outline: none;
+  }
 
-/* Layout/appearance live in the components as Tailwind; these two class names
-   are kept as stable hooks for the e2e specs. */
-.autocomplete-result-container,
-.autocomplete-result-item {
-  color: var(--text-color);
-}
+  .autocomplete_input:focus {
+    border-bottom-color: var(--color-navbar-icon-border);
+    background-color: var(--color-extra-light-gray);
+  }
 
-.autocomplete-result-link {
-  text-decoration: none;
-}
+  .autocomplete_input::placeholder {
+    opacity: 1;
+    /* Ensures placeholder is fully opaque */
+    transition: color 0.3s ease;
+  }
 
-.autocomplete-result-highlight {
-  color: var(--explorer-turquoise);
-}
+  /* Layout/appearance live in the components as Tailwind; these two class names
+     are kept as stable hooks for the e2e specs. */
+  .autocomplete-result-container,
+  .autocomplete-result-item {
+    color: var(--text-color);
+  }
 
-/*End AutoCompleteInput Styles*/
+  .autocomplete-result-link {
+    text-decoration: none;
+  }
 
-/*Error Component Styling*/
-.error-message {
-  background: var(--error-bg);
-  color: var(--error-text);
-  padding: 8px 15px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(112, 109, 109, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 0.75rem;
-  margin-top: 10px;
-  margin-left: 2px;
-  position: relative;
-  max-width: 250px;
-}
+  .autocomplete-result-highlight {
+    color: var(--explorer-turquoise);
+  }
 
-/* Close button styling */
-.error-message .close-btn {
-  background: none;
-  border: none;
-  font-size: medium;
-  cursor: pointer;
-  padding: 0;
-  margin-left: 10px;
-  transition: transform 0.3s ease;
-}
+  /*End AutoCompleteInput Styles*/
 
-.error-message .close-btn:hover {
-  transform: rotate(90deg);
-}
+  /*Error Component Styling*/
+  .error-message {
+    background: var(--error-bg);
+    color: var(--error-text);
+    padding: 8px 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(112, 109, 109, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    margin-top: 10px;
+    margin-left: 2px;
+    position: relative;
+    max-width: 250px;
+  }
 
-.error-message.hide {
-  opacity: 0;
-  transform: translateY(-20px);
-}
+  /* Close button styling */
+  .error-message .close-btn {
+    background: none;
+    border: none;
+    font-size: medium;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 10px;
+    transition: transform 0.3s ease;
+  }
 
-/*Error Component Styling*/
+  .error-message .close-btn:hover {
+    transform: rotate(90deg);
+  }
 
-/* Sync Dialog Styles */
-.dialog-content {
-  background: linear-gradient(
-    to right,
-    var(--background-start-rgb),
-    var(--background-end-rgb)
-  );
-  color: var(--color-text);
-  backdrop-filter: blur(10px);
-  border-radius: 0.75rem;
-  box-shadow: 0 10px 15px var(--color-background);
-  transition: all 0.5s ease;
-}
+  .error-message.hide {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
 
-.dialog-header {
-  border-bottom: 1px solid var(--color-row-odd);
-  padding-bottom: 0.5rem;
-  margin-bottom: 1rem;
-}
+  /*Error Component Styling*/
 
-.dialog-title {
-  font-size: 1.25rem;
-  font-weight: 500;
-}
+  /* Sync Dialog Styles */
+  .dialog-content {
+    background: linear-gradient(
+      to right,
+      var(--background-start-rgb),
+      var(--background-end-rgb)
+    );
+    color: var(--color-text);
+    backdrop-filter: blur(10px);
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 15px var(--color-background);
+    transition: all 0.5s ease;
+  }
 
-.dialog-section {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
+  .dialog-header {
+    border-bottom: 1px solid var(--color-row-odd);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+  }
 
-.dialog-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid var(--color-row-odd);
-  padding: 0.5rem 0;
-  transition: background-color 0.3s ease;
-}
+  .dialog-title {
+    font-size: 1.25rem;
+    font-weight: 500;
+  }
 
-.dialog-item:hover {
-  background-color: var(--color-row-hover);
-}
+  .dialog-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
 
-.dialog-item-text {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 1rem;
-}
+  .dialog-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--color-row-odd);
+    padding: 0.5rem 0;
+    transition: background-color 0.3s ease;
+  }
 
-.dialog-item-value {
-  font-weight: 400;
-  font-size: 1rem;
-}
+  .dialog-item:hover {
+    background-color: var(--color-row-hover);
+  }
 
-/*End Sync Dialog Styles*/
+  .dialog-item-text {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+  }
 
-/* Data Box Styling */
-.data-box {
-  background-color: var(--color-extra-light-gray);
-  border-radius: 12px;
-  padding: 10px;
-  margin: 6px 0;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  color: var(--color-text);
-  font-size: 14px;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  border: 1px solid var(--color-light-gray);
-  /* Fine border */
-  transition: all 0.3s ease-in-out;
-  flex-direction: column;
-  /* Stack elements vertically */
-}
+  .dialog-item-value {
+    font-weight: 400;
+    font-size: 1rem;
+  }
 
-.data-box-chart {
-  background-color: var(--color-extra-light-gray);
-  border-radius: 12px;
-  padding: 10px;
-  margin: 6px 0;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  color: var(--color-text);
-  font-size: 14px;
-  border: 1px solid var(--color-light-gray);
-  transition: all 0.3s ease-in-out;
-  flex-direction: column;
-}
+  /*End Sync Dialog Styles*/
 
-.data-box:hover,
-.data-box-lifted {
-  background-color: var(--color-row-hover);
-  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
-  /* Elevated shadow */
-  transform: translateY(-3px);
-  /* Slight lift on hover */
-}
+  /* Data Box Styling */
+  .data-box {
+    background-color: var(--color-extra-light-gray);
+    border-radius: 12px;
+    padding: 10px;
+    margin: 6px 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    color: var(--color-text);
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border: 1px solid var(--color-light-gray);
+    /* Fine border */
+    transition: all 0.3s ease-in-out;
+    flex-direction: column;
+    /* Stack elements vertically */
+  }
 
-.data-box span {
-  font-weight: bold;
-  font-size: 14px;
-}
+  .data-box-chart {
+    background-color: var(--color-extra-light-gray);
+    border-radius: 12px;
+    padding: 10px;
+    margin: 6px 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    color: var(--color-text);
+    font-size: 14px;
+    border: 1px solid var(--color-light-gray);
+    transition: all 0.3s ease-in-out;
+    flex-direction: column;
+  }
 
-.operations-button {
-  border: 1px solid var(--color-light-gray);
-  background-color: inherit;
-  font-size: small;
-}
+  .data-box:hover,
+  .data-box-lifted {
+    background-color: var(--color-row-hover);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
+    /* Elevated shadow */
+    transform: translateY(-3px);
+    /* Slight lift on hover */
+  }
 
-/*Page Container*/
-.page-container {
-  /* This uses the variable from your React component on large screens, 
-     with 98% as a fallback if the variable isn't set. */
-  width: var(--page-container-width, 98%);
-}
+  .data-box span {
+    font-weight: bold;
+    font-size: 14px;
+  }
 
-/* This rule applies ONLY when the screen width is 768px or less. */
-@media (max-width: 1040px) {
+  .operations-button {
+    border: 1px solid var(--color-light-gray);
+    background-color: inherit;
+    font-size: small;
+  }
+
+  /*Page Container*/
   .page-container {
-    /* It overrides the rule above, forcing the width to be 100% on mobile. */
-    width: 100%;
+    /* This uses the variable from your React component on large screens, 
+       with 98% as a fallback if the variable isn't set. */
+    width: var(--page-container-width, 98%);
   }
-}
 
-/* General Scrollable Container */
-.scrollableContainer {
-  scrollbar-width: thin;
-  /* Firefox */
-  scrollbar-color: rgba(150, 150, 150, 0.3) transparent;
-  /* Firefox */
-}
+  /* This rule applies ONLY when the screen width is 768px or less. */
+  @media (max-width: 1040px) {
+    .page-container {
+      /* It overrides the rule above, forcing the width to be 100% on mobile. */
+      width: 100%;
+    }
+  }
 
-/* WebKit (Chrome, Safari) */
-.scrollableContainer::-webkit-scrollbar {
-  width: 6px;
-}
+  /* General Scrollable Container */
+  .scrollableContainer {
+    scrollbar-width: thin;
+    /* Firefox */
+    scrollbar-color: rgba(150, 150, 150, 0.3) transparent;
+    /* Firefox */
+  }
 
-.scrollableContainer::-webkit-scrollbar-track {
-  background: transparent;
-  /* Make the track transparent */
-}
+  /* WebKit (Chrome, Safari) */
+  .scrollableContainer::-webkit-scrollbar {
+    width: 6px;
+  }
 
-.scrollableContainer::-webkit-scrollbar-thumb {
-  background-color: rgba(150, 150, 150, 0.5);
-  /* Subtle gray thumb */
-  border-radius: 3px;
-  /* Slightly rounded corners */
-}
+  .scrollableContainer::-webkit-scrollbar-track {
+    background: transparent;
+    /* Make the track transparent */
+  }
 
-.scrollableContainer::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(120, 120, 120, 0.7);
-  /* Darker on hover */
-}
+  .scrollableContainer::-webkit-scrollbar-thumb {
+    background-color: rgba(150, 150, 150, 0.5);
+    /* Subtle gray thumb */
+    border-radius: 3px;
+    /* Slightly rounded corners */
+  }
 
-/* Optional: Style the corner (where horizontal and vertical scrollbars meet) */
-.scrollableContainer::-webkit-scrollbar-corner {
-  background: transparent;
-}
+  .scrollableContainer::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(120, 120, 120, 0.7);
+    /* Darker on hover */
+  }
 
-/* Dark mode variants (if applicable - adapt colors to your theme) */
-.scrollableContainer.dark::-webkit-scrollbar-track {
-  background: transparent;
-}
+  /* Optional: Style the corner (where horizontal and vertical scrollbars meet) */
+  .scrollableContainer::-webkit-scrollbar-corner {
+    background: transparent;
+  }
 
-.scrollableContainer.dark::-webkit-scrollbar-thumb {
-  background-color: rgba(80, 80, 80, 0.5);
-}
+  /* Dark mode variants (if applicable - adapt colors to your theme) */
+  .scrollableContainer.dark::-webkit-scrollbar-track {
+    background: transparent;
+  }
 
-.scrollableContainer.dark::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(100, 100, 100, 0.7);
-}
+  .scrollableContainer.dark::-webkit-scrollbar-thumb {
+    background-color: rgba(80, 80, 80, 0.5);
+  }
 
-.table-toolbar {
-  --toolbar-bg-color: #f8fafc;
-  --toolbar-border-color: #334155;
+  .scrollableContainer.dark::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(100, 100, 100, 0.7);
+  }
 
-  display: flex;
-  width: 100%;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.5rem;
-  background-color: var(--toolbar-bg-color);
-  border-bottom-width: 2px;
-  border-bottom-color: #e2e8f0;
-}
+  .table-toolbar {
+    --toolbar-bg-color: #f8fafc;
+    --toolbar-border-color: #334155;
 
-.dark .table-toolbar {
-  --toolbar-bg-color: #1e293b;
-  border-bottom-color: var(--toolbar-border-color);
-}
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.5rem;
+    background-color: var(--toolbar-bg-color);
+    border-bottom-width: 2px;
+    border-bottom-color: #e2e8f0;
+  }
 
-/* Home report dialogs — shared filter panel. Groups the query controls
-   (granularity, date range, search) into one bordered, tinted box so they read
-   as distinct from the results (KPIs + chart) below. Used by every home report
-   dialog via className="report-filters". */
-.report-filters {
-  border-radius: 0.5rem;
-  border: 1px solid #e5e7eb;
-  background-color: var(--color-extra-light-gray);
-  padding: 1rem;
-}
+  .dark .table-toolbar {
+    --toolbar-bg-color: #1e293b;
+    border-bottom-color: var(--toolbar-border-color);
+  }
 
-.dark .report-filters {
-  border-color: #374151;
-}
+  /* Home report dialogs — shared filter panel. Groups the query controls
+     (granularity, date range, search) into one bordered, tinted box so they read
+     as distinct from the results (KPIs + chart) below. Used by every home report
+     dialog via className="report-filters". */
+  .report-filters {
+    border-radius: 0.5rem;
+    border: 1px solid #e5e7eb;
+    background-color: var(--color-extra-light-gray);
+    padding: 1rem;
+  }
 
-.report-filters-label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-size: 10px;
-  line-height: 1;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--color-slate-text);
-}
+  .dark .report-filters {
+    border-color: #374151;
+  }
 
-/* Home report dialogs — shared export trigger, sits beside the dialog title. */
-.report-export-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  height: 2rem;
-  padding: 0 0.625rem;
-  border-radius: 0.375rem;
-  border: 1px solid #e5e7eb;
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: #4b5563;
-  transition:
-    color 0.15s ease,
-    border-color 0.15s ease;
-}
+  .report-filters-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 10px;
+    line-height: 1;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-slate-text);
+  }
 
-.report-export-btn:hover:not(:disabled) {
-  border-color: #818cf8;
-  color: #6366f1;
-}
+  /* Home report dialogs — shared export trigger, sits beside the dialog title. */
+  .report-export-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    height: 2rem;
+    padding: 0 0.625rem;
+    border-radius: 0.375rem;
+    border: 1px solid #e5e7eb;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #4b5563;
+    transition:
+      color 0.15s ease,
+      border-color 0.15s ease;
+  }
 
-.report-export-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
+  .report-export-btn:hover:not(:disabled) {
+    border-color: #818cf8;
+    color: #6366f1;
+  }
 
-.dark .report-export-btn {
-  border-color: #374151;
-  color: #d1d5db;
-}
+  .report-export-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 
-/* Recharts SVG text uses LTR anchoring; force LTR so RTL locales don't overlap
-   axis ticks. Visual mirroring stays handled per-chart via axis orientation. */
-.recharts-wrapper,
-.recharts-surface {
-  direction: ltr;
-}
-.echarts-for-react svg {
-  direction: ltr;
+  .dark .report-export-btn {
+    border-color: #374151;
+    color: #d1d5db;
+  }
+
+  /* Recharts SVG text uses LTR anchoring; force LTR so RTL locales don't overlap
+     axis ticks. Visual mirroring stays handled per-chart via axis orientation. */
+  .recharts-wrapper,
+  .recharts-surface {
+    direction: ltr;
+  }
+  .echarts-for-react svg {
+    direction: ltr;
+  }
 }
