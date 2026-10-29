@@ -46,6 +46,7 @@ import { AuthContextProvider } from "@/contexts/AuthContext";
 import { WatchlistProvider } from "@/contexts/WatchlistContext";
 import SeoFallback from "@/components/seo/SeoFallback";
 import type { SeoMeta } from "@/utils/seo";
+import { deploySettings } from "@/utils/deploySettings";
 
 // This component lives *inside* the SettingsProvider, so it can safely call useSettings().
 // Its job is to manage the dynamic layout width based on the setting.
@@ -101,6 +102,7 @@ const Providers: React.FC<{ children: ReactNode; seo?: SeoMeta }> = ({
     isDashboardRouteRef.current =
       router.pathname === "/" ||
       (router.pathname === "/[accountName]" &&
+        deploySettings.accountAnalytics &&
         router.query.activeTab === "analytics");
   }, [router.pathname, router.query.activeTab]);
 
@@ -166,7 +168,7 @@ const Providers: React.FC<{ children: ReactNode; seo?: SeoMeta }> = ({
 
   return (
     <QueryClientProvider client={queryClient}>
-      <I18nProvider initialLocale="en">
+      <I18nProvider initialLocale={deploySettings.defaultLanguage}>
         <SettingsProvider>
           <AuthContextProvider>
             <WatchlistProvider>

@@ -6,6 +6,7 @@ import {
   ReactNode,
 } from "react";
 import { useRouter } from "next/router";
+import { deploySettings } from "@/utils/deploySettings";
 
 type TabsContextType = {
   activeTab: string;
@@ -22,7 +23,7 @@ const ACCOUNT_TABS = [
   "balance-history",
   "power-activity",
   "analytics",
-];
+].filter((tab) => tab !== "analytics" || deploySettings.accountAnalytics);
 
 // A missing or unknown value means the default tab, so the tab always follows the URL.
 const tabFromQuery = (raw: string | string[] | undefined) => {

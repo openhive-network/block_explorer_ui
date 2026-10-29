@@ -13,6 +13,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { reportRegistry } from "./reportRegistry";
+import { isReportEnabled } from "@/utils/deploySettings";
 import { ReportExportsProvider, useReportExports } from "./reportExports";
 import ReportExportMenu from "./ReportExportMenu";
 import ErrorMessage from "@/components/ErrorMessage";
@@ -182,6 +183,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
         >
           {widgets.map((widget) => {
             const widgetType = widget.i.split("-")[0];
+            if (!isReportEnabled(widgetType)) return null;
             const reportConfig = reportRegistry[widgetType];
             if (!reportConfig) {
               return (

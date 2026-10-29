@@ -3,6 +3,7 @@ import Explorer from "@/types/Explorer";
 import AnalyticsDashboard from "./AnalyticsDashboard";
 import useConvertedVestingShares from "@/hooks/common/useConvertedVestingShares";
 import { reportRegistry } from "./reportRegistry";
+import { isReportEnabled } from "@/utils/deploySettings";
 import { useMemo } from "react";
 import { Layout } from "react-grid-layout";
 import { useAnalyticsDashboardState } from "./useAnalyticsDashboardState";
@@ -15,7 +16,9 @@ const getRequiredDataSources = (widgets: Layout[]): Set<string> => {
   const required = new Set<string>();
   widgets.forEach((widget) => {
     const widgetType = widget.i.split("-")[0];
-    const reportConfig = reportRegistry[widgetType];
+    const reportConfig = isReportEnabled(widgetType)
+      ? reportRegistry[widgetType]
+      : undefined;
     if (reportConfig?.dataMap) {
       Object.values(reportConfig.dataMap).forEach((sourceKey) => {
         if (typeof sourceKey === "string") {

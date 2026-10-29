@@ -5,6 +5,7 @@ import {
   setLocalStorage,
   removeStorageItem,
 } from "@/utils/LocalStorage";
+import { isReportEnabled } from "@/utils/deploySettings";
 
 // The default size for a new widget: half-width (6/12) so two reports sit side
 // by side, with a small minW so they can be dragged narrower for denser layouts.
@@ -239,10 +240,25 @@ export const useAnalyticsDashboardState = (username: string | null) => {
     }
   }, [user, layoutStorageKey, widgetsStorageKey]);
 
+  const layoutsRef = useRef(layouts);
+  useEffect(() => {
+    layoutsRef.current = layouts;
+  }, [layouts]);
+
+  // The grid only reports reports it renders; hidden ones keep their saved place.
   const onLayoutChange = useCallback(
     (currentLayout: Layout[], allLayouts: Layouts) => {
-      setLayouts(allLayouts);
-      setLocalStorage(layoutStorageKey, allLayouts);
+      const next: Layouts = {};
+      for (const [breakpoint, items] of Object.entries(allLayouts)) {
+        const hidden = (layoutsRef.current[breakpoint] ?? []).filter(
+          (item) =>
+            !isReportEnabled(item.i.split("-")[0]) &&
+            !items.some((shown) => shown.i === item.i)
+        );
+        next[breakpoint] = [...items, ...hidden];
+      }
+      setLayouts(next);
+      setLocalStorage(layoutStorageKey, next);
     },
     [layoutStorageKey]
   );
