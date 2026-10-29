@@ -22,6 +22,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "./ui/tooltip";
+import { withSection } from "@/utils/deploySettings";
 
 interface DataItem {
   [key: string]: any;
@@ -322,4 +323,4 @@ const DataExport: React.FC<DataExportProps> = ({
   );
 };
 
-export default DataExport;
+export default withSection(DataExport, "exports");

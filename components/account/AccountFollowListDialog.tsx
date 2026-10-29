@@ -15,6 +15,7 @@ import useAccountFollowList, {
 } from "@/hooks/api/accountPage/useAccountFollowList";
 import { spacesToUnderscores } from "@/utils/StringUtils";
 import { downloadCsv } from "@/utils/csvDownload";
+import { deploySettings } from "@/utils/deploySettings";
 
 interface AccountFollowListDialogProps {
   type: FollowListType;
@@ -176,6 +177,7 @@ const AccountFollowListDialog: React.FC<AccountFollowListDialogProps> = ({
             }
             subtitle={`@${accountName}`}
             actions={
+              deploySettings.exports &&
               names.length > 0 && (
                 <button
                   type="button"

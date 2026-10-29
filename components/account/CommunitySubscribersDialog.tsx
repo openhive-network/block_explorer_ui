@@ -19,6 +19,7 @@ import { downloadCsv } from "@/utils/csvDownload";
 import { spacesToUnderscores } from "@/utils/StringUtils";
 import ErrorMessage from "../ErrorMessage";
 import NoResult from "../NoResult";
+import { deploySettings } from "@/utils/deploySettings";
 
 interface CommunitySubscribersDialogProps {
   isOpen: boolean;
@@ -333,6 +334,7 @@ const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
             }
             subtitle={communityTitle}
             actions={
+              deploySettings.exports &&
               (subscribersData.length > 0 || exportedCount !== null) &&
               (exportedCount === null ? (
                 <>
