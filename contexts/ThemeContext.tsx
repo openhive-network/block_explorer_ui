@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { setCssVariablesFromEnv } from "@/utils/EnvCssVariables";
+import { deploySettings } from "@/utils/deploySettings";
 
 type ThemeContextType = {
   theme: string;
@@ -19,12 +20,15 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
       setTheme(savedTheme);
       document.documentElement.classList.add(savedTheme);
     } else {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-        .matches
-        ? "dark"
-        : "light";
-      setTheme(systemTheme);
-      document.documentElement.classList.add(systemTheme);
+      const { defaultTheme } = deploySettings;
+      const firstTheme =
+        defaultTheme !== "system"
+          ? defaultTheme
+          : window.matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light";
+      setTheme(firstTheme);
+      document.documentElement.classList.add(firstTheme);
     }
   }, []);
 

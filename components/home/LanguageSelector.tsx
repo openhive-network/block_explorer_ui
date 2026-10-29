@@ -8,6 +8,7 @@ import {
   SelectItem,
   SelectTrigger,
 } from "@/components/ui/select";
+import { deploySettings, isLanguageEnabled } from "@/utils/deploySettings";
 
 // Each language is listed in its own script, so it can be found from any UI language.
 const languageOptions = [
@@ -31,6 +32,8 @@ const languageOptions = [
 const LanguageSelector = () => {
   const { locale, setLocale, t, dir } = useI18n();
   const isRTL = dir === "rtl";
+
+  if (deploySettings.languages.length < 2) return null;
 
   return (
     <Select onValueChange={setLocale} value={locale} dir={dir}>
@@ -57,45 +60,47 @@ const LanguageSelector = () => {
         </div>
       </SelectTrigger>
       <SelectContent className="min-w-[260px] p-1">
-        {languageOptions.map((option) => {
-          const active = option.value === locale;
-          const translated = t(option.labelKey);
-          return (
-            <SelectItem
-              key={option.value}
-              value={option.value}
-              className={cn(
-                "rounded-md px-2 py-1.5 [&>span:last-child]:w-full",
-                active && "bg-indigo-50 dark:bg-indigo-950/40"
-              )}
-            >
-              <div className="flex w-full items-center gap-2.5">
-                <span
-                  className={cn(
-                    "inline-flex h-6 w-8 shrink-0 items-center justify-center rounded text-[11px] font-bold tracking-wide",
-                    active
-                      ? "bg-indigo-500 text-white"
-                      : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"
-                  )}
-                >
-                  {option.value.toUpperCase()}
-                </span>
-                <span
-                  lang={option.value}
-                  dir="auto"
-                  className={cn(active && "font-semibold")}
-                >
-                  {option.nativeName}
-                </span>
-                {translated !== option.nativeName && (
-                  <span className="ms-auto ps-3 text-xs text-explorer-light-gray">
-                    {translated}
-                  </span>
+        {languageOptions
+          .filter((option) => isLanguageEnabled(option.value))
+          .map((option) => {
+            const active = option.value === locale;
+            const translated = t(option.labelKey);
+            return (
+              <SelectItem
+                key={option.value}
+                value={option.value}
+                className={cn(
+                  "rounded-md px-2 py-1.5 [&>span:last-child]:w-full",
+                  active && "bg-indigo-50 dark:bg-indigo-950/40"
                 )}
-              </div>
-            </SelectItem>
-          );
-        })}
+              >
+                <div className="flex w-full items-center gap-2.5">
+                  <span
+                    className={cn(
+                      "inline-flex h-6 w-8 shrink-0 items-center justify-center rounded text-[11px] font-bold tracking-wide",
+                      active
+                        ? "bg-indigo-500 text-white"
+                        : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"
+                    )}
+                  >
+                    {option.value.toUpperCase()}
+                  </span>
+                  <span
+                    lang={option.value}
+                    dir="auto"
+                    className={cn(active && "font-semibold")}
+                  >
+                    {option.nativeName}
+                  </span>
+                  {translated !== option.nativeName && (
+                    <span className="ms-auto ps-3 text-xs text-explorer-light-gray">
+                      {translated}
+                    </span>
+                  )}
+                </div>
+              </SelectItem>
+            );
+          })}
       </SelectContent>
     </Select>
   );

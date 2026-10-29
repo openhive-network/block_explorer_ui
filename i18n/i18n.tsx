@@ -12,8 +12,8 @@ import React, {
 // Arithmetic methods (subtract, isSame, toDate, etc.) are unaffected.
 // Each time a new language is added it should be listed here.
 import moment from "moment";
-["es", "it", "ar", "zh-cn", "de", "fr", "ja", "ko", "pl", "pt", "ro"].forEach(
-  (l) => require(`moment/locale/${l}`)
+["es", "it", "ar", "zh-cn", "de", "fr", "ja", "pl", "pt", "ro"].forEach((l) =>
+  require(`moment/locale/${l}`)
 );
 // Keep Western digits (0-9) for Arabic locale so API date strings remain ASCII-safe.
 // Without this, moment's `ar` locale postformat replaces digits with Arabic-Indic
@@ -31,7 +31,6 @@ import zhTimeagoLocale from "timeago.js/lib/lang/zh_CN";
 import deTimeagoLocale from "timeago.js/lib/lang/de";
 import frTimeagoLocale from "timeago.js/lib/lang/fr";
 import jaTimeagoLocale from "timeago.js/lib/lang/ja";
-import koTimeagoLocale from "timeago.js/lib/lang/ko";
 import plTimeagoLocale from "timeago.js/lib/lang/pl";
 import ptTimeagoLocale from "timeago.js/lib/lang/pt_BR";
 import roTimeagoLocale from "timeago.js/lib/lang/ro";
@@ -46,7 +45,6 @@ const registerTimeagoLocalesOnce = () => {
     timeago.register("de", deTimeagoLocale);
     timeago.register("fr", frTimeagoLocale);
     timeago.register("ja", jaTimeagoLocale);
-    timeago.register("ko", koTimeagoLocale);
     timeago.register("pl", plTimeagoLocale);
     timeago.register("pt", ptTimeagoLocale);
     timeago.register("ro", roTimeagoLocale);
@@ -68,6 +66,7 @@ interface I18nContextProps {
 // Static by necessity: defaultContext reads it at module-eval and t() falls back
 // to it for every missing key.
 import enTranslations from "./en.json";
+import { defaultLanguage, isLanguageEnabled } from "@/utils/deploySettings";
 
 // Fetched on demand, one chunk each, so a visitor downloads one language not 12.
 const localeLoaders: Record<string, () => Promise<{ default: Translations }>> =
@@ -82,7 +81,6 @@ const localeLoaders: Record<string, () => Promise<{ default: Translations }>> =
     zh: () => import("./zh.json"),
     ja: () => import("./ja.json"),
     ro: () => import("./ro.json"),
-    ko: () => import("./ko.json"),
   };
 
 // Static: appTranslations only holds what has loaded, so it cannot validate.
@@ -100,11 +98,15 @@ const isRTL = (locale: string) => rtlLanguages.includes(getBaseLocale(locale));
 const getInitialLocale = (defaultLocale: string): string => {
   if (typeof window !== "undefined" && window.localStorage) {
     const savedLocale = localStorage.getItem("locale");
-    if (savedLocale && SUPPORTED_LOCALES.includes(savedLocale)) {
+    if (
+      savedLocale &&
+      SUPPORTED_LOCALES.includes(savedLocale) &&
+      isLanguageEnabled(savedLocale)
+    ) {
       return savedLocale;
     }
   }
-  return defaultLocale;
+  return isLanguageEnabled(defaultLocale) ? defaultLocale : defaultLanguage();
 };
 
 const defaultContext: I18nContextProps = {
@@ -173,7 +175,11 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({
   // This effect listens for changes in localStorage from other tabs
   useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === "locale" && event.newValue) {
+      if (
+        event.key === "locale" &&
+        event.newValue &&
+        isLanguageEnabled(event.newValue)
+      ) {
         setCurrentLocale(event.newValue);
       }
     };
