@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 import Footer from "./footer";
+import ClassicFooter from "./ClassicFooter";
+import { deploySettings } from "@/utils/deploySettings";
 import Navbar from "./navbar";
 import { Toaster } from "sonner";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
@@ -24,7 +26,7 @@ export default function Layout({ children }: LayoutProps) {
         theme={theme === "dark" ? "dark" : "light"}
       />
       <WorkspaceRestorePrompt />
-      <Footer />
+      {deploySettings.footer === "classic" ? <ClassicFooter /> : <Footer />}
     </main>
   );
 }
