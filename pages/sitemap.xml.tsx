@@ -4,6 +4,7 @@ import {
   escapeXml,
   SEO_LIST_CACHE_CONTROL,
 } from "@/utils/seo";
+import { isPathEnabled } from "@/utils/deploySettings";
 
 // Entity pages (accounts, blocks, transactions) number in the millions, so the
 // sitemap lists only the stable index routes; crawlers reach entity pages via
@@ -25,10 +26,14 @@ const SiteMap = () => null;
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const base = absoluteBaseUrl(req);
-  const urls = STATIC_ROUTES.map(({ path, changefreq, priority }) => {
-    const loc = escapeXml(`${base}${path === "/" ? "" : path}` || base || "/");
-    return `  <url><loc>${loc}</loc><changefreq>${changefreq}</changefreq><priority>${priority}</priority></url>`;
-  }).join("\n");
+  const urls = STATIC_ROUTES.filter(({ path }) => isPathEnabled(path))
+    .map(({ path, changefreq, priority }) => {
+      const loc = escapeXml(
+        `${base}${path === "/" ? "" : path}` || base || "/"
+      );
+      return `  <url><loc>${loc}</loc><changefreq>${changefreq}</changefreq><priority>${priority}</priority></url>`;
+    })
+    .join("\n");
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls}

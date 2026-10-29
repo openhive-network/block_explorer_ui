@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import { isInAppPath, normalizeExternalUrl } from "@/utils/SafeUrl";
 import { resolveAccent, AccentKey } from "@/components/dashboard/lib/accents";
 import { Button } from "@/components/ui/button";
+import { isPathEnabled } from "@/utils/deploySettings";
 
 interface LinkItem {
   label: string;
@@ -238,7 +239,10 @@ const QuickLinksWidget: React.FC<QuickLinksWidgetProps> = ({
         ? link.url
         : normalizeExternalUrl(link.url),
     }))
-    .filter((link): link is LinkItem & { safeUrl: string } => !!link.safeUrl);
+    .filter(
+      (link): link is LinkItem & { safeUrl: string } =>
+        !!link.safeUrl && isPathEnabled(link.safeUrl)
+    );
 
   return (
     <div className={shell}>

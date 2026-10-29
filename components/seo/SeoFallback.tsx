@@ -4,6 +4,7 @@ import { Loader2 } from "lucide-react";
 import { useI18n } from "@/i18n/i18n";
 import { getImageSrc } from "@/utils/PathUtils";
 import { SeoMeta, siteConfig } from "@/utils/seo";
+import { isPathEnabled } from "@/utils/deploySettings";
 
 // The served body while the chain-gated app is unavailable; without it SSR emits an empty page.
 
@@ -15,7 +16,7 @@ const NAV_LINKS: { href: string; labelKey: string }[] = [
   { href: "/communities", labelKey: "navbar.communitiesTitle" },
   { href: "/schedule", labelKey: "witnessSchedule.title" },
   { href: "/tools/compare", labelKey: "tools.title" },
-];
+].filter(({ href }) => isPathEnabled(href));
 
 const TITLE_SUFFIX = ` | ${siteConfig.name}`;
 

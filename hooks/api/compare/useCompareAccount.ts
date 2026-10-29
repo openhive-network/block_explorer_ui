@@ -10,6 +10,7 @@ import useWitnessDetails from "@/hooks/api/common/useWitnessDetails";
 import useConvertedVestingShares from "@/hooks/common/useConvertedVestingShares";
 import useAccountContentStats from "@/hooks/api/accountPage/useAccountContentStats";
 import useFinancialSummary from "@/hooks/api/accountPage/useFinancialSummary";
+import { deploySettings } from "@/utils/deploySettings";
 import useAccountDappFootprint from "@/hooks/api/accountPage/useAccountDappFootprint";
 import useAccountVestingStats from "@/hooks/api/accountPage/useAccountVestingStats";
 import useManabars from "@/hooks/api/accountPage/useManabars";
@@ -132,7 +133,10 @@ const useCompareAccount = (
     undefined,
     hasAccount
   );
-  const { voteCount } = useProposalVoteCount(accountName);
+  const { voteCount } = useProposalVoteCount(
+    accountName,
+    deploySettings.proposals
+  );
   const { witnessDetails } = useWitnessDetails(accountName, isWitness);
   const incoming = useConvertedVestingShares(
     "incoming",

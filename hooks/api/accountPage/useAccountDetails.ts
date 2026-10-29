@@ -4,6 +4,7 @@ import Explorer from "@/types/Explorer";
 import { config } from "@/Config";
 import fetchingService from "@/services/FetchingService";
 import { formatAndDelocalizeTime, parseChainDate } from "@/utils/TimeUtils";
+import { deploySettings } from "@/utils/deploySettings";
 
 // Hive leaves interest timestamps at the 1970 epoch until a payment actually
 // happens, so formatting them would show a real-looking date for an event that
@@ -38,8 +39,9 @@ const useAccountDetails = (accountName: string, liveDataEnabled: boolean) => {
     const accountDetails = await fetchingService.getAccount(accountName);
     const { follower_count, following_count } =
       await fetchingService.getAccountFollowCount(accountName);
-    const subscriptions =
-      await fetchingService.getAccountSubscriptions(accountName);
+    const subscriptions = deploySettings.communities
+      ? await fetchingService.getAccountSubscriptions(accountName)
+      : [];
     const voteExpiration = formatAndDelocalizeTime(
       accounts[0].governance_vote_expiration_ts
     );

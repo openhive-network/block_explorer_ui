@@ -24,6 +24,7 @@ import { useSettings } from "@/contexts/SettingsContext";
 import useAccountDetails from "@/hooks/api/accountPage/useAccountDetails";
 import { useI18n } from "@/i18n/i18n";
 import { parseDisplayOrChainDate } from "@/utils/TimeUtils";
+import { deploySettings } from "@/utils/deploySettings";
 
 const MyAccountSnapshotWidget: React.FC = () => {
   const { t, locale } = useI18n();
@@ -139,12 +140,14 @@ const MyAccountSnapshotWidget: React.FC = () => {
               value={count(accountDetails?.following_count)}
               onClick={() => setOpenDialog("following")}
             />
-            <StatCard
-              icon={<Building2 size={20} />}
-              label={t("accountMainCard.subscriptions")}
-              value={count(accountDetails?.subscriptions?.length)}
-              onClick={() => setOpenDialog("subscriptions")}
-            />
+            {deploySettings.communities && (
+              <StatCard
+                icon={<Building2 size={20} />}
+                label={t("accountMainCard.subscriptions")}
+                value={count(accountDetails?.subscriptions?.length)}
+                onClick={() => setOpenDialog("subscriptions")}
+              />
+            )}
             <StatCard
               icon={<PenSquare size={20} />}
               label={t("accountMainCard.totalPosts")}
@@ -208,14 +211,16 @@ const MyAccountSnapshotWidget: React.FC = () => {
           setOpenDialog(isOpen ? "following" : null)
         }
       />
-      <AccountSubscriptionsDialog
-        accountName={username}
-        isSubscriptionsOpen={openDialog === "subscriptions"}
-        changeSubscriptionsDialogue={(isOpen) =>
-          setOpenDialog(isOpen ? "subscriptions" : null)
-        }
-        subscriptions={accountDetails?.subscriptions ?? null}
-      />
+      {deploySettings.communities && (
+        <AccountSubscriptionsDialog
+          accountName={username}
+          isSubscriptionsOpen={openDialog === "subscriptions"}
+          changeSubscriptionsDialogue={(isOpen) =>
+            setOpenDialog(isOpen ? "subscriptions" : null)
+          }
+          subscriptions={accountDetails?.subscriptions ?? null}
+        />
+      )}
     </>
   );
 };

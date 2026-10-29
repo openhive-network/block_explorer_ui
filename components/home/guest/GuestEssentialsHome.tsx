@@ -14,6 +14,7 @@ import GuestBoardHeader from "./GuestBoardHeader";
 import { config } from "@/Config";
 import { useI18n } from "@/i18n/i18n";
 import { Zap } from "lucide-react";
+import { deploySettings } from "@/utils/deploySettings";
 
 const GuestEssentialsHome = () => {
   const { t } = useI18n();
@@ -25,7 +26,12 @@ const GuestEssentialsHome = () => {
   const {
     communities: popularCommunitiesData,
     isLoading: isCommunitiesLoading,
-  } = useCommunities("", "rank", config.popularCommunitiesCount);
+  } = useCommunities(
+    "",
+    "rank",
+    config.popularCommunitiesCount,
+    deploySettings.communities
+  );
 
   const headBlockNum = useHeadBlockNumber().headBlockNumberData;
   const dynamicGlobalQueryData =
@@ -67,10 +73,12 @@ const GuestEssentialsHome = () => {
               isLoading={isWitnessDataLoading}
             />
           </NodeSupportGate>
-          <TopCommunitiesCard
-            communitiesData={popularCommunitiesData}
-            isLoading={isCommunitiesLoading}
-          />
+          {deploySettings.communities && (
+            <TopCommunitiesCard
+              communitiesData={popularCommunitiesData}
+              isLoading={isCommunitiesLoading}
+            />
+          )}
         </div>
       </div>
     </>

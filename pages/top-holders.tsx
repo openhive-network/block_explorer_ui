@@ -79,7 +79,10 @@ import AutoCompleteInput from "@/components/ui/AutoCompleteInput";
 import useCompareSelection from "@/hooks/common/useCompareSelection";
 import CompareSelectToggle from "@/components/compare/CompareSelectToggle";
 import CompareSelectionBar from "@/components/compare/CompareSelectionBar";
+import { deploySettings } from "@/utils/deploySettings";
 import HiveAvatar from "@/components/ui/HiveAvatar";
+import PageNotFound from "@/components/PageNotFound";
+import { notFoundProps } from "@/utils/seo/notFoundProps";
 
 // Total supply in the same raw unit as a holder's balance (VESTS ×1e6, HIVE/HBD ×1e3).
 const getTotalSupplyRaw = (
@@ -177,7 +180,7 @@ const FindAccountInput: React.FC<FindAccountInputProps> = ({
   );
 };
 
-export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
+function TopHoldersPage({ meta }: { meta: SeoMeta }) {
   const { t, locale } = useI18n();
   const router = useRouter();
   const { settings } = useSettings();
@@ -667,7 +670,7 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
                 </span>
               )}
             </div>
-            {!isSystemAccount(account) && (
+            {!isSystemAccount(account) && deploySettings.tools && (
               <CompareSelectToggle
                 account={account}
                 selected={compareSelection.isSelected(account)}
@@ -1140,9 +1143,12 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
   );
 }
 
+export default deploySettings.topHolders ? TopHoldersPage : PageNotFound;
+
 export const getServerSideProps: GetServerSideProps<{
   meta: SeoMeta;
 }> = async ({ req, res }) => {
+  if (!deploySettings.topHolders) return notFoundProps(res);
   res.setHeader("Cache-Control", SEO_LIST_CACHE_CONTROL);
   return {
     props: {

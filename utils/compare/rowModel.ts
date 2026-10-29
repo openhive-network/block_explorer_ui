@@ -1,6 +1,7 @@
 import Hive from "@/types/Hive";
 import { CompareRow, CompareSection, ValueFormat } from "./types";
 import { WealthComposition } from "./wealth";
+import { deploySettings } from "@/utils/deploySettings";
 
 export type { WealthComposition };
 
@@ -165,27 +166,31 @@ export const buildComparisonSections = (
         secondaryFormat: "usd",
       }),
       row("reputation", "reputation", a.reputation, b.reputation),
-      row(
-        "topHolderRankVests",
-        "rank",
-        a.topHolderRankVests,
-        b.topHolderRankVests,
-        TOP_RANK_OPTS
-      ),
-      row(
-        "topHolderRankHive",
-        "rank",
-        a.topHolderRankHive,
-        b.topHolderRankHive,
-        TOP_RANK_OPTS
-      ),
-      row(
-        "topHolderRankHbd",
-        "rank",
-        a.topHolderRankHbd,
-        b.topHolderRankHbd,
-        TOP_RANK_OPTS
-      ),
+      ...(deploySettings.topHolders
+        ? [
+            row(
+              "topHolderRankVests",
+              "rank",
+              a.topHolderRankVests,
+              b.topHolderRankVests,
+              TOP_RANK_OPTS
+            ),
+            row(
+              "topHolderRankHive",
+              "rank",
+              a.topHolderRankHive,
+              b.topHolderRankHive,
+              TOP_RANK_OPTS
+            ),
+            row(
+              "topHolderRankHbd",
+              "rank",
+              a.topHolderRankHbd,
+              b.topHolderRankHbd,
+              TOP_RANK_OPTS
+            ),
+          ]
+        : []),
     ],
   };
 
@@ -230,7 +235,16 @@ export const buildComparisonSections = (
         a.witnessesVotedFor,
         b.witnessesVotedFor
       ),
-      row("proposalVotes", "number", a.proposalVotesCast, b.proposalVotesCast),
+      ...(deploySettings.proposals
+        ? [
+            row(
+              "proposalVotes",
+              "number",
+              a.proposalVotesCast,
+              b.proposalVotesCast
+            ),
+          ]
+        : []),
       // Only scored when both are witnesses — otherwise the missing side is null
       // and winnerOf treats the row as unscored.
       row(

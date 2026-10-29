@@ -93,6 +93,7 @@ import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import ConvertedHiveTooltip from "@/components/ConvertedHiveTooltip";
 import TranslatedFormatterOperation from "@/components/TranslatedFormatterOperation";
 import { KeyRound, LinkIcon } from "lucide-react";
+import { deploySettings } from "@/utils/deploySettings";
 
 class OperationsFormatter implements IWaxCustomFormatter {
   public constructor(private readonly wax: IWaxBaseInterface) {}
@@ -108,7 +109,6 @@ class OperationsFormatter implements IWaxCustomFormatter {
       return <TranslatedFormatterOperation i18nKey={key} />;
     },
   };
-
 
   private getFormattedAmount(
     supply: Hive.Supply | undefined
@@ -161,10 +161,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
 
   private getConvertedHiveTooltip(tooltipTrigger: string, supply: Hive.Supply) {
     return (
-      <ConvertedHiveTooltip
-        tooltipTrigger={tooltipTrigger}
-        supply={supply}
-      />
+      <ConvertedHiveTooltip tooltipTrigger={tooltipTrigger} supply={supply} />
     );
   }
 
@@ -189,6 +186,9 @@ class OperationsFormatter implements IWaxCustomFormatter {
   }
 
   private getProposalLink(proposalId: number): React.JSX.Element {
+    if (!deploySettings.proposals) {
+      return <span key={`proposal-${proposalId}`}>{proposalId}</span>;
+    }
     return (
       <Link
         href={`/proposals/?ID=${proposalId}`}
@@ -220,23 +220,36 @@ class OperationsFormatter implements IWaxCustomFormatter {
    * Decodes a hex-encoded serialized price object (e.g., hbd_exchange_rate).
    * @returns An object with base and quote strings, or null on failure.
    */
-  private decodePriceFeed(hexValue: string): { base: string; quote: string } | null {
-    if (typeof hexValue !== 'string' || hexValue.length !== 64) return null;
+  private decodePriceFeed(
+    hexValue: string
+  ): { base: string; quote: string } | null {
+    if (typeof hexValue !== "string" || hexValue.length !== 64) return null;
     try {
-      const buffer = Buffer.from(hexValue, 'hex');
-      const dataView = new DataView(buffer.buffer, buffer.byteOffset, buffer.byteLength);
+      const buffer = Buffer.from(hexValue, "hex");
+      const dataView = new DataView(
+        buffer.buffer,
+        buffer.byteOffset,
+        buffer.byteLength
+      );
       const baseAmount = dataView.getBigInt64(0, true);
       const basePrecision = dataView.getUint8(8);
-      const baseSymbolRaw = buffer.toString('ascii', 9, 16).replace(/\0/g, '');
-      const baseSymbol = baseSymbolRaw === 'SBD' ? 'HBD' : baseSymbolRaw;
+      const baseSymbolRaw = buffer.toString("ascii", 9, 16).replace(/\0/g, "");
+      const baseSymbol = baseSymbolRaw === "SBD" ? "HBD" : baseSymbolRaw;
       const baseValue = Number(baseAmount) / Math.pow(10, basePrecision);
       const quoteAmount = dataView.getBigInt64(16, true);
       const quotePrecision = dataView.getUint8(24);
-      const quoteSymbolRaw = buffer.toString('ascii', 25, 32).replace(/\0/g, '');
-      const quoteSymbol = quoteSymbolRaw === 'STEEM' ? 'HIVE' : quoteSymbolRaw;
+      const quoteSymbolRaw = buffer
+        .toString("ascii", 25, 32)
+        .replace(/\0/g, "");
+      const quoteSymbol = quoteSymbolRaw === "STEEM" ? "HIVE" : quoteSymbolRaw;
       const quoteValue = Number(quoteAmount) / Math.pow(10, quotePrecision);
-      return { base: `${baseValue.toFixed(basePrecision)} ${baseSymbol}`, quote: `${quoteValue.toFixed(quotePrecision)} ${quoteSymbol}` };
-    } catch (e) { return null; }
+      return {
+        base: `${baseValue.toFixed(basePrecision)} ${baseSymbol}`,
+        quote: `${quoteValue.toFixed(quotePrecision)} ${quoteSymbol}`,
+      };
+    } catch (e) {
+      return null;
+    }
   }
 
   /**
@@ -244,17 +257,23 @@ class OperationsFormatter implements IWaxCustomFormatter {
    * @returns A formatted string like "3.000 HIVE", or null on failure.
    */
   private decodeAsset(hexValue: string): string | null {
-    if (typeof hexValue !== 'string' || hexValue.length !== 32) return null;
+    if (typeof hexValue !== "string" || hexValue.length !== 32) return null;
     try {
-      const buffer = Buffer.from(hexValue, 'hex');
-      const dataView = new DataView(buffer.buffer, buffer.byteOffset, buffer.byteLength);
+      const buffer = Buffer.from(hexValue, "hex");
+      const dataView = new DataView(
+        buffer.buffer,
+        buffer.byteOffset,
+        buffer.byteLength
+      );
       const amount = dataView.getBigInt64(0, true);
       const precision = dataView.getUint8(8);
-      const symbolRaw = buffer.toString('ascii', 9, 16).replace(/\0/g, '');
-      const symbol = symbolRaw === 'STEEM' ? 'HIVE' : symbolRaw;
+      const symbolRaw = buffer.toString("ascii", 9, 16).replace(/\0/g, "");
+      const symbol = symbolRaw === "STEEM" ? "HIVE" : symbolRaw;
       const value = Number(amount) / Math.pow(10, precision);
       return `${value.toFixed(precision)} ${symbol}`;
-    } catch (e) { return null; }
+    } catch (e) {
+      return null;
+    }
   }
 
   /**
@@ -262,12 +281,18 @@ class OperationsFormatter implements IWaxCustomFormatter {
    * @returns The rate in basis points (e.g., 2000 for 20%), or null on failure.
    */
   private decodeInterestRate(value: string | number): number | null {
-    if (typeof value === 'number') return value;
-    if (typeof value === 'string' && value.length === 4 && /^[0-9a-fA-F]+$/.test(value)) {
+    if (typeof value === "number") return value;
+    if (
+      typeof value === "string" &&
+      value.length === 4 &&
+      /^[0-9a-fA-F]+$/.test(value)
+    ) {
       try {
-        const buffer = Buffer.from(value, 'hex');
+        const buffer = Buffer.from(value, "hex");
         return buffer.readUInt16LE(0);
-      } catch (e) { return null; }
+      } catch (e) {
+        return null;
+      }
     }
     return null;
   }
@@ -277,12 +302,14 @@ class OperationsFormatter implements IWaxCustomFormatter {
    * @returns The decoded number, or null on failure.
    */
   private decodeInt32(value: string | number): number | null {
-    if (typeof value === 'number') return value;
-    if (typeof value === 'string' && /^[0-9a-fA-F]+$/.test(value)) {
+    if (typeof value === "number") return value;
+    if (typeof value === "string" && /^[0-9a-fA-F]+$/.test(value)) {
       try {
-        const buffer = Buffer.from(value, 'hex');
+        const buffer = Buffer.from(value, "hex");
         return buffer.readUInt32LE(0);
-      } catch (e) { return null; }
+      } catch (e) {
+        return null;
+      }
     }
     return null;
   }
@@ -295,16 +322,20 @@ class OperationsFormatter implements IWaxCustomFormatter {
     if (!value) return null;
     if (/^[0-9a-fA-F]+$/.test(value) && value.length > 20) {
       try {
-        const buffer = Buffer.from(value, 'hex');
+        const buffer = Buffer.from(value, "hex");
         // Some clients add a length prefix byte, try to handle it
         try {
           const len = buffer.readUInt8(0);
           if (len === buffer.length - 1) {
-              return buffer.toString('utf8', 1);
+            return buffer.toString("utf8", 1);
           }
-        } catch (e) { /* fall through if parsing length fails */ }
-        return buffer.toString('utf8');
-      } catch (e) { return value; } // Fallback to original string on error
+        } catch (e) {
+          /* fall through if parsing length fails */
+        }
+        return buffer.toString("utf8");
+      } catch (e) {
+        return value;
+      } // Fallback to original string on error
     }
     return value; // Assume it's a plain text URL
   }
@@ -558,16 +589,17 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getAccountLink(op.owner),
       this.i18n.t("formatter.formatLimitOrderCreateOperation.actionSell"),
       this.getFormattedAmount(op.amount_to_sell),
-      this.i18n.t("formatter.formatLimitOrderCreateOperation.conditionMinReceive"),
+      this.i18n.t(
+        "formatter.formatLimitOrderCreateOperation.conditionMinReceive"
+      ),
       this.getFormattedAmount(op.min_to_receive),
-      
+
       this.i18n.t("formatter.formatLimitOrderCreateOperation.idPrefix"),
       `${op.orderid}`,
     ];
 
-
     if (avgRate) {
-      const idIndex = messageElements.length - 2; 
+      const idIndex = messageElements.length - 2;
       messageElements.splice(
         idIndex,
         0,
@@ -578,13 +610,14 @@ class OperationsFormatter implements IWaxCustomFormatter {
 
     if (!op.fill_or_kill) {
       messageElements.push(
-        this.i18n.t("formatter.formatLimitOrderCreateOperation.expirationPrefix"),
+        this.i18n.t(
+          "formatter.formatLimitOrderCreateOperation.expirationPrefix"
+        ),
         this.getFormattedDate(op.expiration)
       );
     }
 
     const message = this.generateReactLink(messageElements);
-
 
     return {
       ...target,
@@ -1546,72 +1579,86 @@ class OperationsFormatter implements IWaxCustomFormatter {
     };
   }
 
-   @WaxFormattable({
-  matchProperty: "type",
-  matchValue: "witness_set_properties_operation",
+  @WaxFormattable({
+    matchProperty: "type",
+    matchValue: "witness_set_properties_operation",
   })
   formatWitnessSetPropertiesOperation({
     source: { value: op },
     target,
   }: IFormatFunctionArguments<{ value: witness_set_properties }>) {
-
     const propsMap = Object.fromEntries(op.props as unknown as [string, any][]);
     const actionElements: React.ReactElement[] = [];
 
     // Case: HBD Exchange Rate
-    const parsedPrice = propsMap.hbd_exchange_rate ? this.decodePriceFeed(propsMap.hbd_exchange_rate) : null;
+    const parsedPrice = propsMap.hbd_exchange_rate
+      ? this.decodePriceFeed(propsMap.hbd_exchange_rate)
+      : null;
     if (parsedPrice) {
       const priceString = `${parsedPrice.base} / ${parsedPrice.quote}`;
       actionElements.push(
         <span key="price">
-          {this.i18n.t("formatter.formatWitnessSetPropertiesOperation.updatedPriceTo")}
+          {this.i18n.t(
+            "formatter.formatWitnessSetPropertiesOperation.updatedPriceTo"
+          )}
           <span style={{ color: "red" }}>{priceString}</span>
         </span>
       );
     }
 
     // Case: Account Creation Fee
-    const fee = propsMap.account_creation_fee ? this.decodeAsset(propsMap.account_creation_fee) : null;
+    const fee = propsMap.account_creation_fee
+      ? this.decodeAsset(propsMap.account_creation_fee)
+      : null;
     if (fee) {
       actionElements.push(
         <span key="fee">
-          {this.i18n.t("formatter.formatWitnessSetPropertiesOperation.setAccountCreationFee")}
+          {this.i18n.t(
+            "formatter.formatWitnessSetPropertiesOperation.setAccountCreationFee"
+          )}
           {fee}
         </span>
       );
     }
-    
+
     // Case: Maximum Block Size (Handles number OR hex)
     const blockSize = this.decodeInt32(propsMap.maximum_block_size);
     if (blockSize !== null) {
       actionElements.push(
         <span key="blocksize">
-          {this.i18n.t("formatter.formatWitnessSetPropertiesOperation.setMaxBlockSize")}
-          {blockSize.toLocaleString()}{" "}
-          {this.i18n.t("common.bytes")}
+          {this.i18n.t(
+            "formatter.formatWitnessSetPropertiesOperation.setMaxBlockSize"
+          )}
+          {blockSize.toLocaleString()} {this.i18n.t("common.bytes")}
         </span>
       );
     }
 
     // Case: HBD Interest Rate (Handles number OR hex)
-    const interestRateBasisPoints = propsMap.hbd_interest_rate ? this.decodeInterestRate(propsMap.hbd_interest_rate) : null;
+    const interestRateBasisPoints = propsMap.hbd_interest_rate
+      ? this.decodeInterestRate(propsMap.hbd_interest_rate)
+      : null;
     if (interestRateBasisPoints !== null) {
       const ratePercent = (interestRateBasisPoints / 100).toLocaleString();
       actionElements.push(
         <span key="interest">
-          {this.i18n.t("formatter.formatWitnessSetPropertiesOperation.setHbdInterestRate")}
+          {this.i18n.t(
+            "formatter.formatWitnessSetPropertiesOperation.setHbdInterestRate"
+          )}
           {ratePercent}
           {"%"}
         </span>
       );
     }
-    
+
     // Case: Account Subsidy Budget
     const subsidyBudget = this.decodeInt32(propsMap.account_subsidy_budget);
     if (subsidyBudget !== null) {
       actionElements.push(
         <span key="budget">
-          {this.i18n.t("formatter.formatWitnessSetPropertiesOperation.setSubsidyBudget")}
+          {this.i18n.t(
+            "formatter.formatWitnessSetPropertiesOperation.setSubsidyBudget"
+          )}
           {subsidyBudget.toLocaleString()}
         </span>
       );
@@ -1622,7 +1669,9 @@ class OperationsFormatter implements IWaxCustomFormatter {
     if (subsidyDecay !== null) {
       actionElements.push(
         <span key="decay">
-          {this.i18n.t("formatter.formatWitnessSetPropertiesOperation.setSubsidyDecay")}
+          {this.i18n.t(
+            "formatter.formatWitnessSetPropertiesOperation.setSubsidyDecay"
+          )}
           {subsidyDecay.toLocaleString()}
         </span>
       );
@@ -1634,46 +1683,53 @@ class OperationsFormatter implements IWaxCustomFormatter {
       actionElements.push(
         <span key="url">
           {this.i18n.t("formatter.formatWitnessSetPropertiesOperation.setUrl")}
-          {this.generateLink(url)}
-          {' '}<LinkIcon size={14} style={{ display: 'inline-block', verticalAlign: 'middle' }} />
+          {this.generateLink(url)}{" "}
+          <LinkIcon
+            size={14}
+            style={{ display: "inline-block", verticalAlign: "middle" }}
+          />
         </span>
       );
     }
 
-     // Case: Signing Key (Handles `key` and legacy `new_signing_key`)
+    // Case: Signing Key (Handles `key` and legacy `new_signing_key`)
     const newKey = propsMap.new_signing_key;
-    if (newKey && newKey !==propsMap.key) {
+    if (newKey && newKey !== propsMap.key) {
       actionElements.push(
-        <span key="key" >
-            {this.i18n.t("formatter.formatWitnessSetPropertiesOperation.rotatedKeyTo")}
-            <br/><KeyRound size={12} style={{ display: 'inline-block' }} />
-            {' '}{newKey}
-          
+        <span key="key">
+          {this.i18n.t(
+            "formatter.formatWitnessSetPropertiesOperation.rotatedKeyTo"
+          )}
+          <br />
+          <KeyRound size={12} style={{ display: "inline-block" }} /> {newKey}
         </span>
       );
     }
 
-     const joinedActions = actionElements.flatMap((action, index) => {
-    // If it's not the last item, add a comma and a line break.
-    if (index < actionElements.length - 1) {
+    const joinedActions = actionElements.flatMap((action, index) => {
+      // If it's not the last item, add a comma and a line break.
+      if (index < actionElements.length - 1) {
+        return [
+          <span key={action.key}>{action},</span>,
+          <br key={`br-${index}`} />,
+        ];
+      }
       return [
-        <span key={action.key}>{action},</span>,
-        <br key={`br-${index}`} />
+        <span style={{ whiteSpace: "nowrap" }} key={action.key}>
+          {action}
+        </span>,
       ];
-    }
-      return [<span style={{ whiteSpace: 'nowrap' }} key={action.key}>{action}</span>];
     });
-    
-   // Build the final message.
+
+    // Build the final message.
     const message = this.generateReactLink([
-    this.getAccountLink(op.owner),
-    " ",
-    this.i18n.t("formatter.formatWitnessSetPropertiesOperation.action"), 
-    ...(joinedActions.length > 0 ?
-      [<br key="title-br" />, ...joinedActions] :
-      []
-    )
-  ]);
+      this.getAccountLink(op.owner),
+      " ",
+      this.i18n.t("formatter.formatWitnessSetPropertiesOperation.action"),
+      ...(joinedActions.length > 0
+        ? [<br key="title-br" />, ...joinedActions]
+        : []),
+    ]);
     return {
       ...target,
       value: { ...message, ...this.getOperationPerspective(op.owner) },
@@ -2050,7 +2106,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
       `${op.open_orderid})`,
     ];
     if (avgRate) {
-      const idIndex = 7; 
+      const idIndex = 7;
       messageElements.splice(
         idIndex,
         0,

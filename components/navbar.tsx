@@ -28,6 +28,7 @@ import LanguageSelector from "./home/LanguageSelector";
 import { useI18n } from "@/i18n/i18n";
 import { ExploreMenu } from "./ExploreMenu";
 import RecentlyViewedList from "./RecentlyViewedList";
+import { deploySettings } from "@/utils/deploySettings";
 import { useRecordRecentViews } from "@/hooks/common/useRecentlyViewed";
 import { getImageSrc } from "@/utils/PathUtils";
 import LoginControl from "./login/LoginControl";
@@ -117,9 +118,11 @@ export default function Navbar() {
                         {t("navbar.darkLightMode")}
                       </span>
                     </div>
-                    <div className="py-1 border-b-2 flex items-start justify-start">
-                      <LanguageSelector />
-                    </div>
+                    {deploySettings.languages.length > 1 && (
+                      <div className="py-1 border-b-2 flex items-start justify-start">
+                        <LanguageSelector />
+                      </div>
+                    )}
                     <div className="py-1 max-w-fit">
                       <DataView isMobile={isMobile} />
                     </div>
@@ -165,48 +168,54 @@ export default function Navbar() {
                         {t("pageTitle.hiveBlocks")}
                       </span>
                     </Link>
-                    <Link
-                      href={"/communities"}
-                      className="flex items-center gap-3 rounded-md px-2 py-2 transition-colors hover:bg-navbar-listHover"
-                      onClick={() => setMenuOpen(false)}
-                    >
-                      <Users
-                        className="shrink-0 text-slate-500 dark:text-slate-400"
-                        size={20}
-                      />
-                      <span className="text-base">
-                        {t("navbar.communitiesTitle")}
-                      </span>
-                    </Link>
-                    <Link
-                      href={"/top-holders"}
-                      className="flex items-center gap-3 rounded-md px-2 py-2 transition-colors hover:bg-navbar-listHover"
-                      onClick={() => setMenuOpen(false)}
-                    >
-                      <Award
-                        className="shrink-0 text-slate-500 dark:text-slate-400"
-                        size={20}
-                      />
-                      <span className="text-base">
-                        {t("pageTitle.topHolders")}
-                      </span>
-                    </Link>
+                    {deploySettings.communities && (
+                      <Link
+                        href={"/communities"}
+                        className="flex items-center gap-3 rounded-md px-2 py-2 transition-colors hover:bg-navbar-listHover"
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        <Users
+                          className="shrink-0 text-slate-500 dark:text-slate-400"
+                          size={20}
+                        />
+                        <span className="text-base">
+                          {t("navbar.communitiesTitle")}
+                        </span>
+                      </Link>
+                    )}
+                    {deploySettings.topHolders && (
+                      <Link
+                        href={"/top-holders"}
+                        className="flex items-center gap-3 rounded-md px-2 py-2 transition-colors hover:bg-navbar-listHover"
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        <Award
+                          className="shrink-0 text-slate-500 dark:text-slate-400"
+                          size={20}
+                        />
+                        <span className="text-base">
+                          {t("pageTitle.topHolders")}
+                        </span>
+                      </Link>
+                    )}
                     <p className="px-2 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                       {t("boards.governance.name")}
                     </p>
-                    <Link
-                      href={"/proposals"}
-                      className="flex items-center gap-3 rounded-md px-2 py-2 transition-colors hover:bg-navbar-listHover"
-                      onClick={() => setMenuOpen(false)}
-                    >
-                      <Vote
-                        className="shrink-0 text-slate-500 dark:text-slate-400"
-                        size={20}
-                      />
-                      <span className="text-base">
-                        {t("navbar.proposalsTitle")}
-                      </span>
-                    </Link>
+                    {deploySettings.proposals && (
+                      <Link
+                        href={"/proposals"}
+                        className="flex items-center gap-3 rounded-md px-2 py-2 transition-colors hover:bg-navbar-listHover"
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        <Vote
+                          className="shrink-0 text-slate-500 dark:text-slate-400"
+                          size={20}
+                        />
+                        <span className="text-base">
+                          {t("navbar.proposalsTitle")}
+                        </span>
+                      </Link>
+                    )}
                     <Link
                       href={"/witnesses"}
                       className="flex items-center gap-3 rounded-md px-2 py-2 transition-colors hover:bg-navbar-listHover"
@@ -234,17 +243,19 @@ export default function Navbar() {
                       </span>
                     </Link>
                     <div className="my-1 h-px bg-slate-200 dark:bg-slate-700" />
-                    <Link
-                      href={"/tools/compare"}
-                      className="flex items-center gap-3 rounded-md px-2 py-2 transition-colors hover:bg-navbar-listHover"
-                      onClick={() => setMenuOpen(false)}
-                    >
-                      <Wrench
-                        className="shrink-0 text-slate-500 dark:text-slate-400"
-                        size={20}
-                      />
-                      <span className="text-base">{t("tools.title")}</span>
-                    </Link>
+                    {deploySettings.tools && (
+                      <Link
+                        href={"/tools/compare"}
+                        className="flex items-center gap-3 rounded-md px-2 py-2 transition-colors hover:bg-navbar-listHover"
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        <Wrench
+                          className="shrink-0 text-slate-500 dark:text-slate-400"
+                          size={20}
+                        />
+                        <span className="text-base">{t("tools.title")}</span>
+                      </Link>
+                    )}
                     <Link
                       href={"/settings"}
                       className="flex items-center gap-3 rounded-md px-2 py-2 transition-colors hover:bg-navbar-listHover"
