@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import crypto from "crypto";
 import { config } from "@/Config";
 import { workspaceLimiter } from "@/utils/RateLimit";
+import { deploySettings, rejectUnavailable } from "@/utils/deploySettings";
 import {
   getSessionUser,
   deriveUserEncryptionKey,
@@ -14,6 +15,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  if (!deploySettings.dashboardSync) return rejectUnavailable(res);
   if (req.method !== "POST") return res.status(405).end();
 
   const ip =

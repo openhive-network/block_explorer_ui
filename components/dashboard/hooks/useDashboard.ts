@@ -4,8 +4,6 @@ import {
   getLayoutStorageKey,
   getWidgetsStorageKey,
   getWidgetStatesStorageKey,
-  DEFAULT_WIDGETS,
-  DEFAULT_MASTER_LAYOUT,
   generateDerivedLayouts,
   COLLAPSED_WIDGET_HEIGHT,
   EDITABLE_BREAKPOINTS,
@@ -22,6 +20,8 @@ import {
   captureBoard,
   clearBoardOrigin,
   clearBoardUndo,
+  DEFAULT_BOARD,
+  DEFAULT_BOARD_TAKES_SEEDS,
   getBoardOriginStorageKey,
   getBoardUndoStorageKey,
   isUntouchedAdoption,
@@ -32,6 +32,7 @@ import {
   writeAllOrNothing,
 } from "../lib/boardSlots";
 import { useAuth } from "@/contexts/AuthContext";
+import { isWidgetEnabled } from "@/utils/deploySettings";
 
 // Measured content heights, per breakpoint, per widget id.
 type RuntimeHeights = Record<string, Record<string, number>>;
@@ -54,6 +55,14 @@ const withRuntimeHeights = (
   return merged;
 };
 
+const autoAddFlagKeys = (username: string) => [
+  ...WIDGET_SEEDS.map((seed) => seedStorageKey(seed.flag, username)),
+  watchedProposalsDismissedKey(username),
+];
+
+const markAutoAddsDone = (username: string) =>
+  autoAddFlagKeys(username).forEach((key) => localStorage.setItem(key, "true"));
+
 interface ExtendedLayout extends Layout {
   originalH?: number;
 }
@@ -64,12 +73,14 @@ interface ExtendedLayout extends Layout {
  */
 const createInitialLayoutsAndStates = () => {
   const masterLayout: ExtendedLayout[] = JSON.parse(
-    JSON.stringify(DEFAULT_MASTER_LAYOUT)
+    JSON.stringify(DEFAULT_BOARD.masterLayout)
   );
-  const initialWidgetStates: Record<string, any> = {};
+  const initialWidgetStates: Record<string, any> = JSON.parse(
+    JSON.stringify(DEFAULT_BOARD.widgetStates)
+  );
 
   // Process master layout for initial collapsed states
-  DEFAULT_WIDGETS.forEach((widget) => {
+  DEFAULT_BOARD.widgets.forEach((widget) => {
     const config = WIDGET_REGISTRY[widget.type];
     if (config?.initialCollapsed) {
       const layoutItem = masterLayout.find((item) => item.i === widget.i);
@@ -135,7 +146,7 @@ export function useDashboard() {
       getWidgetStatesStorageKey(username)
     );
 
-    let initialWidgets = [...DEFAULT_WIDGETS];
+    let initialWidgets = [...DEFAULT_BOARD.widgets];
     let initialLayouts: Layouts;
     let initialWidgetStates: Record<string, any> = {};
 
@@ -151,7 +162,7 @@ export function useDashboard() {
       // widgets back to the collapsed height.
       const typeById = new Map(initialWidgets.map((w) => [w.i, w.type]));
       const reconciledMaster: ExtendedLayout[] = (
-        parsedLayouts.lg || DEFAULT_MASTER_LAYOUT
+        parsedLayouts.lg || DEFAULT_BOARD.masterLayout
       ).map((item: ExtendedLayout) => {
         const type = typeById.get(item.i);
         const cfg = type ? WIDGET_REGISTRY[type] : undefined;
@@ -173,6 +184,7 @@ export function useDashboard() {
       const initialState = createInitialLayoutsAndStates();
       initialLayouts = initialState.layouts;
       initialWidgetStates = initialState.widgetStates;
+      if (!DEFAULT_BOARD_TAKES_SEEDS) markAutoAddsDone(username);
     }
 
     setWidgets(initialWidgets);
@@ -323,9 +335,20 @@ export function useDashboard() {
   const onBreakpointChange = (newBreakpoint: string) =>
     setCurrentBreakpoint(newBreakpoint);
 
-  const onLayoutChange = (_currentLayout: Layout[], allLayouts: Layouts) => {
+  const onLayoutChange = (_currentLayout: Layout[], reported: Layouts) => {
     if (!isEditMode) return;
     if (!username) return;
+    // The grid only reports widgets it renders; switched-off ones keep their place.
+    const typeById = new Map(widgets.map((w) => [w.i, w.type]));
+    const allLayouts: Layouts = {};
+    for (const [breakpoint, items] of Object.entries(reported)) {
+      const hidden = (layouts[breakpoint] ?? []).filter(
+        (item) =>
+          !isWidgetEnabled(typeById.get(item.i) ?? "") &&
+          !items.some((shown) => shown.i === item.i)
+      );
+      allLayouts[breakpoint] = [...items, ...hidden];
+    }
     setLayouts(allLayouts);
     if (EDITABLE_BREAKPOINTS.includes(currentBreakpoint)) {
       localStorage.setItem(
@@ -444,13 +467,14 @@ export function useDashboard() {
     if (!username || templateView) return;
 
     const initial = createInitialLayoutsAndStates();
-    const nextWidgets = DEFAULT_WIDGETS;
+    const nextWidgets = DEFAULT_BOARD.widgets;
     const nextLayouts = initial.layouts;
     const nextStates = initial.widgetStates;
-    WIDGET_SEEDS.forEach((seed) =>
-      localStorage.removeItem(seedStorageKey(seed.flag, username))
-    );
-    localStorage.removeItem(watchedProposalsDismissedKey(username));
+    if (DEFAULT_BOARD_TAKES_SEEDS) {
+      autoAddFlagKeys(username).forEach((key) => localStorage.removeItem(key));
+    } else {
+      markAutoAddsDone(username);
+    }
 
     localStorage.setItem(
       getLayoutStorageKey(username),

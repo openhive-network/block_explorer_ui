@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 import { Client } from "@hiveio/dhive";
 import { config } from "@/Config";
 import { useAuth } from "@/contexts/AuthContext";
+import { deploySettings } from "@/utils/deploySettings";
 import { SmartSigner } from "@/lib/smart-signer";
 import {
   buildBundle,
@@ -54,7 +55,7 @@ export function useWorkspaceSync(): UseWorkspaceSyncReturn {
   }, [syncStatus]);
 
   const syncWorkspace = useCallback(async () => {
-    if (!username || !method) return;
+    if (!username || !method || !deploySettings.dashboardSync) return;
 
     setSyncStatus("syncing");
     try {

@@ -25,6 +25,7 @@ import { secondsUntilFull } from "@/utils/manaRecharge";
 import { formatShortDuration } from "@/utils/TimeUtils";
 import { useWorkspaceSync } from "@/hooks/api/useWorkspaceSync";
 import { buildBundle, hasLocalChanges } from "@/utils/workspaceSync";
+import { deploySettings } from "@/utils/deploySettings";
 import { diffBundles } from "@/utils/workspaceDiff";
 import {
   fetchCloudBundle,
@@ -123,7 +124,9 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
   };
 
   useEffect(() => {
-    setIsUnsynced(!!username && hasLocalChanges(username));
+    setIsUnsynced(
+      deploySettings.dashboardSync && !!username && hasLocalChanges(username)
+    );
     if (syncStatus === "success") toast.dismiss("workspace-cloud-differs");
   }, [username, isOpen, syncStatus]);
 
@@ -380,11 +383,13 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
                 )
               }
             />
-            <UserNavItem
-              href={`/proposals?voter=${username}&status=all`}
-              title={t("auth.myVotedProposals")}
-              closeMenu={() => setIsOpen(false)}
-            />
+            {deploySettings.proposals && (
+              <UserNavItem
+                href={`/proposals?voter=${username}&status=all`}
+                title={t("auth.myVotedProposals")}
+                closeMenu={() => setIsOpen(false)}
+              />
+            )}
             <UserNavItem
               href={`/witnesses?voter=${username}`}
               title={t("auth.myWitnessVotes")}
@@ -393,133 +398,139 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
 
             <div className="my-1 border-t border-border/40 mx-1" />
 
-            <TooltipProvider>
-              <Tooltip
-                open={isUnsynced || syncStatus !== "idle" ? undefined : false}
-              >
-                <TooltipTrigger asChild>
-                  <button
-                    onClick={syncWorkspace}
-                    disabled={syncStatus === "syncing" || !isUnsynced}
-                    className="relative flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium hover:bg-secondary/60 transition-all active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+            {deploySettings.dashboardSync && (
+              <>
+                <TooltipProvider>
+                  <Tooltip
+                    open={
+                      isUnsynced || syncStatus !== "idle" ? undefined : false
+                    }
                   >
-                    {syncStatus === "syncing" && (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    )}
-                    {syncStatus === "success" && (
-                      <CheckCircle2 className="h-4 w-4" color="#22c55e" />
-                    )}
-                    {syncStatus === "error" && (
-                      <span className="relative">
-                        <AlertCircle className="h-4 w-4" color="#ef4444" />
-                        {isUnsynced && (
-                          <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-amber-400" />
+                    <TooltipTrigger asChild>
+                      <button
+                        onClick={syncWorkspace}
+                        disabled={syncStatus === "syncing" || !isUnsynced}
+                        className="relative flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium hover:bg-secondary/60 transition-all active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+                      >
+                        {syncStatus === "syncing" && (
+                          <Loader2 className="h-4 w-4 animate-spin" />
                         )}
-                      </span>
-                    )}
-                    {syncStatus === "oversized" && (
-                      <AlertCircle className="h-4 w-4" color="#f59e0b" />
-                    )}
-                    {syncStatus === "idle" && (
-                      <span className="relative">
-                        <CloudUpload className="h-4 w-4" />
-                        {isUnsynced && (
-                          <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-amber-400" />
+                        {syncStatus === "success" && (
+                          <CheckCircle2 className="h-4 w-4" color="#22c55e" />
                         )}
-                      </span>
-                    )}
-                    <span>{t("settingsPage.workspaceSyncButton")}</span>
-                    {isUnsynced &&
-                      (syncStatus === "idle" || syncStatus === "error") && (
-                        <span className="ml-auto text-xs text-amber-500 font-normal">
-                          {t("workspaceSync.unsyncedLabel")}
-                        </span>
-                      )}
-                  </button>
-                </TooltipTrigger>
-                <TooltipPortal>
-                  <TooltipContent
-                    side="left"
-                    className="max-w-[200px] text-center"
-                  >
-                    {isUnsynced
-                      ? t("workspaceSync.unsyncedTooltip")
-                      : t("workspaceSync.noChangesToSync")}
-                  </TooltipContent>
-                </TooltipPortal>
-              </Tooltip>
-            </TooltipProvider>
+                        {syncStatus === "error" && (
+                          <span className="relative">
+                            <AlertCircle className="h-4 w-4" color="#ef4444" />
+                            {isUnsynced && (
+                              <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-amber-400" />
+                            )}
+                          </span>
+                        )}
+                        {syncStatus === "oversized" && (
+                          <AlertCircle className="h-4 w-4" color="#f59e0b" />
+                        )}
+                        {syncStatus === "idle" && (
+                          <span className="relative">
+                            <CloudUpload className="h-4 w-4" />
+                            {isUnsynced && (
+                              <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-amber-400" />
+                            )}
+                          </span>
+                        )}
+                        <span>{t("settingsPage.workspaceSyncButton")}</span>
+                        {isUnsynced &&
+                          (syncStatus === "idle" || syncStatus === "error") && (
+                            <span className="ml-auto text-xs text-amber-500 font-normal">
+                              {t("workspaceSync.unsyncedLabel")}
+                            </span>
+                          )}
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipPortal>
+                      <TooltipContent
+                        side="left"
+                        className="max-w-[200px] text-center"
+                      >
+                        {isUnsynced
+                          ? t("workspaceSync.unsyncedTooltip")
+                          : t("workspaceSync.noChangesToSync")}
+                      </TooltipContent>
+                    </TooltipPortal>
+                  </Tooltip>
+                </TooltipProvider>
 
-            {/* The other direction: the prompt shown at login is otherwise the
+                {/* The other direction: the prompt shown at login is otherwise the
                 only way to pull the saved workspace back. */}
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    onClick={handleRestoreFromChain}
-                    disabled={isRestoring}
-                    className="relative flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium hover:bg-secondary/60 transition-all active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
-                  >
-                    {isRestoring ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <CloudDownload className="h-4 w-4" />
-                    )}
-                    <span>{t("workspaceSync.restoreFromChainButton")}</span>
-                  </button>
-                </TooltipTrigger>
-                <TooltipPortal>
-                  <TooltipContent
-                    side="left"
-                    className="max-w-[200px] text-center"
-                  >
-                    {t("workspaceSync.restoreFromChainTooltip")}
-                  </TooltipContent>
-                </TooltipPortal>
-              </Tooltip>
-            </TooltipProvider>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        onClick={handleRestoreFromChain}
+                        disabled={isRestoring}
+                        className="relative flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium hover:bg-secondary/60 transition-all active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+                      >
+                        {isRestoring ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <CloudDownload className="h-4 w-4" />
+                        )}
+                        <span>{t("workspaceSync.restoreFromChainButton")}</span>
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipPortal>
+                      <TooltipContent
+                        side="left"
+                        className="max-w-[200px] text-center"
+                      >
+                        {t("workspaceSync.restoreFromChainTooltip")}
+                      </TooltipContent>
+                    </TooltipPortal>
+                  </Tooltip>
+                </TooltipProvider>
 
-            {/* RC info row */}
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="flex items-center gap-1.5 ml-6 cursor-default">
-                    <Info className="h-3 w-3 text-muted-foreground/60 shrink-0" />
-                    <span className="text-[10px]">
-                      {t("workspaceSync.rcInfo")}
-                      {lastBundleBytes !== null && (
-                        <span className="ml-1 text-muted-foreground/80">
-                          (~{(lastBundleBytes / 1024).toFixed(1)} KB)
+                {/* RC info row */}
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="flex items-center gap-1.5 ml-6 cursor-default">
+                        <Info className="h-3 w-3 text-muted-foreground/60 shrink-0" />
+                        <span className="text-[10px]">
+                          {t("workspaceSync.rcInfo")}
+                          {lastBundleBytes !== null && (
+                            <span className="ml-1 text-muted-foreground/80">
+                              (~{(lastBundleBytes / 1024).toFixed(1)} KB)
+                            </span>
+                          )}
                         </span>
-                      )}
-                    </span>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipPortal>
+                      <TooltipContent
+                        side="left"
+                        className="max-w-[220px] text-left text-[11px]"
+                      >
+                        {t("workspaceSync.rcInfoTooltip")}
+                      </TooltipContent>
+                    </TooltipPortal>
+                  </Tooltip>
+                </TooltipProvider>
+
+                {/* Low-RC warning */}
+                {!!manabarsData && manabarsData.rc.percentageValue < 10 && (
+                  <div className="mx-1 mb-1 flex items-start gap-2 rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800/40 px-2.5 py-2">
+                    <AlertCircle
+                      className="h-3.5 w-3.5 mt-0.5 shrink-0"
+                      color="#ef4444"
+                    />
+                    <p className="text-[10px] text-red-700 dark:text-red-300 leading-relaxed">
+                      {t("workspaceSync.rcLowWarning")}
+                    </p>
                   </div>
-                </TooltipTrigger>
-                <TooltipPortal>
-                  <TooltipContent
-                    side="left"
-                    className="max-w-[220px] text-left text-[11px]"
-                  >
-                    {t("workspaceSync.rcInfoTooltip")}
-                  </TooltipContent>
-                </TooltipPortal>
-              </Tooltip>
-            </TooltipProvider>
+                )}
 
-            {/* Low-RC warning */}
-            {!!manabarsData && manabarsData.rc.percentageValue < 10 && (
-              <div className="mx-1 mb-1 flex items-start gap-2 rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800/40 px-2.5 py-2">
-                <AlertCircle
-                  className="h-3.5 w-3.5 mt-0.5 shrink-0"
-                  color="#ef4444"
-                />
-                <p className="text-[10px] text-red-700 dark:text-red-300 leading-relaxed">
-                  {t("workspaceSync.rcLowWarning")}
-                </p>
-              </div>
+                <div className="my-1 border-t border-border/40 mx-1" />
+              </>
             )}
-
-            <div className="my-1 border-t border-border/40 mx-1" />
 
             {showLogoutConfirm ? (
               <div className="rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/40 p-3 space-y-2">

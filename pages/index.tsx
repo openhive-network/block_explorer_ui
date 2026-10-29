@@ -32,6 +32,7 @@ import {
   SEO_LIST_CACHE_CONTROL,
 } from "@/utils/seo";
 import { seoText } from "@/utils/seo/seoStrings";
+import { deploySettings } from "@/utils/deploySettings";
 
 const GUEST_VIEWS: Record<GuestView, React.ComponentType> = {
   overview: StandardHome,
@@ -73,7 +74,7 @@ export default function Home({ meta, initialGuestView }: HomeProps) {
     <div className="flex w-full items-center justify-center py-20">
       <Loader2 className="h-10 w-10 animate-spin text-slate-400" />
     </div>
-  ) : isLoggedIn ? (
+  ) : isLoggedIn && deploySettings.dashboard ? (
     // The modular dashboard is the signed-in home. StandardHome lives on only as
     // the guest Overview view below.
     <WidgetIndex />
