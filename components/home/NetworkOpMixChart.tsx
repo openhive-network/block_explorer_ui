@@ -135,7 +135,7 @@ const NetworkOpMixChart: React.FC<NetworkOpMixChartProps> = ({
       },
       tooltip: {
         trigger: "axis",
-        axisPointer: { type: "shadow-sm" },
+        axisPointer: { type: "shadow" },
         appendToBody: true,
         backgroundColor: tooltipBg,
         borderColor: tooltipBorder,
