@@ -1,5 +1,4 @@
 import React, { useState, useMemo, useCallback, useId, useEffect } from "react";
-import Image from "next/image";
 import {
   ArrowUp,
   ChevronRight,
@@ -58,6 +57,7 @@ import {
 import { TabKey } from "../AccountDetailsSection";
 import { PendingAssetSymbol } from "@/utils/accountPendingItems";
 import useCollapsedState from "@/hooks/common/useCollapsedState";
+import { getImageSrc } from "@/utils/PathUtils";
 
 const OPEN_ORDER_FIELDS: Record<string, PendingAssetSymbol> = {
   open_orders_hive_amount: "HIVE",
@@ -119,7 +119,14 @@ export const ASSET_CONFIG = [
     key: "hive",
     name: "HIVE",
     description: "accountBalanceCard.hiveDescription",
-    icon: <Image src="/hive-logo.png" alt="Hive logo" width={15} height={15} />,
+    icon: (
+      <img
+        src={getImageSrc("/hive-logo.png")}
+        alt="Hive logo"
+        width={15}
+        height={15}
+      />
+    ),
     fields: [
       "balance",
       "savings_balance",

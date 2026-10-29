@@ -27,43 +27,10 @@ const nextConfig = {
   basePath: basePath,
   // assetPrefix must match basePath for proper asset serving
   assetPrefix: basePath,
-  // The OG routes read the resvg wasm with fs, which tracing cannot detect.
-  // The glob names pnpm's real directory: it does not follow the
-  // node_modules/@resvg/resvg-wasm symlink, and standalone recreates that link.
-  outputFileTracingIncludes: {
-    "/api/og/**": [
-      "./node_modules/.pnpm/@resvg+resvg-wasm@*/node_modules/@resvg/resvg-wasm/index_bg.wasm",
-    ],
-  },
-  images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "images.hive.blog",
-        pathname: "**",
-      },
-      {
-        protocol: "https",
-        hostname: "files.steempeak.com",
-        pathname: "**",
-      },
-      {
-        protocol: "https",
-        hostname: "files.peakd.com",
-        pathname: "**",
-      },
-      {
-        protocol: "https",
-        hostname: "images.ecency.com",
-        pathname: "**",
-      },
-      {
-        protocol: "https",
-        hostname: "images.leofinance.io",
-        pathname: "**",
-      },
-    ],
-  },
+  // Security (#835): the server must never fetch or decode images. Use plain
+  // <img> (next/image imports fail lint) and never re-enable the optimizer or
+  // add remotePatterns.
+  images: { unoptimized: true },
 };
 
 module.exports = nextConfig;

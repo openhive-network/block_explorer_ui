@@ -359,13 +359,6 @@ export const getServerSideProps: GetServerSideProps<AccountPageProps> = async ({
 
   const title = pageTitle(`@${name}`);
 
-  // Same base as the canonical above: prefers the configured origin so a spoofed
-  // Host can't redirect the share card. Only absolute bases are usable here.
-  const base = absoluteBaseUrl({ headers: req.headers });
-  const ogImageUrl = /^https?:\/\//i.test(base)
-    ? `${base}/api/og/account/${encodeURIComponent(name)}`
-    : null;
-
   const description = clamp(
     seoText("seo.account.description", { name, site: siteConfig.name })
   );
@@ -376,7 +369,7 @@ export const getServerSideProps: GetServerSideProps<AccountPageProps> = async ({
         title,
         description,
         canonical,
-        ogImage: ogImageUrl,
+        ogImage: defaultOgImage(absoluteBaseUrl({ headers: req.headers })),
         ogImageAlt: `@${name}`,
         ogType: "profile",
         jsonLd: canonical

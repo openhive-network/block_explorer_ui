@@ -20,6 +20,7 @@ const useAccountVestingStats = (
     data: accountVestingStats,
     isPending: isAccountVestingStatsLoading,
     isError: isAccountVestingStatsError,
+    refetch,
   }: UseQueryResult<Hive.AccountVestingStatsResponse[] | undefined> = useQuery({
     queryKey: [
       "accountVestingStats",
@@ -47,6 +48,7 @@ const useAccountVestingStats = (
     accountVestingStats,
     isAccountVestingStatsLoading,
     isAccountVestingStatsError,
+    refetch,
   };
 };
 

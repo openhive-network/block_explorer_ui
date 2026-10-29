@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import TimeAgo from "timeago-react";
@@ -23,12 +23,12 @@ import AccountPagination from "@/components/account/AccountPagination";
 import DataCountMessage from "@/components/DataCountMessage";
 import DataExport from "@/components/DataExport";
 import NoResult from "@/components/NoResult";
+import ErrorMessage from "@/components/ErrorMessage";
 import { getOperationColor } from "@/components/OperationsTable";
 
 import { config } from "@/Config";
 import { useI18n } from "@/i18n/i18n";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
-import { useSettings } from "@/contexts/SettingsContext";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import useAccountVestingHistory from "@/hooks/api/balanceHistory/useAccountVestingHistory";
 import Hive from "@/types/Hive";
@@ -53,11 +53,12 @@ const VESTING_OP_TYPE_NAME: Record<number, string> = {
 interface PowerActivityTableProps {
   accountName: string;
   filter: Hive.VestingHistoryFilter;
-  onFilterChange: (filter: Hive.VestingHistoryFilter) => void;
   page: number | undefined;
   onPageChange: (page: number | undefined) => void;
   fromBlock?: Date | number | undefined;
   toBlock?: Date | number | undefined;
+  unit: VestingDisplayUnit;
+  onUnitChange: (unit: VestingDisplayUnit) => void;
 }
 
 // Labels match the AccountHpActivityCard breakdown so users see the same
@@ -86,31 +87,24 @@ const EventIcon: React.FC<{ type: Hive.VestingHistoryEvent["direction"] }> = ({
 const PowerActivityTable: React.FC<PowerActivityTableProps> = ({
   accountName,
   filter,
-  onFilterChange: _onFilterChange,
   page,
   onPageChange,
   fromBlock,
   toBlock,
+  unit,
+  onUnitChange,
 }) => {
   const { t, locale: appLocale } = useI18n();
   const router = useRouter();
-  const { settings } = useSettings();
   const { hiveChain } = useHiveChainContext();
   const { dynamicGlobalData } = useDynamicGlobal();
-
-  const [unit, setUnit] = useState<VestingDisplayUnit>(
-    settings.displayVestHpMode === "vests" ? "vests" : "hp"
-  );
-
-  useEffect(() => {
-    setUnit(settings.displayVestHpMode === "vests" ? "vests" : "hp");
-  }, [settings.displayVestHpMode]);
 
   const {
     accountVestingHistory,
     isAccountVestingHistoryLoading,
     isAccountVestingHistoryFetching,
     isAccountVestingHistoryError,
+    refetch,
   } = useAccountVestingHistory(
     accountName,
     filter,
@@ -248,17 +242,17 @@ const PowerActivityTable: React.FC<PowerActivityTableProps> = ({
           : eventLabel,
         [t("powerActivityTable.amountHive")]:
           hive !== null
-            ? `${hive.toLocaleString(undefined, { maximumFractionDigits: 3 })} HIVE`
+            ? `${hive.toLocaleString(appLocale, { maximumFractionDigits: 3 })} HIVE`
             : "—",
         [unitLabel]:
           amount.value !== null
-            ? `${amount.value.toLocaleString(undefined, {
+            ? `${amount.value.toLocaleString(appLocale, {
                 maximumFractionDigits: unit === "hp" ? 3 : 0,
               })} ${amount.unitSuffix}`
             : "—",
         [t("balanceHistoryTable.dollarValue")]:
           usd !== null
-            ? `$${usd.toLocaleString(undefined, { maximumFractionDigits: 2 })}`
+            ? `$${usd.toLocaleString(appLocale, { maximumFractionDigits: 2 })}`
             : "—",
         [t("commentPermlinkResultTable.operationId")]: String(
           op.operation_id ?? ""
@@ -266,7 +260,7 @@ const PowerActivityTable: React.FC<PowerActivityTableProps> = ({
       };
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [operations, unit, hivePrice, t]);
+  }, [operations, unit, hivePrice, t, appLocale]);
 
   const unitOptions: { key: VestingDisplayUnit; label: string }[] = [
     { key: "hp", label: "HP" },
@@ -308,7 +302,7 @@ const PowerActivityTable: React.FC<PowerActivityTableProps> = ({
                 <button
                   key={opt.key}
                   type="button"
-                  onClick={() => setUnit(opt.key)}
+                  onClick={() => onUnitChange(opt.key)}
                   aria-pressed={isActive}
                   className={cn(
                     "font-medium transition-colors px-2.5 py-0.5",
@@ -341,9 +335,10 @@ const PowerActivityTable: React.FC<PowerActivityTableProps> = ({
       )}
 
       {!isLoading && isAccountVestingHistoryError && (
-        <p className="text-center text-red-500 text-sm py-4">
-          {t("common.errorLoadingData")}
-        </p>
+        <ErrorMessage
+          message={t("common.errorLoadingData")}
+          onRetry={() => refetch()}
+        />
       )}
 
       {!isLoading &&
@@ -401,7 +396,7 @@ const PowerActivityTable: React.FC<PowerActivityTableProps> = ({
                       className="text-link"
                       href={`/block/${op.block_num}`}
                     >
-                      {op.block_num?.toLocaleString()}
+                      {op.block_num?.toLocaleString(appLocale)}
                     </Link>
                     <CopyButton
                       text={op.block_num}
@@ -447,21 +442,21 @@ const PowerActivityTable: React.FC<PowerActivityTableProps> = ({
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
                     {hive !== null
-                      ? `${hive.toLocaleString(undefined, {
+                      ? `${hive.toLocaleString(appLocale, {
                           maximumFractionDigits: 3,
                         })} HIVE`
                       : "—"}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
                     {amount.value !== null
-                      ? `${amount.value.toLocaleString(undefined, {
+                      ? `${amount.value.toLocaleString(appLocale, {
                           maximumFractionDigits: unit === "hp" ? 3 : 0,
                         })} ${amount.unitSuffix}`
                       : "—"}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
                     {usd !== null
-                      ? `$${usd.toLocaleString(undefined, {
+                      ? `$${usd.toLocaleString(appLocale, {
                           maximumFractionDigits: 2,
                         })}`
                       : "—"}

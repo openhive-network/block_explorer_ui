@@ -258,6 +258,10 @@ const HpMomentumFullChartDialog: React.FC<HpMomentumFullChartDialogProps> = ({
                   unit={unit}
                   includeBrush
                   showYear={granularity === "yearly"}
+                  granularity={granularity}
+                  dateFormat={
+                    granularity === "monthly" ? "MMM YYYY" : undefined
+                  }
                 />
               )
             )}

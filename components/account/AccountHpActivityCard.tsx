@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import { useI18n } from "../../i18n/i18n";
 
 import HpMomentumChart from "../home/HpMomentumChart";
+import ValueTooltip from "@/components/ui/ValueTooltip";
 import {
   VESTING_COLORS,
   VestingDisplayUnit,
@@ -212,17 +213,20 @@ const AccountHpActivityCard: React.FC<AccountHpActivityCardProps> = ({
                     {label}
                   </span>
                   <span className="ms-auto flex items-baseline gap-1.5 whitespace-nowrap">
-                    <span
-                      className="font-semibold tabular-nums"
-                      style={{ color }}
-                      title={`${sign}${value.toLocaleString()} ${unitLabel}`}
+                    <ValueTooltip
+                      content={`${sign}${value.toLocaleString(locale)} ${unitLabel}`}
                     >
-                      {sign}
-                      {formatVestingAmount(value, locale)} {unitLabel}
-                    </span>
+                      <span
+                        className="font-semibold tabular-nums"
+                        style={{ color }}
+                      >
+                        {sign}
+                        {formatVestingAmount(value, locale)} {unitLabel}
+                      </span>
+                    </ValueTooltip>
                     <span className="text-[11px] text-gray-400 tabular-nums">
-                      ({count.toLocaleString()} {t("accountHpActivityCard.ops")}
-                      )
+                      ({count.toLocaleString(locale)}{" "}
+                      {t("accountHpActivityCard.ops")})
                     </span>
                   </span>
                 </div>
@@ -232,18 +236,21 @@ const AccountHpActivityCard: React.FC<AccountHpActivityCardProps> = ({
                 <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
                   {t("accountHpActivityCard.netFlow", { unit: unitLabel })}
                 </span>
-                <span
-                  className="ms-auto text-sm font-bold tabular-nums whitespace-nowrap"
-                  style={{
-                    color: netIsPositive
-                      ? VESTING_COLORS.up
-                      : VESTING_COLORS.downFill,
-                  }}
-                  title={`${netIsPositive ? "+" : ""}${totals.net.toLocaleString()} ${unitLabel}`}
+                <ValueTooltip
+                  content={`${netIsPositive ? "+" : ""}${totals.net.toLocaleString(locale)} ${unitLabel}`}
                 >
-                  {netIsPositive ? "+" : ""}
-                  {formatVestingAmount(totals.net, locale)} {unitLabel}
-                </span>
+                  <span
+                    className="ms-auto text-sm font-bold tabular-nums whitespace-nowrap"
+                    style={{
+                      color: netIsPositive
+                        ? VESTING_COLORS.up
+                        : VESTING_COLORS.downFill,
+                    }}
+                  >
+                    {netIsPositive ? "+" : ""}
+                    {formatVestingAmount(totals.net, locale)} {unitLabel}
+                  </span>
+                </ValueTooltip>
               </div>
             </div>
           </div>

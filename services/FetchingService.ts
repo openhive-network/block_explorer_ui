@@ -88,16 +88,6 @@ export type ExplorerNodeApi = {
       ],
       Hive.Proposal[]
     >;
-    list_proposal_votes: TWaxApiRequest<
-      [
-        start: (string | number)[],
-        limit: number,
-        order_by: "by_voter_proposal" | "by_proposal_voter",
-        order_direction: "ascending" | "descending",
-        status: "all" | "active" | "expired" | "inactive" | "votable",
-      ],
-      Hive.ProposalVote[]
-    >;
     find_proposals: TWaxApiRequest<[proposal_ids: number[]], Hive.Proposal[]>;
   };
   bridge: {
@@ -610,6 +600,37 @@ class FetchingService {
     });
   }
 
+  async getProposalVotes({
+    voter,
+    proposalId,
+    status = "all",
+    page = 1,
+    pageSize,
+  }: {
+    voter?: string;
+    proposalId?: number;
+    status?: Hive.ProposalVoteStatus;
+    page?: number;
+    pageSize?: number;
+  }): Promise<Hive.ProposalVotesResponse> {
+    try {
+      return await this.extendedHiveChain!.restApi["hafbe-api"].proposalVotes({
+        voter,
+        "proposal-id": proposalId,
+        status,
+        sort: voter ? "by_voter_proposal" : "by_proposal_voter",
+        page,
+        "page-size": pageSize,
+      });
+    } catch (error: any) {
+      // hafbe rejects an unknown voter instead of answering with no votes.
+      const text = `${error?.message ?? ""} ${JSON.stringify(error ?? {})}`;
+      if (voter && /does not exist/i.test(text))
+        return { total_votes: 0, total_pages: 0, votes: [] };
+      throw error;
+    }
+  }
+
   async getProposalVotesHistory(
     proposalId: number,
     direction: "asc" | "desc",
@@ -987,24 +1008,6 @@ class FetchingService {
   ): Promise<Hive.Proposal[]> {
     const response =
       await this.extendedHiveChain!.api.condenser_api.list_proposals([
-        start,
-        limit,
-        orderBy,
-        orderDirection,
-        status,
-      ]);
-    return Array.isArray(response) ? response : [];
-  }
-
-  async listProposalVotes(
-    start: (string | number)[],
-    limit: number,
-    orderBy: "by_voter_proposal" | "by_proposal_voter",
-    orderDirection: "ascending" | "descending",
-    status: "all" | "active" | "inactive" | "expired" | "votable"
-  ): Promise<Hive.ProposalVote[]> {
-    const response =
-      await this.extendedHiveChain!.api.condenser_api.list_proposal_votes([
         start,
         limit,
         orderBy,

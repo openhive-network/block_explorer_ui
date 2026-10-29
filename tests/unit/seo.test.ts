@@ -156,11 +156,11 @@ describe("seo utils", () => {
       process.env.NEXT_PUBLIC_DEFAULT_OG_IMAGE = OLD_NEXT;
       process.env.REACT_APP_DEFAULT_OG_IMAGE = OLD_RA;
     });
-    it("falls back to the generated cover route", () => {
+    it("falls back to the static cover image", () => {
       delete process.env.NEXT_PUBLIC_DEFAULT_OG_IMAGE;
       delete process.env.REACT_APP_DEFAULT_OG_IMAGE;
       expect(defaultOgImage("https://h.info")).toBe(
-        "https://h.info/api/og/cover"
+        "https://h.info/og-cover.png"
       );
     });
     it("uses an absolute override verbatim", () => {
@@ -175,6 +175,11 @@ describe("seo utils", () => {
       expect(defaultOgImage("https://h.info")).toBe(
         "https://h.info/img/share.png"
       );
+    });
+    it("declares no image when the origin is unknown", () => {
+      delete process.env.NEXT_PUBLIC_DEFAULT_OG_IMAGE;
+      delete process.env.REACT_APP_DEFAULT_OG_IMAGE;
+      expect(defaultOgImage("")).toBeNull();
     });
   });
 

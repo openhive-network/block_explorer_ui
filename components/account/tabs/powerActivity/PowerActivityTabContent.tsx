@@ -26,6 +26,7 @@ import PowerActivityFilterChips from "./PowerActivityFilterChips";
 import ActivePowerDownBanner from "./ActivePowerDownBanner";
 import PowerActivityKpiStrip from "./PowerActivityKpiStrip";
 import HpMomentumChart from "@/components/home/HpMomentumChart";
+import ErrorMessage from "@/components/ErrorMessage";
 
 const CHART_SERIES = [
   "power_up_bar",
@@ -145,6 +146,7 @@ const PowerActivityTabContent: React.FC<PowerActivityTabContentProps> = ({
     accountVestingStats,
     isAccountVestingStatsLoading,
     isAccountVestingStatsError,
+    refetch,
   } = useAccountVestingStats(
     isTabActive ? accountName : "",
     paramsState.granularity,
@@ -192,7 +194,14 @@ const PowerActivityTabContent: React.FC<PowerActivityTabContentProps> = ({
 
       <ActivePowerDownBanner accountName={accountName} unit={unit} />
 
-      <PowerActivityKpiStrip totals={totals} unit={unit} />
+      <PowerActivityKpiStrip
+        totals={totals}
+        unit={unit}
+        filter={paramsState.vestingFilter ?? "all"}
+        onFilterChange={(vestingFilter) =>
+          setParams({ ...paramsState, vestingFilter, page: undefined })
+        }
+      />
 
       <Card
         data-testid="power-activity-chart"
@@ -244,6 +253,10 @@ const PowerActivityTabContent: React.FC<PowerActivityTabContentProps> = ({
               unit={unit}
               includeBrush
               showYear={paramsState.granularity === "yearly"}
+              granularity={paramsState.granularity}
+              dateFormat={
+                paramsState.granularity === "monthly" ? "MMM YYYY" : undefined
+              }
             />
           </div>
         ) : (
@@ -252,9 +265,10 @@ const PowerActivityTabContent: React.FC<PowerActivityTabContentProps> = ({
           </p>
         )}
         {isAccountVestingStatsError && (
-          <p className="text-red-500 text-xs mt-1">
-            {t("common.errorLoadingData")}
-          </p>
+          <ErrorMessage
+            message={t("common.errorLoadingData")}
+            onRetry={() => refetch()}
+          />
         )}
       </Card>
 
@@ -262,17 +276,12 @@ const PowerActivityTabContent: React.FC<PowerActivityTabContentProps> = ({
         <PowerActivityTable
           accountName={accountName}
           filter={paramsState.vestingFilter}
-          onFilterChange={(filter) =>
-            setParams({
-              ...paramsState,
-              vestingFilter: filter,
-              page: undefined,
-            })
-          }
           page={paramsState.page}
           onPageChange={(p) => setParams({ ...paramsState, page: p })}
           fromBlock={effectiveFromBlock}
           toBlock={effectiveToBlock}
+          unit={unit}
+          onUnitChange={setUnit}
         />
       </Card>
     </TabsContent>

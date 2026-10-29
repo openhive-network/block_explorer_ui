@@ -175,6 +175,7 @@ const BalanceHistorySearch = ({
 
   type DatePreset = {
     label: string;
+    labelKey: string;
     lastTime?: number;
     timeUnit?: "days" | "weeks" | "months";
     lastBlocks?: number;
@@ -257,13 +258,28 @@ const BalanceHistorySearch = ({
   };
 
   const datePresets: DatePreset[] = [
-    { label: "1k blocks", lastBlocks: 1000 },
-    { label: "7d", lastTime: 7, timeUnit: "days" },
-    { label: "30d", lastTime: 30, timeUnit: "days" },
-    { label: "90d", lastTime: 90, timeUnit: "days" },
-    { label: "1y", lastTime: 12, timeUnit: "months" },
-    { label: "All" },
-    { label: "Custom", custom: true },
+    { label: "1k blocks", labelKey: "reportRange.blocks1k", lastBlocks: 1000 },
+    { label: "7d", labelKey: "reportRange.d7", lastTime: 7, timeUnit: "days" },
+    {
+      label: "30d",
+      labelKey: "reportRange.d30",
+      lastTime: 30,
+      timeUnit: "days",
+    },
+    {
+      label: "90d",
+      labelKey: "reportRange.d90",
+      lastTime: 90,
+      timeUnit: "days",
+    },
+    {
+      label: "1y",
+      labelKey: "reportRange.d365",
+      lastTime: 12,
+      timeUnit: "months",
+    },
+    { label: "All", labelKey: "reportRange.all" },
+    { label: "Custom", labelKey: "reportRange.custom", custom: true },
   ];
 
   const matchedPresetLabel = (() => {
@@ -441,7 +457,7 @@ const BalanceHistorySearch = ({
                         : "bg-theme hover:bg-gray-100 dark:hover:bg-gray-700"
                     )}
                   >
-                    {preset.label}
+                    {t(preset.labelKey)}
                   </button>
                 );
               })}

@@ -119,53 +119,24 @@ export const ProposalVotesDialog = ({
     isLoading,
   ]);
 
-  const processedVotesWithVests = useMemo(() => {
-    return votes.map((vote) => {
-      const account = vote.accountDetails;
-      if (!account) {
+  const processedVotesWithVests = useMemo(
+    () =>
+      votes.map((vote) => {
+        const directVests = Number(vote.direct_vests);
+        const proxiedVests = Number(vote.proxied_vests);
         return {
-          voter: vote.voter,
-          directVests: 0,
-          proxiedVests: 0,
-          totalVests: 0,
-          displayTotalVests: 0,
-          hasProxy: false,
-          isDataLoaded: false,
-          proxy: "",
+          voter: vote.voter_name,
+          directVests,
+          proxiedVests,
+          // The API already counts a vote cast through a proxy as 0.
+          totalVests: Number(vote.voter_vests),
+          displayTotalVests: directVests + proxiedVests,
+          hasProxy: proxiedVests > 0,
+          proxy: vote.proxy || "",
         };
-      }
-
-      const directVests = grabNumericValue(account.vesting_shares.amount);
-      const totalProxiedVests =
-        Array.isArray(account.proxied_vsf_votes) &&
-        account.proxied_vsf_votes.length > 0
-          ? account.proxied_vsf_votes.reduce(
-              (sum, currentVests) => Number(sum) + Number(currentVests),
-              0
-            )
-          : 0;
-
-      const hasActiveProxy = (account.proxy || "") !== "";
-
-      // The value used for all calculations (chart, export)
-      const effectiveTotalVests = hasActiveProxy
-        ? 0
-        : Number(directVests) + Number(totalProxiedVests);
-
-      const displayTotalVests = Number(directVests) + Number(totalProxiedVests);
-
-      return {
-        voter: vote.voter,
-        directVests,
-        proxiedVests: Number(totalProxiedVests),
-        totalVests: effectiveTotalVests, // For calculations
-        displayTotalVests, // For sorting
-        hasProxy: Number(totalProxiedVests) > 0,
-        isDataLoaded: true,
-        proxy: account.proxy || "",
-      };
-    });
-  }, [votes]);
+      }),
+    [votes]
+  );
 
   const voterListDisplay = useMemo(() => {
     if (
@@ -460,45 +431,41 @@ export const ProposalVotesDialog = ({
                             />
                             <div className="grow min-w-0">
                               <p className="text-link">{vote.voter}</p>
-                              {vote.isDataLoaded ? (
-                                <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                                  {vote.hasActiveProxy ? (
-                                    <Tooltip>
-                                      <TooltipTrigger asChild>
-                                        <span className="line-through cursor-help">
-                                          {vote.directFormatted}
-                                          {vote.hasProxy && (
-                                            <>
-                                              {" "}
-                                              + {vote.proxiedFormatted}{" "}
-                                              {t("common.proxySuffix")}
-                                            </>
-                                          )}
-                                        </span>
-                                      </TooltipTrigger>
-                                      <TooltipContent>
-                                        {t(
-                                          "proposalVotesDialog.proxiedVoteTooltip",
-                                          { proxy: vote.proxy }
+                              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                                {vote.hasActiveProxy ? (
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <span className="line-through cursor-help">
+                                        {vote.directFormatted}
+                                        {vote.hasProxy && (
+                                          <>
+                                            {" "}
+                                            + {vote.proxiedFormatted}{" "}
+                                            {t("common.proxySuffix")}
+                                          </>
                                         )}
-                                      </TooltipContent>
-                                    </Tooltip>
-                                  ) : (
-                                    <>
-                                      <span>{vote.directFormatted}</span>
-                                      {vote.hasProxy && (
-                                        <span className="text-slate-400 dark:text-slate-500">
-                                          {" "}
-                                          + {vote.proxiedFormatted}{" "}
-                                          {t("common.proxySuffix")}
-                                        </span>
+                                      </span>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      {t(
+                                        "proposalVotesDialog.proxiedVoteTooltip",
+                                        { proxy: vote.proxy }
                                       )}
-                                    </>
-                                  )}
-                                </p>
-                              ) : (
-                                <div className="mt-1 h-4 w-32 bg-slate-200 dark:bg-slate-700 rounded animate-pulse" />
-                              )}
+                                    </TooltipContent>
+                                  </Tooltip>
+                                ) : (
+                                  <>
+                                    <span>{vote.directFormatted}</span>
+                                    {vote.hasProxy && (
+                                      <span className="text-slate-400 dark:text-slate-500">
+                                        {" "}
+                                        + {vote.proxiedFormatted}{" "}
+                                        {t("common.proxySuffix")}
+                                      </span>
+                                    )}
+                                  </>
+                                )}
+                              </p>
                             </div>
                           </Link>
                         </div>

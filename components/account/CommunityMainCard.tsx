@@ -14,7 +14,6 @@ import {
   UserCircle,
   FileText,
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import { Card, CardContent } from "../ui/card";
@@ -25,9 +24,9 @@ import { cn } from "@/lib/utils";
 import Explorer from "@/types/Explorer";
 import Hive from "@/types/Hive";
 import CommunitySubscribersDialog from "./CommunitySubscribersDialog";
-import { isImageWhitelisted } from "@/utils/ImageUtils";
 import HiveAvatar from "@/components/ui/HiveAvatar";
 import useMediaQuery from "@/hooks/common/useMediaQuery";
+import { getHiveCoverUrl, hasHiveCover } from "@/utils/HiveBlogUtils";
 
 const roleConfig = {
   owner: {
@@ -172,29 +171,17 @@ const InfoSection = ({
 };
 
 const CommunityCover = ({ src, alt }: { src: string; alt: string }) => {
-  const [source, setSource] = useState<"optimized" | "direct" | "failed">(
-    "optimized"
-  );
+  const [failed, setFailed] = useState(false);
 
-  if (source === "failed") return null;
+  if (failed) return null;
 
-  return source === "optimized" ? (
-    <Image
-      src={src}
-      alt={alt}
-      fill
-      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-      priority
-      className="z-0 object-cover"
-      onError={() => setSource("direct")}
-    />
-  ) : (
-    // eslint-disable-next-line @next/next/no-img-element
+  return (
     <img
       src={src}
       alt={alt}
       className="absolute inset-0 z-0 h-full w-full object-cover"
-      onError={() => setSource("failed")}
+      referrerPolicy="no-referrer"
+      onError={() => setFailed(true)}
     />
   );
 };
@@ -232,15 +219,7 @@ const CommunityMainCard: React.FC<CommunityMainCardProps> = ({
   } = communityDetails;
   const [isSubscribersModalOpen, setIsSubscribersModalOpen] = useState(false);
 
-  let profileMetadata;
-  try {
-    profileMetadata = JSON.parse(accountDetails.posting_json_metadata);
-  } catch (error) {
-    profileMetadata = null;
-  }
-  const coverImageFromProfile = profileMetadata?.profile?.cover_image;
-
-  const hasCover = isImageWhitelisted(coverImageFromProfile);
+  const hasCover = hasHiveCover(accountDetails);
 
   const sortedTeam = [...(team as unknown as TeamMemberTuple[])].sort(
     (a, b) => {
@@ -254,8 +233,8 @@ const CommunityMainCard: React.FC<CommunityMainCardProps> = ({
         {hasCover && (
           <div className="relative h-32 bg-slate-200 dark:bg-slate-700">
             <CommunityCover
-              key={coverImageFromProfile}
-              src={coverImageFromProfile}
+              key={name}
+              src={getHiveCoverUrl(name)}
               alt={`${title} cover image`}
             />
             <div className="absolute -bottom-10 inset-s-4 z-10">

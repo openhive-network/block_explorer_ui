@@ -1,9 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
-import type Hive from "@/types/Hive";
 
-// High limit to fetch all votes for a user in one go.
-const VOTE_FETCH_LIMIT = 1000;
+const VOTE_PAGE_SIZE = 100;
 
 const useVoterProposals = (accountName: string) => {
   const {
@@ -15,25 +13,23 @@ const useVoterProposals = (accountName: string) => {
     queryFn: async () => {
       if (!accountName) return [];
 
-      const start: (string | number)[] = [accountName, 0];
+      const ids: number[] = [];
+      let page = 1;
+      let totalPages = 1;
+      do {
+        const response = await fetchingService.getProposalVotes({
+          voter: accountName,
+          page,
+          pageSize: VOTE_PAGE_SIZE,
+        });
+        ids.push(...response.votes.map((vote) => vote.proposal.proposal_id));
+        totalPages = response.total_pages;
+        page += 1;
+      } while (page <= totalPages);
 
-      const votes: Hive.ProposalVote[] = await fetchingService.listProposalVotes(
-        start,
-        VOTE_FETCH_LIMIT,
-        "by_voter_proposal",
-        "ascending",
-        "all"
-      );
-
-      // The API returns votes *starting from* the accountName, so we must filter.
-      const userVotes = votes.filter(
-        (vote) => vote.voter === accountName
-      );
-
-      // We only need the proposal IDs for filtering on the proposals page.
-      return userVotes.map((vote) => vote.proposal.proposal_id);
+      return ids;
     },
-    enabled: !!accountName, // Only run the query if an accountName is provided
+    enabled: !!accountName,
     refetchOnWindowFocus: false,
   });
 

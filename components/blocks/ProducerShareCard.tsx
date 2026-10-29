@@ -1,5 +1,4 @@
 import React, { useMemo, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { AlertTriangle, ChevronDown, ChevronUp, Users } from "lucide-react";
 
@@ -85,13 +84,12 @@ const ProducerShareCard: React.FC<ProducerShareCardProps> = ({
                 {entry.isOther ? (
                   <span className="h-4 w-4 shrink-0 rounded-full bg-slate-300 dark:bg-slate-600" />
                 ) : (
-                  <Image
+                  <img
                     src={getHiveAvatarUrl(entry.producer)}
                     alt=""
                     width={16}
                     height={16}
                     className="h-4 w-4 shrink-0 rounded-full"
-                    unoptimized
                   />
                 )}
                 {entry.isOther ? (

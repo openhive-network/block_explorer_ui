@@ -92,7 +92,6 @@ const ImageWidget: React.FC<ImageWidgetProps> = ({
 
   return (
     <div className="w-full h-full overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         key={safeUrl}
         src={safeUrl}

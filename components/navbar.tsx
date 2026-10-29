@@ -17,7 +17,6 @@ import {
   CalendarClock,
 } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 
 import { cn } from "@/lib/utils";
 import useMediaQuery from "@/hooks/common/useMediaQuery";
@@ -49,7 +48,7 @@ export default function Navbar() {
         {isMobile ? (
           <div className="flex items-center justify-between w-full">
             <Link href={"/"} className="relative pr-2">
-              <Image
+              <img
                 src={getImageSrc("/hive-logo.png")}
                 alt="Hive logo"
                 width={40}
@@ -273,7 +272,7 @@ export default function Navbar() {
                     href={"/"}
                     className="pr-2 flex items-center text-explorer-turquoise font-medium"
                   >
-                    <Image
+                    <img
                       src={getImageSrc("/hive-logo.png")}
                       alt="Hive logo"
                       width={50}

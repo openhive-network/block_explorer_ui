@@ -12,7 +12,6 @@ import { config } from "@/Config";
 import { DialogDescription, DialogHeader, DialogTitle } from "../ui/dialog";
 import { cn } from "@/lib/utils";
 import ErrorMessage from "../ErrorMessage";
-import Image from "next/image";
 import keychainLogo from "@/lib/smart-signer/logo/keychain.png";
 import Hslogo from "@/lib/smart-signer/logo/hivesigner.svg";
 
@@ -95,11 +94,11 @@ const LoginDialog: React.FC<LoginDialogProps> = ({
                   {loading ? (
                     <Loader2 className="w-6 h-6 animate-spin" />
                   ) : (
-                    <Image
+                    <img
                       alt="logo"
                       width={40}
                       height={40}
-                      src={keychainLogo}
+                      src={keychainLogo.src}
                       style={{ height: "auto" }}
                     />
                   )}
@@ -126,11 +125,11 @@ const LoginDialog: React.FC<LoginDialogProps> = ({
             >
               <div className="flex items-center gap-5">
                 <div className="w-12 h-12 rounded-xl bg-linear-to-br from-blue-500/20 to-blue-500/5 flex items-center justify-center border border-blue-500/20 shadow-xs group-hover:scale-110 transition-transform">
-                  <Image
+                  <img
                     alt="logo"
                     width={30}
                     height={30}
-                    src={Hslogo}
+                    src={Hslogo.src}
                     style={{ height: "auto" }}
                   />
                 </div>

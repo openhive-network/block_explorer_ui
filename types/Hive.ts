@@ -394,6 +394,55 @@ namespace Hive {
     votes_history!: ProposalVoteHistoryEntry[];
   }
 
+  export type ProposalVoteStatus =
+    | "all"
+    | "active"
+    | "inactive"
+    | "expired"
+    | "votable";
+
+  export class GetProposalVotesParams {
+    voter?: string;
+    "proposal-id"?: number;
+    status?: ProposalVoteStatus;
+    sort?: "by_voter_proposal" | "by_proposal_voter";
+    direction?: Direction;
+    page?: number;
+    "page-size"?: number;
+  }
+
+  export class ProposalVoteProposal {
+    id!: number;
+    proposal_id!: number;
+    creator!: string;
+    receiver!: string;
+    start_date!: string;
+    end_date!: string;
+    daily_pay!: string;
+    subject!: string;
+    permlink!: string;
+    total_votes!: string;
+    voters_num!: number;
+    paid_amount!: string;
+    status!: string;
+  }
+
+  export class ProposalVoteEntry {
+    voter_name!: string;
+    proposal!: ProposalVoteProposal;
+    voter_vests!: string;
+    direct_vests!: string;
+    proxied_vests!: string;
+    proxy!: string;
+    timestamp!: string;
+  }
+
+  export class ProposalVotesResponse {
+    total_votes!: number;
+    total_pages!: number;
+    votes!: ProposalVoteEntry[];
+  }
+
   export class GetBlockDetailsParams {
     blockNumber!: number | string;
     "include-virtual"?: boolean;
@@ -1324,12 +1373,6 @@ namespace Hive {
     permlink!: string;
     total_votes!: string;
     status!: "active" | "inactive" | "expired";
-  }
-
-  export class ProposalVote {
-    id!: number;
-    voter!: string;
-    proposal!: Proposal;
   }
 
   export class BlockChainProps {
