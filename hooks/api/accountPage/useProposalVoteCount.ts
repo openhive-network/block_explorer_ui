@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
 
-const useProposalVoteCount = (accountName: string) => {
+const useProposalVoteCount = (accountName: string, enabled = true) => {
   const {
     data: voteCount,
     isPending: isLoading,
@@ -15,7 +15,7 @@ const useProposalVoteCount = (accountName: string) => {
       });
       return total_votes;
     },
-    enabled: !!accountName,
+    enabled: enabled && !!accountName,
     refetchOnWindowFocus: false,
   });
 

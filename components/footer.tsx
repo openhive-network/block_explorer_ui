@@ -9,6 +9,7 @@ import HealthCheckerDialog from "./HealthCheckerDialog";
 import { useHealthCheckerContext } from "@/contexts/HealthCheckerContext";
 import { getImageSrc } from "@/utils/PathUtils";
 import { useI18n } from "../i18n/i18n";
+import { deploySettings } from "@/utils/deploySettings";
 
 const { lastCommitHashRepoUrl, gitHash } = config;
 
@@ -207,11 +208,13 @@ const Footer = () => {
                   {t("footer.witnessSchedule")}
                 </Link>
               </li>
-              <li>
-                <Link href="/top-holders" className="hover:opacity-75">
-                  {t("pageTitle.topHolders")}
-                </Link>
-              </li>
+              {deploySettings.topHolders && (
+                <li>
+                  <Link href="/top-holders" className="hover:opacity-75">
+                    {t("pageTitle.topHolders")}
+                  </Link>
+                </li>
+              )}
             </ul>
           </div>
 

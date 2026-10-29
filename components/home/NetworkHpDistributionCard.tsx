@@ -17,6 +17,7 @@ import LorenzConcentrationChart from "@/components/home/LorenzConcentrationChart
 import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
 import SegmentedToggle from "@/components/ui/SegmentedToggle";
 import { COIN_BRACKET_BY_BUCKET, coinToBucket } from "@/utils/coinBrackets";
+import { deploySettings } from "@/utils/deploySettings";
 
 const ConcChip: React.FC<{ label: string; value: string }> = ({
   label,
@@ -224,7 +225,9 @@ const NetworkHpDistributionCard: React.FC = () => {
                   locale={locale}
                   isRTL={dir === "rtl"}
                   t={t}
-                  onBucketClick={handleBucketClick}
+                  onBucketClick={
+                    deploySettings.topHolders ? handleBucketClick : undefined
+                  }
                 />
               )}
             </div>

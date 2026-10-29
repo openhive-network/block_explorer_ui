@@ -22,6 +22,9 @@ import useCommunitiesList, {
   CommunitySortOrder,
 } from "@/hooks/api/communities/useCommunities";
 import Hive from "@/types/Hive";
+import PageNotFound from "@/components/PageNotFound";
+import { deploySettings } from "@/utils/deploySettings";
+import { notFoundProps } from "@/utils/seo/notFoundProps";
 
 const CommunitiesPage = ({ meta }: { meta: SeoMeta }) => {
   const { t } = useI18n();
@@ -134,11 +137,12 @@ const CommunitiesPage = ({ meta }: { meta: SeoMeta }) => {
   );
 };
 
-export default CommunitiesPage;
+export default deploySettings.communities ? CommunitiesPage : PageNotFound;
 
 export const getServerSideProps: GetServerSideProps<{
   meta: SeoMeta;
 }> = async ({ req, res }) => {
+  if (!deploySettings.communities) return notFoundProps(res);
   res.setHeader("Cache-Control", SEO_LIST_CACHE_CONTROL);
   return {
     props: {

@@ -93,6 +93,7 @@ import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import ConvertedHiveTooltip from "@/components/ConvertedHiveTooltip";
 import TranslatedFormatterOperation from "@/components/TranslatedFormatterOperation";
 import { KeyRound, LinkIcon } from "lucide-react";
+import { deploySettings } from "@/utils/deploySettings";
 
 class OperationsFormatter implements IWaxCustomFormatter {
   public constructor(private readonly wax: IWaxBaseInterface) {}
@@ -185,6 +186,9 @@ class OperationsFormatter implements IWaxCustomFormatter {
   }
 
   private getProposalLink(proposalId: number): React.JSX.Element {
+    if (!deploySettings.proposals) {
+      return <span key={`proposal-${proposalId}`}>{proposalId}</span>;
+    }
     return (
       <Link
         href={`/proposals/?ID=${proposalId}`}

@@ -32,6 +32,7 @@ import { useI18n } from "@/i18n/i18n";
 import useCommunity from "@/hooks/api/accountPage/useCommunity";
 import { useSettings } from "@/contexts/SettingsContext";
 import SidebarToggleButton from "@/components/SideBarToggleButton";
+import { deploySettings } from "@/utils/deploySettings";
 
 // Meta copy only, so a slow node falls back to the bare id rather than holding the render.
 const COMMUNITY_LOOKUP_TIMEOUT_MS = 2500;
@@ -115,7 +116,10 @@ export default function Account() {
   // if we auto-collapsed it (don't override a manual collapse).
   const autoCollapsedSidebarRef = useRef(false);
   useEffect(() => {
-    if (router.query.activeTab === "analytics") {
+    if (
+      deploySettings.accountAnalytics &&
+      router.query.activeTab === "analytics"
+    ) {
       setIsDesktopAccountDetailsCollapsed(true);
       autoCollapsedSidebarRef.current = true;
     } else if (autoCollapsedSidebarRef.current) {
@@ -137,7 +141,8 @@ export default function Account() {
   );
 
   //Check if the account name is a community
-  const isCommunityAccount = accountNameFromRoute?.startsWith("hive-");
+  const isCommunityAccount =
+    deploySettings.communities && accountNameFromRoute?.startsWith("hive-");
   const { communityDetails } = useCommunity(
     isCommunityAccount && !isAccountDetailsLoading && !notFound
       ? accountNameFromRoute
@@ -323,7 +328,7 @@ export const getServerSideProps: GetServerSideProps<AccountPageProps> = async ({
   // Resolve the real community name server-side: "@hive-167922" is not what anyone searches for.
   // Only a resolved title makes it a community; a plain account that happens to
   // start with "hive-" falls through and gets account copy.
-  if (name.startsWith("hive-")) {
+  if (deploySettings.communities && name.startsWith("hive-")) {
     const details = await rpcOrNull<{ title?: string; about?: string }>(
       "bridge.get_community",
       { name },

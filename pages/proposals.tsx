@@ -38,6 +38,9 @@ import { grabNumericValue, isHiveAccountName } from "@/utils/StringUtils";
 import { BudgetsSection } from "@/components/proposals/BudgetsSection";
 import useDebounce from "@/hooks/common/useDebounce";
 import useFindProposal from "@/hooks/api/proposals/useFindProposal";
+import PageNotFound from "@/components/PageNotFound";
+import { deploySettings } from "@/utils/deploySettings";
+import { notFoundProps } from "@/utils/seo/notFoundProps";
 
 export type MatchDetails = {
   isCreatorMatch: boolean;
@@ -544,10 +547,11 @@ const ProposalsPage = ({ meta }: { meta: SeoMeta }) => {
   );
 };
 
-export default ProposalsPage;
+export default deploySettings.proposals ? ProposalsPage : PageNotFound;
 export const getServerSideProps: GetServerSideProps<{
   meta: SeoMeta;
 }> = async ({ req, res }) => {
+  if (!deploySettings.proposals) return notFoundProps(res);
   res.setHeader("Cache-Control", SEO_LIST_CACHE_CONTROL);
   return {
     props: {

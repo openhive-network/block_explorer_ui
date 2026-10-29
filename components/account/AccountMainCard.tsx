@@ -54,6 +54,7 @@ import StatCard from "@/components/ui/StatCard";
 import WitnessUrlIcon from "@/components/account/WitnessUrlIcon";
 import HiveAvatar from "@/components/ui/HiveAvatar";
 import useMediaQuery from "@/hooks/common/useMediaQuery";
+import { deploySettings } from "@/utils/deploySettings";
 
 interface AccountMainCardProps {
   accountDetails: Explorer.FormattedAccountDetails;
@@ -120,7 +121,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
     accountDetails.is_witness
   );
   const { voteCount: proposalVoteCount, isLoading: isVoteCountLoading } =
-    useProposalVoteCount(accountName);
+    useProposalVoteCount(accountName, deploySettings.proposals);
   const { entries: topHolderEntries } = useAccountTopHolderRank(accountName);
   const coinLabel = (coinType: string) =>
     coinType === "VESTS"
@@ -363,25 +364,28 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                       </TooltipProvider>
                     )}
                   </div>
-                  <div className="mt-2.5 flex flex-wrap items-center gap-2">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        router.push(`/tools/compare?a=${accountName}`);
-                      }}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-600 transition-colors hover:bg-sky-100 dark:border-sky-800 dark:bg-sky-950/40 dark:text-sky-300 dark:hover:bg-sky-900/50"
-                      aria-label={t("compare.entry.tooltip")}
-                    >
-                      <ArrowLeftRight className="h-3.5 w-3.5" />
-                      <span className="whitespace-nowrap">
-                        {t("compare.entry.button")}
-                      </span>
-                    </button>
-                  </div>
+                  {deploySettings.tools && (
+                    <div className="mt-2.5 flex flex-wrap items-center gap-2">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push(`/tools/compare?a=${accountName}`);
+                        }}
+                        className="inline-flex items-center gap-1.5 rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-600 transition-colors hover:bg-sky-100 dark:border-sky-800 dark:bg-sky-950/40 dark:text-sky-300 dark:hover:bg-sky-900/50"
+                        aria-label={t("compare.entry.tooltip")}
+                      >
+                        <ArrowLeftRight className="h-3.5 w-3.5" />
+                        <span className="whitespace-nowrap">
+                          {t("compare.entry.button")}
+                        </span>
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
 
               {accountDetails.is_witness &&
+                deploySettings.login &&
                 !isWitnessLoading &&
                 !isWitnessError && (
                   <div className="flex flex-wrap items-center gap-2">
@@ -456,14 +460,16 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                 )}
                 onClick={openFollowingModal}
               />
-              <StatCard
-                icon={<Building2 size={20} />}
-                label={t("accountMainCard.subscriptions")}
-                value={Number(
-                  accountDetails.subscriptions.length
-                ).toLocaleString(locale)}
-                onClick={openSubscriptionsModal}
-              />
+              {deploySettings.communities && (
+                <StatCard
+                  icon={<Building2 size={20} />}
+                  label={t("accountMainCard.subscriptions")}
+                  value={Number(
+                    accountDetails.subscriptions.length
+                  ).toLocaleString(locale)}
+                  onClick={openSubscriptionsModal}
+                />
+              )}
               <StatCard
                 icon={<PenSquare size={20} />}
                 label={t("accountMainCard.totalPosts")}
@@ -492,23 +498,25 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                 tooltipContent={<p>{accountDetails.created}</p>}
                 onClick={creationOperation ? openCreationOperation : undefined}
               />
-              <StatCard
-                icon={<Vote size={20} />}
-                label={t("accountMainCard.proposalVotes")}
-                value={
-                  isVoteCountLoading ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    (proposalVoteCount ?? 0).toLocaleString(locale)
-                  )
-                }
-                onClick={
-                  proposalVoteCount && proposalVoteCount > 0
-                    ? () =>
-                        router.push(`/proposals?q=${accountName}&status=all`)
-                    : undefined
-                }
-              />
+              {deploySettings.proposals && (
+                <StatCard
+                  icon={<Vote size={20} />}
+                  label={t("accountMainCard.proposalVotes")}
+                  value={
+                    isVoteCountLoading ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      (proposalVoteCount ?? 0).toLocaleString(locale)
+                    )
+                  }
+                  onClick={
+                    proposalVoteCount && proposalVoteCount > 0
+                      ? () =>
+                          router.push(`/proposals?q=${accountName}&status=all`)
+                      : undefined
+                  }
+                />
+              )}
               {governanceHealthProps && (
                 <StatCard
                   icon={governanceHealthProps.icon}

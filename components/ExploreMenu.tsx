@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/i18n/i18n";
 import RecentlyViewedList from "./RecentlyViewedList";
+import { deploySettings } from "@/utils/deploySettings";
 import {
   Users,
   Vote,
@@ -116,29 +117,35 @@ export function ExploreMenu() {
               closeMenu={() => setIsOpen(false)}
               active={isActive("/blocks")}
             />
-            <ExploreListItem
-              href="/communities"
-              title={t("navbar.communitiesTitle")}
-              icon={Users}
-              closeMenu={() => setIsOpen(false)}
-              active={isActive("/communities")}
-            />
-            <ExploreListItem
-              href="/top-holders"
-              title={t("pageTitle.topHolders")}
-              icon={Award}
-              closeMenu={() => setIsOpen(false)}
-              active={isActive("/top-holders")}
-            />
+            {deploySettings.communities && (
+              <ExploreListItem
+                href="/communities"
+                title={t("navbar.communitiesTitle")}
+                icon={Users}
+                closeMenu={() => setIsOpen(false)}
+                active={isActive("/communities")}
+              />
+            )}
+            {deploySettings.topHolders && (
+              <ExploreListItem
+                href="/top-holders"
+                title={t("pageTitle.topHolders")}
+                icon={Award}
+                closeMenu={() => setIsOpen(false)}
+                active={isActive("/top-holders")}
+              />
+            )}
 
             <SectionLabel>{t("boards.governance.name")}</SectionLabel>
-            <ExploreListItem
-              href="/proposals"
-              title={t("navbar.proposalsTitle")}
-              icon={Vote}
-              closeMenu={() => setIsOpen(false)}
-              active={isActive("/proposals")}
-            />
+            {deploySettings.proposals && (
+              <ExploreListItem
+                href="/proposals"
+                title={t("navbar.proposalsTitle")}
+                icon={Vote}
+                closeMenu={() => setIsOpen(false)}
+                active={isActive("/proposals")}
+              />
+            )}
             <ExploreListItem
               href="/witnesses"
               title={t("navbar.witnessesTitle")}
@@ -156,14 +163,16 @@ export function ExploreMenu() {
             />
 
             <div className="my-1 h-px bg-slate-200 dark:bg-slate-700" />
-            <ExploreListItem
-              href="/tools/compare"
-              title={t("tools.title")}
-              icon={Wrench}
-              closeMenu={() => setIsOpen(false)}
-              active={isActive("/tools/compare")}
-              testId="navbar-tools-link"
-            />
+            {deploySettings.tools && (
+              <ExploreListItem
+                href="/tools/compare"
+                title={t("tools.title")}
+                icon={Wrench}
+                closeMenu={() => setIsOpen(false)}
+                active={isActive("/tools/compare")}
+                testId="navbar-tools-link"
+              />
+            )}
             <ExploreListItem
               href="/settings"
               title={t("navbar.settingsTitle")}

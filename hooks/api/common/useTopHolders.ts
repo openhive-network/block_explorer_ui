@@ -10,7 +10,8 @@ const useTopHolders = (
   balanceType: BalanceType,
   page: number,
   minBalance?: number,
-  maxBalance?: number
+  maxBalance?: number,
+  enabled: boolean = true
 ) => {
   const {
     data: holdersData,
@@ -33,7 +34,7 @@ const useTopHolders = (
         minBalance,
         maxBalance
       ),
-    enabled: !(coinType === "VESTS" && balanceType !== "balance"),
+    enabled: enabled && !(coinType === "VESTS" && balanceType !== "balance"),
     placeholderData: keepPreviousData,
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,

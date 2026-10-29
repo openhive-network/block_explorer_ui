@@ -34,6 +34,7 @@ import { useWatchlist } from "@/contexts/WatchlistContext";
 import WatchedProposalsWidget from "@/components/dashboard/widgets/data/WatchedProposalsWidget";
 import WitnessHealthWidget from "@/components/dashboard/widgets/data/WitnessHealthWidget";
 import NodeSupportGate from "@/components/dashboard/ui/NodeSupportGate";
+import { deploySettings } from "@/utils/deploySettings";
 
 const StandardHome = () => {
   const { t } = useI18n();
@@ -50,7 +51,12 @@ const StandardHome = () => {
   const {
     communities: popularCommunitiesData,
     isLoading: isCommunitiesLoading,
-  } = useCommunities("", "rank", config.popularCommunitiesCount);
+  } = useCommunities(
+    "",
+    "rank",
+    config.popularCommunitiesCount,
+    deploySettings.communities
+  );
 
   const headBlockNum = useHeadBlockNumber().headBlockNumberData;
   const dynamicGlobalQueryData =
@@ -77,9 +83,11 @@ const StandardHome = () => {
           <NodeSupportGate widgetId="network-hp-distribution">
             <NetworkHpDistributionCard />
           </NodeSupportGate>
-          <NodeSupportGate widgetId="top-holders">
-            <TopHoldersWidget />
-          </NodeSupportGate>
+          {deploySettings.topHolders && (
+            <NodeSupportGate widgetId="top-holders">
+              <TopHoldersWidget />
+            </NodeSupportGate>
+          )}
         </div>
 
         <div className="col-span-12 md:col-span-8 lg:col-span-6">
@@ -129,7 +137,9 @@ const StandardHome = () => {
         </div>
 
         <div className="col-span-12 lg:col-span-3 flex flex-col">
-          {isLoggedIn && hasWatchedProposals && <WatchedProposalsWidget />}
+          {isLoggedIn && hasWatchedProposals && deploySettings.proposals && (
+            <WatchedProposalsWidget />
+          )}
           <NodeSupportGate widgetId="top-witnesses">
             <TopWitnessesCard
               witnessesData={witnessesData}
@@ -139,10 +149,12 @@ const StandardHome = () => {
           <NodeSupportGate widgetId="top-accounts">
             <NetworkTopAccountsCard />
           </NodeSupportGate>
-          <TopCommunitiesCard
-            communitiesData={popularCommunitiesData}
-            isLoading={isCommunitiesLoading}
-          />
+          {deploySettings.communities && (
+            <TopCommunitiesCard
+              communitiesData={popularCommunitiesData}
+              isLoading={isCommunitiesLoading}
+            />
+          )}
           {isLoggedIn && <WitnessHealthWidget />}
         </div>
       </div>

@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import useTopHolders, { CoinType } from "./useTopHolders";
+import { deploySettings } from "@/utils/deploySettings";
 
 // One page is fetched and the API returns 100 per page, so 100 is the ceiling.
 const TOP_RANK_LIMIT = 100;
@@ -7,9 +8,31 @@ const TOP_RANK_LIMIT = 100;
 export type TopHolderEntry = { rank: number; coinType: CoinType };
 
 const useAccountTopHolderRank = (accountName: string | undefined) => {
-  const hive = useTopHolders("HIVE", "balance", 1);
-  const hbd = useTopHolders("HBD", "balance", 1);
-  const vests = useTopHolders("VESTS", "balance", 1);
+  const topHoldersEnabled = deploySettings.topHolders;
+  const hive = useTopHolders(
+    "HIVE",
+    "balance",
+    1,
+    undefined,
+    undefined,
+    topHoldersEnabled
+  );
+  const hbd = useTopHolders(
+    "HBD",
+    "balance",
+    1,
+    undefined,
+    undefined,
+    topHoldersEnabled
+  );
+  const vests = useTopHolders(
+    "VESTS",
+    "balance",
+    1,
+    undefined,
+    undefined,
+    topHoldersEnabled
+  );
 
   const isLoading =
     hive.isTopHoldersLoading ||
@@ -17,7 +40,7 @@ const useAccountTopHolderRank = (accountName: string | undefined) => {
     vests.isTopHoldersLoading;
 
   const entries = useMemo<TopHolderEntry[]>(() => {
-    if (!accountName) return [];
+    if (!accountName || !topHoldersEnabled) return [];
     const result: TopHolderEntry[] = [];
     const pushIfTop = (data: typeof hive.holdersData, coinType: CoinType) => {
       const found = data.find((h) => h.account === accountName);
@@ -30,7 +53,13 @@ const useAccountTopHolderRank = (accountName: string | undefined) => {
     pushIfTop(vests.holdersData, "VESTS");
     result.sort((a, b) => a.rank - b.rank);
     return result;
-  }, [accountName, hive.holdersData, hbd.holdersData, vests.holdersData]);
+  }, [
+    accountName,
+    topHoldersEnabled,
+    hive.holdersData,
+    hbd.holdersData,
+    vests.holdersData,
+  ]);
 
   return { entries, isLoading };
 };

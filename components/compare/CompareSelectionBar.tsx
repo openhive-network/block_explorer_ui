@@ -2,6 +2,7 @@ import React from "react";
 import { useRouter } from "next/router";
 import { X, ArrowLeftRight } from "lucide-react";
 import { CompareSelection } from "@/hooks/common/useCompareSelection";
+import { deploySettings } from "@/utils/deploySettings";
 
 interface CompareSelectionBarProps {
   selection: CompareSelection;
@@ -16,7 +17,7 @@ const CompareSelectionBar: React.FC<CompareSelectionBarProps> = ({
 }) => {
   const router = useRouter();
   const { selected, remove, clear } = selection;
-  if (selected.length === 0) return null;
+  if (!deploySettings.tools || selected.length === 0) return null;
 
   const ready = selected.length === 2;
   const go = () => {

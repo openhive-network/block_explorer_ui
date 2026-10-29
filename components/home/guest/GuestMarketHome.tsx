@@ -8,6 +8,7 @@ import NodeSupportGate from "@/components/dashboard/ui/NodeSupportGate";
 import GuestBoardHeader from "./GuestBoardHeader";
 import GuestSectionTitle from "./GuestSectionTitle";
 import { useI18n } from "@/i18n/i18n";
+import { deploySettings } from "@/utils/deploySettings";
 
 const GuestMarketHome = () => {
   const { t } = useI18n();
@@ -45,9 +46,11 @@ const GuestMarketHome = () => {
             label={t("guestHome.market.sectionHeld")}
             hint={t("guestHome.market.hintHeld")}
           />
-          <NodeSupportGate widgetId="top-holders">
-            <TopHoldersWidget />
-          </NodeSupportGate>
+          {deploySettings.topHolders && (
+            <NodeSupportGate widgetId="top-holders">
+              <TopHoldersWidget />
+            </NodeSupportGate>
+          )}
           <NodeSupportGate widgetId="top-accounts">
             <NetworkTopAccountsCard />
           </NodeSupportGate>
