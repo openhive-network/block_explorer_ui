@@ -51,6 +51,7 @@ include:
     file: "/templates/npm_projects.gitlab-ci.yml"
 
 default:
+  tags: [public-runner-docker]
   hooks:
     pre_get_sources_script:
       # Clean corrupt git state left by cancelled pipelines (see GitLab #296638, #4600)
