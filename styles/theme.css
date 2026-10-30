@@ -1,6 +1,6 @@
-@import 'tailwindcss';
-@import 'react-grid-layout/css/styles.css' layer(base);
-@import 'react-resizable/css/styles.css' layer(base);
+@import "tailwindcss";
+@import "react-grid-layout/css/styles.css" layer(base);
+@import "react-resizable/css/styles.css" layer(base);
 
 /* Automatic source detection skips node_modules; the health checker's dialog
    is styled with this app's utilities. */
@@ -26,8 +26,8 @@
   /* Tailwind CSS v3's default; v4's no longer leads with ui-sans-serif and
      system-ui, which changes the font on Linux. */
   --font-sans:
-    ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-    'Segoe UI Symbol', 'Noto Color Emoji';
+    ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol", "Noto Color Emoji";
 
   --color-theme: var(--color-background);
   --color-rowOdd: var(--color-row-odd);
@@ -233,6 +233,9 @@
   --color-navbar-icon-border: #6b7280;
   --color-navbar-icon-list-hover: #eff2f4;
 
+  /* Focus ring for ring-ring (HSL parts); Tailwind 4 draws an unset ring black. */
+  --ring: 215 20.2% 65.1%;
+
   --cd-day-fg: #000;
   --cd-day-fg-disabled: #9ca3af;
   --cd-day-fg-outmonth: #6b7280;
@@ -302,6 +305,8 @@
   --color-navbar-icon-hover: #34373ed4;
   --color-navbar-icon-border: #6b7280;
   --color-navbar-icon-list-hover: #374151;
+
+  --ring: 215 20.2% 65.1%;
 
   --cd-day-fg: #fff;
   --cd-day-fg-disabled: #6b7280;

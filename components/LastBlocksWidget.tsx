@@ -344,7 +344,7 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
       },
       tooltip: {
         trigger: "axis",
-        axisPointer: { type: "shadow-sm", shadowStyle: { opacity: 0.06 } },
+        axisPointer: { type: "shadow", shadowStyle: { opacity: 0.06 } },
         backgroundColor: tooltipBg,
         borderColor: tooltipBorder,
         borderWidth: 1,
