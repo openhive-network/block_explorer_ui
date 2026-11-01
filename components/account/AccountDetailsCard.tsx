@@ -202,7 +202,8 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
         hidden={isPropertiesHidden}
       >
         <TooltipProvider>
-          <Table noOverflow={true}>
+          {/* Scrolls sideways only when the values don't fit, e.g. on phones. */}
+          <Table>
             <TableBody className="text-sm">{buildTableBody(keys)}</TableBody>
           </Table>
         </TooltipProvider>
