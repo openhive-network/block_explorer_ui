@@ -289,8 +289,9 @@ docker-build:
   script:
     - |
       echo -e "\e[0Ksection_start:$(date +%s):deps[collapsed=true]\r\e[0KInstalling dependencies..."
-      # node-test-tools ships pnpm; the Playwright image gets it through corepack
-      command -v pnpm >/dev/null || corepack enable
+      # node-test-tools ships pnpm; the Playwright image gets it through corepack,
+      # which Node 25+ no longer bundles, so install corepack first when it's missing
+      command -v pnpm >/dev/null || { command -v corepack >/dev/null || npm install -g corepack; corepack enable; }
       pnpm config set store-dir .pnpm-store
       git submodule status --recursive  # which ccc catalog this job installs against
       export HUSKY=0
