@@ -17,8 +17,8 @@ jest.mock(
 jest.mock("@/components/VestsTooltip", () => () => null);
 jest.mock("@/components/CopyToKeyboard", () => () => null);
 
-// Values are single-line, so on a narrow screen the table is wider than the
-// card. The wrapper must scroll, not clip, or the end of each value is unreachable.
+// On a narrow screen long values are wider than the card. They must wrap,
+// and the wrapper must scroll rather than clip, so no value is cut off.
 describe("AccountDetailsCard", () => {
   let container: HTMLDivElement;
   let root: Root;
@@ -51,7 +51,7 @@ describe("AccountDetailsCard", () => {
     container.remove();
   });
 
-  it("lets the properties table scroll horizontally instead of clipping it", () => {
+  it("wraps long values and never clips the properties table", () => {
     act(() => {
       root.render(
         <AccountDetailsCard
@@ -68,6 +68,10 @@ describe("AccountDetailsCard", () => {
     const wrapper = container.querySelector("table")?.parentElement;
     expect(wrapper?.classList).toContain("overflow-auto");
     expect(wrapper?.classList).not.toContain("overflow-hidden");
-    expect(container.textContent).toContain("1970/01/01 00:00:00 UTC");
+    const valueCell = [...container.querySelectorAll("tr")].find((row) =>
+      row.textContent?.includes("last_account_recovery")
+    )?.cells[1];
+    expect(valueCell?.classList).toContain("wrap-anywhere");
+    expect(valueCell?.classList).not.toContain("whitespace-nowrap");
   });
 });

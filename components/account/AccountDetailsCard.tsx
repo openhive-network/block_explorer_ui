@@ -63,6 +63,19 @@ const TOOLTIP_KEYS: Record<string, string> = {
   hbd_last_interest_payment: "accountDetailsSection.liquidHbdInterestTooltip",
 };
 
+// Lets long snake_case keys wrap after an underscore on narrow screens.
+const breakableKey = (key: string) =>
+  key.split("_").map((part, i) => (
+    <Fragment key={i}>
+      {i > 0 && (
+        <>
+          _<wbr />
+        </>
+      )}
+      {part}
+    </Fragment>
+  ));
+
 const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
   header,
   userDetails,
@@ -144,10 +157,10 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
         return (
           <Fragment key={index}>
             <TableRow>
-              <TableCell className="whitespace-nowrap">
+              <TableCell>
                 {TOOLTIP_KEYS[key] ? (
                   <span className="flex items-center gap-1.5">
-                    {key}
+                    <span>{breakableKey(key)}</span>
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <span className="cursor-help text-gray-400 dark:text-gray-500">
@@ -162,14 +175,14 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
                     </Tooltip>
                   </span>
                 ) : (
-                  key
+                  breakableKey(key)
                 )}
               </TableCell>
               <TableCell
                 className={
                   Array.isArray(userDetails[key])
                     ? "whitespace-normal break-all"
-                    : "whitespace-nowrap"
+                    : "wrap-anywhere"
                 }
               >
                 {renderKey(key)}
@@ -202,7 +215,7 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
         hidden={isPropertiesHidden}
       >
         <TooltipProvider>
-          {/* Scrolls sideways only when the values don't fit, e.g. on phones. */}
+          {/* Values wrap to fit the card; scrolling is only a fallback, so nothing is ever clipped. */}
           <Table>
             <TableBody className="text-sm">{buildTableBody(keys)}</TableBody>
           </Table>
