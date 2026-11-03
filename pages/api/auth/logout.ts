@@ -2,6 +2,8 @@ import { serialize } from "cookie";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { config } from "@/Config";
 
+// Deliberately not gated by REACT_APP_LOGIN: it only clears cookies, and it is the
+// one way to remove HttpOnly ones left behind after a deployment turns login off.
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   // 1. Only allow POST to prevent accidental logouts via URL browsing
   if (req.method !== "POST") {
