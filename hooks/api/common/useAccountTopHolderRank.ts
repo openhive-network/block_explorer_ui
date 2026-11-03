@@ -42,7 +42,10 @@ const useAccountTopHolderRank = (accountName: string | undefined) => {
   const entries = useMemo<TopHolderEntry[]>(() => {
     if (!accountName || !topHoldersEnabled) return [];
     const result: TopHolderEntry[] = [];
-    const pushIfTop = (data: typeof hive.holdersData, coinType: CoinType) => {
+    const pushIfTop = (
+      data: ReturnType<typeof useTopHolders>["holdersData"],
+      coinType: CoinType
+    ) => {
       const found = data.find((h) => h.account === accountName);
       if (found && found.rank > 0 && found.rank <= TOP_RANK_LIMIT) {
         result.push({ rank: found.rank, coinType });
