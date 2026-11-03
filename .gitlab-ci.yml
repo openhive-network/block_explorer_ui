@@ -340,6 +340,25 @@ lint:
       - "npm-validate-i18n.log"
       - pnpm-lock.catalog-refreshed.yaml
 
+# Includes tests/unit/imageSafety.test.ts, which stops the image optimizer coming back (#835).
+unit-tests:
+  extends: .node-job
+  needs:
+    - job: detect_changes
+      optional: true
+  rules:
+    - if: $DOCS_ONLY == "true"
+      when: never
+    - when: on_success
+  script:
+    - !reference [.node-job, script]
+    - |
+      set -o pipefail
+      pnpm run test:unit --ci 2>&1 | tee jest.log
+  artifacts:
+    paths:
+      - jest.log
+
 startup-test:
   extends: .docker_image_builder_job_template
   stage: test

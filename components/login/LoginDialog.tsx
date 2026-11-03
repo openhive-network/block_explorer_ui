@@ -12,8 +12,7 @@ import { config } from "@/Config";
 import { DialogDescription, DialogHeader, DialogTitle } from "../ui/dialog";
 import { cn } from "@/lib/utils";
 import ErrorMessage from "../ErrorMessage";
-import keychainLogo from "@/lib/smart-signer/logo/keychain.png";
-import Hslogo from "@/lib/smart-signer/logo/hivesigner.svg";
+import { getImageSrc } from "@/utils/PathUtils";
 import { isLoginMethodEnabled } from "@/utils/deploySettings";
 
 interface LoginDialogProps {
@@ -106,7 +105,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({
                         alt="logo"
                         width={40}
                         height={40}
-                        src={keychainLogo.src}
+                        src={getImageSrc("/logos/keychain.png")}
                         style={{ height: "auto" }}
                       />
                     )}
@@ -139,7 +138,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({
                       alt="logo"
                       width={30}
                       height={30}
-                      src={Hslogo.src}
+                      src={getImageSrc("/logos/hivesigner.svg")}
                       style={{ height: "auto" }}
                     />
                   </div>

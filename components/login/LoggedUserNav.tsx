@@ -33,8 +33,7 @@ import {
 } from "@/utils/workspaceCloud";
 import { toast } from "sonner";
 
-import keychainLogo from "@/lib/smart-signer/logo/keychain.png";
-import Hslogo from "@/lib/smart-signer/logo/hivesigner.svg";
+import { getImageSrc } from "@/utils/PathUtils";
 
 import {
   Tooltip,
@@ -134,7 +133,7 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
     () => ({
       keychain: {
         name: "Hive Keychain",
-        logo: keychainLogo,
+        logo: "/logos/keychain.png",
         description: t("auth.keychainDescription"),
         bgColor: "bg-red-50 dark:bg-red-950/20",
         borderColor: "border-red-200 dark:border-red-800/30",
@@ -142,7 +141,7 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
       },
       hivesigner: {
         name: "Hivesigner",
-        logo: Hslogo,
+        logo: "/logos/hivesigner.svg",
         description: t("auth.hivesignermessage"),
         bgColor: "bg-blue-50 dark:bg-blue-950/20",
         borderColor: "border-blue-200 dark:border-blue-800/30",
@@ -219,7 +218,7 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
                     <div className="w-8 h-8 rounded-lg bg-white dark:bg-slate-900 border border-black/5 flex items-center justify-center shadow-xs">
                       {config && (
                         <img
-                          src={config.logo.src}
+                          src={getImageSrc(config.logo)}
                           alt="logo"
                           width={20}
                           height={20}

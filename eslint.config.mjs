@@ -28,12 +28,12 @@ export default defineConfig([
             {
               name: "next/image",
               message:
-                "Use a plain <img>. next/image routes pictures through the server-side optimizer (/_next/image + sharp), which must never decode remote or user-controlled images (#835).",
+                "Use a plain <img>. next/image routes pictures through the server-side optimizer (/_next/image), which must never decode remote or user-controlled images (#835).",
             },
             {
               name: "next/legacy/image",
               message:
-                "Use a plain <img>. next/image routes pictures through the server-side optimizer (/_next/image + sharp), which must never decode remote or user-controlled images (#835).",
+                "Use a plain <img>. next/image routes pictures through the server-side optimizer (/_next/image), which must never decode remote or user-controlled images (#835).",
             },
           ],
           patterns: [

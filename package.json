@@ -37,7 +37,6 @@
     "@radix-ui/react-switch": "^1.4.1",
     "@radix-ui/react-tabs": "^1.2.1",
     "@radix-ui/react-tooltip": "^1.4.1",
-    "@resvg/resvg-wasm": "2.6.2",
     "@tailwindcss/postcss": "catalog:tailwind-toolset",
     "@tanstack/react-query": "catalog:react-toolset",
     "@tanstack/react-query-devtools": "5.104.2",
@@ -64,7 +63,6 @@
     "next-themes": "^0.2.1",
     "postcss": "^8.4.31",
     "react": "catalog:react-toolset",
-    "react-country-flag": "^3.1.0",
     "react-day-picker": "^8.10.2",
     "react-dom": "catalog:react-toolset",
     "react-error-boundary": "^4.0.11",
@@ -72,7 +70,6 @@
     "react-markdown": "^10.1.0",
     "react-resizable": "^3.0.5",
     "recharts": "^2.9.2",
-    "sharp": "^0.35.5",
     "sonner": "^1.4.3",
     "stable": "^0.1.8",
     "tailwind-merge": "^1.14.0",
@@ -103,7 +100,7 @@
   },
   "pnpm": {
     "overrides": {
-      "sharp": "^0.35.5",
+      "sharp": "-",
       "recharts>react-is": "^19.0.0"
     }
   },
