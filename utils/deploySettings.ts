@@ -84,20 +84,25 @@ type ReadSetting = (key: string) => string | undefined;
 
 const ENV_PREFIX = "REACT_APP_";
 
+const TRUE_VALUES = ["true", "1", "yes", "on"];
+const FALSE_VALUES = ["false", "0", "no", "off"];
+
+// `onInvalid` lets security-relevant switches fail closed on a typo.
 const parseBoolean = (
   key: string,
   raw: string | undefined,
   fallback: boolean,
-  issues: DeploySettingsIssues
+  issues: DeploySettingsIssues,
+  onInvalid: boolean = fallback
 ): boolean => {
   const value = raw?.trim().toLowerCase();
   if (!value) return fallback;
-  if (value === "true") return true;
-  if (value === "false") return false;
+  if (TRUE_VALUES.includes(value)) return true;
+  if (FALSE_VALUES.includes(value)) return false;
   issues.warnings.push(
-    `${ENV_PREFIX}${key}="${raw}" is not true or false, using ${fallback}`
+    `${ENV_PREFIX}${key}="${raw}" is not true or false, using ${onInvalid}`
   );
-  return fallback;
+  return onInvalid;
 };
 
 const parseChoice = <T extends string>(
@@ -105,15 +110,16 @@ const parseChoice = <T extends string>(
   raw: string | undefined,
   choices: readonly T[],
   fallback: T,
-  issues: DeploySettingsIssues
+  issues: DeploySettingsIssues,
+  onInvalid: T = fallback
 ): T => {
   const value = raw?.trim().toLowerCase();
   if (!value) return fallback;
   if (choices.includes(value as T)) return value as T;
   issues.warnings.push(
-    `${ENV_PREFIX}${key}="${raw}" is not one of ${choices.join(", ")}, using ${fallback}`
+    `${ENV_PREFIX}${key}="${raw}" is not one of ${choices.join(", ")}, using ${onInvalid}`
   );
-  return fallback;
+  return onInvalid;
 };
 
 // Returns what is left after the exclusions; leaving none of `required` keeps
@@ -159,11 +165,12 @@ export const resolveDeploySettings = (
     read("EXPLORER_MODE"),
     EXPLORER_MODES,
     "full",
-    issues
+    issues,
+    "classic"
   );
   const full = mode === "full";
 
-  let login = parseBoolean("LOGIN", read("LOGIN"), full, issues);
+  let login = parseBoolean("LOGIN", read("LOGIN"), full, issues, false);
   // Removing every method switches login off rather than being ignored.
   let loginMethods = parseExclude(
     "LOGIN_EXCLUDE",
@@ -195,7 +202,7 @@ export const resolveDeploySettings = (
   };
   const dashboard = requiresLogin(
     "DASHBOARD",
-    parseBoolean("DASHBOARD", read("DASHBOARD"), full && login, issues)
+    parseBoolean("DASHBOARD", read("DASHBOARD"), full && login, issues, false)
   );
   const wantedSync = requiresLogin(
     "DASHBOARD_SYNC",
@@ -203,7 +210,8 @@ export const resolveDeploySettings = (
       "DASHBOARD_SYNC",
       read("DASHBOARD_SYNC"),
       full && login,
-      issues
+      issues,
+      false
     )
   );
   if (wantedSync && !dashboard) {
@@ -256,17 +264,17 @@ export const resolveDeploySettings = (
   const communities = parseBoolean(
     "COMMUNITIES",
     read("COMMUNITIES"),
-    full,
+    true,
     issues
   );
-  const proposals = parseBoolean("PROPOSALS", read("PROPOSALS"), full, issues);
+  const proposals = parseBoolean("PROPOSALS", read("PROPOSALS"), true, issues);
   const topHolders = parseBoolean(
     "TOP_HOLDERS",
     read("TOP_HOLDERS"),
-    full,
+    true,
     issues
   );
-  const exports = parseBoolean("EXPORTS", read("EXPORTS"), full, issues);
+  const exports = parseBoolean("EXPORTS", read("EXPORTS"), true, issues);
   const languagesOn = parseBoolean(
     "LANGUAGES",
     read("LANGUAGES"),
@@ -355,11 +363,42 @@ export const isHivesignerReady = hivesignerMissing.length === 0;
 
 const resolved = resolveDeploySettings((key) => env(key), hivesignerMissing);
 
+// A table of what this deployment has on and off, one setting per line.
+export const summarizeDeploySettings = (s: DeploySettings): string => {
+  const onOff = (on: boolean, detail = "") =>
+    on ? `on${detail ? `  (${detail})` : ""}` : "off";
+  const rows: [string, string][] = [
+    ["Login", onOff(s.login, s.loginMethods.join(", "))],
+    ["Dashboard", onOff(s.dashboard)],
+    ["Sync", onOff(s.dashboardSync)],
+    ["Home tabs", onOff(s.homeTabs)],
+    ["Recent visits", onOff(s.recentVisits)],
+    ["Tools", onOff(s.tools)],
+    ["Account analytics", onOff(s.accountAnalytics)],
+    ["Communities", onOff(s.communities)],
+    ["Proposals", onOff(s.proposals)],
+    ["Top holders", onOff(s.topHolders)],
+    ["Exports", onOff(s.exports)],
+    ["Home board", s.defaultTemplate],
+    ["Languages", `${s.languages.join(", ")}  (default ${s.defaultLanguage})`],
+    ["Theme", s.defaultTheme],
+    ["Footer", s.footer],
+  ];
+  const width = Math.max(...rows.map(([label]) => label.length));
+  return [
+    `Explorer mode: ${s.mode}`,
+    ...rows.map(([label, value]) => `  ${label.padEnd(width)}  ${value}`),
+  ].join("\n");
+};
+
 // Next evaluates this module once per server bundle; log the issues only once.
 if (typeof window === "undefined") {
   const g = globalThis as Record<string, unknown>;
   if (!g.__deploySettingsLogged__) {
     g.__deploySettingsLogged__ = true;
+    console.info(
+      `[deploy-settings] ${summarizeDeploySettings(resolved.settings)}`
+    );
     resolved.issues.warnings.forEach((msg) =>
       console.warn(`[deploy-settings] ${msg}`)
     );

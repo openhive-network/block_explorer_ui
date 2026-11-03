@@ -3,6 +3,7 @@ import {
   LANGUAGES,
   TEMPLATE_NAMES,
   resolveDeploySettings,
+  summarizeDeploySettings,
 } from "@/utils/deploySettings";
 import { ALL_BOARD_TEMPLATES } from "@/components/dashboard/templates";
 import { SUPPORTED_LOCALES } from "@/i18n/i18n";
@@ -81,14 +82,36 @@ describe("resolveDeploySettings", () => {
     expect(settings.dashboard).toBe(false);
   });
 
-  it("falls back on values it cannot read", () => {
+  it("accepts 1/0, yes/no and on/off", () => {
+    expect(resolve({ LOGIN: "0" }).settings.login).toBe(false);
+    expect(resolve({ LOGIN: "No" }).settings.login).toBe(false);
+    expect(resolve({ TOOLS: "off" }).settings.tools).toBe(false);
+    expect(
+      resolve({ EXPLORER_MODE: "classic", LOGIN: "yes" }).settings.login
+    ).toBe(true);
+    expect(
+      resolve({ EXPLORER_MODE: "classic", TOOLS: "1" }).settings.tools
+    ).toBe(true);
+  });
+
+  it("fails closed on values it cannot read", () => {
+    const typoMode = resolve({ EXPLORER_MODE: "clasic" });
+    expect(typoMode.settings.mode).toBe("classic");
+    expect(typoMode.settings.login).toBe(false);
+
     const { settings, issues } = resolve({
-      EXPLORER_MODE: "simple",
-      LOGIN: "no",
+      LOGIN: "flase",
+      TOOLS: "maybe",
     });
-    expect(settings.mode).toBe("full");
-    expect(settings.login).toBe(true);
+    expect(settings.login).toBe(false);
+    expect(settings.dashboard).toBe(false);
+    expect(settings.tools).toBe(true);
     expect(issues.warnings).toHaveLength(2);
+
+    expect(resolve({ DASHBOARD: "nope" }).settings.dashboard).toBe(false);
+    expect(resolve({ DASHBOARD_SYNC: "nope" }).settings.dashboardSync).toBe(
+      false
+    );
   });
 
   it("keeps the dashboard and sync off without login", () => {
@@ -151,12 +174,20 @@ describe("resolveDeploySettings", () => {
     expect(settings.recentVisits).toBe(false);
     expect(settings.tools).toBe(false);
     expect(settings.accountAnalytics).toBe(false);
-    expect(settings.communities).toBe(false);
-    expect(settings.proposals).toBe(false);
-    expect(settings.topHolders).toBe(false);
-    expect(settings.exports).toBe(false);
     expect(settings.languages).toEqual(["en"]);
     expect(settings.footer).toBe("classic");
+  });
+
+  it("keeps the content sections on in classic mode unless switched off", () => {
+    const classic = resolve({ EXPLORER_MODE: "classic" }).settings;
+    expect(classic.communities).toBe(true);
+    expect(classic.proposals).toBe(true);
+    expect(classic.topHolders).toBe(true);
+    expect(classic.exports).toBe(true);
+    expect(
+      resolve({ EXPLORER_MODE: "classic", PROPOSALS: "false" }).settings
+        .proposals
+    ).toBe(false);
   });
 
   it("can leave a single language, English or not", () => {
@@ -198,6 +229,18 @@ describe("resolveDeploySettings", () => {
       LANGUAGES_EXCLUDE: "ja",
     });
     expect(settings.languages).toEqual(["en"]);
+  });
+});
+
+describe("summarizeDeploySettings", () => {
+  it("names what is on and off", () => {
+    const summary = summarizeDeploySettings(
+      resolve({ EXPLORER_MODE: "classic", LOGIN: "true" }).settings
+    );
+    expect(summary).toContain("Explorer mode: classic");
+    expect(summary).toMatch(/Login +on {2}\(keychain, hivesigner\)/);
+    expect(summary).toMatch(/Dashboard +off/);
+    expect(summary).toMatch(/Footer +classic/);
   });
 });
 

@@ -144,10 +144,11 @@ REACT_APP_API_ADDRESS=https://api.hive.blog
 REACT_APP_HIVE_BLOG_API_ADDRESS=https://api.hive.blog
 ```
 
-**Classic**: no login, dashboard, sync, Recent Visits, Tools, account Analytics,
-communities, proposals, Top Holders, CSV exports or language switcher, a single
-home board without tabs and a minimal footer. No Hivesigner or
-`WORKSPACE_ENCRYPTION_KEY` secrets are needed.
+**Classic**: no login, dashboard, sync, Recent Visits, Tools, account Analytics
+or language switcher, a single home board without tabs and a minimal footer.
+Communities, proposals, Top Holders and CSV exports stay on; each has its own
+setting to turn it off. No Hivesigner or `WORKSPACE_ENCRYPTION_KEY` secrets are
+needed.
 
 ```
 REACT_APP_API_ADDRESS=https://api.hive.blog
