@@ -7,7 +7,6 @@ import React, {
   useCallback,
   useRef,
 } from "react";
-import { Client } from "@hiveio/dhive";
 import Router from "next/router";
 import { isInAppPath } from "@/utils/SafeUrl";
 import { config } from "@/Config";
@@ -24,8 +23,7 @@ import {
 } from "@/utils/workspaceSync";
 import { getLayoutStorageKey } from "@/components/dashboard/lib/dashboard.config";
 import { deploySettings, isLoginMethodEnabled } from "@/utils/deploySettings";
-
-const hiveClient = new Client([config.nodeAddress]);
+import { getAccount } from "@/utils/waxClient";
 
 interface AuthContextType {
   username: string | null;
@@ -76,7 +74,7 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
         const nodeTimeout = config.security?.nodeTimeout || 8000;
 
         const account = (await Promise.race([
-          hiveClient.database.getAccounts([user]).then((res) => res[0]),
+          getAccount(user),
           new Promise((_, reject) =>
             setTimeout(() => reject(new Error("NODE_TIMEOUT")), nodeTimeout)
           ),

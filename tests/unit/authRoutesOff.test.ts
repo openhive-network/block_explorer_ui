@@ -6,6 +6,9 @@ import {
   restoreEnv,
 } from "./support/deployEnv";
 
+// Jest can't load wax (ESM with wasm); these tests stop before any chain call.
+jest.mock("@/utils/waxClient", () => ({ getWaxChain: jest.fn(), getAccount: jest.fn() }));
+
 type Handler = (req: NextApiRequest, res: NextApiResponse) => unknown;
 
 const call = async (route: string, settings: Record<string, string>) => {

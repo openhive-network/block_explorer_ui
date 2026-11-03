@@ -1,19 +1,18 @@
 import { serialize } from "cookie";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { Client, Signature, cryptoUtils } from "@hiveio/dhive";
 import { config } from "@/Config";
 import { loginLimiter } from "@/utils/RateLimit";
 import {
   createSessionToken,
   verifyChallengeToken,
 } from "@/lib/smart-signer/serverSession";
+import { recoverSigningKey } from "@/lib/smart-signer/keychainSignature";
 import { claimChallenge } from "@/lib/smart-signer/usedChallenges";
 import {
   isLoginMethodEnabled,
   rejectUnavailable,
 } from "@/utils/deploySettings";
-
-const hiveClient = new Client([config.nodeAddress]);
+import { getAccount } from "@/utils/waxClient";
 
 export default async function handler(
   req: NextApiRequest,
@@ -72,17 +71,13 @@ export default async function handler(
   }
 
   try {
-    const [account] = await hiveClient.database.getAccounts([username]);
+    const account = await getAccount(username);
     if (!account) return res.status(400).json({ error: "account_not_found" });
 
-    const postingKeys = account.posting.key_auths.map(([key]) => key as string);
+    const postingKeys = account.posting.key_auths.map((auth) => auth[0]);
+    const recoveredKey = await recoverSigningKey(message, signature);
 
-    const msgHash = cryptoUtils.sha256(message);
-    const sig = Signature.fromString(signature);
-    const recoveredKey = sig.recover(msgHash);
-    const recoveredKeyStr = recoveredKey.toString();
-
-    if (!postingKeys.includes(recoveredKeyStr)) {
+    if (!postingKeys.includes(recoveredKey)) {
       return res.status(401).json({ error: "invalid_signature" });
     }
 

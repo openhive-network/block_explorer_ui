@@ -1,6 +1,4 @@
 import { useState, useCallback, useEffect } from "react";
-import { Client } from "@hiveio/dhive";
-import { config } from "@/Config";
 import { useAuth } from "@/contexts/AuthContext";
 import { deploySettings } from "@/utils/deploySettings";
 import { SmartSigner } from "@/lib/smart-signer";
@@ -15,6 +13,7 @@ import {
   bundleFingerprint,
 } from "@/utils/workspaceSync";
 import { buildWorkspaceSyncSignUrl } from "@/lib/smart-signer/providers/hivesigner";
+import { getAccount } from "@/utils/waxClient";
 
 type SyncStatus = "idle" | "syncing" | "success" | "error" | "oversized";
 
@@ -24,8 +23,6 @@ interface UseWorkspaceSyncReturn {
   /** Compressed bundle size in bytes from the last sync attempt. null before first sync. */
   lastBundleBytes: number | null;
 }
-
-const hiveClient = new Client([config.nodeAddress]);
 
 export function useWorkspaceSync(): UseWorkspaceSyncReturn {
   const { username, method } = useAuth();
@@ -73,7 +70,7 @@ export function useWorkspaceSync(): UseWorkspaceSyncReturn {
       const stored = await encryptBundle(compressed);
 
       // Fetch existing metadata to preserve other apps' data
-      const [account] = await hiveClient.database.getAccounts([username]);
+      const account = await getAccount(username);
       let existingPostingMeta: Record<string, any> = {};
       if (account?.posting_json_metadata) {
         try {

@@ -1,5 +1,4 @@
-import { Client } from "@hiveio/dhive";
-import { config } from "@/Config";
+import { getAccount } from "@/utils/waxClient";
 import {
   WorkspaceBundle,
   WORKSPACE_CLOUD_DIFFERS_EVENT,
@@ -7,8 +6,6 @@ import {
   decryptBundle,
   getInstanceMetadataKey,
 } from "@/utils/workspaceSync";
-
-const hiveClient = new Client([config.nodeAddress]);
 
 export type CloudFetchResult =
   | { status: "found"; bundle: WorkspaceBundle; compressed: string }
@@ -21,7 +18,7 @@ export async function fetchCloudBundle(
   username: string
 ): Promise<CloudFetchResult> {
   try {
-    const [account] = await hiveClient.database.getAccounts([username]);
+    const account = await getAccount(username);
     const rawMeta = account?.posting_json_metadata;
     if (!rawMeta) return { status: "none" };
 

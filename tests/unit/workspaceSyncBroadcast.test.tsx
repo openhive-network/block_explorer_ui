@@ -5,7 +5,7 @@
 import { restoreEnv, setDeployEnv } from "./support/deployEnv";
 
 const mockBroadcast = jest.fn();
-const mockGetAccounts = jest.fn();
+const mockGetAccount = jest.fn();
 
 jest.mock("@/contexts/AuthContext", () => ({
   useAuth: () => ({ username: "alice", method: "keychain" }),
@@ -16,10 +16,8 @@ jest.mock("@/lib/smart-signer", () => ({
 jest.mock("@/lib/smart-signer/providers/hivesigner", () => ({
   buildWorkspaceSyncSignUrl: jest.fn(),
 }));
-jest.mock("@hiveio/dhive", () => ({
-  Client: jest.fn().mockImplementation(() => ({
-    database: { getAccounts: (...args: unknown[]) => mockGetAccounts(...args) },
-  })),
+jest.mock("@/utils/waxClient", () => ({
+  getAccount: (...args: unknown[]) => mockGetAccount(...args),
 }));
 
 // Renders the hook from a fresh module registry, so the settings are read again.
@@ -48,9 +46,7 @@ describe("workspace sync broadcast", () => {
   beforeEach(() => {
     (globalThis as Record<string, unknown>).IS_REACT_ACT_ENVIRONMENT = true;
     mockBroadcast.mockReset().mockResolvedValue({ success: true });
-    mockGetAccounts
-      .mockReset()
-      .mockResolvedValue([{ posting_json_metadata: "{}" }]);
+    mockGetAccount.mockReset().mockResolvedValue({ posting_json_metadata: "{}" });
     global.fetch = jest.fn().mockResolvedValue({
       ok: false,
       status: 400,
@@ -63,7 +59,7 @@ describe("workspace sync broadcast", () => {
   it("broadcasts nothing when sync is off", async () => {
     await runSync({ DASHBOARD_SYNC: "false" });
     expect(global.fetch).not.toHaveBeenCalled();
-    expect(mockGetAccounts).not.toHaveBeenCalled();
+    expect(mockGetAccount).not.toHaveBeenCalled();
     expect(mockBroadcast).not.toHaveBeenCalled();
   });
 
