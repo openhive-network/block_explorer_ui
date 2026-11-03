@@ -5,6 +5,7 @@ import { useAddressesContext } from "@/contexts/AddressesContext";
 import { useHealthCheckerContext } from "@/contexts/HealthCheckerContext";
 import useHafbeVersion from "@/hooks/api/common/useHafbeVersion";
 import { useI18n } from "@/i18n/i18n";
+import { siteConfig } from "@/utils/seo";
 import HealthCheckerDialog from "./HealthCheckerDialog";
 
 const { lastCommitHashRepoUrl, gitHash } = config;
@@ -54,7 +55,7 @@ const ClassicFooter: React.FC = () => {
           )}
         </div>
         <p className="text-explorer-dark-gray dark:text-gray-400">
-          © {new Date().getFullYear()} HIVE Block Explorer.{" "}
+          © {new Date().getFullYear()} {siteConfig.name}.{" "}
           {t("footer.allRightsReserved")}.
         </p>
       </div>
