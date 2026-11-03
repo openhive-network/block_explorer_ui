@@ -55,3 +55,15 @@ describe("next.config images", () => {
     expect(images.loader).toBeUndefined();
   });
 });
+
+describe("image dependencies", () => {
+  // Next lists sharp as optional; the override keeps it out of the install (#844).
+  it("keeps sharp and the image renderers out of the install", () => {
+    const pkg = require("../../package.json");
+    expect(pkg.pnpm.overrides.sharp).toBe("-");
+    const deps = { ...pkg.dependencies, ...pkg.devDependencies };
+    for (const name of ["sharp", "@resvg/resvg-wasm", "react-country-flag"]) {
+      expect(deps).not.toHaveProperty([name]);
+    }
+  });
+});
