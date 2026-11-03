@@ -8,6 +8,7 @@ const createJestConfig = nextJest({
 const customJestConfig = {
   testEnvironment: "node",
   testMatch: ["<rootDir>/tests/unit/**/*.test.{ts,tsx}"],
+  setupFiles: ["<rootDir>/tests/unit/support/clearDeployEnv.js"],
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/$1",
     // The package exports only an `import` condition, which Jest's CommonJS
