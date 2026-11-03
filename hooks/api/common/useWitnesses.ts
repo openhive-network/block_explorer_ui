@@ -13,7 +13,7 @@ const useWitnesses = (
     data: witnessesData,
     isPending: isWitnessDataLoading,
     isError: isWitnessDataError,
-    isPreviousData: isWitnessDataPreviousData,
+    isPlaceholderData: isWitnessDataPreviousData,
   } = useQuery({
     queryKey: ["witnesses", witnessesLimit, orderBy, orderIs, page],
     queryFn: () =>
