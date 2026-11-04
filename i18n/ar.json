@@ -1519,6 +1519,7 @@
   "proposalVotesHistoryDialog.voter": "المصوّت",
   "proposalVotesHistoryDialog.date": "التاريخ",
   "proposalVotesHistoryDialog.vote": "تصويت",
+  "proposalVotesHistoryDialog.currentVoterPower": "قوة التصويت الحالية",
   "proposalVotesHistoryDialog.approve": "صوّت",
   "proposalVotesHistoryDialog.disapprove": "سحب التصويت",
   "proposalVotesHistoryDialog.nMore": "+{{n}} المزيد",

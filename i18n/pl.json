@@ -1519,6 +1519,7 @@
   "proposalVotesHistoryDialog.voter": "Głosujący",
   "proposalVotesHistoryDialog.date": "Data",
   "proposalVotesHistoryDialog.vote": "Głos",
+  "proposalVotesHistoryDialog.currentVoterPower": "Bieżąca Moc Głosu",
   "proposalVotesHistoryDialog.approve": "Zagłosowano",
   "proposalVotesHistoryDialog.disapprove": "Wycofano głos",
   "proposalVotesHistoryDialog.nMore": "+{{n}} więcej",

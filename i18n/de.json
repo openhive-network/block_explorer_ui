@@ -1519,6 +1519,7 @@
   "proposalVotesHistoryDialog.voter": "Wähler",
   "proposalVotesHistoryDialog.date": "Datum",
   "proposalVotesHistoryDialog.vote": "Abstimmung",
+  "proposalVotesHistoryDialog.currentVoterPower": "Aktuelle Stimmkraft",
   "proposalVotesHistoryDialog.approve": "Abgestimmt",
   "proposalVotesHistoryDialog.disapprove": "Stimme zurückgezogen",
   "proposalVotesHistoryDialog.nMore": "+{{n}} weitere",

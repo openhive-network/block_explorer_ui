@@ -27,6 +27,8 @@ import {
 } from "recharts";
 
 import { cn } from "@/lib/utils";
+import { convertVestsToHP } from "@/utils/Calculations";
+import { relocalizeAmount } from "@/utils/localeAmount";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import { trimAccountName } from "@/utils/StringUtils";
 import useProposalVotesHistory from "@/hooks/api/proposals/useProposalVotesHistory";
@@ -34,6 +36,9 @@ import useProposalVotesHistoryChart from "@/hooks/api/proposals/useProposalVotes
 import useSearchRanges from "@/hooks/common/useSearchRanges";
 import { useI18n } from "@/i18n/i18n";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useSettings } from "@/contexts/SettingsContext";
+import { useHiveChainContext } from "@/contexts/HiveChainContext";
+import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import { config } from "@/Config";
 
 import {
@@ -53,6 +58,13 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import {
+  Tooltip as UiTooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import AutocompleteInput from "@/components/ui/AutoCompleteInput";
 import CustomPagination from "@/components/CustomPagination";
 import NoResult from "@/components/NoResult";
@@ -81,7 +93,7 @@ type DayCount = {
 const TOOLTIP_MAX_NAMES = 8;
 
 const VoterList = ({ names }: { names: string[] }) => {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   return (
     <div className="mt-1.5 space-y-1.5">
       {names.slice(0, TOOLTIP_MAX_NAMES).map((name) => (
@@ -98,7 +110,7 @@ const VoterList = ({ names }: { names: string[] }) => {
       {names.length > TOOLTIP_MAX_NAMES && (
         <p className="text-xs text-slate-400 italic">
           {t("proposalVotesHistoryDialog.nMore", {
-            n: names.length - TOOLTIP_MAX_NAMES,
+            n: (names.length - TOOLTIP_MAX_NAMES).toLocaleString(locale),
           })}
         </p>
       )}
@@ -118,7 +130,7 @@ const VoteTooltip = ({
   approveLabel: string;
   disapproveLabel: string;
 }) => {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   if (!active || !payload?.length) return null;
   const d = payload[0]?.payload as DayCount | undefined;
   if (!d) return null;
@@ -137,7 +149,7 @@ const VoteTooltip = ({
           }
         >
           {d.cumulativeNet > 0 ? "+" : ""}
-          {d.cumulativeNet}
+          {d.cumulativeNet.toLocaleString(locale)}
         </span>
       </p>
 
@@ -146,12 +158,12 @@ const VoteTooltip = ({
         <>
           <hr className="my-2 border-slate-200 dark:border-slate-700" />
           <p className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-            {approveLabel}: +{d.approveList.length}
+            {approveLabel}: +{d.approveList.length.toLocaleString(locale)}
             {d.approveList.length > TOOLTIP_MAX_NAMES && (
               <span className="font-normal text-slate-400">
                 {" "}
                 {t("proposalVotesHistoryDialog.showingMax", {
-                  count: TOOLTIP_MAX_NAMES,
+                  count: TOOLTIP_MAX_NAMES.toLocaleString(locale),
                 })}
               </span>
             )}
@@ -165,12 +177,12 @@ const VoteTooltip = ({
         <>
           <hr className="my-2 border-slate-200 dark:border-slate-700" />
           <p className="text-xs font-semibold text-rose-600 dark:text-rose-400">
-            {disapproveLabel}: -{d.disapproveList.length}
+            {disapproveLabel}: -{d.disapproveList.length.toLocaleString(locale)}
             {d.disapproveList.length > TOOLTIP_MAX_NAMES && (
               <span className="font-normal text-slate-400">
                 {" "}
                 {t("proposalVotesHistoryDialog.showingMax", {
-                  count: TOOLTIP_MAX_NAMES,
+                  count: TOOLTIP_MAX_NAMES.toLocaleString(locale),
                 })}
               </span>
             )}
@@ -205,11 +217,53 @@ const KpiChip = ({
   </div>
 );
 
+// ---------- current voter power cell ----------
+const VoterPower = ({
+  vote,
+  formatPower,
+}: {
+  vote: Hive.ProposalVoteHistoryEntry;
+  formatPower: (vests: string) => string;
+}) => {
+  const { t } = useI18n();
+  const hasProxied = Number(vote.proxied_vests) > 0;
+  const power = (
+    <>
+      {formatPower(vote.direct_vests)}
+      {hasProxied && (
+        <span className="text-slate-500 dark:text-slate-400">
+          {" "}
+          + {formatPower(vote.proxied_vests)} {t("common.proxySuffix")}
+        </span>
+      )}
+    </>
+  );
+  if (!vote.proxy) return power;
+  // With a proxy set, the voter's own vote doesn't count.
+  return (
+    <TooltipProvider>
+      <UiTooltip>
+        <TooltipTrigger asChild>
+          <button type="button" className="cursor-help rounded-sm line-through">
+            {power}
+          </button>
+        </TooltipTrigger>
+        <TooltipContent
+          align="end"
+          className="max-w-65 whitespace-normal text-start"
+        >
+          {t("proposalVotesDialog.proxiedVoteTooltip", { proxy: vote.proxy })}
+        </TooltipContent>
+      </UiTooltip>
+    </TooltipProvider>
+  );
+};
+
 // ---------- main component ----------
 export const ProposalVotesHistoryDialog: React.FC<
   ProposalVotesHistoryDialogProps
 > = ({ proposalId, children }) => {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const { theme } = useTheme();
   const strokeColor = theme === "dark" ? "#FFF" : "#000";
 
@@ -217,6 +271,40 @@ export const ProposalVotesHistoryDialog: React.FC<
   const [pageNum, setPageNum] = useState(1);
   const [direction, setDirection] = useState<"asc" | "desc">("desc");
   const [hiddenSeries, setHiddenSeries] = useState<Set<string>>(new Set());
+
+  const { settings } = useSettings();
+  const [isHP, setIsHP] = useState(settings.displayVestHpMode === "hp");
+  const { hiveChain } = useHiveChainContext();
+  const { dynamicGlobalData } = useDynamicGlobal() as any;
+  const totalVestingShares =
+    dynamicGlobalData?.headBlockDetails.rawTotalVestingShares;
+  const totalVestingFundHive =
+    dynamicGlobalData?.headBlockDetails.rawTotalVestingFundHive;
+
+  const formatPower = (vests: string): string => {
+    if (!isHP) {
+      // Formatted from the raw integer as a decimal string, so values past 2^53 stay exact.
+      const raw = BigInt(vests || 0);
+      const scale = BigInt(10 ** config.precisions.vests);
+      const fraction = (raw % scale)
+        .toString()
+        .padStart(config.precisions.vests, "0");
+      const amount = new Intl.NumberFormat(locale, {
+        minimumFractionDigits: config.precisions.vests,
+      }).format(`${raw / scale}.${fraction}` as unknown as number);
+      return `${amount} ${t("common.vests")}`;
+    }
+    if (!hiveChain || !totalVestingFundHive || !totalVestingShares) return "";
+    return relocalizeAmount(
+      convertVestsToHP(
+        hiveChain,
+        vests,
+        totalVestingFundHive,
+        totalVestingShares
+      ) ?? "",
+      locale
+    );
+  };
 
   const toggleSeries = (dataKey: string) => {
     setHiddenSeries((prev) => {
@@ -332,6 +420,7 @@ export const ProposalVotesHistoryDialog: React.FC<
       handleClear();
       setDirection("desc");
       setHiddenSeries(new Set());
+      setIsHP(settings.displayVestHpMode === "hp");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
@@ -405,6 +494,10 @@ export const ProposalVotesHistoryDialog: React.FC<
         [t("proposalVotesHistoryDialog.vote")]: vote.approve
           ? approveLabel
           : disapproveLabel,
+        // voter_vests is 0 while the voter has a proxy, as the vote then doesn't count.
+        [t("proposalVotesHistoryDialog.currentVoterPower")]: formatPower(
+          vote.voter_vests
+        ),
       })
     );
   };
@@ -482,24 +575,24 @@ export const ProposalVotesHistoryDialog: React.FC<
               <KpiChip
                 icon={Activity}
                 label={t("proposalVotesHistoryDialog.kpiTotal")}
-                value={kpi.total}
+                value={kpi.total.toLocaleString(locale)}
               />
               <KpiChip
                 icon={ThumbsUp}
                 label={approveLabel}
-                value={kpi.voted}
+                value={kpi.voted.toLocaleString(locale)}
                 valueClass="text-emerald-600 dark:text-emerald-400"
               />
               <KpiChip
                 icon={ThumbsDown}
                 label={disapproveLabel}
-                value={kpi.unvoted}
+                value={kpi.unvoted.toLocaleString(locale)}
                 valueClass="text-rose-600 dark:text-rose-400"
               />
               <KpiChip
                 icon={TrendingUp}
                 label={t("proposalVotesHistoryDialog.kpiNet")}
-                value={kpi.net > 0 ? `+${kpi.net}` : kpi.net}
+                value={`${kpi.net > 0 ? "+" : ""}${kpi.net.toLocaleString(locale)}`}
                 valueClass={
                   kpi.net >= 0
                     ? "text-emerald-600 dark:text-emerald-400"
@@ -539,6 +632,7 @@ export const ProposalVotesHistoryDialog: React.FC<
                   yAxisId="left"
                   allowDecimals={false}
                   domain={chartYDomain}
+                  tickFormatter={(v: number) => v.toLocaleString(locale)}
                   tick={{ fontSize: 11, fill: strokeColor }}
                   tickLine={false}
                   axisLine={false}
@@ -547,6 +641,7 @@ export const ProposalVotesHistoryDialog: React.FC<
                   yAxisId="right"
                   orientation="right"
                   allowDecimals={false}
+                  tickFormatter={(v: number) => v.toLocaleString(locale)}
                   tick={{ fontSize: 11, fill: "#8b5cf6" }}
                   tickLine={false}
                   axisLine={false}
@@ -653,12 +748,28 @@ export const ProposalVotesHistoryDialog: React.FC<
                 count={votesHistory.total_votes}
                 dataType={t("proposalVotesHistoryDialog.votes")}
               />
-              <DataExport
-                data={prepareExportData()}
-                filename={t("proposalVotesHistoryDialog.exportFilename", {
-                  proposalId,
-                })}
-              />
+              <div className="flex items-center gap-2">
+                <div className="flex items-center">
+                  <Label htmlFor="proposal-votes-history-unit" className="me-2">
+                    {t("common.vests")}
+                  </Label>
+                  <Switch
+                    id="proposal-votes-history-unit"
+                    checked={isHP}
+                    onCheckedChange={setIsHP}
+                    className="mx-1"
+                  />
+                  <Label htmlFor="proposal-votes-history-unit">
+                    {t("common.hp")}
+                  </Label>
+                </div>
+                <DataExport
+                  data={prepareExportData()}
+                  filename={t("proposalVotesHistoryDialog.exportFilename", {
+                    proposalId,
+                  })}
+                />
+              </div>
             </div>
             <div className="text-text w-full rounded bg-theme overflow-auto">
               <Table enableMobileScrollArrows isDialog className="min-w-max">
@@ -686,6 +797,9 @@ export const ProposalVotesHistoryDialog: React.FC<
                     </TableHead>
                     <TableHead>
                       {t("proposalVotesHistoryDialog.vote")}
+                    </TableHead>
+                    <TableHead className="text-end">
+                      {t("proposalVotesHistoryDialog.currentVoterPower")}
                     </TableHead>
                   </TableRow>
                 </TableHeader>
@@ -718,6 +832,9 @@ export const ProposalVotesHistoryDialog: React.FC<
                           ) : (
                             <ArrowDownCircleIcon color="#f71b1b" />
                           )}
+                        </TableCell>
+                        <TableCell className="text-end whitespace-nowrap">
+                          <VoterPower vote={vote} formatPower={formatPower} />
                         </TableCell>
                       </TableRow>
                     )

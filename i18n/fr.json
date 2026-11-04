@@ -1519,6 +1519,7 @@
   "proposalVotesHistoryDialog.voter": "Votant",
   "proposalVotesHistoryDialog.date": "Date",
   "proposalVotesHistoryDialog.vote": "Vote",
+  "proposalVotesHistoryDialog.currentVoterPower": "Pouvoir de Vote Actuel",
   "proposalVotesHistoryDialog.approve": "Voté",
   "proposalVotesHistoryDialog.disapprove": "Vote retiré",
   "proposalVotesHistoryDialog.nMore": "+{{n}} de plus",

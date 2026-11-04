@@ -1519,6 +1519,7 @@
   "proposalVotesHistoryDialog.voter": "Votant",
   "proposalVotesHistoryDialog.date": "Data",
   "proposalVotesHistoryDialog.vote": "Vot",
+  "proposalVotesHistoryDialog.currentVoterPower": "Putere de Vot Curentă",
   "proposalVotesHistoryDialog.approve": "Votat",
   "proposalVotesHistoryDialog.disapprove": "Vot retras",
   "proposalVotesHistoryDialog.nMore": "+{{n}} mai mult",

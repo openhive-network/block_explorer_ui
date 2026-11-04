@@ -1519,6 +1519,7 @@
   "proposalVotesHistoryDialog.voter": "投票者",
   "proposalVotesHistoryDialog.date": "日付",
   "proposalVotesHistoryDialog.vote": "投票",
+  "proposalVotesHistoryDialog.currentVoterPower": "現在の投票パワー",
   "proposalVotesHistoryDialog.approve": "投票済み",
   "proposalVotesHistoryDialog.disapprove": "投票取り消し",
   "proposalVotesHistoryDialog.nMore": "+{{n}} 件以上",

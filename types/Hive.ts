@@ -385,6 +385,10 @@ namespace Hive {
   export class ProposalVoteHistoryEntry {
     voter_name!: string;
     approve!: boolean;
+    voter_vests!: string;
+    direct_vests!: string;
+    proxied_vests!: string;
+    proxy!: string;
     timestamp!: string;
   }
 
