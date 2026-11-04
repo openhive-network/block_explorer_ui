@@ -69,6 +69,7 @@ export interface DeploySettings {
   proposals: boolean;
   topHolders: boolean;
   exports: boolean;
+  hafStats: boolean;
   languages: Language[];
   defaultLanguage: Language;
   footer: FooterKind;
@@ -160,13 +161,14 @@ export const resolveDeploySettings = (
 ): { settings: DeploySettings; issues: DeploySettingsIssues } => {
   const issues: DeploySettingsIssues = { warnings: [], errors: [] };
 
+  // Classic by default: a node that sets only the API addresses (haf_api_node)
+  // gets the plain explorer, and the full app is opted into.
   const mode = parseChoice(
     "EXPLORER_MODE",
     read("EXPLORER_MODE"),
     EXPLORER_MODES,
-    "full",
-    issues,
-    "classic"
+    "classic",
+    issues
   );
   const full = mode === "full";
 
@@ -275,6 +277,8 @@ export const resolveDeploySettings = (
     issues
   );
   const exports = parseBoolean("EXPORTS", read("EXPORTS"), true, issues);
+  // Off means the app never probes or calls haf-stats-api.
+  const hafStats = parseBoolean("HAF_STATS", read("HAF_STATS"), full, issues);
   const languagesOn = parseBoolean(
     "LANGUAGES",
     read("LANGUAGES"),
@@ -323,6 +327,7 @@ export const resolveDeploySettings = (
       proposals,
       topHolders,
       exports,
+      hafStats,
       defaultTheme: parseChoice(
         "DEFAULT_THEME",
         read("DEFAULT_THEME"),
@@ -379,6 +384,7 @@ export const summarizeDeploySettings = (s: DeploySettings): string => {
     ["Proposals", onOff(s.proposals)],
     ["Top holders", onOff(s.topHolders)],
     ["Exports", onOff(s.exports)],
+    ["haf-stats-api", onOff(s.hafStats)],
     ["Home board", s.defaultTemplate],
     ["Languages", `${s.languages.join(", ")}  (default ${s.defaultLanguage})`],
     ["Theme", s.defaultTheme],
@@ -409,6 +415,10 @@ if (typeof window === "undefined") {
 }
 
 export const deploySettings: DeploySettings = resolved.settings;
+
+// HAF apps this deployment may contact; the rest are never probed or called.
+export const isHafAppEnabled = (app: string): boolean =>
+  app !== "haf-stats-api" || deploySettings.hafStats;
 
 export const isLoginMethodEnabled = (method: LoginMethod): boolean =>
   deploySettings.login && deploySettings.loginMethods.includes(method);

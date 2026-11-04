@@ -392,6 +392,7 @@ startup-test:
         --image="$IMAGE_NAME" \
         --api-endpoint="$API_ENDPOINT" \
         --hive-blog-api-endpoint="$HIVE_BLOG_API_ENDPOINT" \
+        --explorer-mode="${EXPLORER_MODE:-full}" \
         --port="$PORT" \
         --name="$CONTAINER_NAME" \
         --detach
@@ -458,6 +459,8 @@ e2e-tests:
       variables:
         REACT_APP_API_ADDRESS: https://api.hive.blog
         REACT_APP_HIVE_BLOG_API_ADDRESS: https://api.hive.blog
+        # The e2e tests cover the whole app; blank would mean classic.
+        REACT_APP_EXPLORER_MODE: full
   variables:
     PORT: 5000
     BLOCK_EXPLORER_URL: http://block-explorer:$PORT
@@ -508,6 +511,7 @@ e2e-report-aggregate:
         --image="$IMAGE_NAME" \
         --api-endpoint="$API_ENDPOINT" \
         --hive-blog-api-endpoint="$HIVE_BLOG_API_ENDPOINT" \
+        --explorer-mode="${EXPLORER_MODE:-full}" \
         --port="$PORT" \
         --name="$CONTAINER_NAME" \
         --detach

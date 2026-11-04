@@ -133,28 +133,37 @@ To stop and delete the container use command `docker compose down`.
 
 Optional features are switched with runtime `REACT_APP_*` variables, so one
 image serves every deployment; restart the server after changing them.
-Leave everything blank for the full explorer, as on hivescan.info. Every
-setting, its values and what it needs or removes is listed in
+Leave everything blank for the classic explorer; hivescan.info runs the full
+one. Every setting, its values and what it needs or removes is listed in
 [.env.example](.env.example).
 
-**Full** (default):
+**Classic** (default): no login, dashboard, sync, Recent Visits, Tools, account
+Analytics or language switcher, a single home board without tabs and a minimal
+footer. It never contacts haf-stats-api. Communities, proposals, Top Holders and
+CSV exports stay on; each has its own setting to turn it off. No Hivesigner or
+`WORKSPACE_ENCRYPTION_KEY` secrets are needed.
 
 ```
 REACT_APP_API_ADDRESS=https://api.hive.blog
 REACT_APP_HIVE_BLOG_API_ADDRESS=https://api.hive.blog
 ```
 
-**Classic**: no login, dashboard, sync, Recent Visits, Tools, account Analytics
-or language switcher, a single home board without tabs and a minimal footer.
-Communities, proposals, Top Holders and CSV exports stay on; each has its own
-setting to turn it off. No Hivesigner or `WORKSPACE_ENCRYPTION_KEY` secrets are
-needed.
+**Full**: everything, including login, the dashboard and the analytics.
 
 ```
 REACT_APP_API_ADDRESS=https://api.hive.blog
 REACT_APP_HIVE_BLOG_API_ADDRESS=https://api.hive.blog
-REACT_APP_EXPLORER_MODE=classic
+REACT_APP_EXPLORER_MODE=full
 ```
+
+| Backend       | Classic      | Full                                            |
+| ------------- | ------------ | ----------------------------------------------- |
+| hafah-api     | needed       | needed                                          |
+| hafbe-api     | needed       | needed                                          |
+| balance-api   | needed       | needed                                          |
+| haf-stats-api | never called | optional; its widgets hide on a node without it |
+
+`REACT_APP_HAF_STATS` overrides that last row in either mode.
 
 Any single setting overrides the preset, e.g. classic with Keychain login only
 (this needs `WORKSPACE_ENCRYPTION_KEY` again, which protects Keychain logins):

@@ -5,9 +5,11 @@ import { DEPLOY_KEYS } from "./clearDeployEnv";
 const originalEnv = { ...process.env };
 
 // Jest loads the developer's .env, so every deploy setting is cleared first and
-// only the ones a test names apply.
+// only the ones a test names apply. The tests switch features off one at a time,
+// so they start from full mode unless they name another.
 export const setDeployEnv = (settings: Record<string, string> = {}) => {
   for (const key of DEPLOY_KEYS) delete process.env[`REACT_APP_${key}`];
+  process.env.REACT_APP_EXPLORER_MODE = "full";
   Object.assign(process.env, {
     NEXT_PUBLIC_HIVESIGNER_APP: "explorer-app",
     NEXT_PUBLIC_HIVESIGNER_CALLBACK: "http://localhost/",

@@ -8,11 +8,30 @@ import {
 import { ALL_BOARD_TEMPLATES } from "@/components/dashboard/templates";
 import { SUPPORTED_LOCALES } from "@/i18n/i18n";
 
+// Most cases switch one feature of the full app, so they start from full mode.
 const resolve = (values: Record<string, string>) =>
-  resolveDeploySettings((key) => values[key]);
+  resolveDeploySettings((key) => ({ EXPLORER_MODE: "full", ...values })[key]);
 
 describe("resolveDeploySettings", () => {
-  it("keeps everything on when nothing is set", () => {
+  it("gives the classic explorer when nothing is set", () => {
+    const { settings, issues } = resolveDeploySettings(() => undefined);
+    expect(settings).toMatchObject({
+      mode: "classic",
+      login: false,
+      dashboard: false,
+      dashboardSync: false,
+      homeTabs: false,
+      tools: false,
+      accountAnalytics: false,
+      hafStats: false,
+      communities: true,
+      proposals: true,
+      footer: "classic",
+    });
+    expect(issues).toEqual({ warnings: [], errors: [] });
+  });
+
+  it("keeps everything on in full mode", () => {
     const { settings, issues } = resolve({});
     expect(settings).toEqual({
       mode: "full",
@@ -30,6 +49,7 @@ describe("resolveDeploySettings", () => {
       proposals: true,
       topHolders: true,
       exports: true,
+      hafStats: true,
       languages: [...LANGUAGES],
       defaultLanguage: "en",
       footer: "full",
@@ -65,7 +85,7 @@ describe("resolveDeploySettings", () => {
 
   it("hides Hivesigner while one of its settings is missing", () => {
     const { settings, issues } = resolveDeploySettings(
-      () => undefined,
+      (key) => (key === "EXPLORER_MODE" ? "full" : undefined),
       ["HIVESIGNER_SECRET"]
     );
     expect(settings.loginMethods).toEqual(["keychain"]);
@@ -75,7 +95,7 @@ describe("resolveDeploySettings", () => {
 
   it("turns login off when Hivesigner was the only method and is not set up", () => {
     const { settings } = resolveDeploySettings(
-      (key) => (key === "LOGIN_EXCLUDE" ? "keychain" : undefined),
+      (key) => ({ EXPLORER_MODE: "full", LOGIN_EXCLUDE: "keychain" })[key],
       ["HIVESIGNER_APP"]
     );
     expect(settings.login).toBe(false);
@@ -232,6 +252,17 @@ describe("resolveDeploySettings", () => {
   });
 });
 
+describe("haf-stats-api switch", () => {
+  it("is on in full and off in classic, and either can be overridden", () => {
+    expect(resolve({}).settings.hafStats).toBe(true);
+    expect(resolve({ EXPLORER_MODE: "classic" }).settings.hafStats).toBe(false);
+    expect(resolve({ HAF_STATS: "off" }).settings.hafStats).toBe(false);
+    expect(
+      resolve({ EXPLORER_MODE: "classic", HAF_STATS: "on" }).settings.hafStats
+    ).toBe(true);
+  });
+});
+
 describe("summarizeDeploySettings", () => {
   it("names what is on and off", () => {
     const summary = summarizeDeploySettings(
@@ -241,6 +272,7 @@ describe("summarizeDeploySettings", () => {
     expect(summary).toMatch(/Login +on {2}\(keychain, hivesigner\)/);
     expect(summary).toMatch(/Dashboard +off/);
     expect(summary).toMatch(/Footer +classic/);
+    expect(summary).toMatch(/haf-stats-api +off/);
   });
 });
 

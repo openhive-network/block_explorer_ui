@@ -11,6 +11,7 @@ OPTIONS:
   --image=IMAGE                 Docker image to run (default: 'registry.gitlab.syncad.com/hive/block_explorer_ui:latest')
   --api-endpoint=URL            API endpoint to be used by the new instance (default: 'https://api.hive.blog')
   --hive-blog-api-endpoint=URL  Hive Blog API endpoint to be used by the new instance (default: 'https://api.hive.blog')
+  --explorer-mode=MODE          classic or full (default: unset, which the app treats as classic)
   --port=PORT                   Port to be exposed (default: 5000)
   --name=NAME                   Container name to be used (default: block_explorer_ui)
   --detach                      Run in detached mode
@@ -23,6 +24,7 @@ PORT=${PORT:-"5000"}
 API_ENDPOINT=${API_ENDPOINT:-"https://api.hive.blog"}
 HIVE_BLOG_API_ENDPOINT=${HIVE_BLOG_API_ENDPOINT:-"https://api.hive.blog"}
 CONTAINER_NAME=${CONTAINER_NAME:-"block_explorer_ui"}
+EXPLORER_MODE=${EXPLORER_MODE:-""}
 DETACH=${DETACH:-false}
 
 while [ $# -gt 0 ]; do
@@ -38,6 +40,10 @@ while [ $# -gt 0 ]; do
     --hive-blog-api-endpoint=*)
         arg="${1#*=}"
         HIVE_BLOG_API_ENDPOINT="$arg"
+        ;;
+    --explorer-mode=*)
+        arg="${1#*=}"
+        EXPLORER_MODE="$arg"
         ;;
     --port=*)
         arg="${1#*=}"
@@ -74,6 +80,10 @@ RUN_OPTIONS=(
     "--env" "REACT_APP_HIVE_BLOG_API_ADDRESS=$HIVE_BLOG_API_ENDPOINT"
     "--name" "$CONTAINER_NAME"
 )
+
+if [[ -n "$EXPLORER_MODE" ]]; then
+    RUN_OPTIONS+=("--env" "REACT_APP_EXPLORER_MODE=$EXPLORER_MODE")
+fi
 
 if [[ "$DETACH" == "true" ]]; then
     RUN_OPTIONS+=("--detach")

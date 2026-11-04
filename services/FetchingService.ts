@@ -12,6 +12,7 @@ import {
 } from "@hiveio/wax";
 import { extendedRest } from "@/types/Rest";
 import { createPathFilterString } from "@/lib/utils";
+import { isHafAppEnabled } from "@/utils/deploySettings";
 import {
   classifyEndpointError,
   EndpointUnsupportedError,
@@ -196,6 +197,15 @@ class FetchingService {
       hiveChain,
       config.blockSearchTimeout
     );
+  }
+
+  // Every haf-stats-api call goes through here, so a deployment with it off
+  // never contacts it, even from code that skips the node-support gate.
+  private get hafStatsApi() {
+    if (!isHafAppEnabled("haf-stats-api")) {
+      throw new EndpointUnsupportedError("haf-stats-api");
+    }
+    return this.extendedHiveChain!.restApi["haf-stats-api"];
   }
 
   // Wrap a REST call so a definitive missing-endpoint 404 surfaces as a typed
@@ -1204,7 +1214,7 @@ class FetchingService {
       operation_types: operationTypes?.trim(),
     };
     return this.withNodeSupport("haf-stats-api:daily-active-users", () =>
-      this.extendedHiveChain!.restApi["haf-stats-api"].dailyActiveUsers(params)
+      this.hafStatsApi.dailyActiveUsers(params)
     );
   }
 
@@ -1214,7 +1224,7 @@ class FetchingService {
     granularity?: "day" | "week" | "month"
   ): Promise<Hive.NetworkVoteStatsResponse[]> {
     return this.withNodeSupport("haf-stats-api:vote-stats", () =>
-      this.extendedHiveChain!.restApi["haf-stats-api"].networkVoteStats({
+      this.hafStatsApi.networkVoteStats({
         from_date: from,
         to_date: to,
         granularity,
@@ -1226,16 +1236,14 @@ class FetchingService {
     Hive.NetworkHpDistributionResponse[]
   > {
     return this.withNodeSupport("haf-stats-api:hp-distribution", () =>
-      this.extendedHiveChain!.restApi["haf-stats-api"].networkHpDistribution({})
+      this.hafStatsApi.networkHpDistribution({})
     );
   }
 
   async getGovernanceInfluenceConcentration(): Promise<
     Hive.GovernanceInfluenceConcentrationResponse[]
   > {
-    return await this.extendedHiveChain!.restApi[
-      "haf-stats-api"
-    ].governanceInfluenceConcentration({});
+    return await this.hafStatsApi.governanceInfluenceConcentration({});
   }
 
   async getNetworkRcUtilization(
@@ -1244,7 +1252,7 @@ class FetchingService {
     granularity?: "day" | "week" | "month"
   ): Promise<Hive.NetworkRcUtilizationResponse[]> {
     return this.withNodeSupport("haf-stats-api:rc-utilization", () =>
-      this.extendedHiveChain!.restApi["haf-stats-api"].networkRcUtilization({
+      this.hafStatsApi.networkRcUtilization({
         from_date: from,
         to_date: to,
         granularity,
@@ -1258,7 +1266,7 @@ class FetchingService {
     granularity?: "day" | "week" | "month"
   ): Promise<Hive.NetworkContentVolumeResponse[]> {
     return this.withNodeSupport("haf-stats-api:content-volume", () =>
-      this.extendedHiveChain!.restApi["haf-stats-api"].networkContentVolume({
+      this.hafStatsApi.networkContentVolume({
         from_date: from,
         to_date: to,
         granularity,
@@ -1272,7 +1280,7 @@ class FetchingService {
     granularity?: "day" | "week" | "month"
   ): Promise<Hive.NetworkEngagementResponse[]> {
     return this.withNodeSupport("haf-stats-api:engagement", () =>
-      this.extendedHiveChain!.restApi["haf-stats-api"].networkEngagement({
+      this.hafStatsApi.networkEngagement({
         from_date: from,
         to_date: to,
         granularity,
@@ -1285,7 +1293,7 @@ class FetchingService {
     to?: Date | number
   ): Promise<Hive.AccountFunnelResponse[]> {
     return this.withNodeSupport("haf-stats-api:account-funnel", () =>
-      this.extendedHiveChain!.restApi["haf-stats-api"].accountFunnel({
+      this.hafStatsApi.accountFunnel({
         from_date: from,
         to_date: to,
       })
@@ -1297,7 +1305,7 @@ class FetchingService {
     to?: string | Date | number
   ): Promise<Hive.NetworkAuthorRetentionResponse[]> {
     return this.withNodeSupport("haf-stats-api:author-retention", () =>
-      this.extendedHiveChain!.restApi["haf-stats-api"].networkAuthorRetention({
+      this.hafStatsApi.networkAuthorRetention({
         from_date: from,
         to_date: to,
       })
@@ -1308,9 +1316,7 @@ class FetchingService {
     params: Hive.NetworkTopCustomJsonParams
   ): Promise<Hive.NetworkTopCustomJsonRow[]> {
     return this.withNodeSupport("haf-stats-api:top-custom-json", () =>
-      this.extendedHiveChain!.restApi["haf-stats-api"].networkTopCustomJson(
-        params
-      )
+      this.hafStatsApi.networkTopCustomJson(params)
     );
   }
 
@@ -1318,15 +1324,13 @@ class FetchingService {
     params: Hive.NetworkCustomJsonUsageParams
   ): Promise<Hive.NetworkCustomJsonUsageRow[]> {
     return this.withNodeSupport("haf-stats-api:custom-json-usage", () =>
-      this.extendedHiveChain!.restApi["haf-stats-api"].networkCustomJsonUsage(
-        params
-      )
+      this.hafStatsApi.networkCustomJsonUsage(params)
     );
   }
 
   async getCustomJsonAppRegistry(): Promise<Hive.CustomJsonAppRegistryRow[]> {
     return this.withNodeSupport("haf-stats-api:custom-json-registry", () =>
-      this.extendedHiveChain!.restApi["haf-stats-api"].customJsonAppRegistry({})
+      this.hafStatsApi.customJsonAppRegistry({})
     );
   }
 
@@ -1337,7 +1341,7 @@ class FetchingService {
     granularity?: "day" | "week" | "month"
   ): Promise<Hive.AccountContentStatsResponse[]> {
     return this.withNodeSupport("haf-stats-api:content-stats", () =>
-      this.extendedHiveChain!.restApi["haf-stats-api"].accountContentStats({
+      this.hafStatsApi.accountContentStats({
         accountName,
         from_date: from,
         to_date: to,
@@ -1353,7 +1357,7 @@ class FetchingService {
     limitCount?: number
   ): Promise<Hive.TopAccountsResponse[]> {
     return this.withNodeSupport("haf-stats-api:top-accounts", () =>
-      this.extendedHiveChain!.restApi["haf-stats-api"].topAccounts({
+      this.hafStatsApi.topAccounts({
         metric,
         from_date: fromDate,
         to_date: toDate,
@@ -1366,9 +1370,7 @@ class FetchingService {
     params: Hive.WitnessMissedBlocksParams
   ): Promise<Hive.WitnessMissedBlocksResponse[]> {
     return this.withNodeSupport("haf-stats-api:witness-missed-blocks", () =>
-      this.extendedHiveChain!.restApi["haf-stats-api"].witnessMissedBlocks(
-        params
-      )
+      this.hafStatsApi.witnessMissedBlocks(params)
     );
   }
 
@@ -1378,7 +1380,7 @@ class FetchingService {
     toDate?: string | Date | number
   ): Promise<Hive.AccountDappFootprintResponse> {
     return this.withNodeSupport("haf-stats-api:dapp-footprint", () =>
-      this.extendedHiveChain!.restApi["haf-stats-api"].accountDappFootprint({
+      this.hafStatsApi.accountDappFootprint({
         account,
         from_date: fromDate,
         to_date: toDate,
@@ -1394,7 +1396,7 @@ class FetchingService {
     typeFilter?: Hive.AccountInteractionType
   ): Promise<Hive.AccountInteractionRow[]> {
     return this.withNodeSupport("haf-stats-api:account-interactions", () =>
-      this.extendedHiveChain!.restApi["haf-stats-api"].accountInteractions({
+      this.hafStatsApi.accountInteractions({
         account,
         from_date: fromDate,
         to_date: toDate,
@@ -1410,13 +1412,11 @@ class FetchingService {
     toDate?: string | Date | number
   ): Promise<Hive.AccountCommunityActivityRow[]> {
     return this.withNodeSupport("haf-stats-api:community-activity", () =>
-      this.extendedHiveChain!.restApi["haf-stats-api"].accountCommunityActivity(
-        {
-          account,
-          from_date: fromDate,
-          to_date: toDate,
-        }
-      )
+      this.hafStatsApi.accountCommunityActivity({
+        account,
+        from_date: fromDate,
+        to_date: toDate,
+      })
     );
   }
 
@@ -1427,7 +1427,7 @@ class FetchingService {
     groupBy: "op_type" | "app" = "op_type"
   ): Promise<Hive.AccountRcFootprintRow[]> {
     return this.withNodeSupport("haf-stats-api:rc-footprint", () =>
-      this.extendedHiveChain!.restApi["haf-stats-api"].accountRcFootprint({
+      this.hafStatsApi.accountRcFootprint({
         account,
         from_date: fromDate,
         to_date: toDate,
@@ -1447,9 +1447,7 @@ class FetchingService {
       beforeSeq?: number;
     }
   ): Promise<Hive.AccountRcFootprintTimelineRow[]> {
-    return await this.extendedHiveChain!.restApi[
-      "haf-stats-api"
-    ].accountRcFootprintTimeline({
+    return await this.hafStatsApi.accountRcFootprintTimeline({
       account,
       from_date: params.fromDate,
       to_date: params.toDate,
@@ -1467,7 +1465,7 @@ class FetchingService {
     granularity: "day" | "week" | "month" = "month"
   ): Promise<Hive.FinancialSummaryRow[]> {
     return this.withNodeSupport("haf-stats-api:financial-summary", () =>
-      this.extendedHiveChain!.restApi["haf-stats-api"].accountFinancialSummary({
+      this.hafStatsApi.accountFinancialSummary({
         account,
         from_date: fromDate,
         to_date: toDate,

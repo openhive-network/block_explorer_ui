@@ -12,6 +12,10 @@ import useApiAddresses from "@/utils/ApiAddresses";
 import { probeAppSupported, RequiredApi } from "@/utils/nodeSupport";
 import { nodeSupportStore } from "@/utils/nodeSupportStore";
 import { PROBED_APPS } from "@/components/dashboard/lib/widgetNodeSupport";
+import { isHafAppEnabled } from "@/utils/deploySettings";
+
+// Apps this deployment switched off are never probed.
+const APPS_TO_PROBE = PROBED_APPS.filter(isHafAppEnabled);
 
 // Detects which optional HAF apps/endpoints the active REST node supports.
 //   isSupported(app):            true / false / undefined(pending) — proactive
@@ -54,7 +58,7 @@ export const NodeSupportContextProvider: React.FC<{
     const startedHere: string[] = [];
     const inFlightSet = inFlight.current;
 
-    PROBED_APPS.forEach(async (app) => {
+    APPS_TO_PROBE.forEach(async (app) => {
       const key = `${node}::${app}`;
       if (supportMapRef.current[key] !== undefined || inFlightSet.has(key)) {
         return;
@@ -93,7 +97,7 @@ export const NodeSupportContextProvider: React.FC<{
       // widgets remount and retry (definitive 404/501 reports are kept).
       nodeSupportStore.clearTransient(node);
       // Proactive layer: re-probe apps still unsupported/unresolved.
-      PROBED_APPS.forEach(async (app) => {
+      APPS_TO_PROBE.forEach(async (app) => {
         const key = `${node}::${app}`;
         if (supportMapRef.current[key] === true || inFlightSet.has(key)) return;
         inFlightSet.add(key);
@@ -124,6 +128,7 @@ export const NodeSupportContextProvider: React.FC<{
   const isSupported = useCallback(
     (app?: RequiredApi | null): boolean | undefined => {
       if (!app) return true;
+      if (!isHafAppEnabled(app)) return false;
       return supportMap[`${node}::${app}`];
     },
     [supportMap, node]
