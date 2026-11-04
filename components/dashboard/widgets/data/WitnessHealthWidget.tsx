@@ -305,7 +305,7 @@ const WitnessHealthWidget = () => {
                     >
                       {t(
                         col.key === "missed" && showRecent
-                          ? "witnesses.missed7d"
+                          ? "witnesses.missed7Days"
                           : col.labelKey
                       )}
                       <SortIcon
@@ -399,7 +399,15 @@ const WitnessHealthWidget = () => {
                             if (!showRecent) return value;
                             return (
                               <Tooltip>
-                                <TooltipTrigger asChild>{value}</TooltipTrigger>
+                                <TooltipTrigger asChild>
+                                  {/* A button, so keyboard users can reach the tooltip too. */}
+                                  <button
+                                    type="button"
+                                    className="shrink-0 cursor-help rounded-sm"
+                                  >
+                                    {value}
+                                  </button>
+                                </TooltipTrigger>
                                 <TooltipPortal>
                                   <TooltipContent className="bg-theme text-text text-xs">
                                     {t("witnesses.missedSummary", {
@@ -417,23 +425,33 @@ const WitnessHealthWidget = () => {
                                     {recent.week &&
                                       recent.week.missed_count > 0 && (
                                         <div className="mt-0.5 opacity-80">
-                                          {t("witnesses.missedRateTooltip", {
-                                            rate: formatLocalePercent(
-                                              recent.week.rate * 100,
-                                              locale,
-                                              2
-                                            ),
-                                            missed:
-                                              recent.week.missed_count.toLocaleString(
-                                                locale
-                                              ),
-                                            scheduled: (
-                                              recent.week.missed_count +
-                                              recent.week.produced_count
-                                            ).toLocaleString(locale),
-                                          })}
+                                          {recent.week.produced_count === 0
+                                            ? t("witnesses.missedAllTooltip", {
+                                                scheduled:
+                                                  recent.week.missed_count.toLocaleString(
+                                                    locale
+                                                  ),
+                                              })
+                                            : t("witnesses.missedRateTooltip", {
+                                                rate: formatLocalePercent(
+                                                  recent.week.rate * 100,
+                                                  locale,
+                                                  2
+                                                ),
+                                                missed:
+                                                  recent.week.missed_count.toLocaleString(
+                                                    locale
+                                                  ),
+                                                scheduled: (
+                                                  recent.week.missed_count +
+                                                  recent.week.produced_count
+                                                ).toLocaleString(locale),
+                                              })}
                                         </div>
                                       )}
+                                    <div className="mt-0.5 opacity-75">
+                                      {t("witnesses.window7DaysHint")}
+                                    </div>
                                   </TooltipContent>
                                 </TooltipPortal>
                               </Tooltip>
