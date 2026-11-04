@@ -12,29 +12,25 @@ export interface RecentMissedBlocks {
   week?: Hive.WitnessMissedBlocksResponse;
 }
 
-const roundedNow = () => new Date(Math.floor(Date.now() / 60000) * 60000);
+const utcDay = () => moment.utc().format("YYYY-MM-DD");
 
 const toMap = (rows?: Hive.WitnessMissedBlocksResponse[]) =>
   new Map((rows ?? []).map((row) => [row.producer ?? "", row]));
 
-// Missed blocks over the last 24 hours and 7 days: one grouped call per window
-// for the whole table, or filtered to one witness when a name is given.
+// The API counts whole UTC days and reads only the date of from_date, so the
+// windows are UTC calendar days: today, and today plus the previous 6 days.
+// One call per window covers the whole table, or one witness when named.
 const useRecentMissedBlocks = (witness?: string) => {
-  const [now, setNow] = useState(roundedNow);
+  const [today, setToday] = useState(utcDay);
   useEffect(() => {
-    const id = setInterval(
-      () => setNow(roundedNow()),
-      config.witnessMissedBlocksRefreshInterval
-    );
+    const id = setInterval(() => setToday(utcDay()), 60_000);
     return () => clearInterval(id);
   }, []);
-  const dayAgo = useMemo(
-    () => moment.utc(now).subtract(1, "day").toDate(),
-    [now]
-  );
-  const weekAgo = useMemo(
-    () => moment.utc(now).subtract(7, "days").toDate(),
-    [now]
+  // Derived from the UTC day alone, so every caller shares one query key.
+  const todayStart = useMemo(() => moment.utc(today).toDate(), [today]);
+  const weekStart = useMemo(
+    () => moment.utc(today).subtract(6, "days").toDate(),
+    [today]
   );
 
   const { isSupported, isEndpointUnsupported } = useNodeSupport();
@@ -42,14 +38,15 @@ const useRecentMissedBlocks = (witness?: string) => {
   const isAvailable =
     isSupported(cap?.app) !== false && !isEndpointUnsupported(cap?.endpoint);
 
+  // to_date is left out: the API defaults it to now, which keeps today live.
   const options = {
-    toDate: now,
     witness,
     limitCount: witness ? undefined : config.witnessMissedBlocksLimit,
     enabled: isAvailable,
+    refetchInterval: config.witnessMissedBlocksRefreshInterval,
   };
-  const day = useWitnessMissedBlocks({ ...options, fromDate: dayAgo });
-  const week = useWitnessMissedBlocks({ ...options, fromDate: weekAgo });
+  const day = useWitnessMissedBlocks({ ...options, fromDate: todayStart });
+  const week = useWitnessMissedBlocks({ ...options, fromDate: weekStart });
 
   const dayByProducer = useMemo(
     () => toMap(day.missedBlocksData),
@@ -72,8 +69,9 @@ const useRecentMissedBlocks = (witness?: string) => {
     isAvailable,
     isLoading: day.isMissedBlocksLoading || week.isMissedBlocksLoading,
     isError: day.isMissedBlocksError || week.isMissedBlocksError,
-    isDayUnknown: day.isMissedBlocksLoading || day.isMissedBlocksError,
-    isWeekUnknown: week.isMissedBlocksLoading || week.isMissedBlocksError,
+    // A failed refresh keeps the cached rows, so only a window with no data is unknown.
+    isDayUnknown: day.missedBlocksData === undefined,
+    isWeekUnknown: week.missedBlocksData === undefined,
     getRecentMissed,
   };
 };

@@ -19,6 +19,7 @@ interface UseWitnessMissedBlocksOptions {
   orderBy?: Hive.WitnessMissedBlocksOrder;
   limitCount?: number;
   enabled?: boolean;
+  refetchInterval?: number;
 }
 
 const useWitnessMissedBlocks = ({
@@ -29,6 +30,7 @@ const useWitnessMissedBlocks = ({
   orderBy = "missed",
   limitCount,
   enabled = true,
+  refetchInterval,
 }: UseWitnessMissedBlocksOptions) => {
   const {
     data: missedBlocksData,
@@ -57,6 +59,7 @@ const useWitnessMissedBlocks = ({
           : { order_by: orderBy, limit_count: limitCount }),
       }),
     refetchOnWindowFocus: false,
+    refetchInterval,
     placeholderData: keepPreviousData,
     // to_date is optional; the API defaults it to now.
     enabled: enabled && Boolean(fromDate),
