@@ -242,12 +242,21 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
   const isSwitchingList =
     isWitnessDataPreviousData && loadedAsClientList !== isClientList;
 
-  // The missed columns vanish when the node can't serve them; don't leave the
-  // table in a sort nobody can see.
+  // A missed sort needs that window's data; until it arrives the rows would
+  // only be in rank order while the header claims otherwise.
+  const isMissedSortDataUnknown =
+    isMissedSort &&
+    (sort.orderBy === "missed_24h"
+      ? recentMissed.isDayUnknown
+      : recentMissed.isWeekUnknown);
+  const isMissedSortFailed = isMissedSortDataUnknown && recentMissed.isError;
+
+  // The missed columns vanish when the node can't serve them, and a failed
+  // window has nothing to sort by; don't leave the table in a sort nobody can see.
   useEffect(() => {
-    if (isMissedSort && !recentMissed.isAvailable)
+    if (isMissedSort && (!recentMissed.isAvailable || isMissedSortFailed))
       setSort({ orderBy: SORT_KEY_BY_CELL["rank"], isOrderAscending: true });
-  }, [isMissedSort, recentMissed.isAvailable]);
+  }, [isMissedSort, recentMissed.isAvailable, isMissedSortFailed]);
 
   useEffect(() => {
     if (!totalWitnesses || isClientList) return;
@@ -420,10 +429,10 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
       [t("witnesses.votersChange")]: num(witness.voters_num_daily_change),
       [t("witnesses.missedblocks")]: num(witness.missed_blocks),
       ...(recentMissed.isAvailable && {
-        [t("witnesses.missed24h")]: recentMissed.isDayUnknown
+        [t("witnesses.missedToday")]: recentMissed.isDayUnknown
           ? "--"
           : num(getRecentMissed(witness.witness_name).day?.missed_count),
-        [t("witnesses.missed7d")]: recentMissed.isWeekUnknown
+        [t("witnesses.missed7Days")]: recentMissed.isWeekUnknown
           ? "--"
           : num(getRecentMissed(witness.witness_name).week?.missed_count),
       }),
@@ -534,6 +543,7 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
 
             {isWitnessDataLoading ||
             isSwitchingList ||
+            isMissedSortDataUnknown ||
             !router.isReady ||
             (voterFilter && isFilterLoading) ? (
               <div className="flex justify-center items-center py-12">
