@@ -29,6 +29,7 @@ const AccountWitnessMissedBlocksCard: React.FC<
 
   const windowTile = (
     label: string,
+    hint: string,
     row: Hive.WitnessMissedBlocksResponse | undefined,
     isUnknown: boolean
   ) => {
@@ -36,18 +37,23 @@ const AccountWitnessMissedBlocksCard: React.FC<
     return (
       <KpiTile
         label={label}
+        infoText={hint}
         value={
           isUnknown ? "--" : row ? row.missed_count.toLocaleString(locale) : "—"
         }
         sub={
-          row && scheduled > 0
-            ? t("accountWitnessMissedBlocks.rateSub", {
-                rate: formatLocalePercent(row.rate * 100, locale, 2),
+          row && scheduled > 0 && row.produced_count === 0
+            ? t("accountWitnessMissedBlocks.offlineSub", {
                 scheduled: scheduled.toLocaleString(locale),
               })
-            : !isUnknown && !row
-              ? t("accountWitnessMissedBlocks.notScheduled")
-              : undefined
+            : row && scheduled > 0
+              ? t("accountWitnessMissedBlocks.rateSub", {
+                  rate: formatLocalePercent(row.rate * 100, locale, 2),
+                  scheduled: scheduled.toLocaleString(locale),
+                })
+              : !isUnknown && !row
+                ? t("accountWitnessMissedBlocks.notScheduled")
+                : undefined
         }
       />
     );
@@ -74,12 +80,14 @@ const AccountWitnessMissedBlocksCard: React.FC<
             value={(lifetimeMissed ?? 0).toLocaleString(locale)}
           />
           {windowTile(
-            t("accountWitnessMissedBlocks.last24h"),
+            t("accountWitnessMissedBlocks.today"),
+            t("witnesses.windowTodayHint"),
             day,
             isDayUnknown
           )}
           {windowTile(
-            t("accountWitnessMissedBlocks.last7d"),
+            t("accountWitnessMissedBlocks.last7Days"),
+            t("witnesses.window7DaysHint"),
             week,
             isWeekUnknown
           )}

@@ -81,8 +81,8 @@ const COLUMNS: ColumnConfig[] = [
     key: "missed",
     main: { labelKey: "witnesses.missedblocks" },
     second: [
-      { labelKey: "witnesses.window24h", sortKey: "missed 24h" },
-      { labelKey: "witnesses.window7d", sortKey: "missed 7d" },
+      { labelKey: "witnesses.windowToday", sortKey: "missed 24h" },
+      { labelKey: "witnesses.window7Days", sortKey: "missed 7d" },
     ],
     isRightAligned: true,
   },
@@ -146,9 +146,10 @@ const renderSortArrow = (
 
 const RecentMissedValue: React.FC<{
   label: string;
+  hint: string;
   row?: Hive.WitnessMissedBlocksResponse;
   isUnknown: boolean;
-}> = ({ label, row, isUnknown }) => {
+}> = ({ label, hint, row, isUnknown }) => {
   const { t, locale } = useI18n();
   const missed = row?.missed_count ?? 0;
   const badge = (
@@ -177,11 +178,18 @@ const RecentMissedValue: React.FC<{
       </TooltipTrigger>
       <TooltipPortal>
         <TooltipContent className="bg-theme text-text text-xs">
-          {t("witnesses.missedRateTooltip", {
-            rate: formatLocalePercent(row.rate * 100, locale, 2),
-            missed: missed.toLocaleString(locale),
-            scheduled: scheduled.toLocaleString(locale),
-          })}
+          <p>
+            {row.produced_count === 0
+              ? t("witnesses.missedAllTooltip", {
+                  scheduled: scheduled.toLocaleString(locale),
+                })
+              : t("witnesses.missedRateTooltip", {
+                  rate: formatLocalePercent(row.rate * 100, locale, 2),
+                  missed: missed.toLocaleString(locale),
+                  scheduled: scheduled.toLocaleString(locale),
+                })}
+          </p>
+          <p className="opacity-75">{hint}</p>
         </TooltipContent>
       </TooltipPortal>
     </Tooltip>
@@ -552,12 +560,14 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
                     {showRecentMissed && recentMissed && (
                       <span className="mt-1 flex items-center gap-1.5 font-normal">
                         <RecentMissedValue
-                          label={t("witnesses.window24h")}
+                          label={t("witnesses.windowToday")}
+                          hint={t("witnesses.windowTodayHint")}
                           row={recent?.day}
                           isUnknown={recentMissed.isDayUnknown}
                         />
                         <RecentMissedValue
-                          label={t("witnesses.window7d")}
+                          label={t("witnesses.window7Days")}
+                          hint={t("witnesses.window7DaysHint")}
                           row={recent?.week}
                           isUnknown={recentMissed.isWeekUnknown}
                         />
