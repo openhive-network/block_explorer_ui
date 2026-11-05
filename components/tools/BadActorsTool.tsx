@@ -1,11 +1,11 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { ShieldAlert, ShieldCheck, Search } from "lucide-react";
 import { useI18n } from "@/i18n/i18n";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { trimAccountName } from "@/utils/StringUtils";
-import { BadActors, isBadActor, useBadActors } from "@/utils/badActors";
+import { BadActors, isBadActor, useBadActorsState } from "@/utils/badActors";
 
 // Some letters hold thousands of names (u: over 6,000), so a letter shows
 // this many until the user asks for the rest.
@@ -32,7 +32,7 @@ const groupByLetter = (list: BadActors) => {
 
 const BadActorsTool: React.FC = () => {
   const { t, locale } = useI18n();
-  const badActors = useBadActors();
+  const { list: badActors, failed } = useBadActorsState();
   const { grouped, letters } = useMemo(
     () => groupByLetter(badActors ?? new Set<string>()),
     [badActors]
@@ -40,6 +40,11 @@ const BadActorsTool: React.FC = () => {
   const [lookup, setLookup] = useState("");
   const [picked, setPicked] = useState<string | null>(null);
   const [showAll, setShowAll] = useState(false);
+  const listRef = useRef<HTMLUListElement>(null);
+  // "Show all" removes itself, so move focus to the first name it revealed.
+  useEffect(() => {
+    if (showAll) listRef.current?.querySelectorAll("a")[PAGE]?.focus();
+  }, [showAll]);
   const active = picked ?? letters[0] ?? "#";
 
   const lookupName = trimAccountName(lookup);
@@ -150,7 +155,12 @@ const BadActorsTool: React.FC = () => {
             {t("tools.badActors.warning")}
           </span>
         </div>
-        <ul className="flex flex-wrap gap-2 px-4 pb-4">
+        {failed && (
+          <p className="px-4 pb-4 text-sm text-rose-600 dark:text-rose-400">
+            {t("tools.badActors.unavailable")}
+          </p>
+        )}
+        <ul ref={listRef} className="flex flex-wrap gap-2 px-4 pb-4">
           {shown.map((name) => (
             <li key={name}>
               <Link

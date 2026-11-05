@@ -127,6 +127,7 @@
   "tools.badActors.inLetter": "{letter} で始まるもの {n} 件",
   "tools.badActors.source": "出典: Hive Watchmen コミュニティリスト",
   "tools.badActors.showAll": "{n} 件すべて表示",
+  "tools.badActors.unavailable": "リストを読み込めませんでした。ページを再読み込みしてもう一度お試しください。",
   "common.fullChart": "全チャート",
   "common.operations": "オペレーション",
   "operations.participationMode": "トランザクション方向",

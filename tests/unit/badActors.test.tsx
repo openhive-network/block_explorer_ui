@@ -106,3 +106,63 @@ describe("useBadActors", () => {
     await R.act(async () => root.unmount());
   });
 });
+
+describe("useBadActorsState when the list fails to load", () => {
+  // The list is imported after the render, outside any isolateModules
+  // callback, so each run clears the whole registry instead. The mock factory
+  // reads this shared state, so every run sees its own failure count.
+  const mockLoad = { failures: 0, calls: 0 };
+
+  // Loads the hook in a fresh registry whose list import fails `failures`
+  // times, then renders it and runs through the retry delays.
+  const run = async (failures: number) => {
+    mockLoad.failures = failures;
+    mockLoad.calls = 0;
+    jest.useFakeTimers();
+    let R!: typeof React;
+    let createFreshRoot!: typeof createRoot;
+    let hookState!: typeof import("@/utils/badActors").useBadActorsState;
+    jest.resetModules();
+    jest.doMock("@/utils/BadActorList", () => {
+      mockLoad.calls += 1;
+      if (mockLoad.calls <= mockLoad.failures) throw new Error("chunk failed");
+      return { __esModule: true, default: ["scammer"] };
+    });
+    R = require("react");
+    createFreshRoot = require("react-dom/client").createRoot;
+    hookState = require("@/utils/badActors").useBadActorsState;
+    const warn = jest.spyOn(console, "warn").mockImplementation(() => {});
+    const seen: Array<{ list: BadActors | null; failed: boolean }> = [];
+    const Probe = () => {
+      seen.push(hookState());
+      return null;
+    };
+    const root = createFreshRoot(document.createElement("div"));
+    await R.act(async () => {
+      root.render(R.createElement(Probe));
+    });
+    for (let i = 0; i < 4; i++) {
+      await R.act(async () => {
+        await jest.advanceTimersByTimeAsync(30000);
+      });
+    }
+    await R.act(async () => root.unmount());
+    jest.useRealTimers();
+    warn.mockRestore();
+    return { last: seen[seen.length - 1], calls: mockLoad.calls };
+  };
+
+  it("retries and recovers after a failed load", async () => {
+    const { last, calls } = await run(1);
+    expect(calls).toBe(2);
+    expect(last.failed).toBe(false);
+    expect(last.list?.has("scammer")).toBe(true);
+  });
+
+  it("reports failure after the last retry", async () => {
+    const { last, calls } = await run(99);
+    expect(calls).toBe(4);
+    expect(last.failed).toBe(true);
+    expect(last.list).toBeNull();
+  });
+});

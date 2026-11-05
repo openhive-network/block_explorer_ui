@@ -127,6 +127,7 @@
   "tools.badActors.inLetter": "{n} che iniziano con {letter}",
   "tools.badActors.source": "Fonte: lista della community Hive Watchmen",
   "tools.badActors.showAll": "Mostra tutti i {n}",
+  "tools.badActors.unavailable": "Impossibile caricare la lista. Ricarica la pagina per riprovare.",
   "common.fullChart": "Grafico Completo",
   "common.operations": "Operazioni",
   "operations.participationMode": "Direzione della Transazione",

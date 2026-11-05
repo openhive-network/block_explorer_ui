@@ -127,6 +127,7 @@
   "tools.badActors.inLetter": "{n} تبدأ بحرف {letter}",
   "tools.badActors.source": "المصدر: قائمة Hive Watchmen المجتمعية للجهات الخبيثة",
   "tools.badActors.showAll": "عرض الكل ({n})",
+  "tools.badActors.unavailable": "تعذّر تحميل القائمة. أعد تحميل الصفحة للمحاولة مرة أخرى.",
   "common.fullChart": "مخطط كامل",
   "common.operations": "العمليات",
   "operations.participationMode": "اتجاه المعاملة",

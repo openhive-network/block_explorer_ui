@@ -127,6 +127,7 @@
   "tools.badActors.inLetter": "{n} care încep cu {letter}",
   "tools.badActors.source": "Sursă: lista comunității Hive Watchmen",
   "tools.badActors.showAll": "Afișează toate cele {n}",
+  "tools.badActors.unavailable": "Lista nu a putut fi încărcată. Reîncarcă pagina pentru a încerca din nou.",
   "common.fullChart": "Grafic Complet",
   "common.operations": "Operațiuni",
   "operations.participationMode": "Direcția Tranzacției",

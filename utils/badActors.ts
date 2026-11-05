@@ -30,23 +30,45 @@ export const loadBadActors = (): Promise<BadActors> =>
       throw error;
     }));
 
-// The list once it has loaded; null before that, so nothing is flagged yet.
-export const useBadActors = (): BadActors | null => {
+// Waits before each retry of a failed load (a flaky network, or a chunk
+// replaced by a deploy).
+const RETRY_DELAYS_MS = [2000, 10000, 30000];
+
+// The list once it has loaded (null before that, so nothing is flagged yet),
+// and whether every attempt to load it failed.
+export const useBadActorsState = (): {
+  list: BadActors | null;
+  failed: boolean;
+} => {
   const [list, setList] = useState(loaded);
+  const [failed, setFailed] = useState(false);
   useEffect(() => {
     if (list) return;
     let live = true;
-    loadBadActors()
-      .then((names) => live && setList(names))
-      .catch((error) =>
-        console.warn("[badActors] could not load the list:", error)
-      );
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const attempt = (retry: number) => {
+      loadBadActors()
+        .then((names) => live && setList(names))
+        .catch((error) => {
+          if (!live) return;
+          if (retry < RETRY_DELAYS_MS.length) {
+            timer = setTimeout(() => attempt(retry + 1), RETRY_DELAYS_MS[retry]);
+          } else {
+            console.warn("[badActors] could not load the list:", error);
+            setFailed(true);
+          }
+        });
+    };
+    attempt(0);
     return () => {
       live = false;
+      clearTimeout(timer);
     };
   }, [list]);
-  return list;
+  return { list, failed };
 };
+
+export const useBadActors = (): BadActors | null => useBadActorsState().list;
 
 export const isBadActor = (
   list: BadActors | null,
