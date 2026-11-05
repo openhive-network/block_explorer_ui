@@ -14,6 +14,7 @@ import { extendedRest } from "@/types/Rest";
 import { createPathFilterString } from "@/lib/utils";
 import { isHafAppEnabled } from "@/utils/deploySettings";
 import {
+  AppDisabledError,
   classifyEndpointError,
   EndpointUnsupportedError,
   isNaiAmount,
@@ -203,7 +204,7 @@ class FetchingService {
   // never contacts it, even from code that skips the node-support gate.
   private get hafStatsApi() {
     if (!isHafAppEnabled("haf-stats-api")) {
-      throw new EndpointUnsupportedError("haf-stats-api");
+      throw new AppDisabledError("haf-stats-api");
     }
     return this.extendedHiveChain!.restApi["haf-stats-api"];
   }

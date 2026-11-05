@@ -15,6 +15,8 @@ pnpm install
 
 - REACT_APP_API_ADDRESS=https://api.hive.blog
 - REACT_APP_HIVE_BLOG_API_ADDRESS=https://api.hive.blog
+- REACT_APP_EXPLORER_MODE=full - leave it out for the classic explorer (login,
+  dashboard and analytics off); the local e2e tests expect full
 
 **Private: Backend needs these for the secret handshake for hivesigner login**
 
@@ -125,7 +127,8 @@ docker compose up --detach
 ```
 
 If you wish to change parameters (like API endpoints or port) when using the [Composefile](docker/docker-compose.yml),
-edit the accompanying [.env file](docker/.env)
+edit the accompanying [.env file](docker/.env). It starts the classic explorer;
+set `REACT_APP_EXPLORER_MODE=full` there for the full app.
 
 To stop and delete the container use command `docker compose down`.
 
@@ -169,7 +172,6 @@ Any single setting overrides the preset, e.g. classic with Keychain login only
 (this needs `WORKSPACE_ENCRYPTION_KEY` again, which protects Keychain logins):
 
 ```
-REACT_APP_EXPLORER_MODE=classic
 REACT_APP_LOGIN=true
 REACT_APP_LOGIN_EXCLUDE=hivesigner
 ```

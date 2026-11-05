@@ -16,7 +16,10 @@ import RcConsumptionReport from "./rcConsumption/RcConsumptionReport";
 import FinancialSummaryReport from "./FinancialSummaryReport";
 import SocialInteractionsReport from "./SocialInteractionsReport";
 import CommunityActivityReport from "./CommunityActivityReport";
-import type { WidgetNodeSupport } from "@/components/dashboard/lib/widgetNodeSupport";
+import {
+  REPORT_NODE_SUPPORT,
+  type WidgetNodeSupport,
+} from "@/components/dashboard/lib/widgetNodeSupport";
 export interface BaseReportProps {
   accountName: string;
   data: { [key: string]: any };
@@ -64,10 +67,7 @@ export const reportRegistry: ReportRegistry = {
     // This report fetches its own content-stats internally, so it needs no
     // top-level data sources from AnalyticsTabContent.
     dataMap: {},
-    nodeSupport: {
-      app: "haf-stats-api",
-      endpoint: "haf-stats-api:content-stats",
-    },
+    nodeSupport: REPORT_NODE_SUPPORT.contentActivity,
   },
   rcFootprint: {
     component: RcFootprintReport,
@@ -75,10 +75,7 @@ export const reportRegistry: ReportRegistry = {
     descriptionKey: "analyticsDashboard.rcFootprintReportDesc",
     icon: PieChart,
     dataMap: {},
-    nodeSupport: {
-      app: "haf-stats-api",
-      endpoint: "haf-stats-api:dapp-footprint",
-    },
+    nodeSupport: REPORT_NODE_SUPPORT.rcFootprint,
   },
   rcConsumption: {
     component: RcConsumptionReport,
@@ -86,20 +83,14 @@ export const reportRegistry: ReportRegistry = {
     descriptionKey: "analyticsDashboard.rcConsumptionReportDesc",
     icon: Gauge,
     dataMap: {},
-    nodeSupport: {
-      app: "haf-stats-api",
-      endpoint: "haf-stats-api:rc-footprint",
-    },
+    nodeSupport: REPORT_NODE_SUPPORT.rcConsumption,
   },
   financialSummary: {
     component: FinancialSummaryReport,
     titleKey: "financialSummary.widgetTitle",
     icon: Coins,
     dataMap: {},
-    nodeSupport: {
-      app: "haf-stats-api",
-      endpoint: "haf-stats-api:financial-summary",
-    },
+    nodeSupport: REPORT_NODE_SUPPORT.financialSummary,
   },
   socialInteractions: {
     component: SocialInteractionsReport,
@@ -107,10 +98,7 @@ export const reportRegistry: ReportRegistry = {
     descriptionKey: "analyticsDashboard.socialInteractionsReportDesc",
     icon: Waypoints,
     dataMap: {},
-    nodeSupport: {
-      app: "haf-stats-api",
-      endpoint: "haf-stats-api:account-interactions",
-    },
+    nodeSupport: REPORT_NODE_SUPPORT.socialInteractions,
   },
   communityActivity: {
     component: CommunityActivityReport,
@@ -118,10 +106,7 @@ export const reportRegistry: ReportRegistry = {
     descriptionKey: "analyticsDashboard.communityActivityReportDesc",
     icon: LayoutGrid,
     dataMap: {},
-    nodeSupport: {
-      app: "haf-stats-api",
-      endpoint: "haf-stats-api:community-activity",
-    },
+    nodeSupport: REPORT_NODE_SUPPORT.communityActivity,
   },
   // Other reports would go here
 };

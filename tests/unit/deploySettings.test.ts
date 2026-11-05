@@ -15,18 +15,27 @@ const resolve = (values: Record<string, string>) =>
 describe("resolveDeploySettings", () => {
   it("gives the classic explorer when nothing is set", () => {
     const { settings, issues } = resolveDeploySettings(() => undefined);
-    expect(settings).toMatchObject({
+    expect(settings).toEqual({
       mode: "classic",
       login: false,
+      loginMethods: ["keychain", "hivesigner"],
       dashboard: false,
       dashboardSync: false,
+      defaultTemplate: "overview",
       homeTabs: false,
+      templates: [...TEMPLATE_NAMES],
+      recentVisits: false,
       tools: false,
       accountAnalytics: false,
-      hafStats: false,
       communities: true,
       proposals: true,
+      topHolders: true,
+      exports: true,
+      hafStats: false,
+      languages: ["en"],
+      defaultLanguage: "en",
       footer: "classic",
+      defaultTheme: "system",
     });
     expect(issues).toEqual({ warnings: [], errors: [] });
   });
@@ -260,6 +269,12 @@ describe("haf-stats-api switch", () => {
     expect(
       resolve({ EXPLORER_MODE: "classic", HAF_STATS: "on" }).settings.hafStats
     ).toBe(true);
+  });
+
+  it("counts a value it cannot read as off, even in full mode", () => {
+    const { settings, issues } = resolve({ HAF_STATS: "flase" });
+    expect(settings.hafStats).toBe(false);
+    expect(issues.warnings[0]).toContain("REACT_APP_HAF_STATS");
   });
 });
 

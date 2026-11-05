@@ -134,6 +134,34 @@ export const WIDGET_NODE_SUPPORT: Record<string, WidgetNodeSupport> = {
   "witness-schedule": { app: "hafbe-api" },
 };
 
+// The same for the account Analytics reports, keyed by report type.
+export const REPORT_NODE_SUPPORT: Record<string, WidgetNodeSupport> = {
+  contentActivity: {
+    app: "haf-stats-api",
+    endpoint: "haf-stats-api:content-stats",
+  },
+  rcFootprint: {
+    app: "haf-stats-api",
+    endpoint: "haf-stats-api:dapp-footprint",
+  },
+  rcConsumption: {
+    app: "haf-stats-api",
+    endpoint: "haf-stats-api:rc-footprint",
+  },
+  financialSummary: {
+    app: "haf-stats-api",
+    endpoint: "haf-stats-api:financial-summary",
+  },
+  socialInteractions: {
+    app: "haf-stats-api",
+    endpoint: "haf-stats-api:account-interactions",
+  },
+  communityActivity: {
+    app: "haf-stats-api",
+    endpoint: "haf-stats-api:community-activity",
+  },
+};
+
 export const getWidgetNodeSupport = (
   widgetId: string
 ): WidgetNodeSupport | undefined => WIDGET_NODE_SUPPORT[widgetId];

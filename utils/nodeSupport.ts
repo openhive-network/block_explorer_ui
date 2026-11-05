@@ -86,6 +86,16 @@ export class EndpointUnsupportedError extends Error {
   }
 }
 
+// Thrown when the deployment switched the app off, so no request is made. Not a
+// node problem: it is neither reported to the node-support store nor toasted.
+export class AppDisabledError extends EndpointUnsupportedError {
+  constructor(app: string) {
+    super(app);
+    this.name = "AppDisabledError";
+    this.message = `${app} is switched off on this deployment`;
+  }
+}
+
 // A HAF "Amount" is the NAI object { nai, amount, precision }. Older nodes serve
 // a bare string for these fields (verified: hiveapi.actifit.io returns
 // total_transfer_amount as "1537221848" instead of {nai, amount, precision}),

@@ -3,6 +3,10 @@ import env from "@beam-australia/react-env";
 import type { NextApiResponse } from "next";
 import { LOGIN_METHODS, LoginMethod } from "@/lib/smart-signer/types";
 import { missingHivesignerSettings } from "@/Config";
+import {
+  REPORT_NODE_SUPPORT,
+  WIDGET_NODE_SUPPORT,
+} from "@/components/dashboard/lib/widgetNodeSupport";
 
 export const EXPLORER_MODES = ["full", "classic"] as const;
 
@@ -277,8 +281,14 @@ export const resolveDeploySettings = (
     issues
   );
   const exports = parseBoolean("EXPORTS", read("EXPORTS"), true, issues);
-  // Off means the app never probes or calls haf-stats-api.
-  const hafStats = parseBoolean("HAF_STATS", read("HAF_STATS"), full, issues);
+  // Off means the app never probes or calls haf-stats-api; a typo counts as off.
+  const hafStats = parseBoolean(
+    "HAF_STATS",
+    read("HAF_STATS"),
+    full,
+    issues,
+    false
+  );
   const languagesOn = parseBoolean(
     "LANGUAGES",
     read("LANGUAGES"),
@@ -464,8 +474,14 @@ const SECTION_WIDGETS: Record<string, SectionKey> = {
   "top-holders": "topHolders",
 };
 
+// Widgets and reports that need a switched-off HAF app are left out entirely,
+// rather than shown as unavailable on this node.
+const needsDisabledApp = (app?: string): boolean =>
+  !!app && !isHafAppEnabled(app);
+
 export const isWidgetEnabled = (type: string): boolean => {
   const key = SECTION_WIDGETS[type];
+  if (needsDisabledApp(WIDGET_NODE_SUPPORT[type]?.app)) return false;
   return !key || deploySettings[key];
 };
 
@@ -475,6 +491,7 @@ const SECTION_REPORTS: Record<string, SectionKey> = {
 
 export const isReportEnabled = (type: string): boolean => {
   const key = SECTION_REPORTS[type];
+  if (needsDisabledApp(REPORT_NODE_SUPPORT[type]?.app)) return false;
   return !key || deploySettings[key];
 };
 

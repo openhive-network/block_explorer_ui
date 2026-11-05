@@ -388,6 +388,7 @@ startup-test:
     - |
       echo -e "\e[0Ksection_start:$(date +%s):startup[collapsed=true]\r\e[0KStarting the test environment..."
 
+      # Full app unless a CI variable EXPLORER_MODE says otherwise (blank = classic).
       timeout -s INT -k 10 600 scripts/run_instance.sh \
         --image="$IMAGE_NAME" \
         --api-endpoint="$API_ENDPOINT" \
@@ -507,6 +508,7 @@ e2e-report-aggregate:
       echo -e "\e[0Ksection_end:$(date +%s):login\r\e[0K"
   script:
     - |
+      # Full app unless a CI variable EXPLORER_MODE says otherwise (blank = classic).
       scripts/run_instance.sh \
         --image="$IMAGE_NAME" \
         --api-endpoint="$API_ENDPOINT" \

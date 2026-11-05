@@ -6,6 +6,7 @@ import { WIDGET_REGISTRY } from "@/components/dashboard/lib/widgetRegistry";
 import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
 import WidgetUnavailable from "./WidgetUnavailable";
 import { useI18n } from "@/i18n/i18n";
+import { isHafAppEnabled } from "@/utils/deploySettings";
 
 interface NodeSupportGateProps {
   widgetId: string;
@@ -29,6 +30,8 @@ const NodeSupportGate: React.FC<NodeSupportGateProps> = ({
 
   const cap = getWidgetNodeSupport(widgetId);
   if (!cap) return <>{children}</>;
+  // The deployment turned the app off: nothing to show, and no node to blame.
+  if (!isHafAppEnabled(cap.app)) return null;
 
   const appStatus = isSupported(cap.app);
   const endpointMissing = isEndpointUnsupported(cap.endpoint);

@@ -7,7 +7,10 @@ import {
 } from "./support/deployEnv";
 
 // Jest can't load wax (ESM with wasm); these tests stop before any chain call.
-jest.mock("@/utils/waxClient", () => ({ getWaxChain: jest.fn(), getAccount: jest.fn() }));
+jest.mock("@/utils/waxClient", () => ({
+  getWaxChain: jest.fn(),
+  getAccount: jest.fn(),
+}));
 
 type Handler = (req: NextApiRequest, res: NextApiResponse) => unknown;
 
@@ -48,6 +51,14 @@ describe("auth routes when login is off", () => {
     "/api/auth/%s answers 404 when Hivesigner is excluded",
     async (route) => {
       const res = await call(route, { LOGIN_EXCLUDE: "hivesigner" });
+      expect(res.statusCode).toBe(404);
+    }
+  );
+
+  it.each([...KEYCHAIN_ROUTES, ...HIVESIGNER_ROUTES])(
+    "/api/auth/%s answers 404 when no mode is set (classic)",
+    async (route) => {
+      const res = await call(route, { EXPLORER_MODE: "" });
       expect(res.statusCode).toBe(404);
     }
   );

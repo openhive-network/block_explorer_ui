@@ -37,7 +37,10 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import { SearchesContextProvider } from "@/contexts/SearchesContext";
 import { HealthCheckerContextProvider } from "@/contexts/HealthCheckerContext";
 import { NodeSupportContextProvider } from "@/contexts/NodeSupportContext";
-import { EndpointUnsupportedError } from "@/utils/nodeSupport";
+import {
+  AppDisabledError,
+  EndpointUnsupportedError,
+} from "@/utils/nodeSupport";
 import { nodeSupportStore } from "@/utils/nodeSupportStore";
 import { WaxError } from "@hiveio/wax";
 
@@ -128,6 +131,8 @@ const Providers: React.FC<{ children: ReactNode; seo?: SeoMeta }> = ({
 
         queryCache: new QueryCache({
           onError: (error: any, query) => {
+            // The deployment switched the app off; whatever asked has nothing to show.
+            if (error instanceof AppDisabledError) return;
             // A missing endpoint is recorded for the active node so the widget's
             // gate can show its inline "Unavailable" card.
             if (error instanceof EndpointUnsupportedError) {
