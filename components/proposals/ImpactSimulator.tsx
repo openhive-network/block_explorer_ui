@@ -55,7 +55,7 @@ const ImpactSimulator: React.FC<ImpactSimulatorProps> = ({
     return <div className="h-4" />;
   }
 
-  const account = findAccountData.accounts[0] as any;
+  const account = findAccountData.accounts[0];
   const hasProxy = (account.proxy || "") !== "";
   if (hasProxy) return null;
 

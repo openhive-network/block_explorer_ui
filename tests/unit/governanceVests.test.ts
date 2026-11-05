@@ -22,6 +22,21 @@ describe("governanceVests", () => {
     });
   });
 
+  it("handles delayed and proxied votes together, matching hafbe", () => {
+    // arcange on 2026-11-06, against hafbe's direct_vests and proxied_vests.
+    expect(
+      governanceVests({
+        vesting_shares: vests("106900392879289"),
+        delayed_votes: [{ val: 22126384561322 }],
+        proxied_vsf_votes: [82853069657, 0, 0, 0],
+      })
+    ).toEqual({
+      direct: 84774008317967,
+      proxied: 82853069657,
+      total: 84774008317967 + 82853069657,
+    });
+  });
+
   it("adds every level of proxied votes", () => {
     const { direct, proxied, total } = governanceVests({
       vesting_shares: vests("1000"),

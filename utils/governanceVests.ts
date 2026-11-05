@@ -1,5 +1,7 @@
 // An account's weight in proposal and witness votes, in raw VESTS units, from
-// a database_api.find_accounts entry. It matches hived's witness_vote_weight().
+// a database_api.find_accounts entry fetched with delayed_votes_active: true
+// (FetchingService.findAccounts' default). It matches hived's
+// get_governance_vote_power().
 //
 // Since HF24, powered-up VESTS only count in governance once their 30-day delay
 // ends, so the direct part is vesting_shares minus delayed_votes.
