@@ -125,7 +125,7 @@
   "tools.badActors.warning": "Bekannter Bad Actor — sende keine Gelder an dieses Konto und vertraue seinen Nachrichten nicht.",
   "tools.badActors.count": "{n} markierte Konten",
   "tools.badActors.inLetter": "{n} beginnend mit {letter}",
-  "tools.badActors.source": "Quelle: Hive-Wallet Bad-Actor-Liste",
+  "tools.badActors.source": "Quelle: Hive-Watchmen-Liste der Community",
   "common.fullChart": "Vollständiges Diagramm",
   "common.operations": "Operationen",
   "operations.participationMode": "Transaktionsrichtung",

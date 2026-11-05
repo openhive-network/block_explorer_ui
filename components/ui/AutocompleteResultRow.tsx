@@ -7,6 +7,7 @@ import {
   resolveBadActorLabel,
 } from "@/utils/accountLabels";
 import AccountLabelBadge from "@/components/AccountLabelBadge";
+import { useBadActors } from "@/utils/badActors";
 import HiveAvatar from "@/components/ui/HiveAvatar";
 
 export type AutocompleteResultType = "account" | "block" | "tx";
@@ -55,7 +56,10 @@ const AutocompleteResultRow = forwardRef<HTMLDivElement, Props>(
     ref
   ) => {
     const isAccount = resultType === "account";
-    const badActorLabel = isAccount ? resolveBadActorLabel(value) : null;
+    const badActors = useBadActors();
+    const badActorLabel = isAccount
+      ? resolveBadActorLabel(value, badActors)
+      : null;
     const accountLabel = isAccount
       ? resolveAccountLabel(value, { isWitness })
       : null;

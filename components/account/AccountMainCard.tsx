@@ -35,7 +35,7 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@/components/ui/hybrid-tooltip";
-import { isBadActor } from "@/utils/badActors";
+import { isBadActor, useBadActors } from "@/utils/badActors";
 import ErrorMessage from "../ErrorMessage";
 import { Button } from "../ui/button";
 import { useI18n } from "../../i18n/i18n";
@@ -142,11 +142,12 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
   // Only the dismissal needs state; the flag itself is a pure lookup. The old
   // effect only ever set it true, so a flagged account's warning carried over
   // to the next, clean account.
+  const badActors = useBadActors();
   const [warningDismissed, setWarningDismissed] = useState(false);
   useEffect(() => {
     setWarningDismissed(false);
   }, [accountName]);
-  const showBadActorWarning = isBadActor(accountName) && !warningDismissed;
+  const showBadActorWarning = isBadActor(badActors, accountName) && !warningDismissed;
 
   const handleCloseWarning = () => {
     setWarningDismissed(true);

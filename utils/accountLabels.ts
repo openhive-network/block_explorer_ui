@@ -1,4 +1,4 @@
-import { isBadActor } from "./badActors";
+import { BadActors, isBadActor } from "./badActors";
 
 // Curated known-account map; ship only verifiable treasury/burn or documented
 // exchange wallets — better unbadged than mislabeled.
@@ -95,8 +95,9 @@ export const resolveAccountLabel = (
 // Orthogonal to the curated label above — an account can be both a known
 // exchange and community-flagged, so this resolves separately.
 export const resolveBadActorLabel = (
-  account: string
+  account: string,
+  badActors: BadActors | null
 ): ResolvedAccountLabel | null =>
-  isBadActor(account)
+  isBadActor(badActors, account)
     ? { type: "badActor", label: "", tooltipKey: TOOLTIP_KEY_BY_TYPE.badActor }
     : null;

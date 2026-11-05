@@ -125,7 +125,7 @@
   "tools.badActors.warning": "Znany zły aktor — nie wysyłaj środków ani nie ufaj wiadomościom z tego konta.",
   "tools.badActors.count": "{n} oznaczonych kont",
   "tools.badActors.inLetter": "{n} zaczynających się od {letter}",
-  "tools.badActors.source": "Źródło: lista złych aktorów portfela Hive",
+  "tools.badActors.source": "Źródło: lista społeczności Hive Watchmen",
   "common.fullChart": "Pełny Wykres",
   "common.operations": "Operacje",
   "operations.participationMode": "Kierunek Transakcji",

@@ -125,7 +125,7 @@
   "tools.badActors.warning": "Actor rău-intenționat cunoscut — nu trimite fonduri și nu avea încredere în mesajele de la acest cont.",
   "tools.badActors.count": "{n} conturi semnalate",
   "tools.badActors.inLetter": "{n} care încep cu {letter}",
-  "tools.badActors.source": "Sursă: lista de actori rău-intenționați a portofelului Hive",
+  "tools.badActors.source": "Sursă: lista comunității Hive Watchmen",
   "common.fullChart": "Grafic Complet",
   "common.operations": "Operațiuni",
   "operations.participationMode": "Direcția Tranzacției",

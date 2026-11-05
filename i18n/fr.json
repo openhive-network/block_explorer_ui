@@ -125,7 +125,7 @@
   "tools.badActors.warning": "Acteur malveillant connu — n'envoyez pas de fonds à ce compte et ne faites pas confiance à ses messages.",
   "tools.badActors.count": "{n} comptes signalés",
   "tools.badActors.inLetter": "{n} commençant par {letter}",
-  "tools.badActors.source": "Source : liste des comptes malveillants du portefeuille Hive",
+  "tools.badActors.source": "Source : liste communautaire Hive Watchmen",
   "common.fullChart": "Graphique Complet",
   "common.operations": "Opérations",
   "operations.participationMode": "Direction de Transaction",

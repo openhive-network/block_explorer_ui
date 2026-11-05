@@ -125,7 +125,7 @@
   "tools.badActors.warning": "已知恶意账户——请勿向此账户转账或信任其消息。",
   "tools.badActors.count": "{n} 个已标记账户",
   "tools.badActors.inLetter": "{n} 个以 {letter} 开头",
-  "tools.badActors.source": "来源：Hive 钱包恶意账户名单",
+  "tools.badActors.source": "来源：Hive Watchmen 社区名单",
   "common.fullChart": "完整图表",
   "common.operations": "操作",
   "operations.participationMode": "参与方式",

@@ -125,7 +125,7 @@
   "tools.badActors.warning": "Account malevolo noto — non inviare fondi né fidarti dei messaggi di questo account.",
   "tools.badActors.count": "{n} account segnalati",
   "tools.badActors.inLetter": "{n} che iniziano con {letter}",
-  "tools.badActors.source": "Fonte: lista account malevoli del wallet Hive",
+  "tools.badActors.source": "Fonte: lista della community Hive Watchmen",
   "common.fullChart": "Grafico Completo",
   "common.operations": "Operazioni",
   "operations.participationMode": "Direzione della Transazione",

@@ -125,7 +125,7 @@
   "tools.badActors.warning": "جهة خبيثة معروفة — لا ترسل أموالاً إلى هذا الحساب ولا تثق برسائله.",
   "tools.badActors.count": "{n} حساب مُبلَّغ عنه",
   "tools.badActors.inLetter": "{n} تبدأ بحرف {letter}",
-  "tools.badActors.source": "المصدر: قائمة Hive للجهات الخبيثة في المحفظة",
+  "tools.badActors.source": "المصدر: قائمة Hive Watchmen المجتمعية للجهات الخبيثة",
   "common.fullChart": "مخطط كامل",
   "common.operations": "العمليات",
   "operations.participationMode": "اتجاه المعاملة",

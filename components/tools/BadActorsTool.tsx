@@ -1,44 +1,51 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Link from "next/link";
 import { ShieldAlert, ShieldCheck, Search } from "lucide-react";
 import { useI18n } from "@/i18n/i18n";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { trimAccountName } from "@/utils/StringUtils";
-import badActors from "@/utils/BadActorList";
-import { isBadActor } from "@/utils/badActors";
+import { BadActors, isBadActor, useBadActors } from "@/utils/badActors";
 
 const fill = (s: string, vars: Record<string, string>) =>
   Object.entries(vars).reduce((acc, [k, v]) => acc.replace(`{${k}}`, v), s);
 
-// Bucket the flagged names by first letter once (module scope — the list is a
-// static import). Non a–z first chars fall into the "#" bucket.
-const ALL = (badActors as string[]).filter(Boolean);
-const GROUPED: Record<string, string[]> = {};
-for (const name of ALL) {
-  const c = name[0].toLowerCase();
-  const key = c >= "a" && c <= "z" ? c : "#";
-  (GROUPED[key] ||= []).push(name);
-}
-for (const key of Object.keys(GROUPED)) GROUPED[key].sort();
-const LETTERS = Object.keys(GROUPED).sort((a, b) =>
-  a === "#" ? 1 : b === "#" ? -1 : a.localeCompare(b)
-);
+// Bucket the flagged names by first letter. Non a–z first chars fall into
+// the "#" bucket.
+const groupByLetter = (list: BadActors) => {
+  const grouped: Record<string, string[]> = {};
+  for (const name of list) {
+    const c = name[0];
+    const key = c >= "a" && c <= "z" ? c : "#";
+    (grouped[key] ||= []).push(name);
+  }
+  for (const key of Object.keys(grouped)) grouped[key].sort();
+  const letters = Object.keys(grouped).sort((a, b) =>
+    a === "#" ? 1 : b === "#" ? -1 : a.localeCompare(b)
+  );
+  return { grouped, letters };
+};
 
 const BadActorsTool: React.FC = () => {
   const { t, locale } = useI18n();
+  const badActors = useBadActors();
+  const { grouped, letters } = useMemo(
+    () => groupByLetter(badActors ?? new Set<string>()),
+    [badActors]
+  );
   const [lookup, setLookup] = useState("");
-  const [active, setActive] = useState(LETTERS[0] ?? "#");
+  const [picked, setPicked] = useState<string | null>(null);
+  const active = picked ?? letters[0] ?? "#";
 
   const lookupName = trimAccountName(lookup);
   const verdict =
-    lookupName.length > 0
-      ? isBadActor(lookupName)
+    badActors && lookupName.length > 0
+      ? isBadActor(badActors, lookupName)
         ? "flagged"
         : "clear"
       : null;
 
-  const rows = GROUPED[active] ?? [];
+  const rows = grouped[active] ?? [];
 
   return (
     <div className="w-full space-y-5">
@@ -98,15 +105,15 @@ const BadActorsTool: React.FC = () => {
         <div className="border-b border-slate-100 px-4 py-3 dark:border-slate-800">
           <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">
             {fill(t("tools.badActors.count"), {
-              n: ALL.length.toLocaleString(locale),
+              n: badActors ? badActors.size.toLocaleString(locale) : "…",
             })}
           </span>
           <div className="mt-2 flex flex-wrap gap-1">
-            {LETTERS.map((l) => (
+            {letters.map((l) => (
               <button
                 key={l}
                 type="button"
-                onClick={() => setActive(l)}
+                onClick={() => setPicked(l)}
                 aria-pressed={active === l}
                 className={cn(
                   "h-7 min-w-[28px] rounded-md px-2 text-xs font-bold uppercase transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-400",

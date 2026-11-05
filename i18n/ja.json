@@ -125,7 +125,7 @@
   "tools.badActors.warning": "既知の不正アカウントです — このアカウントに送金したりメッセージを信用したりしないでください。",
   "tools.badActors.count": "{n} 件の不正アカウント",
   "tools.badActors.inLetter": "{letter} で始まるもの {n} 件",
-  "tools.badActors.source": "出典: Hiveウォレット不正アカウントリスト",
+  "tools.badActors.source": "出典: Hive Watchmen コミュニティリスト",
   "common.fullChart": "全チャート",
   "common.operations": "オペレーション",
   "operations.participationMode": "トランザクション方向",

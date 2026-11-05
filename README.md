@@ -197,6 +197,14 @@ npm run pw:test:local:webkit
 
 Running the tests only works locally at this moment.
 
+## Bad-actor list
+
+Accounts flagged as phishing, scam or fraud accounts come from the community
+[Hive Watchmen](https://gitlab.syncad.com/hive/watchmen) list, copied into
+`utils/BadActorList.js` so the explorer makes no outside request for it. To
+pick up a newer list, run `pnpm run update:bad-actors` and commit the result.
+Corrections go to Hive Watchmen, not to this repo.
+
 ## About Wax usage
 
 There are two big part of Block Explorer that are handled by Wax library:

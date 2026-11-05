@@ -125,7 +125,7 @@
   "tools.badActors.warning": "Conta maliciosa conhecida — não envie fundos nem confie em mensagens desta conta.",
   "tools.badActors.count": "{n} contas sinalizadas",
   "tools.badActors.inLetter": "{n} começando com {letter}",
-  "tools.badActors.source": "Fonte: lista de contas maliciosas da carteira Hive",
+  "tools.badActors.source": "Fonte: lista da comunidade Hive Watchmen",
   "common.fullChart": "Gráfico Completo",
   "common.operations": "Operações",
   "operations.participationMode": "Direção da Transação",

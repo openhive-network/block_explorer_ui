@@ -7,7 +7,7 @@ import { Star } from "lucide-react";
 import WitnessUrlIcon from "@/components/account/WitnessUrlIcon";
 
 import { useEffect, useState } from "react";
-import { isBadActor } from "@/utils/badActors";
+import { isBadActor, useBadActors } from "@/utils/badActors";
 import ErrorMessage from "../ErrorMessage";
 import { useI18n } from "@/i18n/i18n";
 import HiveAvatar from "@/components/ui/HiveAvatar";
@@ -36,11 +36,12 @@ const MobileAccountNameCard: React.FC<MobileAccountNameCardProps> = ({
   // Only the dismissal needs state; the flag itself is a pure lookup. The old
   // effect only ever set it true, so a flagged account's warning carried over
   // to the next, clean account.
+  const badActors = useBadActors();
   const [warningDismissed, setWarningDismissed] = useState(false);
   useEffect(() => {
     setWarningDismissed(false);
   }, [accountName]);
-  const showBadActorWarning = isBadActor(accountName) && !warningDismissed;
+  const showBadActorWarning = isBadActor(badActors, accountName) && !warningDismissed;
 
   const handleCloseWarning = () => {
     setWarningDismissed(true);
