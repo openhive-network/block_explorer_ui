@@ -7,6 +7,10 @@ import { cn } from "@/lib/utils";
 import { trimAccountName } from "@/utils/StringUtils";
 import { BadActors, isBadActor, useBadActors } from "@/utils/badActors";
 
+// Some letters hold thousands of names (u: over 6,000), so a letter shows
+// this many until the user asks for the rest.
+const PAGE = 500;
+
 const fill = (s: string, vars: Record<string, string>) =>
   Object.entries(vars).reduce((acc, [k, v]) => acc.replace(`{${k}}`, v), s);
 
@@ -35,6 +39,7 @@ const BadActorsTool: React.FC = () => {
   );
   const [lookup, setLookup] = useState("");
   const [picked, setPicked] = useState<string | null>(null);
+  const [showAll, setShowAll] = useState(false);
   const active = picked ?? letters[0] ?? "#";
 
   const lookupName = trimAccountName(lookup);
@@ -46,6 +51,7 @@ const BadActorsTool: React.FC = () => {
       : null;
 
   const rows = grouped[active] ?? [];
+  const shown = showAll ? rows : rows.slice(0, PAGE);
 
   return (
     <div className="w-full space-y-5">
@@ -113,7 +119,10 @@ const BadActorsTool: React.FC = () => {
               <button
                 key={l}
                 type="button"
-                onClick={() => setPicked(l)}
+                onClick={() => {
+                  setPicked(l);
+                  setShowAll(false);
+                }}
                 aria-pressed={active === l}
                 className={cn(
                   "h-7 min-w-[28px] rounded-md px-2 text-xs font-bold uppercase transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-400",
@@ -130,10 +139,11 @@ const BadActorsTool: React.FC = () => {
 
         <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 px-4 pb-2 pt-3">
           <span className="text-[11px] font-medium uppercase tracking-wide text-slate-400 dark:text-slate-500">
-            {fill(t("tools.badActors.inLetter"), {
-              n: rows.length.toLocaleString(locale),
-              letter: active.toUpperCase(),
-            })}
+            {badActors &&
+              fill(t("tools.badActors.inLetter"), {
+                n: rows.length.toLocaleString(locale),
+                letter: active.toUpperCase(),
+              })}
           </span>
           {/* Stated once for the whole list — every entry below carries it. */}
           <span className="text-[11px] text-rose-600/80 dark:text-rose-400/80">
@@ -141,10 +151,11 @@ const BadActorsTool: React.FC = () => {
           </span>
         </div>
         <ul className="flex flex-wrap gap-2 px-4 pb-4">
-          {rows.map((name) => (
+          {shown.map((name) => (
             <li key={name}>
               <Link
                 href={`/@${name}`}
+                prefetch={false}
                 className="inline-flex items-center rounded-full border border-rose-200 bg-rose-50 px-2.5 py-1 text-xs font-medium text-rose-700 transition-colors hover:bg-rose-100 dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-300"
               >
                 @{name}
@@ -152,6 +163,19 @@ const BadActorsTool: React.FC = () => {
             </li>
           ))}
         </ul>
+        {shown.length < rows.length && (
+          <div className="px-4 pb-4">
+            <button
+              type="button"
+              onClick={() => setShowAll(true)}
+              className="rounded-md px-2 py-1 text-xs font-semibold text-indigo-600 hover:bg-slate-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-400 dark:text-indigo-400 dark:hover:bg-slate-800"
+            >
+              {fill(t("tools.badActors.showAll"), {
+                n: rows.length.toLocaleString(locale),
+              })}
+            </button>
+          </div>
+        )}
 
         <div className="border-t border-slate-100 px-4 py-2 text-[11px] text-slate-400 dark:border-slate-800 dark:text-slate-500">
           {t("tools.badActors.source")}

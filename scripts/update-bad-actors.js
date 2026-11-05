@@ -1,29 +1,65 @@
 // Refreshes utils/BadActorList.js from the Hive Watchmen list
 // (https://gitlab.syncad.com/hive/watchmen, output/flat/badactors.txt).
-// Run: node scripts/update-bad-actors.js, then commit the regenerated file.
+// Run: pnpm run update:bad-actors, then commit the regenerated file.
+// Pass --allow-removals when Watchmen really did remove many names.
 const fs = require("fs");
 const path = require("path");
 
 const SOURCE =
   "https://gitlab.syncad.com/hive/watchmen/-/raw/main/output/flat/badactors.txt";
 const OUT = path.join(__dirname, "..", "utils", "BadActorList.js");
-// Hive account names: 3-16 characters of a-z, 0-9, "." and "-".
-const ACCOUNT_NAME = /^[a-z0-9.-]{3,16}$/;
+// A line made of anything else means the file format changed: stop.
+const NAME_CHARS = /^[a-z0-9.-]+$/;
+// Hive's rule: 3-16 characters, and every dot-separated part is at least 3
+// long, starts with a letter and ends with a letter or digit.
+const PART = /^[a-z][a-z0-9-]*[a-z0-9]$/;
+const isAccountName = (name) =>
+  name.length >= 3 &&
+  name.length <= 16 &&
+  name.split(".").every((part) => part.length >= 3 && PART.test(part));
+// Refuse an update that drops more than this share of the current names.
+const MAX_REMOVED_SHARE = 0.1;
+
+const currentNames = () => {
+  if (!fs.existsSync(OUT)) return [];
+  const text = fs.readFileSync(OUT, "utf8");
+  const body = text.slice(text.indexOf("`") + 1, text.lastIndexOf("`"));
+  return body.split(/\r?\n/).filter(Boolean);
+};
 
 const main = async () => {
-  const res = await fetch(SOURCE);
+  const res = await fetch(SOURCE, { signal: AbortSignal.timeout(30000) });
   if (!res.ok) throw new Error(`${SOURCE} answered ${res.status}`);
 
   const lines = (await res.text())
     .split(/\r?\n/)
     .map((line) => line.trim().toLowerCase())
     .filter(Boolean);
-  const invalid = lines.filter((name) => !ACCOUNT_NAME.test(name));
-  if (invalid.length > 0) {
-    throw new Error(`Not account names: ${invalid.slice(0, 10).join(", ")}`);
+  const unreadable = lines.filter((line) => !NAME_CHARS.test(line));
+  if (unreadable.length > 0) {
+    throw new Error(`Not account names: ${unreadable.slice(0, 10).join(", ")}`);
   }
-  const names = [...new Set(lines)].sort();
+  const impossible = lines.filter((name) => !isAccountName(name));
+  if (impossible.length > 0) {
+    console.warn(
+      `Skipped ${impossible.length} name(s) that can't exist on Hive: ${impossible.join(", ")}`
+    );
+  }
+  const names = [...new Set(lines.filter(isAccountName))].sort();
   if (names.length === 0) throw new Error("The list is empty");
+
+  const current = currentNames();
+  const kept = new Set(names);
+  const removed = current.filter((name) => !kept.has(name));
+  if (
+    removed.length > current.length * MAX_REMOVED_SHARE &&
+    !process.argv.includes("--allow-removals")
+  ) {
+    throw new Error(
+      `The new list drops ${removed.length} of ${current.length} current names. ` +
+        "Check the source, then rerun with --allow-removals if that's right."
+    );
+  }
 
   fs.writeFileSync(
     OUT,
@@ -38,7 +74,9 @@ ${names.join("\n")}
 export default list;
 `
   );
-  console.log(`Wrote ${names.length} names to ${path.relative(process.cwd(), OUT)}`);
+  console.log(
+    `Wrote ${names.length} names (${removed.length} removed) to ${path.relative(process.cwd(), OUT)}`
+  );
 };
 
 main().catch((error) => {

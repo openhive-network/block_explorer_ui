@@ -126,6 +126,7 @@
   "tools.badActors.count": "{n} cuentas señaladas",
   "tools.badActors.inLetter": "{n} que empiezan con {letter}",
   "tools.badActors.source": "Fuente: lista comunitaria Hive Watchmen",
+  "tools.badActors.showAll": "Mostrar los {n}",
   "common.fullChart": "Gráfico Completo",
   "common.operations": "Operaciones",
   "operations.participationMode": "Dirección de Transacción",

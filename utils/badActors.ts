@@ -10,10 +10,19 @@ const normalize = (name: string) =>
 let loaded: BadActors | null = null;
 let loading: Promise<BadActors> | null = null;
 
+// Accounts we label ourselves (exchanges, treasury, services) are never
+// flagged: the Watchmen list has carried live exchange wallets before, and a
+// "do not send funds" warning on a known exchange wallet does real harm.
+// accountLabels is loaded here, not imported, because it imports this module.
 export const loadBadActors = (): Promise<BadActors> =>
-  (loading ??= import("./BadActorList")
-    .then(({ default: list }) => {
-      loaded = new Set((list as string[]).filter(Boolean).map(normalize));
+  (loading ??= Promise.all([import("./BadActorList"), import("./accountLabels")])
+    .then(([{ default: list }, { ACCOUNT_LABELS }]) => {
+      loaded = new Set(
+        (list as string[])
+          .filter(Boolean)
+          .map(normalize)
+          .filter((name) => !ACCOUNT_LABELS[name])
+      );
       return loaded;
     })
     .catch((error) => {
@@ -29,7 +38,9 @@ export const useBadActors = (): BadActors | null => {
     let live = true;
     loadBadActors()
       .then((names) => live && setList(names))
-      .catch(() => {});
+      .catch((error) =>
+        console.warn("[badActors] could not load the list:", error)
+      );
     return () => {
       live = false;
     };
