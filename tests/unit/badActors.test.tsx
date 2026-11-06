@@ -15,7 +15,7 @@ import {
 
 const names = (list as string[]).filter(Boolean);
 const exempt = (name: string) =>
-  !!ACCOUNT_LABELS[name] || name in NEVER_FLAGGED;
+  !!ACCOUNT_LABELS[name] || Object.hasOwn(NEVER_FLAGGED, name);
 // Hive's rule: 3-16 characters, each dot-separated part at least 3 long,
 // starting with a letter and ending with a letter or digit.
 const isAccountName = (name: string) =>
@@ -52,9 +52,8 @@ describe("bad-actor list", () => {
     // Look-alike squats stay flagged.
     expect(isBadActor(badActors, "upbitsusersa")).toBe(true);
     // Each entry must still be on Watchmen's list; drop it once it's gone.
-    for (const name of Object.keys(NEVER_FLAGGED)) {
-      expect(names).toContain(name);
-    }
+    const gone = Object.keys(NEVER_FLAGGED).filter((n) => !names.includes(n));
+    expect(gone).toEqual([]);
   });
 
   it("never flags an account we label, such as Upbit's hot wallets", () => {
