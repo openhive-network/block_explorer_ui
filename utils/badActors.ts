@@ -4,8 +4,7 @@ import { useEffect, useState } from "react";
 // its own chunk the first time something needs it, not with every page.
 export type BadActors = ReadonlySet<string>;
 
-const normalize = (name: string) =>
-  name.trim().toLowerCase().replace(/^@/, "");
+const normalize = (name: string) => name.trim().toLowerCase().replace(/^@/, "");
 
 let loaded: BadActors | null = null;
 let loading: Promise<BadActors> | null = null;
@@ -14,14 +13,31 @@ let loading: Promise<BadActors> | null = null;
 // flagged: the Watchmen list has carried live exchange wallets before, and a
 // "do not send funds" warning on a known exchange wallet does real harm.
 // accountLabels is loaded here, not imported, because it imports this module.
+// Watchmen also lists these exchange accounts, which we don't label. Each entry
+// is checked on chain; drop it once Watchmen removes the name.
+export const NEVER_FLAGGED: Readonly<Record<string, string>> = {
+  // Upbit deposit account: ~56M HIVE in from other exchanges, swept only to
+  // cold.dunamu and upbitshotwallet1-3 (checked 2026-11-06).
+  upbitsusers: "Upbit deposit account",
+  // Bithumb receiving account: ~26.5M HIVE in, swept only to qlthivethumb,
+  // the recovery account of bithumbsend4 (checked 2026-11-06).
+  bithumbrecv2: "Bithumb receiving account",
+};
+
+const isExempt = (name: string, labels: Record<string, unknown>) =>
+  !!labels[name] || name in NEVER_FLAGGED;
+
 export const loadBadActors = (): Promise<BadActors> =>
-  (loading ??= Promise.all([import("./BadActorList"), import("./accountLabels")])
+  (loading ??= Promise.all([
+    import("./BadActorList"),
+    import("./accountLabels"),
+  ])
     .then(([{ default: list }, { ACCOUNT_LABELS }]) => {
       loaded = new Set(
         (list as string[])
           .filter(Boolean)
           .map(normalize)
-          .filter((name) => !ACCOUNT_LABELS[name])
+          .filter((name) => !isExempt(name, ACCOUNT_LABELS))
       );
       return loaded;
     })
@@ -52,7 +68,10 @@ export const useBadActorsState = (): {
         .catch((error) => {
           if (!live) return;
           if (retry < RETRY_DELAYS_MS.length) {
-            timer = setTimeout(() => attempt(retry + 1), RETRY_DELAYS_MS[retry]);
+            timer = setTimeout(
+              () => attempt(retry + 1),
+              RETRY_DELAYS_MS[retry]
+            );
           } else {
             console.warn("[badActors] could not load the list:", error);
             setFailed(true);

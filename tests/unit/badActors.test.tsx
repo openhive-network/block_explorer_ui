@@ -9,10 +9,13 @@ import {
   BadActors,
   isBadActor,
   loadBadActors,
+  NEVER_FLAGGED,
   useBadActors,
 } from "@/utils/badActors";
 
 const names = (list as string[]).filter(Boolean);
+const exempt = (name: string) =>
+  !!ACCOUNT_LABELS[name] || name in NEVER_FLAGGED;
 // Hive's rule: 3-16 characters, each dot-separated part at least 3 long,
 // starting with a letter and ending with a letter or digit.
 const isAccountName = (name: string) =>
@@ -20,10 +23,13 @@ const isAccountName = (name: string) =>
   name.length <= 16 &&
   name
     .split(".")
-    .every((part) => part.length >= 3 && /^[a-z][a-z0-9-]*[a-z0-9]$/.test(part));
+    .every(
+      (part) => part.length >= 3 && /^[a-z][a-z0-9-]*[a-z0-9]$/.test(part)
+    );
 
-(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT =
-  true;
+(
+  globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
+).IS_REACT_ACT_ENVIRONMENT = true;
 
 describe("bad-actor list", () => {
   let badActors: BadActors;
@@ -31,10 +37,23 @@ describe("bad-actor list", () => {
     badActors = await loadBadActors();
   });
 
-  it("flags every name on the shipped list except accounts we label", () => {
+  it("flags every name on the shipped list except exempt accounts", () => {
     expect(names.length).toBeGreaterThan(0);
     for (const name of names) {
-      expect(isBadActor(badActors, name)).toBe(!ACCOUNT_LABELS[name]);
+      expect(isBadActor(badActors, name)).toBe(!exempt(name));
+    }
+  });
+
+  it("never flags the exchange accounts on the never-flag list", () => {
+    for (const name of ["upbitsusers", "bithumbrecv2"]) {
+      expect(isBadActor(badActors, name)).toBe(false);
+      expect(isBadActor(badActors, `@${name.toUpperCase()}`)).toBe(false);
+    }
+    // Look-alike squats stay flagged.
+    expect(isBadActor(badActors, "upbitsusersa")).toBe(true);
+    // Each entry must still be on Watchmen's list; drop it once it's gone.
+    for (const name of Object.keys(NEVER_FLAGGED)) {
+      expect(names).toContain(name);
     }
   });
 
@@ -50,8 +69,7 @@ describe("bad-actor list", () => {
     expect(names.filter((name) => !isAccountName(name))).toEqual([]);
     expect(new Set(names).size).toBe(names.length);
     expect([...names].sort()).toEqual(names);
-    const labelled = names.filter((name) => ACCOUNT_LABELS[name]).length;
-    expect(badActors.size).toBe(names.length - labelled);
+    expect(badActors.size).toBe(names.length - names.filter(exempt).length);
   });
 
   it("does not flag well-known legitimate accounts", () => {
