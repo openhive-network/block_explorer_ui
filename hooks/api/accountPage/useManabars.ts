@@ -23,7 +23,7 @@ const useManabars = (accountName: string, liveDataEnabled: boolean) => {
     accountName: string
   ): Promise<Explorer.Manabars | null> => {
     if (!accountName || !hiveChain) return null;
-    const manabars = await fetchingService.getManabars(accountName, hiveChain);
+    const manabars = await fetchingService.getManabars(accountName);
     if (!manabars) return null;
     const { upvote, downvote, rc } = manabars;
     const processedManabars: Explorer.Manabars = {

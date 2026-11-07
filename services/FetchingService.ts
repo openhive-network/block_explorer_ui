@@ -726,20 +726,22 @@ class FetchingService {
     });
   }
 
-  async getManabars(
-    accountName: string,
-    hiveChain: IHiveChainInterface
-  ): Promise<Hive.Manabars | null> {
+  // calculateCurrentManabarValueForAccount queries the node itself, so it runs
+  // on the chain that carries the configured node. The context's base chain
+  // keeps wax's default endpoint: setting endpointUrl on an extended copy only
+  // reaches its direct parent.
+  async getManabars(accountName: string): Promise<Hive.Manabars | null> {
     try {
-      const upvotePromise = hiveChain.calculateCurrentManabarValueForAccount(
+      const chain = this.extendedHiveChain!;
+      const upvotePromise = chain.calculateCurrentManabarValueForAccount(
         accountName,
         0
       );
-      const downvotePromise = hiveChain.calculateCurrentManabarValueForAccount(
+      const downvotePromise = chain.calculateCurrentManabarValueForAccount(
         accountName,
         1
       );
-      const rcPromise = hiveChain.calculateCurrentManabarValueForAccount(
+      const rcPromise = chain.calculateCurrentManabarValueForAccount(
         accountName,
         2
       );
