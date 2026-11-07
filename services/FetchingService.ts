@@ -511,14 +511,6 @@ class FetchingService {
     });
   }
 
-  async getBlockByTime(date: Date): Promise<number> {
-    return await this.extendedHiveChain!.restApi["hafah-api"].blockNumberByDate(
-      {
-        date: date.toISOString(),
-      }
-    );
-  }
-
   async getOperationKeys(operationTypeId: number): Promise<string[][]> {
     return await this.extendedHiveChain!.restApi[
       "hafah-api"

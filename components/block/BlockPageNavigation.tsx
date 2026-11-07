@@ -8,7 +8,6 @@ import {
   convertIdsToBooleanArray,
 } from "@/lib/utils";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
-import useBlockByTime from "@/hooks/api/common/useBlockByTime";
 
 import DateTimePicker from "../DateTimePicker";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
@@ -46,8 +45,6 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
   const { t , dir } = useI18n();
   const [block, setBlock] = useState(blockNumber.toString());
   const [blockDate, setBlockDate] = useState(timeStamp);
-
-  const { checkBlockByTime } = useBlockByTime();
 
   const datePickerRef = useRef<HTMLDivElement>(null);
 

@@ -505,10 +505,6 @@ namespace Hive {
     is_virtual!: boolean;
   }
 
-  export class GetBlockByTimeParams {
-    date!: string;
-  }
-
   export class GetOperationKeysParams {
     operationTypeId!: number;
   }

@@ -172,11 +172,6 @@ export const extendedRest = {
       result: Hive.BlockDetails,
       urlPath: "global-state",
     },
-    blockNumberByDate: {
-      params: Hive.GetBlockByTimeParams,
-      result: Number,
-      urlPath: "block-number-by-date/{date}",
-    },
   },
   "balance-api": {
     balanceHistory: {
