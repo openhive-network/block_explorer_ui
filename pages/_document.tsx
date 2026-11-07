@@ -1,7 +1,7 @@
 import { Html, Head, Main, NextScript } from "next/document";
 import Script from "next/script";
 import { verification } from "@/utils/seo";
-import { isHivesignerReady } from "@/utils/deploySettings";
+import { isLoginMethodEnabled } from "@/utils/deploySettings";
 
 export default function Document() {
   // Get basePath from Next.js config (set at build time)
@@ -17,12 +17,17 @@ export default function Document() {
         {verification.bing && (
           <meta name="msvalidate.01" content={verification.bing} />
         )}
-        {/* A boolean only: never put a Hivesigner setting's value in the page. */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `window.__HIVESIGNER_READY__=${isHivesignerReady};`,
-          }}
-        />
+        {/* A boolean only: never put a Hivesigner setting's value in the page.
+            Emitted only when Hivesigner login is on (which needs its settings):
+            the reader checks `=== true`, and a site without it then serves no
+            inline script, so a CSP without 'unsafe-inline' has nothing to block. */}
+        {isLoginMethodEnabled("hivesigner") && (
+          <script
+            dangerouslySetInnerHTML={{
+              __html: "window.__HIVESIGNER_READY__=true;",
+            }}
+          />
+        )}
       </Head>
       <body>
         <Main />
