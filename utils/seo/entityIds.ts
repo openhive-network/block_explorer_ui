@@ -1,6 +1,6 @@
 // One spelling per entity: gSSP redirects to the normalized id so a block/tx cannot self-compete.
 
-export type EntityIdKind = "number" | "hash" | "invalid";
+export type EntityIdKind = "number" | "hash" | "time" | "invalid";
 
 export interface NormalizedEntityId {
   normalized: string;
@@ -8,6 +8,9 @@ export interface NormalizedEntityId {
 }
 
 const HEX_40 = /^[0-9a-f]{40}$/i;
+
+// The block page's date jump navigates to /block/<Date.toISOString()>.
+const ISO_UTC = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,3})?Z$/;
 
 const INVALID: NormalizedEntityId = { normalized: "", kind: "invalid" };
 
@@ -18,6 +21,8 @@ const MAX_BLOCK_DIGITS = 10;
 
 export const normalizeBlockId = (raw: string): NormalizedEntityId => {
   if (HEX_40.test(raw)) return { normalized: raw.toLowerCase(), kind: "hash" };
+  if (ISO_UTC.test(raw) && !Number.isNaN(Date.parse(raw)))
+    return { normalized: raw, kind: "time" };
   const digits = raw.replace(/[,\s]/g, "");
   if (!/^\d+$/.test(digits)) return INVALID;
   const normalized = digits.replace(/^0+(?=\d)/, "");

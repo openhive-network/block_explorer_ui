@@ -391,6 +391,22 @@ export const getServerSideProps: GetServerSideProps<{
   res.setHeader("Cache-Control", SEO_LIST_CACHE_CONTROL);
   const canonical = canonicalUrl(req, `/block/${normalized}`);
 
+  // A date jump shows whichever block was produced at that time; like the hash
+  // view it duplicates a numbered page, so it stays out of the index.
+  if (kind === "time") {
+    return {
+      props: {
+        meta: {
+          title: pageTitle(seoText("seo.block.timeTitle", { time: normalized })),
+          description: "",
+          canonical,
+          ogType: "website",
+          noindex: true,
+        },
+      },
+    };
+  }
+
   // The hash view duplicates the numbered page, so it stays out of the index.
   if (kind === "hash") {
     return {
