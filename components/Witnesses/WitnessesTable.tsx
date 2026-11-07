@@ -6,7 +6,6 @@ import {
   ChevronDown,
   ChevronUp,
   ChevronsUpDown,
-  Link as LinkIcon,
 } from "lucide-react";
 import { useI18n } from "@/i18n/i18n";
 import { cn, formatNumber, formatPercent, formatHp } from "@/lib/utils";
@@ -35,6 +34,7 @@ import { convertVestsToHP } from "@/utils/Calculations";
 import { relocalizeAmount } from "@/utils/localeAmount";
 import { config } from "@/Config";
 import Hive from "@/types/Hive";
+import WitnessUrlIcon from "@/components/account/WitnessUrlIcon";
 import { IHiveChainInterface } from "@hiveio/wax";
 import WitnessVoteButton from "./WitnessVoteButton";
 import SetProxyButton from "./SetProxyButton";
@@ -402,17 +402,21 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
                         >
                           {singleWitness.witness_name}
                         </Link>
+                        {/* Free text from witness_update: WitnessUrlIcon links only a
+                            web address or an in-app path, as on the account card. */}
                         {singleWitness.url && (
-                          <Link
-                            href={singleWitness.url}
-                            target="_blank"
+                          <span
                             className={cn(
-                              "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300",
+                              "inline-flex text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300",
                               isMobile ? "ms-1" : "ms-2"
                             )}
                           >
-                            <LinkIcon className="h-4 w-4" />
-                          </Link>
+                            <WitnessUrlIcon
+                              url={singleWitness.url}
+                              size={16}
+                              strokeWidth={2}
+                            />
+                          </span>
                         )}
                         {compareSelection && (
                           <span className={isMobile ? "ms-1" : "ms-2"}>

@@ -1,4 +1,8 @@
-import { isInAppPath, normalizeExternalUrl } from "@/utils/SafeUrl";
+import {
+  isInAppPath,
+  normalizeExternalUrl,
+  resolveLinkTarget,
+} from "@/utils/SafeUrl";
 
 describe("normalizeExternalUrl", () => {
   it("accepts a valid https URL", () => {
@@ -112,5 +116,39 @@ describe("isInAppPath", () => {
     expect(isInAppPath(null)).toBe(false);
     expect(isInAppPath(42)).toBe(false);
     expect(isInAppPath({})).toBe(false);
+  });
+});
+
+// Witness urls are free text from witness_update; these are real values from
+// chain (2026-11-07). Only a web address or an in-app path may become a link.
+describe("resolveLinkTarget", () => {
+  it("keeps web addresses", () => {
+    expect(resolveLinkTarget("https://blocktrades.us")).toBe(
+      "https://blocktrades.us/"
+    );
+    expect(resolveLinkTarget("http://example.com/witness")).toBe(
+      "http://example.com/witness"
+    );
+  });
+
+  it("keeps in-app paths as they are", () => {
+    expect(
+      resolveLinkTarget("/witness-category/@lapingvino/lapingvino-witness")
+    ).toBe("/witness-category/@lapingvino/lapingvino-witness");
+    expect(resolveLinkTarget("/@scrooger")).toBe("/@scrooger");
+  });
+
+  it("rejects values without a scheme instead of linking them relatively", () => {
+    expect(resolveLinkTarget("steemit.com")).toBeNull();
+    expect(resolveLinkTarget("www.steemit.com")).toBeNull();
+    expect(resolveLinkTarget("witness.mayega.com")).toBeNull();
+    expect(resolveLinkTarget("soon")).toBeNull();
+  });
+
+  it("rejects blank values and other schemes", () => {
+    expect(resolveLinkTarget(" ")).toBeNull();
+    expect(resolveLinkTarget("")).toBeNull();
+    expect(resolveLinkTarget("javascript:alert(1)")).toBeNull();
+    expect(resolveLinkTarget("//evil.com")).toBeNull();
   });
 });

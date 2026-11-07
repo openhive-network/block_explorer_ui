@@ -94,6 +94,7 @@ import ConvertedHiveTooltip from "@/components/ConvertedHiveTooltip";
 import TranslatedFormatterOperation from "@/components/TranslatedFormatterOperation";
 import { KeyRound, LinkIcon } from "lucide-react";
 import { deploySettings } from "@/utils/deploySettings";
+import { resolveLinkTarget } from "@/utils/SafeUrl";
 
 class OperationsFormatter implements IWaxCustomFormatter {
   public constructor(private readonly wax: IWaxBaseInterface) {}
@@ -340,11 +341,22 @@ class OperationsFormatter implements IWaxCustomFormatter {
     return value; // Assume it's a plain text URL
   }
 
+  // The url comes from witness_set_properties, so it is free text: only a web
+  // address or an in-app path becomes a link (with the link icon), anything
+  // else stays plain text.
   private generateLink(link: string): React.JSX.Element {
+    const href = resolveLinkTarget(link);
+    if (!href) return <span>{link}</span>;
     return (
-      <Link href={`${link}`} target="_blank">
-        <span className="text-link">{link}</span>
-      </Link>
+      <>
+        <Link href={href} target="_blank" rel="noopener noreferrer">
+          <span className="text-link">{link}</span>
+        </Link>{" "}
+        <LinkIcon
+          size={14}
+          style={{ display: "inline-block", verticalAlign: "middle" }}
+        />
+      </>
     );
   }
 
@@ -1683,11 +1695,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
       actionElements.push(
         <span key="url">
           {this.i18n.t("formatter.formatWitnessSetPropertiesOperation.setUrl")}
-          {this.generateLink(url)}{" "}
-          <LinkIcon
-            size={14}
-            style={{ display: "inline-block", verticalAlign: "middle" }}
-          />
+          {this.generateLink(url)}
         </span>
       );
     }
