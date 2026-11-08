@@ -1,3 +1,4 @@
+import { ACCOUNT_LABELS } from "@/utils/accountLabels";
 import { isBadActor, loadBadActors } from "@/utils/badActors";
 
 // Watchmen has listed live exchange wallets before (Upbit, XT.com). None are on
@@ -9,6 +10,8 @@ jest.mock("@/utils/BadActorList", () => ({
 
 describe("bad-actor list with a labelled account on it", () => {
   it("skips the labelled account and flags the rest", async () => {
+    // The stand-in list relies on this label existing.
+    expect(Object.hasOwn(ACCOUNT_LABELS, "upbitshotwallet1")).toBe(true);
     const badActors = await loadBadActors();
     expect(isBadActor(badActors, "upbitshotwallet1")).toBe(false);
     expect(isBadActor(badActors, "upbitshotwallet1a")).toBe(true);
