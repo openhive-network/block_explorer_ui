@@ -16,6 +16,7 @@ import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/i18n/i18n";
+import { GENESIS_MS } from "@/utils/seo/entityIds";
 
 interface BlockPageNavigationProps {
   blockNumber: number;
@@ -102,7 +103,8 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
 
   const handleGoToBlockByTime = async (date: Date | undefined) => {
     if (date && date?.getTime() !== timeStamp?.getTime()) {
-      goToBlock(date.toISOString());
+      // Block 1 is the earliest time with a block; earlier times would 404.
+      goToBlock(new Date(Math.max(date.getTime(), GENESIS_MS)).toISOString());
     }
   };
 
@@ -160,6 +162,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
             <DateTimePicker
               date={blockDate || new Date()}
               setDate={setBlockDate}
+              firstDate={new Date(GENESIS_MS)}
             />
           </div>
         </div>

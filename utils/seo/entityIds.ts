@@ -13,7 +13,7 @@ const HEX_40 = /^[0-9a-f]{40}$/i;
 const ISO_UTC = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,3})?Z$/;
 
 // Block 1's timestamp: hafah has no block for anything earlier.
-const GENESIS_MS = Date.UTC(2016, 2, 24, 16, 5, 0);
+export const GENESIS_MS = Date.UTC(2016, 2, 24, 16, 5, 0);
 // A date jump may pick a time later today; anything further out is a made-up URL.
 const FUTURE_SLACK_MS = 24 * 60 * 60 * 1000;
 

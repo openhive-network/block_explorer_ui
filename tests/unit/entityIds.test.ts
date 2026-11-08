@@ -57,6 +57,9 @@ describe("normalizeBlockId", () => {
     expect(normalizeBlockId(at(now + 2 * 24 * 60 * 60 * 1000)).kind).toBe(
       "invalid"
     );
-    expect(normalizeBlockId("2099-01-01T00:00:00Z").kind).toBe("invalid");
+    const year = new Date(now).getUTCFullYear();
+    expect(normalizeBlockId(`${year + 2}-01-01T00:00:00Z`).kind).toBe(
+      "invalid"
+    );
   });
 });
