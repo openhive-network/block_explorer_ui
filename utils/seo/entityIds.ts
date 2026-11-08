@@ -12,6 +12,23 @@ const HEX_40 = /^[0-9a-f]{40}$/i;
 // The block page's date jump navigates to /block/<Date.toISOString()>.
 const ISO_UTC = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,3})?Z$/;
 
+// Block 1's timestamp: hafah has no block for anything earlier.
+const GENESIS_MS = Date.UTC(2016, 2, 24, 16, 5, 0);
+// A date jump may pick a time later today; anything further out is a made-up URL.
+const FUTURE_SLACK_MS = 24 * 60 * 60 * 1000;
+
+// A timestamp hafah can answer: a real calendar time (Date.parse rolls
+// 2026-02-30 over to Mar 2 and 24:00 to the next day, but hafah rejects both),
+// from block 1 up to about now.
+const isBlockTime = (raw: string): boolean => {
+  if (!ISO_UTC.test(raw)) return false;
+  const ms = Date.parse(raw);
+  if (Number.isNaN(ms)) return false;
+  if (new Date(ms).toISOString().slice(0, 19) !== raw.slice(0, 19))
+    return false;
+  return ms >= GENESIS_MS && ms <= Date.now() + FUTURE_SLACK_MS;
+};
+
 const INVALID: NormalizedEntityId = { normalized: "", kind: "invalid" };
 
 // Hive mints ~10.5M blocks a year and is under 100M, so 10 digits covers roughly
@@ -21,8 +38,7 @@ const MAX_BLOCK_DIGITS = 10;
 
 export const normalizeBlockId = (raw: string): NormalizedEntityId => {
   if (HEX_40.test(raw)) return { normalized: raw.toLowerCase(), kind: "hash" };
-  if (ISO_UTC.test(raw) && !Number.isNaN(Date.parse(raw)))
-    return { normalized: raw, kind: "time" };
+  if (isBlockTime(raw)) return { normalized: raw, kind: "time" };
   const digits = raw.replace(/[,\s]/g, "");
   if (!/^\d+$/.test(digits)) return INVALID;
   const normalized = digits.replace(/^0+(?=\d)/, "");
