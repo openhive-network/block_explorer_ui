@@ -9,13 +9,11 @@ import {
   BadActors,
   isBadActor,
   loadBadActors,
-  NEVER_FLAGGED,
   useBadActors,
 } from "@/utils/badActors";
 
 const names = (list as string[]).filter(Boolean);
-const exempt = (name: string) =>
-  !!ACCOUNT_LABELS[name] || Object.hasOwn(NEVER_FLAGGED, name);
+const exempt = (name: string) => Object.hasOwn(ACCOUNT_LABELS, name);
 // Hive's rule: 3-16 characters, each dot-separated part at least 3 long,
 // starting with a letter and ending with a letter or digit.
 const isAccountName = (name: string) =>
@@ -44,21 +42,7 @@ describe("bad-actor list", () => {
     }
   });
 
-  it("never flags the exchange accounts on the never-flag list", () => {
-    for (const name of ["upbitsusers", "bithumbrecv2"]) {
-      expect(isBadActor(badActors, name)).toBe(false);
-      expect(isBadActor(badActors, `@${name.toUpperCase()}`)).toBe(false);
-    }
-    // Look-alike squats stay flagged.
-    expect(isBadActor(badActors, "upbitsusersa")).toBe(true);
-    // Each entry must still be on Watchmen's list; drop it once it's gone.
-    const gone = Object.keys(NEVER_FLAGGED).filter((n) => !names.includes(n));
-    expect(gone).toEqual([]);
-  });
-
-  it("never flags an account we label, such as Upbit's hot wallets", () => {
-    // Watchmen lists upbitshotwallet1-3; they hold millions of HIVE for Upbit.
-    expect(names).toContain("upbitshotwallet1");
+  it("never flags an account we label", () => {
     for (const name of Object.keys(ACCOUNT_LABELS)) {
       expect(isBadActor(badActors, name)).toBe(false);
     }

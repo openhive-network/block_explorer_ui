@@ -12,20 +12,6 @@ let loading: Promise<BadActors> | null = null;
 // Accounts we label ourselves (exchanges, treasury, services) are never
 // flagged: the Watchmen list has carried live exchange wallets before, and a
 // "do not send funds" warning on a known exchange wallet does real harm.
-// Watchmen also lists these exchange accounts, which we don't label. Each entry
-// is checked on chain; drop it once Watchmen removes the name (hive/watchmen#3).
-export const NEVER_FLAGGED: Readonly<Record<string, string>> = {
-  // Upbit deposit account: ~56M HIVE in from other exchanges, swept only to
-  // cold.dunamu and upbitshotwallet1-3 (checked 2026-11-06).
-  upbitsusers: "Upbit deposit account",
-  // Bithumb receiving account: ~26.5M HIVE in, swept only to qlthivethumb,
-  // the recovery account of bithumbsend4 (checked 2026-11-06).
-  bithumbrecv2: "Bithumb receiving account",
-};
-
-const isExempt = (name: string, labels: Record<string, unknown>) =>
-  !!labels[name] || Object.hasOwn(NEVER_FLAGGED, name);
-
 // accountLabels is loaded here, not imported, because it imports this module.
 export const loadBadActors = (): Promise<BadActors> =>
   (loading ??= Promise.all([
@@ -37,7 +23,7 @@ export const loadBadActors = (): Promise<BadActors> =>
         (list as string[])
           .filter(Boolean)
           .map(normalize)
-          .filter((name) => !isExempt(name, ACCOUNT_LABELS))
+          .filter((name) => !Object.hasOwn(ACCOUNT_LABELS, name))
       );
       return loaded;
     })
