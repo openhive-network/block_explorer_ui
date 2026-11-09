@@ -431,6 +431,19 @@ namespace Hive {
     status!: string;
   }
 
+  export class GetProposalsParams {
+    status?: ProposalVoteStatus;
+    page?: number;
+    "page-size"?: number;
+  }
+
+  // hafbe-api /proposals: the node's list plus voters_num and paid_amount.
+  export class ProposalsResponse {
+    total_proposals!: number;
+    total_pages!: number;
+    proposals!: ProposalVoteProposal[];
+  }
+
   export class ProposalVoteEntry {
     voter_name!: string;
     proposal!: ProposalVoteProposal;

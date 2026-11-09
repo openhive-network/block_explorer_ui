@@ -1478,6 +1478,8 @@
   "proposalCard.votesLabel": "总票数",
   "proposalCard.neededToFund": "需要资金",
   "proposalCard.dailyPayLabel": "每日报酬",
+  "proposalCard.paidSoFarLabel": "已支付",
+  "proposalCard.paidSoFarTooltip": "链上迄今实际支付给该提案的 HBD。下方的潜在报酬是它可能获得的金额。",
   "proposalCard.totalPayoutLabel": "总潜在报酬",
   "proposalCard.payoutTooltip": "基于提案的完整持续时间",
   "proposalCard.remainingPayoutLabel": "剩余潜在报酬",

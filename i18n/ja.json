@@ -1478,6 +1478,8 @@
   "proposalCard.votesLabel": "総投票数",
   "proposalCard.neededToFund": "資金調達に必要",
   "proposalCard.dailyPayLabel": "日当",
+  "proposalCard.paidSoFarLabel": "これまでの支払額",
+  "proposalCard.paidSoFarTooltip": "チェーンがこれまでにこの提案へ実際に支払った HBD です。下の潜在的な支払額は受け取る可能性のある額です。",
   "proposalCard.totalPayoutLabel": "潜在的な総支払額",
   "proposalCard.payoutTooltip": "提案の全期間に基づく",
   "proposalCard.remainingPayoutLabel": "残りの潜在的な支払額",

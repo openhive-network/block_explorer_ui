@@ -1478,6 +1478,8 @@
   "proposalCard.votesLabel": "Total Voturi",
   "proposalCard.neededToFund": "Necesar pentru a fi finanțată",
   "proposalCard.dailyPayLabel": "Plată Zilnică",
+  "proposalCard.paidSoFarLabel": "Plătit până acum",
+  "proposalCard.paidSoFarTooltip": "HBD plătiți efectiv de lanț acestei propuneri până acum. Plățile potențiale de mai jos arată cât ar putea primi.",
   "proposalCard.totalPayoutLabel": "Plată Potențială Totală",
   "proposalCard.payoutTooltip": "Bazat pe durata completă a propunerii",
   "proposalCard.remainingPayoutLabel": "Plată Potențială Rămasă",

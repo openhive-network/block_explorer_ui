@@ -1478,6 +1478,8 @@
   "proposalCard.votesLabel": "إجمالي الأصوات",
   "proposalCard.neededToFund": "مطلوب للتمويل",
   "proposalCard.dailyPayLabel": "الدفع اليومي",
+  "proposalCard.paidSoFarLabel": "المدفوع حتى الآن",
+  "proposalCard.paidSoFarTooltip": "مقدار HBD الذي دفعته السلسلة فعلياً لهذا المقترح حتى الآن. العوائد المحتملة أدناه هي ما يمكن أن يحصل عليه.",
   "proposalCard.totalPayoutLabel": "إجمالي العائد المحتمل",
   "proposalCard.payoutTooltip": "بناءً على المدة الكاملة للمقترح",
   "proposalCard.remainingPayoutLabel": "العائد المحتمل المتبقي",

@@ -1478,6 +1478,8 @@
   "proposalCard.votesLabel": "Gesamtstimmen",
   "proposalCard.neededToFund": "Benötigt zur Finanzierung",
   "proposalCard.dailyPayLabel": "Tägliche Auszahlung",
+  "proposalCard.paidSoFarLabel": "Bisher ausgezahlt",
+  "proposalCard.paidSoFarTooltip": "HBD, die die Chain bisher tatsächlich an diesen Vorschlag ausgezahlt hat. Die potenziellen Auszahlungen unten zeigen, was er erhalten könnte.",
   "proposalCard.totalPayoutLabel": "Gesamte potenzielle Auszahlung",
   "proposalCard.payoutTooltip": "Basierend auf der vollen Dauer des Vorschlags",
   "proposalCard.remainingPayoutLabel": "Verbleibende potenzielle Auszahlung",

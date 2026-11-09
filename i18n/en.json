@@ -1478,6 +1478,8 @@
   "proposalCard.votesLabel": "Total Votes",
   "proposalCard.neededToFund": "Needed to be funded",
   "proposalCard.dailyPayLabel": "Daily Pay",
+  "proposalCard.paidSoFarLabel": "Paid so far",
+  "proposalCard.paidSoFarTooltip": "HBD the chain has actually paid to this proposal so far. The potential payouts below are what it could receive.",
   "proposalCard.totalPayoutLabel": "Total Potential Payout",
   "proposalCard.payoutTooltip": "Based on the proposal's full duration",
   "proposalCard.remainingPayoutLabel": "Remaining Potential Payout",

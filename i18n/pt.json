@@ -1478,6 +1478,8 @@
   "proposalCard.votesLabel": "Total de Votos",
   "proposalCard.neededToFund": "Necessário para ser financiada",
   "proposalCard.dailyPayLabel": "Pagamento Diário",
+  "proposalCard.paidSoFarLabel": "Pago até agora",
+  "proposalCard.paidSoFarTooltip": "HBD que a cadeia pagou de fato a esta proposta até agora. Os pagamentos potenciais abaixo são o que ela poderia receber.",
   "proposalCard.totalPayoutLabel": "Pagamento Potencial Total",
   "proposalCard.payoutTooltip": "Baseado na duração completa da proposta",
   "proposalCard.remainingPayoutLabel": "Pagamento Potencial Restante",

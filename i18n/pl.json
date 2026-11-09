@@ -1478,6 +1478,8 @@
   "proposalCard.votesLabel": "Suma Głosów",
   "proposalCard.neededToFund": "Potrzebne do sfinansowania",
   "proposalCard.dailyPayLabel": "Dzienna Wypłata",
+  "proposalCard.paidSoFarLabel": "Wypłacono dotąd",
+  "proposalCard.paidSoFarTooltip": "HBD, które łańcuch faktycznie wypłacił dotąd na tę propozycję. Potencjalne wypłaty poniżej to kwota, którą może otrzymać.",
   "proposalCard.totalPayoutLabel": "Całkowita Potencjalna Wypłata",
   "proposalCard.payoutTooltip": "Na podstawie pełnego czasu trwania propozycji",
   "proposalCard.remainingPayoutLabel": "Pozostała Potencjalna Wypłata",

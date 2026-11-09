@@ -1023,6 +1023,24 @@ class FetchingService {
     return Array.isArray(response) ? response : [];
   }
 
+  // Cumulative HBD paid to each proposal, in milli-HBD, from hafbe's
+  // /proposals (the node's list_proposals has no such field).
+  async getProposalsPaidAmounts(
+    status: Hive.ProposalVoteStatus
+  ): Promise<Record<number, string>> {
+    const paid: Record<number, string> = {};
+    for (let page = 1, totalPages = 1; page <= totalPages; page++) {
+      const response = await this.extendedHiveChain!.restApi[
+        "hafbe-api"
+      ].proposals({ status, page, "page-size": 1000 });
+      response.proposals.forEach((p) => {
+        paid[p.proposal_id] = p.paid_amount;
+      });
+      totalPages = response.total_pages;
+    }
+    return paid;
+  }
+
   async getProposal(proposalId: number[]): Promise<Hive.Proposal[]> {
     return await this.extendedHiveChain!.api.condenser_api.find_proposals([
       proposalId,
