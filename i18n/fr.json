@@ -1719,7 +1719,7 @@
   "topHolders.rangeInvalid": "Le maximum doit être supérieur ou égal au minimum.",
   "topHolders.rangeInvalidNumber": "Saisissez des nombres valides et non négatifs pour la plage.",
   "topHolders.shareOfSupply": "% de l'offre",
-  "topHolders.shareOfSupplyInfo": "Les pourcentages sont des parts de l'offre en circulation du jeton pour le type de solde sélectionné — liquide ou épargne — les comptes de trésorerie et de destruction étant exclus à la fois des détenteurs et de l'offre.",
+  "topHolders.shareOfSupplyInfo": "Les pourcentages sont des parts de l'offre en circulation du jeton pour le type de solde sélectionné — liquide, épargne ou les deux — les comptes de trésorerie et de destruction étant exclus à la fois des détenteurs et de l'offre.",
   "topHolders.totalSupply": "Offre totale",
   "accountLabel.treasuryInfo": "Compte Hive DAO / trésorerie — finance les propositions de l'écosystème et est exclu de l'offre en circulation, il n'est donc pas comptabilisé comme détenteur ici.",
   "accountLabel.burnInfo": "Compte de destruction @null — les soldes envoyés ici sont définitivement détruits, il est donc exclu de la part des détenteurs.",

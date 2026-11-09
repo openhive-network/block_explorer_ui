@@ -1719,7 +1719,7 @@
   "topHolders.rangeInvalid": "O máximo deve ser maior ou igual ao mínimo.",
   "topHolders.rangeInvalidNumber": "Introduza números válidos e não negativos para o intervalo.",
   "topHolders.shareOfSupply": "% do Fornecimento",
-  "topHolders.shareOfSupplyInfo": "As percentagens são participações no fornecimento em circulação da moeda para o tipo de saldo selecionado — líquido ou poupanças — com as contas de tesouraria e queima excluídas tanto dos detentores como do fornecimento.",
+  "topHolders.shareOfSupplyInfo": "As percentagens são participações no fornecimento em circulação da moeda para o tipo de saldo selecionado — líquido, poupanças ou ambos — com as contas de tesouraria e queima excluídas tanto dos detentores como do fornecimento.",
   "topHolders.totalSupply": "Fornecimento total",
   "accountLabel.treasuryInfo": "Conta da Hive DAO / tesouraria — financia propostas do ecossistema e é excluída do fornecimento em circulação, por isso não é contabilizada como detentora aqui.",
   "accountLabel.burnInfo": "Conta de queima @null — os saldos enviados para aqui são destruídos permanentemente, por isso são excluídos da participação dos detentores.",

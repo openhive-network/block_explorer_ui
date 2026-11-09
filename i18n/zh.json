@@ -1719,7 +1719,7 @@
   "topHolders.rangeInvalid": "最大值必须大于或等于最小值。",
   "topHolders.rangeInvalidNumber": "请为范围输入有效的非负数。",
   "topHolders.shareOfSupply": "占供应量百分比",
-  "topHolders.shareOfSupplyInfo": "百分比表示所选余额类型——流动或储蓄——在该币种流通供应量中所占的份额，其中国库账户和销毁账户已同时从持有者和供应量中排除。",
+  "topHolders.shareOfSupplyInfo": "百分比表示所选余额类型——流动、储蓄或两者合计——在该币种流通供应量中所占的份额，其中国库账户和销毁账户已同时从持有者和供应量中排除。",
   "topHolders.totalSupply": "总供应量",
   "accountLabel.treasuryInfo": "Hive DAO / 国库账户——为生态系统提案提供资金，且不计入流通供应量，因此此处不将其视为持有者。",
   "accountLabel.burnInfo": "@null 销毁账户——发送到此处的余额将被永久销毁，因此不计入持有者份额。",

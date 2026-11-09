@@ -57,12 +57,13 @@ describe("resolveBalanceType", () => {
 describe("isOptionRejected", () => {
   const withStatus = (status: number) => ({ response: { status } });
 
-  it("treats a 4xx as the node rejecting balance-type=total", () => {
+  it("treats a 400 as the node rejecting balance-type=total", () => {
     expect(isOptionRejected(withStatus(400))).toBe(true);
-    expect(isOptionRejected(withStatus(404))).toBe(true);
   });
 
-  it("does not treat server errors or network failures as unsupported", () => {
+  it("does not treat rate limits, timeouts, server errors or network failures as unsupported", () => {
+    expect(isOptionRejected(withStatus(429))).toBe(false);
+    expect(isOptionRejected(withStatus(408))).toBe(false);
     expect(isOptionRejected(withStatus(502))).toBe(false);
     expect(isOptionRejected(new Error("network"))).toBe(false);
   });

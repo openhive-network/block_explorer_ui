@@ -1719,7 +1719,7 @@
   "topHolders.rangeInvalid": "El máximo debe ser mayor o igual que el mínimo.",
   "topHolders.rangeInvalidNumber": "Introduzca números válidos y no negativos para el rango.",
   "topHolders.shareOfSupply": "% del suministro",
-  "topHolders.shareOfSupplyInfo": "Los porcentajes son participaciones del suministro circulante de la moneda para el tipo de balance seleccionado — líquido o ahorros — con las cuentas de tesorería y quema excluidas tanto de los poseedores como del suministro.",
+  "topHolders.shareOfSupplyInfo": "Los porcentajes son participaciones del suministro circulante de la moneda para el tipo de balance seleccionado — líquido, ahorros o ambos — con las cuentas de tesorería y quema excluidas tanto de los poseedores como del suministro.",
   "topHolders.totalSupply": "Suministro total",
   "accountLabel.treasuryInfo": "Cuenta del Hive DAO / tesorería — financia propuestas del ecosistema y está excluida del suministro circulante, por lo que no se cuenta como poseedora aquí.",
   "accountLabel.burnInfo": "Cuenta de quema @null — los balances enviados aquí se destruyen permanentemente, por lo que se excluye de la participación de poseedores.",

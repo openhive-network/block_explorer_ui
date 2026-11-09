@@ -1719,7 +1719,7 @@
   "topHolders.rangeInvalid": "Max muss größer oder gleich Min sein.",
   "topHolders.rangeInvalidNumber": "Geben Sie gültige, nicht-negative Zahlen für den Bereich ein.",
   "topHolders.shareOfSupply": "% des Angebots",
-  "topHolders.shareOfSupplyInfo": "Prozentangaben sind Anteile am zirkulierenden Angebot des Coins für den ausgewählten Guthabentyp — liquide oder Ersparnisse — wobei Treasury- und Burn-Konten sowohl von den Inhabern als auch vom Angebot ausgeschlossen sind.",
+  "topHolders.shareOfSupplyInfo": "Prozentangaben sind Anteile am zirkulierenden Angebot des Coins für den ausgewählten Guthabentyp — liquide, Ersparnisse oder beides — wobei Treasury- und Burn-Konten sowohl von den Inhabern als auch vom Angebot ausgeschlossen sind.",
   "topHolders.totalSupply": "Gesamtangebot",
   "accountLabel.treasuryInfo": "Hive DAO / Treasury-Konto — finanziert Ökosystem-Proposals und ist vom zirkulierenden Angebot ausgeschlossen, daher wird es hier nicht als Inhaber gezählt.",
   "accountLabel.burnInfo": "@null Burn-Konto — hierher gesendete Guthaben werden dauerhaft vernichtet, daher ist es vom Inhaberanteil ausgeschlossen.",

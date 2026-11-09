@@ -12,11 +12,10 @@ export const DEFAULT_BALANCE_TYPE: BalanceType = "total";
 // Above any real HBD total, so the check returns no rows and stays cheap.
 const PROBE_MIN_BALANCE = 1e15;
 
-// A 4xx is the node rejecting the option; anything else may be a blip.
-export const isOptionRejected = (err: unknown): boolean => {
-  const status = getHttpStatus(err);
-  return status !== undefined && status >= 400 && status < 500;
-};
+// The node rejecting the option is a 400 (bad enum value). Anything else,
+// including 408/429, may be a blip and must not stick for the session.
+export const isOptionRejected = (err: unknown): boolean =>
+  getHttpStatus(err) === 400;
 
 // balance-type=total needs balance_tracker!414; older nodes answer HTTP 400
 // ("invalid input value for enum"). Asked once per node: the query client is
@@ -38,7 +37,8 @@ export const useTotalRankingSupported = (): boolean | undefined => {
     refetchOnWindowFocus: false,
     meta: { suppressErrorToast: true },
   });
-  // Until a blip clears, rank by liquid rather than show nothing.
+  // After a failed check, rank by liquid rather than show nothing; the check
+  // runs again when a component using it next mounts.
   return isError ? false : data;
 };
 

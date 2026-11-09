@@ -1719,7 +1719,7 @@
   "topHolders.rangeInvalid": "Il valore massimo deve essere maggiore o uguale al minimo.",
   "topHolders.rangeInvalidNumber": "Inserisci numeri validi e non negativi per l'intervallo.",
   "topHolders.shareOfSupply": "% della Fornitura",
-  "topHolders.shareOfSupplyInfo": "Le percentuali sono quote della fornitura circolante della moneta per il tipo di saldo selezionato — liquido o risparmi — con gli account treasury e burn esclusi sia dai detentori sia dalla fornitura.",
+  "topHolders.shareOfSupplyInfo": "Le percentuali sono quote della fornitura circolante della moneta per il tipo di saldo selezionato — liquido, risparmi o entrambi — con gli account treasury e burn esclusi sia dai detentori sia dalla fornitura.",
   "topHolders.totalSupply": "Fornitura totale",
   "accountLabel.treasuryInfo": "Account Hive DAO / treasury — finanzia le proposte dell'ecosistema ed è escluso dalla fornitura circolante, quindi non viene conteggiato qui come detentore.",
   "accountLabel.burnInfo": "Account di burn @null — i saldi inviati qui vengono distrutti in modo permanente, quindi è escluso dalla quota dei detentori.",

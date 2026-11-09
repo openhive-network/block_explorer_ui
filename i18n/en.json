@@ -1719,7 +1719,7 @@
   "topHolders.rangeInvalid": "Max must be greater than or equal to Min.",
   "topHolders.rangeInvalidNumber": "Enter valid, non-negative numbers for the range.",
   "topHolders.shareOfSupply": "% of Supply",
-  "topHolders.shareOfSupplyInfo": "Percentages are shares of the coin's circulating supply for the selected balance type — liquid or savings — with treasury and burn accounts excluded from both the holders and the supply.",
+  "topHolders.shareOfSupplyInfo": "Percentages are shares of the coin's circulating supply for the selected balance type — liquid, savings or both — with treasury and burn accounts excluded from both the holders and the supply.",
   "topHolders.totalSupply": "Total supply",
   "accountLabel.treasuryInfo": "Hive DAO / treasury account — funds ecosystem proposals and is excluded from circulating supply, so it isn't counted as a holder here.",
   "accountLabel.burnInfo": "@null burn account — balances sent here are permanently destroyed, so it's excluded from holder share.",

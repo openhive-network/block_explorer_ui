@@ -1719,7 +1719,7 @@
   "topHolders.rangeInvalid": "Valoarea Max trebuie să fie mai mare sau egală cu Min.",
   "topHolders.rangeInvalidNumber": "Introduceți numere valide și nenegative pentru interval.",
   "topHolders.shareOfSupply": "% din ofertă",
-  "topHolders.shareOfSupplyInfo": "Procentele reprezintă cote din oferta în circulație a monedei pentru tipul de sold selectat — lichid sau economii — conturile de trezorerie și de ardere fiind excluse atât din rândul deținătorilor, cât și din ofertă.",
+  "topHolders.shareOfSupplyInfo": "Procentele reprezintă cote din oferta în circulație a monedei pentru tipul de sold selectat — lichid, economii sau ambele — conturile de trezorerie și de ardere fiind excluse atât din rândul deținătorilor, cât și din ofertă.",
   "topHolders.totalSupply": "Ofertă totală",
   "accountLabel.treasuryInfo": "Contul Hive DAO / trezorerie — finanțează propunerile ecosistemului și este exclus din oferta în circulație, așa că nu este considerat aici drept deținător.",
   "accountLabel.burnInfo": "Contul de ardere @null — soldurile trimise aici sunt distruse definitiv, așa că sunt excluse din cota deținătorilor.",

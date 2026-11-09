@@ -1719,7 +1719,7 @@
   "topHolders.rangeInvalid": "Maks musi być większy lub równy Min.",
   "topHolders.rangeInvalidNumber": "Wprowadź prawidłowe, nieujemne liczby dla zakresu.",
   "topHolders.shareOfSupply": "% podaży",
-  "topHolders.shareOfSupplyInfo": "Wartości procentowe to udziały w podaży monety w obiegu dla wybranego typu salda — płynnego lub oszczędnościowego — przy czym konta skarbca i spalania są wykluczone zarówno z posiadaczy, jak i z podaży.",
+  "topHolders.shareOfSupplyInfo": "Wartości procentowe to udziały w podaży monety w obiegu dla wybranego typu salda — płynnego, oszczędnościowego lub obu — przy czym konta skarbca i spalania są wykluczone zarówno z posiadaczy, jak i z podaży.",
   "topHolders.totalSupply": "Całkowita podaż",
   "accountLabel.treasuryInfo": "Konto Hive DAO / skarbca — finansuje propozycje ekosystemu i jest wykluczone z podaży w obiegu, więc nie jest tu liczone jako posiadacz.",
   "accountLabel.burnInfo": "Konto do spalania @null — salda wysłane tutaj są trwale niszczone, więc jest wykluczone z udziału posiadaczy.",

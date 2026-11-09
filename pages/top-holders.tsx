@@ -319,7 +319,7 @@ function TopHoldersPage({ meta }: { meta: SeoMeta }) {
     if (!router.isReady || !initedFromUrl.current) return;
     const query: Record<string, string> = {};
     if (coinType !== "HIVE") query.coin = coinType;
-    if (requestedBalanceType !== DEFAULT_BALANCE_TYPE)
+    if (coinType !== "VESTS" && requestedBalanceType !== DEFAULT_BALANCE_TYPE)
       query.balance = requestedBalanceType;
     if (minBalance !== undefined) query.min = String(minBalance);
     if (maxBalance !== undefined) query.max = String(maxBalance);
@@ -891,7 +891,7 @@ function TopHoldersPage({ meta }: { meta: SeoMeta }) {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {totalSupported && (
+                    {(totalSupported || balanceType === "total") && (
                       <SelectItem value="total">
                         {t("topHolders.filtersTotal")}
                       </SelectItem>
