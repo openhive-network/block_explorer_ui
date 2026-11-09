@@ -1,5 +1,9 @@
 import { useMemo } from "react";
-import useTopHolders, { CoinType } from "./useTopHolders";
+import useTopHolders, {
+  CoinType,
+  DEFAULT_BALANCE_TYPE,
+  useEffectiveBalanceType,
+} from "./useTopHolders";
 import { deploySettings } from "@/utils/deploySettings";
 
 // One page is fetched and the API returns 100 per page, so 100 is the ceiling.
@@ -9,21 +13,24 @@ export type TopHolderEntry = { rank: number; coinType: CoinType };
 
 const useAccountTopHolderRank = (accountName: string | undefined) => {
   const topHoldersEnabled = deploySettings.topHolders;
+  // Same ranking as /top-holders, which the badge links to (HIVE and HBD
+  // resolve alike: both depend only on the node).
+  const liquidOrTotal = useEffectiveBalanceType("HIVE", DEFAULT_BALANCE_TYPE);
   const hive = useTopHolders(
     "HIVE",
-    "balance",
+    liquidOrTotal.balanceType,
     1,
     undefined,
     undefined,
-    topHoldersEnabled
+    topHoldersEnabled && liquidOrTotal.ready
   );
   const hbd = useTopHolders(
     "HBD",
-    "balance",
+    liquidOrTotal.balanceType,
     1,
     undefined,
     undefined,
-    topHoldersEnabled
+    topHoldersEnabled && liquidOrTotal.ready
   );
   const vests = useTopHolders(
     "VESTS",

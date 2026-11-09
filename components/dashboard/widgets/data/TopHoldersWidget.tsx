@@ -7,7 +7,11 @@ import SegmentedToggle from "@/components/ui/SegmentedToggle";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
-import useTopHolders, { CoinType } from "@/hooks/api/common/useTopHolders";
+import useTopHolders, {
+  CoinType,
+  DEFAULT_BALANCE_TYPE,
+  useEffectiveBalanceType,
+} from "@/hooks/api/common/useTopHolders";
 import { convertVestsToHP } from "@/utils/Calculations";
 import { relocalizeAmount } from "@/utils/localeAmount";
 import { useI18n } from "@/i18n/i18n";
@@ -24,10 +28,17 @@ const TopHoldersWidget: React.FC = () => {
 
   const [coinType, setCoinType] = useState<CoinType>("VESTS");
 
+  const { balanceType, ready } = useEffectiveBalanceType(
+    coinType,
+    DEFAULT_BALANCE_TYPE
+  );
   const { holdersData, isTopHoldersLoading } = useTopHolders(
     coinType,
-    "balance",
-    1
+    balanceType,
+    1,
+    undefined,
+    undefined,
+    ready
   );
 
   const totalVestingShares =

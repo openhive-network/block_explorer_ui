@@ -1,4 +1,5 @@
 import Hive from "@/types/Hive";
+import type { BalanceType } from "@/hooks/api/common/useTopHolders";
 import { config } from "@/Config";
 import Explorer from "@/types/Explorer";
 import {
@@ -1049,7 +1050,7 @@ class FetchingService {
   }
   async getTopHolders(
     coinType: "HIVE" | "HBD" | "VESTS",
-    balanceType: "balance" | "savings_balance",
+    balanceType: BalanceType,
     page: number,
     minBalance?: number,
     maxBalance?: number,

@@ -107,7 +107,7 @@ export const isNaiAmount = (value: unknown): boolean =>
   "amount" in (value as object) &&
   "nai" in (value as object);
 
-const getHttpStatus = (err: unknown): number | undefined => {
+export const getHttpStatus = (err: unknown): number | undefined => {
   const status = (err as { response?: { status?: unknown } } | null)?.response
     ?.status;
   return typeof status === "number" ? status : undefined;

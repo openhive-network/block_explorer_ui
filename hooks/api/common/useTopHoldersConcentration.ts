@@ -7,9 +7,10 @@ import { CoinType, BalanceType } from "@/hooks/api/common/useTopHolders";
 // strip keeps >=100 real holders after excluding treasury/burn accounts.
 const useTopHoldersConcentration = (
   coinType: CoinType,
-  balanceType: BalanceType
+  balanceType: BalanceType,
+  ready: boolean = true
 ) => {
-  const enabled = !(coinType === "VESTS" && balanceType !== "balance");
+  const enabled = ready && !(coinType === "VESTS" && balanceType !== "balance");
   const opts = {
     enabled,
     refetchOnWindowFocus: false,

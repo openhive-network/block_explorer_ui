@@ -30,6 +30,8 @@ import CustomPagination from "@/components/CustomPagination";
 import useTopHolders, {
   CoinType,
   BalanceType,
+  DEFAULT_BALANCE_TYPE,
+  useEffectiveBalanceType,
 } from "@/hooks/api/common/useTopHolders";
 import { config } from "@/Config";
 import { Loader2, Info } from "lucide-react";
@@ -105,9 +107,9 @@ const getTotalSupplyRaw = (
 // Denominator for every "% of supply" figure and the concentration KPIs
 // (Largest / Top-N / Nakamoto). It must match the numerator on BOTH axes, or
 // the percentages and the Nakamoto count come out wrong:
-//   1. Balance type — a holder's value is liquid-only or savings-only, so the
-//      base is that same pool: liquid = total supply − savings; savings = the
-//      savings total (from the total-value-locked endpoint). VESTS has no split.
+//   1. Balance type — the base is the same pool as a holder's value:
+//      liquid = total supply − savings; savings = the savings total (from the
+//      total-value-locked endpoint); total = the whole supply. VESTS has no split.
 //   2. Account set — treasury (DHF) and burn are excluded from the ranking, so
 //      subtract their balances from the base too (i.e. circulating, not total).
 // Caveat: Hive's supply fields disagree on the treasury. HIVE's current_supply
@@ -124,7 +126,7 @@ const getCirculatingBaseRaw = (
   const supplyRaw = getTotalSupplyRaw(coinType, headBlockDetails);
   if (supplyRaw === null) return null;
   let total: number;
-  if (coinType === "VESTS") {
+  if (coinType === "VESTS" || balanceType === "total") {
     total = supplyRaw;
   } else {
     if (!tvl) return null;
@@ -188,7 +190,15 @@ function TopHoldersPage({ meta }: { meta: SeoMeta }) {
 
   const [page, setPage] = useState(1);
   const [coinType, setCoinType] = useState<CoinType>("HIVE");
-  const [balanceType, setBalanceType] = useState<BalanceType>("balance");
+  // What the user picked; `balanceType` below is what this node can rank by.
+  const [requestedBalanceType, setBalanceType] =
+    useState<BalanceType>(DEFAULT_BALANCE_TYPE);
+  const {
+    balanceType,
+    ready: rankingReady,
+    defaultBalanceType,
+    totalSupported,
+  } = useEffectiveBalanceType(coinType, requestedBalanceType);
   const [isFiltersVisible, setIsFiltersVisible] = useState(false);
   const [minBalance, setMinBalance] = useState<number | undefined>(undefined);
   const [maxBalance, setMaxBalance] = useState<number | undefined>(undefined);
@@ -227,15 +237,21 @@ function TopHoldersPage({ meta }: { meta: SeoMeta }) {
   const pageSize = config.topHolders.pageSize;
 
   const { holdersData, totalAccounts, isTopHoldersLoading, isTopHoldersError } =
-    useTopHolders(coinType, balanceType, page, minBalance, maxBalance);
+    useTopHolders(
+      coinType,
+      balanceType,
+      page,
+      minBalance,
+      maxBalance,
+      rankingReady
+    );
 
   const totalCount = totalAccounts;
 
   const defaultCoinType: CoinType = "HIVE";
-  const defaultBalanceType: BalanceType = "balance";
+  const balanceTypeChanged = balanceType !== defaultBalanceType;
 
-  const filtersChanged =
-    coinType !== defaultCoinType || balanceType !== defaultBalanceType;
+  const filtersChanged = coinType !== defaultCoinType || balanceTypeChanged;
 
   const { dynamicGlobalData } = useDynamicGlobal();
   const { hiveChain } = useHiveChainContext();
@@ -267,8 +283,12 @@ function TopHoldersPage({ meta }: { meta: SeoMeta }) {
     if (coin === "HIVE" || coin === "HBD" || coin === "VESTS") {
       setCoinType(coin);
     }
-    if (balance === "balance" || balance === "savings_balance") {
-      setBalanceType(coin === "VESTS" ? "balance" : balance);
+    if (
+      balance === "balance" ||
+      balance === "savings_balance" ||
+      balance === "total"
+    ) {
+      setBalanceType(balance);
     }
     const minN = num(min);
     if (minN !== undefined) setMinBalance(minN);
@@ -299,7 +319,8 @@ function TopHoldersPage({ meta }: { meta: SeoMeta }) {
     if (!router.isReady || !initedFromUrl.current) return;
     const query: Record<string, string> = {};
     if (coinType !== "HIVE") query.coin = coinType;
-    if (balanceType !== "balance") query.balance = balanceType;
+    if (requestedBalanceType !== DEFAULT_BALANCE_TYPE)
+      query.balance = requestedBalanceType;
     if (minBalance !== undefined) query.min = String(minBalance);
     if (maxBalance !== undefined) query.max = String(maxBalance);
     if (coinType === "VESTS") query.unit = unit;
@@ -312,7 +333,7 @@ function TopHoldersPage({ meta }: { meta: SeoMeta }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     coinType,
-    balanceType,
+    requestedBalanceType,
     minBalance,
     maxBalance,
     unit,
@@ -352,7 +373,16 @@ function TopHoldersPage({ meta }: { meta: SeoMeta }) {
       ? t("topHolders.balanceStaked")
       : balanceType === "savings_balance"
         ? t("topHolders.balanceSavings")
-        : t("topHolders.balanceLiquid");
+        : balanceType === "total"
+          ? t("topHolders.balanceTotal")
+          : t("topHolders.balanceLiquid");
+
+  const valueColumnLabel =
+    balanceType === "savings_balance"
+      ? t("topHolders.savings")
+      : balanceType === "total"
+        ? t("topHolders.total")
+        : t("topHolders.balance");
 
   // Display-unit amount → raw smallest unit (VESTS ×1e6, HIVE/HBD ×1e3).
   const displayToRaw = (amount: number): number => {
@@ -439,7 +469,7 @@ function TopHoldersPage({ meta }: { meta: SeoMeta }) {
   const clearAllFilters = () => {
     clearFilter();
     setCoinType("HIVE");
-    setBalanceType("balance");
+    setBalanceType(DEFAULT_BALANCE_TYPE);
   };
 
   const handleJumpToRank = (rank: number, account?: string) => {
@@ -525,7 +555,8 @@ function TopHoldersPage({ meta }: { meta: SeoMeta }) {
   const { totalValueLocked: tvl } = useTotalValueLocked();
   const { holders: concentrationHolders } = useTopHoldersConcentration(
     coinType,
-    balanceType
+    balanceType,
+    rankingReady
   );
   const circulatingBaseRaw = useMemo(
     () =>
@@ -600,9 +631,7 @@ function TopHoldersPage({ meta }: { meta: SeoMeta }) {
                 : 0,
               locale
             ),
-        [balanceType === "savings_balance"
-          ? t("topHolders.savings")
-          : t("topHolders.balance")]: displayValue,
+        [valueColumnLabel]: displayValue,
       };
     });
 
@@ -747,11 +776,7 @@ function TopHoldersPage({ meta }: { meta: SeoMeta }) {
             </TooltipProvider>
           </span>
         </TableHead>
-        <TableHead className="text-end pe-6">
-          {balanceType === "savings_balance"
-            ? t("topHolders.savings")
-            : t("topHolders.balance")}
-        </TableHead>
+        <TableHead className="text-end pe-6">{valueColumnLabel}</TableHead>
       </TableRow>
     </TableHeader>
   );
@@ -834,7 +859,6 @@ function TopHoldersPage({ meta }: { meta: SeoMeta }) {
                   value={coinType}
                   onValueChange={(v) => {
                     setCoinType(v as CoinType);
-                    if (v === "VESTS") setBalanceType("balance");
                     setMinBalance(undefined);
                     setMaxBalance(undefined);
                     setPage(1);
@@ -867,6 +891,11 @@ function TopHoldersPage({ meta }: { meta: SeoMeta }) {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
+                    {totalSupported && (
+                      <SelectItem value="total">
+                        {t("topHolders.filtersTotal")}
+                      </SelectItem>
+                    )}
                     <SelectItem value="balance">
                       {t("topHolders.filtersBalance")}
                     </SelectItem>
@@ -967,7 +996,7 @@ function TopHoldersPage({ meta }: { meta: SeoMeta }) {
           </div>
         )}
 
-        {searchTarget && (
+        {searchTarget && rankingReady && (
           <AccountLocator
             key={`${searchTarget}-${searchNonce}-${coinType}-${balanceType}`}
             account={searchTarget}
@@ -1009,13 +1038,12 @@ function TopHoldersPage({ meta }: { meta: SeoMeta }) {
             {
               key: "balance",
               label: balanceLabel,
-              onRemove:
-                balanceType === "savings_balance"
-                  ? () => {
-                      setBalanceType("balance");
-                      setPage(1);
-                    }
-                  : undefined,
+              onRemove: balanceTypeChanged
+                ? () => {
+                    setBalanceType(DEFAULT_BALANCE_TYPE);
+                    setPage(1);
+                  }
+                : undefined,
             },
             ...(filterActive
               ? [{ key: "range", label: rangeLabel(), onRemove: clearFilter }]
@@ -1025,6 +1053,7 @@ function TopHoldersPage({ meta }: { meta: SeoMeta }) {
         <TopHoldersConcentrationStrip
           coinType={coinType}
           balanceType={balanceType}
+          ready={rankingReady}
           totalSupplyRaw={totalSupplyRaw}
           supplyDisplay={
             totalSupplyRaw !== null &&
@@ -1068,16 +1097,18 @@ function TopHoldersPage({ meta }: { meta: SeoMeta }) {
             />
           </div>
 
-          <TopHolderYouBadge
-            coinType={coinType}
-            balanceType={balanceType}
-            onJump={() => {
-              if (!username) return;
-              setSearchError(null);
-              setSearchTarget(username);
-              setSearchNonce((n) => n + 1);
-            }}
-          />
+          {rankingReady && (
+            <TopHolderYouBadge
+              coinType={coinType}
+              balanceType={balanceType}
+              onJump={() => {
+                if (!username) return;
+                setSearchError(null);
+                setSearchTarget(username);
+                setSearchNonce((n) => n + 1);
+              }}
+            />
+          )}
 
           <div className="ms-auto flex items-center gap-x-4">
             {coinType === "VESTS" && (

@@ -22,6 +22,7 @@ interface Props {
   supplyDisplay: number | null; // total supply in the displayed unit
   unitLabel: string;
   baseRaw: number | null; // circulating balance-type denominator (excl. treasury/burn)
+  ready?: boolean; // false while the node's ranking support is unknown
 }
 
 const TopHoldersConcentrationStrip: React.FC<Props> = ({
@@ -31,11 +32,13 @@ const TopHoldersConcentrationStrip: React.FC<Props> = ({
   supplyDisplay,
   unitLabel,
   baseRaw,
+  ready = true,
 }) => {
   const { t, locale } = useI18n();
   const { holders, isLoading } = useTopHoldersConcentration(
     coinType,
-    balanceType
+    balanceType,
+    ready
   );
 
   const stats = useMemo(() => {
