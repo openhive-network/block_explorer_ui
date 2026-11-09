@@ -259,14 +259,13 @@ export const ProposalCard = ({
   const { dynamicGlobalData } = useDynamicGlobal() as any;
 
   // HBD actually disbursed, as opposed to the potential payouts below.
-  const { paidAmounts, isPending: isPaidPending } = useProposalPaidAmounts(
-    proposal.status
-  );
+  const { paidAmounts, isPending: isPaidPending } = useProposalPaidAmounts();
   const paidRaw = paidAmounts?.[proposal.proposal_id];
   const paidSoFar = paidRaw ? formatMilliHbd(paidRaw) : null;
   const paidSoFarExact = paidRaw
     ? formatMilliHbd(paidRaw, undefined, true)
     : null;
+  const hasBeenPaid = !!paidRaw && paidRaw !== "0";
 
   const voteValueInHp =
     dynamicGlobalData && hiveChain
@@ -513,7 +512,10 @@ export const ProposalCard = ({
                   <div className="flex items-center justify-between">
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <div className="flex items-center gap-2 cursor-default text-explorer-dark-gray dark:text-white">
+                        <div
+                          tabIndex={0}
+                          className="flex items-center gap-2 cursor-default text-explorer-dark-gray dark:text-white"
+                        >
                           <Coins className="h-4 w-4" color="#16a34a" />
                           {t("proposalCard.paidSoFarLabel")}
                         </div>
@@ -526,7 +528,12 @@ export const ProposalCard = ({
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <p
-                            className="font-semibold cursor-default text-green-600 dark:text-green-400"
+                            tabIndex={0}
+                            className={cn(
+                              "font-semibold cursor-default",
+                              hasBeenPaid &&
+                                "text-green-600 dark:text-green-400"
+                            )}
                             data-testid="proposal-paid-so-far"
                           >
                             {paidSoFar} HBD

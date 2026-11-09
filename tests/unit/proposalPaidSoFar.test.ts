@@ -29,13 +29,16 @@ describe("formatMilliHbd", () => {
     expect(formatMilliHbd("0", "en-US", true)).toBe("0.000");
   });
 
-  it("uses the locale's separators", () => {
+  it("uses the locale's separators and digits", () => {
     expect(formatMilliHbd("75667680", "de-DE", true)).toBe("75.667,680");
+    // Arabic-Indic digits in the fraction too, not just the whole part.
+    expect(formatMilliHbd("75667680", "ar-EG", true)).toBe("٧٥٬٦٦٧٫٦٨٠");
   });
 
-  it("stays exact past Number's safe range", () => {
-    expect(formatMilliHbd("9007199254740993123", "en-US", true)).toBe(
-      "9,007,199,254,740,993.123"
+  it("stays exact at the largest real total", () => {
+    // Proposal #0 (the return proposal), about 2.7e11 milli-HBD.
+    expect(formatMilliHbd("271796249074", "en-US", true)).toBe(
+      "271,796,249.074"
     );
   });
 
