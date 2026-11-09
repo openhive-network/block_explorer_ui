@@ -15,7 +15,11 @@ const OPEN_REFRESH_MS = 3_000;
 const useBlockchainSyncInfo = (isDialogOpen = false) => {
   const explorerBlockNumber: number | undefined =
     useHeadBlockNumber().headBlockNumberData;
-  const headBlockData = useHeadBlock(explorerBlockNumber).headBlockData;
+  // The block's time is shown only in the dialog. Fetched with it closed, it
+  // cost one request per new head block on every page.
+  const headBlockData = useHeadBlock(
+    isDialogOpen ? explorerBlockNumber : undefined
+  ).headBlockData;
 
   const { data: nodeHead, refetch } = useQuery({
     queryKey: ["blockchainNodeHead"],

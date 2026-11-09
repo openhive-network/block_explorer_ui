@@ -12,8 +12,9 @@ import { grabNumericValue } from "@/utils/StringUtils";
 import { computeVestingRatios, type VestingRatios } from "@/utils/Calculations";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
-import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
-import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
+import useDynamicGlobal, {
+  VESTING_RATIO_STALE_MS,
+} from "@/hooks/api/homePage/useDynamicGlobal";
 import { formatCompact } from "@/utils/chartUtils";
 
 export type VestingDisplayUnit = "hp" | "vests";
@@ -191,8 +192,13 @@ export const useAggregatedVesting = (
   unit: VestingDisplayUnit
 ): AggregatedVestingStats & { isReady: boolean } => {
   const { hiveChain } = useHiveChainContext();
-  const { headBlockNumberData } = useHeadBlockNumber();
-  const { dynamicGlobalData } = useDynamicGlobal(headBlockNumberData);
+  // Not keyed on the head block: only the VESTS <-> HP ratio is read from the
+  // globals. Keyed, every new block refetched three RPCs for each page showing
+  // a vesting chart.
+  const { dynamicGlobalData } = useDynamicGlobal(
+    undefined,
+    VESTING_RATIO_STALE_MS
+  );
 
   const supplyToNumber = useMemo(
     () => makeSupplyToNumber(hiveChain),

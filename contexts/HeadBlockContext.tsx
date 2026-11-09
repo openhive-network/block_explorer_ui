@@ -73,9 +73,15 @@ export const HeadBlockContextProvider: React.FC<{
   } = useQuery({
     queryKey: ["headBlockNum", router],
     queryFn: () => fetchingService.getHafbeLastSyncedBlock(),
-    refetchOnWindowFocus: false,
+    // Each new head block fans out into the per-block queries of whatever the
+    // page shows, so a hidden tab polling here spends API requests (and the
+    // node's per-IP rate limit) on a page nobody sees. While polling, catch up
+    // as soon as the tab is shown again: the navbar's chain head refetches on
+    // focus, and a stale head block here would read as "out of sync" until the
+    // next tick. Without polling (Live Data off) the head block stays put.
+    refetchOnWindowFocus: refreshConditions() !== false,
     refetchInterval: refreshConditions(),
-    refetchIntervalInBackground: true,
+    refetchIntervalInBackground: false,
     enabled: !!hiveChain,
   });
 
