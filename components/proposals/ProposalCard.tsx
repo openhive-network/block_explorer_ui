@@ -266,6 +266,10 @@ export const ProposalCard = ({
     ? formatMilliHbd(paidRaw, undefined, true)
     : null;
   const hasBeenPaid = !!paidRaw && paidRaw !== "0";
+  // Upcoming proposals have nothing paid yet; expired ones show a final total.
+  const showPaid =
+    proposal.status !== "inactive" && (!!paidSoFar || isPaidPending);
+  const isExpired = proposal.status === "expired";
 
   const voteValueInHp =
     dynamicGlobalData && hiveChain
@@ -508,7 +512,7 @@ export const ProposalCard = ({
             </div>
             <div className="mt-auto pt-4">
               <div className="border-t dark:border-slate-800 pt-3 space-y-2 text-sm">
-                {(paidSoFar || isPaidPending) && (
+                {showPaid && (
                   <div className="flex items-center justify-between">
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -517,11 +521,21 @@ export const ProposalCard = ({
                           className="flex items-center gap-2 cursor-default text-explorer-dark-gray dark:text-white"
                         >
                           <Coins className="h-4 w-4" color="#16a34a" />
-                          {t("proposalCard.paidSoFarLabel")}
+                          {t(
+                            isExpired
+                              ? "proposalCard.paidLabel"
+                              : "proposalCard.paidSoFarLabel"
+                          )}
                         </div>
                       </TooltipTrigger>
                       <TooltipContent>
-                        <p>{t("proposalCard.paidSoFarTooltip")}</p>
+                        <p>
+                          {t(
+                            isExpired
+                              ? "proposalCard.paidTooltip"
+                              : "proposalCard.paidSoFarTooltip"
+                          )}
+                        </p>
                       </TooltipContent>
                     </Tooltip>
                     {paidSoFar ? (
