@@ -150,7 +150,7 @@ export type ExplorerNodeApi = {
   };
 };
 
-export type ProposalPayout = { paid: string; totalBudget?: string };
+export type ProposalPayout = { paid: string; totalBudget?: string | null };
 
 class FetchingService {
   private apiUrl: string | null = null;

@@ -60,6 +60,8 @@ describe("proposalTotalBudget", () => {
 
   it("falls back to today's daily pay over the whole term", () => {
     expect(proposalTotalBudget(undefined, 490, 366)).toBe(179340);
+    // hafbe returns null for a budget it has not computed yet.
+    expect(proposalTotalBudget(null, 490, 366)).toBe(179340);
   });
 
   it("ignores a total_budget that is not a whole number of milli-HBD", () => {

@@ -429,8 +429,8 @@ namespace Hive {
     voters_num!: number;
     paid_amount!: string;
     // Full-term budget at the daily pay in force each day (milli-HBD).
-    // Optional: hafbe versions before haf_block_explorer#202 leave it out.
-    total_budget?: string;
+    // null while hafbe has not computed it; missing before haf_block_explorer#202.
+    total_budget?: string | null;
     status!: string;
   }
 

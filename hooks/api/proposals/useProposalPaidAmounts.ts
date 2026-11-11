@@ -34,10 +34,10 @@ export const formatMilliHbd = (
 };
 
 // Full-term budget in HBD. hafbe's figure follows the daily pay in force each
-// day; without it (older hafbe, or still loading) today's daily pay stands in
+// day; without it (older hafbe, not computed yet, or still loading) today's daily pay stands in
 // for the whole term, which is too low if the daily pay was lowered.
 export const proposalTotalBudget = (
-  totalBudgetRaw: string | undefined,
+  totalBudgetRaw: string | null | undefined,
   dailyPay: number,
   totalDays: number
 ): number =>
