@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
 
-// Cumulative HBD paid per proposal id (milli-HBD strings). One request for
+// Per proposal id, milli-HBD strings: HBD paid so far and, when hafbe returns
+// it, the full-term budget at the daily pay in force each day. One request for
 // every status: the page derives a card's status from the browser clock and
 // hafbe from its head block, so a per-status lookup could miss a proposal at
 // its start or end date.
@@ -31,5 +32,17 @@ export const formatMilliHbd = (
     maximumFractionDigits: digits,
   });
 };
+
+// Full-term budget in HBD. hafbe's figure follows the daily pay in force each
+// day; without it (older hafbe, or still loading) today's daily pay stands in
+// for the whole term, which is too low if the daily pay was lowered.
+export const proposalTotalBudget = (
+  totalBudgetRaw: string | undefined,
+  dailyPay: number,
+  totalDays: number
+): number =>
+  totalBudgetRaw && /^\d+$/.test(totalBudgetRaw)
+    ? Number(totalBudgetRaw) / 1000
+    : dailyPay * totalDays;
 
 export default useProposalPaidAmounts;

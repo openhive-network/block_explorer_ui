@@ -428,6 +428,9 @@ namespace Hive {
     total_votes!: string;
     voters_num!: number;
     paid_amount!: string;
+    // Full-term budget at the daily pay in force each day (milli-HBD).
+    // Optional: hafbe versions before haf_block_explorer#202 leave it out.
+    total_budget?: string;
     status!: string;
   }
 
@@ -437,7 +440,7 @@ namespace Hive {
     "page-size"?: number;
   }
 
-  // hafbe-api /proposals: the node's list plus voters_num and paid_amount.
+  // hafbe-api /proposals: the node's list plus voters_num, paid_amount and total_budget.
   export class ProposalsResponse {
     total_proposals!: number;
     total_pages!: number;

@@ -12,7 +12,10 @@ jest.mock(
   { virtual: true }
 );
 
-import { formatMilliHbd } from "@/hooks/api/proposals/useProposalPaidAmounts";
+import {
+  formatMilliHbd,
+  proposalTotalBudget,
+} from "@/hooks/api/proposals/useProposalPaidAmounts";
 
 describe("formatMilliHbd", () => {
   it("rounds to whole HBD for the headline", () => {
@@ -46,5 +49,21 @@ describe("formatMilliHbd", () => {
     expect(formatMilliHbd("12.5")).toBeNull();
     expect(formatMilliHbd("")).toBeNull();
     expect(formatMilliHbd("-3")).toBeNull();
+  });
+});
+
+describe("proposalTotalBudget", () => {
+  it("uses hafbe's total_budget when it is there", () => {
+    // #350: 635 HBD/day until 2026-02-22T20:34:42, then 490/day, over 366 days.
+    expect(proposalTotalBudget("214554327", 490, 366)).toBe(214554.327);
+  });
+
+  it("falls back to today's daily pay over the whole term", () => {
+    expect(proposalTotalBudget(undefined, 490, 366)).toBe(179340);
+  });
+
+  it("ignores a total_budget that is not a whole number of milli-HBD", () => {
+    expect(proposalTotalBudget("", 490, 366)).toBe(179340);
+    expect(proposalTotalBudget("12.5", 490, 366)).toBe(179340);
   });
 });

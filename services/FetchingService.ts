@@ -150,6 +150,8 @@ export type ExplorerNodeApi = {
   };
 };
 
+export type ProposalPayout = { paid: string; totalBudget?: string };
+
 class FetchingService {
   private apiUrl: string | null = null;
   private nodeUrl: string | null = null;
@@ -1023,20 +1025,24 @@ class FetchingService {
     return Array.isArray(response) ? response : [];
   }
 
-  // Cumulative HBD paid to each proposal, in milli-HBD, from hafbe's
-  // /proposals (the node's list_proposals has no such field).
-  async getProposalsPaidAmounts(): Promise<Record<number, string>> {
-    const paid: Record<number, string> = {};
+  // Per proposal, in milli-HBD, from hafbe's /proposals (the node's
+  // list_proposals has neither field): HBD paid so far and the full-term
+  // budget, which older hafbe versions leave out.
+  async getProposalsPaidAmounts(): Promise<Record<number, ProposalPayout>> {
+    const payouts: Record<number, ProposalPayout> = {};
     for (let page = 1, totalPages = 1; page <= totalPages; page++) {
       const response = await this.extendedHiveChain!.restApi[
         "hafbe-api"
       ].proposals({ status: "all", page, "page-size": 1000 });
       response.proposals.forEach((p) => {
-        paid[p.proposal_id] = p.paid_amount;
+        payouts[p.proposal_id] = {
+          paid: p.paid_amount,
+          totalBudget: p.total_budget,
+        };
       });
       totalPages = response.total_pages;
     }
-    return paid;
+    return payouts;
   }
 
   async getProposal(proposalId: number[]): Promise<Hive.Proposal[]> {

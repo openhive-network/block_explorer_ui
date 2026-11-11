@@ -9,6 +9,7 @@ import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import useProposalPaidAmounts, {
   formatMilliHbd,
+  proposalTotalBudget,
 } from "@/hooks/api/proposals/useProposalPaidAmounts";
 import type { ProcessedProposal } from "@/hooks/api/proposals/useProposals";
 import { useI18n } from "@/i18n/i18n";
@@ -245,22 +246,27 @@ export const ProposalCard = ({
   const dailyPayValue = parseFloat(proposal.daily_pay) || 0;
   const totalMs = proposal.end_date.getTime() - proposal.start_date.getTime();
   const totalDays = totalMs > 0 ? totalMs / (1000 * 60 * 60 * 24) : 0;
-  const totalHbdToBePaid = dailyPayValue * totalDays;
   const remainingMs = proposal.end_date.getTime() - new Date().getTime();
   const remainingDays = Math.max(0, remainingMs / (1000 * 60 * 60 * 24));
-
-  // If the proposal is inactive, remaining pay is equal to total. Else, we calculate it based on remaining days
-  const remainingHbdToBePaid =
-    !proposal.isFunded && proposal.status == "inactive"
-      ? totalHbdToBePaid
-      : dailyPayValue * remainingDays;
 
   const { hiveChain } = useHiveChainContext();
   const { dynamicGlobalData } = useDynamicGlobal() as any;
 
   // HBD actually disbursed, as opposed to the potential payouts below.
   const { paidAmounts, isPending: isPaidPending } = useProposalPaidAmounts();
-  const paidRaw = paidAmounts?.[proposal.proposal_id];
+  const payout = paidAmounts?.[proposal.proposal_id];
+  const paidRaw = payout?.paid;
+  const totalHbdToBePaid = proposalTotalBudget(
+    payout?.totalBudget,
+    dailyPayValue,
+    totalDays
+  );
+
+  // If the proposal is inactive, remaining pay is equal to total. Else, we calculate it based on remaining days
+  const remainingHbdToBePaid =
+    !proposal.isFunded && proposal.status == "inactive"
+      ? totalHbdToBePaid
+      : dailyPayValue * remainingDays;
   const paidSoFar = paidRaw ? formatMilliHbd(paidRaw) : null;
   const paidSoFarExact = paidRaw
     ? formatMilliHbd(paidRaw, undefined, true)
