@@ -12,6 +12,7 @@ import useDynamicGlobal, {
 } from "@/hooks/api/homePage/useDynamicGlobal";
 import useUnclaimedRewards from "@/hooks/api/common/useUnclaimedRewards";
 import { useI18n } from "@/i18n/i18n";
+import { deploySettings } from "@/utils/deploySettings";
 import { SmartSigner } from "@/lib/smart-signer";
 import fetchingService from "@/services/FetchingService";
 import { convertVestsToHP } from "@/utils/Calculations";
@@ -149,7 +150,9 @@ const useClaimRewards = () => {
 
   return {
     rewards,
-    canClaim: !!account && hasUnclaimedRewards,
+    // Full explorer only: classic mode can turn login on, but stays read-only.
+    canClaim:
+      deploySettings.mode === "full" && !!account && hasUnclaimedRewards,
     isClaiming,
     claim: () => {
       if (!isClaiming) mutate();
