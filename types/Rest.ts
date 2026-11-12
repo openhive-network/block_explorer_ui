@@ -13,6 +13,12 @@ export const extendedRest = {
       result: Number,
       urlPath: "last-synced-block",
     },
+    hardforks: {
+      params: undefined,
+      result: Hive.Hardfork,
+      responseArray: true,
+      urlPath: "hardforks",
+    },
     blockSearch: {
       params: Hive.BlockSearchParams,
       result: Hive.BlockByOpResponse,

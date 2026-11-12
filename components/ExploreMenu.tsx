@@ -17,6 +17,7 @@ import {
   Wrench,
   Boxes,
   CalendarClock,
+  GitFork,
 } from "lucide-react";
 import {
   Popover,
@@ -160,6 +161,13 @@ export function ExploreMenu() {
               icon={CalendarClock}
               closeMenu={() => setIsOpen(false)}
               active={isActive("/schedule")}
+            />
+            <ExploreListItem
+              href="/hardforks"
+              title={t("pageTitle.hardforks")}
+              icon={GitFork}
+              closeMenu={() => setIsOpen(false)}
+              active={isActive("/hardforks")}
             />
 
             <div className="my-1 h-px bg-slate-200 dark:bg-slate-700" />

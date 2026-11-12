@@ -15,6 +15,7 @@ const NAV_LINKS: { href: string; labelKey: string }[] = [
   { href: "/top-holders", labelKey: "pageTitle.topHolders" },
   { href: "/communities", labelKey: "navbar.communitiesTitle" },
   { href: "/schedule", labelKey: "witnessSchedule.title" },
+  { href: "/hardforks", labelKey: "pageTitle.hardforks" },
   { href: "/tools/compare", labelKey: "tools.title" },
 ].filter(({ href }) => isPathEnabled(href));
 

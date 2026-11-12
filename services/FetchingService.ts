@@ -228,6 +228,14 @@ class FetchingService {
     return await this.extendedHiveChain!.restApi["hafah-api"].headblock();
   }
 
+  // Older hafbe nodes lack this route; the error is typed so callers can hide
+  // what depends on it instead of failing.
+  async getHardforks(): Promise<Hive.Hardfork[]> {
+    return this.withNodeSupport("hafbe-api:hardforks", () =>
+      this.extendedHiveChain!.restApi["hafbe-api"].hardforks()
+    );
+  }
+
   async getHafbeLastSyncedBlock(): Promise<number> {
     return await this.extendedHiveChain!.restApi["hafbe-api"].lastSyncedBlock();
   }

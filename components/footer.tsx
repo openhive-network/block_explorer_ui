@@ -208,6 +208,11 @@ const Footer = () => {
                   {t("footer.witnessSchedule")}
                 </Link>
               </li>
+              <li>
+                <Link href="/hardforks" className="hover:opacity-75">
+                  {t("pageTitle.hardforks")}
+                </Link>
+              </li>
               {deploySettings.topHolders && (
                 <li>
                   <Link href="/top-holders" className="hover:opacity-75">

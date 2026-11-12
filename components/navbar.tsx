@@ -15,6 +15,7 @@ import {
   Award,
   Boxes,
   CalendarClock,
+  GitFork,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -240,6 +241,19 @@ export default function Navbar() {
                       />
                       <span className="text-base">
                         {t("witnessSchedule.title")}
+                      </span>
+                    </Link>
+                    <Link
+                      href={"/hardforks"}
+                      className="flex items-center gap-3 rounded-md px-2 py-2 transition-colors hover:bg-navbar-listHover"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      <GitFork
+                        className="shrink-0 text-slate-500 dark:text-slate-400"
+                        size={20}
+                      />
+                      <span className="text-base">
+                        {t("pageTitle.hardforks")}
                       </span>
                     </Link>
                     <div className="my-1 h-px bg-slate-200 dark:bg-slate-700" />

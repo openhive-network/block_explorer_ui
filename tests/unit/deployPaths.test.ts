@@ -73,5 +73,6 @@ describe("sitemap", () => {
     expect(xml).not.toContain("/proposals");
     expect(xml).toContain("/communities");
     expect(xml).toContain("/schedule");
+    expect(xml).toContain("/hardforks");
   });
 });

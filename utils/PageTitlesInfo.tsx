@@ -1,5 +1,6 @@
 import { ChevronDown, Filter } from "lucide-react";
 import * as React from "react";
+import { useI18n } from "@/i18n/i18n";
 
 interface LocalizedInfo {
   en: React.ReactNode;
@@ -18,6 +19,18 @@ interface LocalizedInfo {
 interface InfoContent {
   [key: string]: Partial<LocalizedInfo>; // Use Partial<> as not all languages might be available for all keys
 }
+
+// Translated through the i18n files rather than one component per language.
+const HardforksInfo: React.FC = () => {
+  const { t } = useI18n();
+  return (
+    <ul className="list-disc list-inside space-y-1">
+      <li>{t("hardforksPage.info1")}</li>
+      <li>{t("hardforksPage.info2")}</li>
+      <li>{t("hardforksPage.info3")}</li>
+    </ul>
+  );
+};
 
 // =================================================================
 // English Components (Original)
@@ -2494,6 +2507,10 @@ const pageTitlesInfo: InfoContent = {
     ja: <CommunitiesPageInfoJa />,
     ro: <CommunitiesPageInfoRo />,
     ar: <CommunitiesPageInfoAr />,
+  },
+  // Every locale falls back to `en`; the component translates itself.
+  "pageTitle.hardforks": {
+    en: <HardforksInfo />,
   },
 };
 

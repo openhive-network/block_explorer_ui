@@ -8,6 +8,8 @@ import { cn } from "@/lib/utils";
 import CopyButton from "../ui/CopyButton";
 import { useI18n } from "@/i18n/i18n";
 import HiveAvatar from "@/components/ui/HiveAvatar";
+import useHardforks from "@/hooks/api/common/useHardforks";
+import { hardforkAnchor, hardforkForBlock } from "@/utils/hardforks";
 
 interface BlockDetailsProps {
   virtualOperationsTypesCounters?: Explorer.OperationCounter[];
@@ -30,8 +32,11 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
   handleEnableVirtualOperations,
   trxOperationsLength,
 }) => {
-  const { t, dir } = useI18n();
+  const { t, dir, locale } = useI18n();
+  const { hardforks } = useHardforks();
   if (!blockDetails) return;
+  // Hidden while loading or when the node can't list hardforks.
+  const hardfork = hardforkForBlock(hardforks, blockDetails.block_num);
   interface BlockDetailItemProps {
     label: string;
     value: React.ReactNode; // Allow the value to be any React node
@@ -102,6 +107,25 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
           dataTestId="produced-at"
           hasBorder
         />
+
+        {hardfork && (
+          <BlockDetailItem
+            label={t("blockDetails.protocolEra")}
+            value={
+              <Link
+                href={`/hardforks#${hardforkAnchor(hardfork.hardfork_num)}`}
+                className="text-link"
+              >
+                {t("blockDetails.protocolEraValue", {
+                  num: hardfork.hardfork_num,
+                  block: hardfork.block_num.toLocaleString(locale),
+                })}
+              </Link>
+            }
+            dataTestId="protocol-era"
+            hasBorder
+          />
+        )}
 
         <BlockDetailItem
           label={t("blockDetails.producedBy")}

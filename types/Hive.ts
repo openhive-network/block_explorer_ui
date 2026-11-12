@@ -1428,6 +1428,14 @@ namespace Hive {
     value!: string;
   }
 
+  // One protocol upgrade: the block it activated at and that block's time (UTC,
+  // no zone suffix).
+  export class Hardfork {
+    hardfork_num!: number;
+    block_num!: number;
+    timestamp!: string;
+  }
+
   export class TotalValueLocked {
     block_num!: number;
     total_vests!: string;
