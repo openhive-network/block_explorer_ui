@@ -89,6 +89,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
   const {
     accountOperations,
     isAccountOperationsLoading,
+    isAccountOperationsPlaceholder,
     refetchAccountOperations,
   } = useAccountOperations(accountOperationsProps as any, liveDataEnabled, {
     // This tab stays mounted while others are shown: fetch only when it is the one in view.
@@ -409,6 +410,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
       <AccountOperationsSection
         accountOperations={accountOperations}
         isAccountOperationsLoading={isAccountOperationsLoading}
+        isAccountOperationsPlaceholder={isAccountOperationsPlaceholder}
       />
     </TabsContent>
   );

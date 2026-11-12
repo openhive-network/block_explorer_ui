@@ -6,7 +6,7 @@ import NoResult from "@/components/NoResult";
 import BlocksTable from "@/components/blocks/BlocksTable";
 import useAllBlocksSearch from "@/hooks/api/blocks/useAllBlocksSearch";
 import { useMemo, useRef } from "react";
-import { Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Block } from "@/pages/blocks";
 import BlockNavigation from "@/components/BlockNavigation";
 import useBlockNavigation from "@/hooks/common/useBlockNavigation";
@@ -41,8 +41,12 @@ const BlockSearchResults = () => {
     ...allBlocksSearchProps,
   } as any;
 
-  const { blocksSearchData, blocksSearchDataError, blocksSearchDataLoading } =
-    useAllBlocksSearch(props, blockSearchPage, props.toBlock, liveData);
+  const {
+    blocksSearchData,
+    blocksSearchDataError,
+    blocksSearchDataLoading,
+    blocksSearchShowingPrevious,
+  } = useAllBlocksSearch(props, blockSearchPage, props.toBlock, liveData);
 
   const { getOperationsCounts } = useOperationBuckets();
 
@@ -116,13 +120,15 @@ const BlockSearchResults = () => {
 
   return (
     <>
-      {blocksSearchDataLoading && !liveData ? (
-        <div className="flex justify-center items-center">
-          <Loader2 className="animate-spin mt-1 h-16 w-10 ml-10 dark:text-white" />
-        </div>
-      ) : blocksSearchData?.blocks_result &&
-        blocksSearchData?.blocks_result.length > 0 ? (
-        <>
+      {blocksSearchData?.blocks_result &&
+      blocksSearchData?.blocks_result.length > 0 ? (
+        // The rows stay while the next page or range loads, dimmed, as on /blocks.
+        <div
+          className={cn("transition-opacity", {
+            "opacity-60": blocksSearchShowingPrevious,
+          })}
+          aria-busy={blocksSearchShowingPrevious}
+        >
           <div className="w-full rounded-t bg-theme pt-1">
             <BlockNavigation
               fromBlock={blocksSearchData?.block_range.from}
@@ -144,7 +150,7 @@ const BlockSearchResults = () => {
             isMainPageTable={true}
             allBlocksPageLink={allBlocksPageLink}
           />
-        </>
+        </div>
       ) : !blocksSearchDataLoading ? (
         <NoResult />
       ) : null}

@@ -202,47 +202,45 @@ const BalanceHistoryTabContent: React.FC<BalanceHistoryTabContentProps> = ({
         setShowCustomRange={setShowCustomRange}
       />
 
-      {(isChartLoading || isAccHistDataLoading) && !chartData ? (
+      {isChartLoading && !chartData ? (
         <div className="flex justify-center text-center align-center items-center mb-5">
           <Loader2 className="animate-spin h-12 w-12" />
         </div>
       ) : (
-        <>
-          <Card data-testid="balance-history-content" className="rounded">
-            {!isChartLoading && (!chartData || chartData.length === 0) ? (
-              <NoResult titleKey="noResult.noChartData" />
-            ) : (
-              <>
-                <BalanceKpiStrip
-                  data={preparedData}
-                  coinType={coinType}
-                  unit={unit}
-                />
-                <MemoizedBalanceHistoryChart
-                  aggregatedAccountBalanceHistory={preparedData}
-                  selectedCoinType={coinType}
-                  setSelectedCoinType={setCoinType}
-                  showSavingsBalance={includeSavings}
-                  unit={unit}
-                  setUnit={setUnit}
-                  className="h-[450px] mb-10 mr-0 pr-1 pb-6"
-                />
-              </>
-            )}
-          </Card>
-          {accountBalanceHistory && (
-            <MemoizedBalanceHistoryTable
-              operations={tableOperations}
-              total_operations={accountBalanceHistory.total_operations ?? 0}
-              total_pages={accountBalanceHistory.total_pages ?? 0}
-              current_page={
-                paramsState.page ?? accountBalanceHistory.total_pages
-              }
-              account_name={accountName ?? ""}
-              unit={unit}
-            />
+        <Card data-testid="balance-history-content" className="rounded">
+          {!isChartLoading && (!chartData || chartData.length === 0) ? (
+            <NoResult titleKey="noResult.noChartData" />
+          ) : (
+            <>
+              <BalanceKpiStrip
+                data={preparedData}
+                coinType={coinType}
+                unit={unit}
+              />
+              <MemoizedBalanceHistoryChart
+                aggregatedAccountBalanceHistory={preparedData}
+                selectedCoinType={coinType}
+                setSelectedCoinType={setCoinType}
+                showSavingsBalance={includeSavings}
+                unit={unit}
+                setUnit={setUnit}
+                className="h-[450px] mb-10 mr-0 pr-1 pb-6"
+              />
+            </>
           )}
-        </>
+        </Card>
+      )}
+      {/* The table keeps its place while the chart or a new page loads. */}
+      {(accountBalanceHistory || isAccHistDataLoading) && (
+        <MemoizedBalanceHistoryTable
+          operations={tableOperations}
+          total_operations={accountBalanceHistory?.total_operations ?? 0}
+          total_pages={accountBalanceHistory?.total_pages ?? 0}
+          current_page={paramsState.page ?? accountBalanceHistory?.total_pages}
+          account_name={accountName ?? ""}
+          unit={unit}
+          isLoading={isAccHistDataLoading}
+        />
       )}
     </TabsContent>
   );

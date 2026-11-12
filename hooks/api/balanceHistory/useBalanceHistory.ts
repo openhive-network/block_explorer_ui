@@ -1,10 +1,11 @@
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import moment from "moment";
 
 import fetchingService from "@/services/FetchingService";
 import useMarketHistory from "@/hooks/common/useMarketHistory";
 import { getDayRangeOfRows } from "@/utils/BalanceHistoryUtils";
 import { calculateCloseHivePrice } from "@/components/home/MarketHistoryChart";
+import { keepPreviousDataFor } from "@/hooks/common/keepPreviousDataFor";
 
 const useBalanceHistory = (
   accountName: string,
@@ -48,7 +49,9 @@ const useBalanceHistory = (
       toDate,
     ],
     queryFn: fetchBalanceHist,
-    placeholderData: keepPreviousData,
+    placeholderData: keepPreviousDataFor(
+      (previousKey) => previousKey[1] === accountName
+    ),
     enabled: !!accountName,
     refetchOnWindowFocus: false,
   });

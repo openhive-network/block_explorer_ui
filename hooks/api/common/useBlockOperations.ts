@@ -2,6 +2,7 @@ import { UseQueryResult, useQuery } from "@tanstack/react-query";
 
 import Hive from "@/types/Hive";
 import fetchingService from "@/services/FetchingService";
+import { keepPreviousDataFor } from "@/hooks/common/keepPreviousDataFor";
 
 const useBlockOperations = (
   blockNumber: number | string,
@@ -14,6 +15,7 @@ const useBlockOperations = (
   const {
     data: blockOperations,
     isPending: trxLoading,
+    isPlaceholderData: blockOperationsShowingPrevious,
     error: trxError,
   }: UseQueryResult<Hive.TotalOperationsResponse> = useQuery({
     queryKey: [
@@ -34,6 +36,10 @@ const useBlockOperations = (
         keyContent,
         setOfKeys
       ),
+    // Same block only: another block's operations never show while one loads.
+    placeholderData: keepPreviousDataFor<Hive.TotalOperationsResponse>(
+      (previousKey) => previousKey[1] === blockNumber
+    ),
     refetchOnWindowFocus: false,
     enabled: !!blockNumber,
   });
@@ -43,6 +49,7 @@ const useBlockOperations = (
   return {
     blockOperations,
     trxLoading,
+    blockOperationsShowingPrevious,
     blockError,
   };
 };

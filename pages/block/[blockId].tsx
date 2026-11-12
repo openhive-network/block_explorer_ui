@@ -116,7 +116,12 @@ export default function Block({ meta }: { meta: SeoMeta }) {
   // reported 1, and only one page of ops is loaded so later pages undercounted.
   const transactionCount = rawBlockdata?.transaction_ids?.length;
 
-  const { blockError, blockOperations, trxLoading } = useBlockOperations(
+  const {
+    blockError,
+    blockOperations,
+    trxLoading,
+    blockOperationsShowingPrevious,
+  } = useBlockOperations(
     blockId,
     paramsState.filters
       ? convertBooleanArrayToIds(paramsState.filters)
@@ -303,19 +308,21 @@ export default function Block({ meta }: { meta: SeoMeta }) {
           <div className="fixed top-[calc(100vh-90px)] md:top-[calc(100vh-60px)] right-0 flex flex-col items-end justify-end px-3 md:px-12">
             <ScrollTopButton />
           </div>
-          {loading || trxLoading || totalLoading ? (
-            <div className="flex justify-center items-center">
-              <Loader2 className="animate-spin text-text mt-1 h-16 w-16 ml-3 ... " />
-            </div>
-          ) : settings.rawJsonView || settings.prettyJsonView ? (
-            <div>
-              <JSONView
-                data-testid="json-view"
-                json={rawBlockdata || {}}
-                className="w-full m-auto py-2 px-4 bg-theme dark:bg-theme rounded text-white text-xs wrap-break-word break-all"
-                isPrettyView={settings.prettyJsonView}
-              />
-            </div>
+          {settings.rawJsonView || settings.prettyJsonView ? (
+            loading || trxLoading || totalLoading ? (
+              <div className="flex justify-center items-center">
+                <Loader2 className="animate-spin text-text mt-1 h-16 w-16 ml-3 ... " />
+              </div>
+            ) : (
+              <div>
+                <JSONView
+                  data-testid="json-view"
+                  json={rawBlockdata || {}}
+                  className="w-full m-auto py-2 px-4 bg-theme dark:bg-theme rounded text-white text-xs wrap-break-word break-all"
+                  isPrettyView={settings.prettyJsonView}
+                />
+              </div>
+            )
           ) : (
             <section
               className="flex flex-col items-center justify-center text-text"
@@ -336,7 +343,11 @@ export default function Block({ meta }: { meta: SeoMeta }) {
                   </div>
                 )}
               <div className="w-full max-w-(--breakpoint-2xl) flex flex-col">
-                {!!convertedTotalOperations.length && (
+                {/* The table stays while a filter or page loads: placeholder
+                    rows first, then dimmed rows of this block. */}
+                {(!!convertedTotalOperations.length ||
+                  trxLoading ||
+                  blockOperationsShowingPrevious) && (
                   <OperationsTable
                     operationCount={totalOperations?.total_operations || 0}
                     operations={convertedTotalOperations}
@@ -346,6 +357,7 @@ export default function Block({ meta }: { meta: SeoMeta }) {
                     referrer={`${blockId}_${t(
                       "blockDetails.blockDetails"
                     )}.csv`}
+                    isLoading={trxLoading || blockOperationsShowingPrevious}
                   />
                 )}
               </div>
@@ -397,7 +409,9 @@ export const getServerSideProps: GetServerSideProps<{
     return {
       props: {
         meta: {
-          title: pageTitle(seoText("seo.block.timeTitle", { time: normalized })),
+          title: pageTitle(
+            seoText("seo.block.timeTitle", { time: normalized })
+          ),
           description: "",
           canonical,
           ogType: "website",

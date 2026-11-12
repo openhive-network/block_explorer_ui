@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import Explorer from "@/types/Explorer";
 import fetchingService from "@/services/FetchingService";
+import { keepPreviousDataFor } from "@/hooks/common/keepPreviousDataFor";
 
 const usePermlinkSearch = (
   permlinkSearchProps: Explorer.PermlinkSearchProps | undefined
@@ -10,10 +11,16 @@ const usePermlinkSearch = (
     data: permlinkSearchData,
     isFetching: permlinkSearchDataLoading,
     isError: permlinkSearchDataError,
+    isPlaceholderData: permlinkSearchShowingPrevious,
     refetch: permlinkSearchRefetchData,
   } = useQuery({
     queryKey: ["permlinkSearch", permlinkSearchProps],
     queryFn: () => fetchCommentPermlinks(permlinkSearchProps),
+    placeholderData: keepPreviousDataFor(
+      (previousKey) =>
+        (previousKey[1] as Explorer.PermlinkSearchProps | undefined)
+          ?.accountName === permlinkSearchProps?.accountName
+    ),
     refetchOnWindowFocus: false,
     enabled: !!permlinkSearchProps?.accountName,
     meta: { showErrorToast: true },
@@ -30,6 +37,7 @@ const usePermlinkSearch = (
     permlinkSearchData,
     permlinkSearchDataLoading,
     permlinkSearchDataError,
+    permlinkSearchShowingPrevious,
     permlinkSearchRefetchData,
   };
 };

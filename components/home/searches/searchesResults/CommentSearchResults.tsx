@@ -26,7 +26,8 @@ const CommentSearchResults = () => {
     searchRanges,
   } = useSearchesContext();
 
-  const { commentSearchData } = useCommentSearch(commentSearchProps);
+  const { commentSearchData, commentSearchShowingPrevious } =
+    useCommentSearch(commentSearchProps);
   const formattedCommentOperations = useOperationsFormatter(commentSearchData);
   const pathname = usePathname();
   const { t } = useI18n();
@@ -91,6 +92,7 @@ const CommentSearchResults = () => {
             unformattedOperations={unformattedOperations}
             referrer={t("commentsSearch.commentSearchResults")}
             accountName={commentSearchProps?.accountName}
+            isLoading={commentSearchShowingPrevious}
           />
         </div>
       ) : (

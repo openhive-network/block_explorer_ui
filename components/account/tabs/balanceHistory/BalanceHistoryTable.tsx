@@ -45,6 +45,7 @@ import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import { convertVestsToHive, convertVestsToHP } from "@/utils/Calculations";
 import { useSettings } from "@/contexts/SettingsContext";
+import TablePlaceholderRows from "@/components/ui/TablePlaceholderRows";
 
 interface BalanceHistoryTableProps {
   operations: Explorer.BalanceHistoryForTable[];
@@ -53,6 +54,8 @@ interface BalanceHistoryTableProps {
   current_page: number;
   account_name: string;
   unit?: "vests" | "hp";
+  // Placeholder rows when there is nothing to show yet, dimmed rows otherwise.
+  isLoading?: boolean;
 }
 
 const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
@@ -62,6 +65,7 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
   current_page,
   account_name,
   unit,
+  isLoading = false,
 }) => {
   const router = useRouter();
   const { hiveChain } = useHiveChainContext();
@@ -359,7 +363,7 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
           isMirrored={true}
         />
       </div>
-      {total_operations === 0 ? (
+      {total_operations === 0 && !isLoading ? (
         <div className="flex justify-center w-full">
           {t("balanceHistoryTable.noResultsMatchingCriteria")}
         </div>
@@ -383,7 +387,11 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
           </div>
 
           <Table
-            className={cn("rounded-[6px] overflow-hidden max-w-full text-xs")}
+            className={cn(
+              "rounded-[6px] overflow-hidden max-w-full text-xs transition-opacity",
+              { "opacity-60": isLoading && operations.length > 0 }
+            )}
+            aria-busy={isLoading}
             enableMobileScrollArrows
             enableCompactToggle
           >
@@ -402,6 +410,9 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
               </TableRow>
             </TableHeader>
             <TableBody>
+              {isLoading && operations.length === 0 && (
+                <TablePlaceholderRows columns={8} />
+              )}
               {operations.map((operation, index) => {
                 const operationBgColor = getOperationColor(operation.opTypeId);
                 const isExpanded = expandedRow === operation.operationId;

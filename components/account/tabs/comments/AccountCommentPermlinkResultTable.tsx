@@ -22,11 +22,14 @@ import DataExport from "@/components/DataExport";
 import { cn } from "@/lib/utils";
 import DataCountMessage from "@/components/DataCountMessage";
 import { useI18n } from "@/i18n/i18n";
+import TablePlaceholderRows from "@/components/ui/TablePlaceholderRows";
 
 interface AccountCommentPermlinkResultTableProps {
   permlinkCount: number;
   data: Hive.Permlink[];
   accountName: string | undefined;
+  // Placeholder rows when there is nothing to show yet, dimmed rows otherwise.
+  isLoading?: boolean;
 }
 
 let timeout: string | number | NodeJS.Timeout | undefined;
@@ -133,6 +136,7 @@ const AccountCommentPermlinkResultTable = ({
   permlinkCount,
   data,
   accountName,
+  isLoading = false,
 }: AccountCommentPermlinkResultTableProps) => {
   const router = useRouter();
   const { t } = useI18n();
@@ -203,11 +207,19 @@ const AccountCommentPermlinkResultTable = ({
         </div>
       </div>
       <div className="flex w-full overflow-auto rounded">
-        <div className="text-text w-full bg-theme">
+        <div
+          className={cn("text-text w-full bg-theme transition-opacity", {
+            "opacity-60": isLoading && data.length > 0,
+          })}
+          aria-busy={isLoading}
+        >
           <Table enableMobileScrollArrows enableCompactToggle>
             <TableHeader>{buildTableHeader(t)}</TableHeader>
 
             <TableBody>
+              {isLoading && data.length === 0 && (
+                <TablePlaceholderRows columns={6} />
+              )}
               {buildTableBody(
                 data,
                 accountName,

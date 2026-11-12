@@ -75,10 +75,8 @@ export default function Transaction({ meta }: { meta: SeoMeta }) {
   const [includeVirtual, setIncludeVirtual] = useState(false);
   const [bytes, setBytes] = useState<Uint8Array | null>(null);
 
-  const { trxData, trxLoading, trxError } = useTransactionData(
-    transactionId,
-    includeVirtual
-  );
+  const { trxData, trxLoading, trxShowingPrevious, trxError } =
+    useTransactionData(transactionId, includeVirtual);
   const formattedTransaction = useOperationsFormatter(trxData) as
     | Hive.TransactionResponse
     | undefined;
@@ -116,6 +114,8 @@ export default function Transaction({ meta }: { meta: SeoMeta }) {
     <>
       <Seo meta={meta} />
       <div className="page-container flex flex-col gap-y-4">
+        {/* First load: placeholder rows instead of a blank page. */}
+        {trxLoading && <OperationsTable operations={[]} isLoading />}
         {!trxLoading && !!trxData && (
           <>
             <Card data-testid="transaction-header">
@@ -208,6 +208,7 @@ export default function Transaction({ meta }: { meta: SeoMeta }) {
                     referrer={`${trxData?.transaction_id?.slice(0, 10)}_${t(
                       "transactionPage.transactionDetailsRefferer"
                     )}`}
+                    isLoading={trxShowingPrevious}
                   />
                 )}
                 <Card data-testid="transaction-details">

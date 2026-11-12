@@ -28,18 +28,29 @@ const AccountSearchResults = () => {
     searchRanges,
   } = useSearchesContext();
 
-  const { accountOperations, isAccountOperationsError } = useAccountOperations(
-    accountOperationsSearchProps
-  );
+  const {
+    accountOperations,
+    isAccountOperationsError,
+    isAccountOperationsPlaceholder,
+  } = useAccountOperations(accountOperationsSearchProps);
 
   const formattedAccountOperations = useOperationsFormatter(accountOperations);
 
   useEffect(() => {
-    if (!accountOperationsPage && accountOperations) {
+    // Not from the previous search's results: their page count is not this one's.
+    if (
+      !accountOperationsPage &&
+      accountOperations &&
+      !isAccountOperationsPlaceholder
+    ) {
       setAccountOperationsPage(accountOperations?.total_pages);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accountOperations, accountOperationsPage]);
+  }, [
+    accountOperations,
+    accountOperationsPage,
+    isAccountOperationsPlaceholder,
+  ]);
 
   if (isAccountOperationsError) {
     return <ErrorPage />;
@@ -72,7 +83,8 @@ const AccountSearchResults = () => {
   );
   return (
     <>
-      {accountOperations.total_operations > 0 ? (
+      {accountOperations.total_operations > 0 ||
+      isAccountOperationsPlaceholder ? (
         <div data-testid="operations-card">
           <div className="flex flex-wrap justify-between items-center bg-theme p-2 sticky z-20 top-[3.2rem] md:top-16 rounded-t">
             <div className="flex justify-center w-full md:w-auto md:justify-start">
@@ -107,6 +119,7 @@ const AccountSearchResults = () => {
             unformattedOperations={unformattedOperations}
             referrer={t("accountSearch.accountReactResults")}
             accountName={accountOperationsSearchProps?.accountName}
+            isLoading={isAccountOperationsPlaceholder}
           />
         </div>
       ) : (

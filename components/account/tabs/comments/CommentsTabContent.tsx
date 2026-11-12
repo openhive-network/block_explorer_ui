@@ -205,6 +205,7 @@ const CommentsTabContent: React.FC<CommnetsTabContentProps> = ({
         accountName={accountName}
         paramsState={paramsState}
         setParams={setParams}
+        isLoading={permlinkSearchDataLoading}
       />
     </TabsContent>
   );

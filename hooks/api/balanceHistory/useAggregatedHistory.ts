@@ -4,6 +4,7 @@ import fetchingService from "@/services/FetchingService";
 import useMarketHistory from "@/hooks/common/useMarketHistory";
 import { getDayRangeOfRows } from "@/utils/BalanceHistoryUtils";
 import { calculateCloseHivePrice } from "@/components/home/MarketHistoryChart";
+import { keepPreviousDataFor } from "@/hooks/common/keepPreviousDataFor";
 
 const useAggregatedBalanceHistory = (
   accountName: string,
@@ -43,6 +44,11 @@ const useAggregatedBalanceHistory = (
       toDate,
     ],
     queryFn: fetchBalanceHist,
+    // Same account and coin: another coin's chart would carry this one's label.
+    placeholderData: keepPreviousDataFor(
+      (previousKey) =>
+        previousKey[1] === accountName && previousKey[2] === coinType
+    ),
     enabled: !!accountName,
     refetchOnWindowFocus: false,
   });

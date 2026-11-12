@@ -1,10 +1,7 @@
-import {
-  keepPreviousData,
-  useQuery,
-  UseQueryResult,
-} from "@tanstack/react-query";
+import { useQuery, UseQueryResult } from "@tanstack/react-query";
 
 import fetchingService from "@/services/FetchingService";
+import { keepPreviousDataFor } from "@/hooks/common/keepPreviousDataFor";
 import Hive from "@/types/Hive";
 
 const useAccountVestingHistory = (
@@ -44,7 +41,9 @@ const useAccountVestingHistory = (
         toDate
       ),
     enabled: !!accountName,
-    placeholderData: keepPreviousData,
+    placeholderData: keepPreviousDataFor(
+      (previousKey) => previousKey[1] === accountName
+    ),
     refetchOnWindowFocus: false,
   });
 

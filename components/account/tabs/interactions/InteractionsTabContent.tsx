@@ -1,6 +1,5 @@
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { useRouter } from "next/router";
-import { Loader2 } from "lucide-react";
 
 import useCommentSearch from "@/hooks/api/common/useCommentSearch";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
@@ -58,28 +57,25 @@ const InteractionsTabContent: React.FC<InteractionsTabContentProps> = ({
 
   const {
     commentSearchData,
-    isCommentSearchDataLoading,
     isCommentSearchDataFetching,
     refetchCommentSearchData,
   } = useCommentSearch(props);
 
   const buildCommentSearchView = () => {
-    if (!commentSearchData) return;
+    if (!commentSearchData && !isCommentSearchDataFetching) return;
     if (!isCommentSearchDataFetching && !commentSearchData?.total_operations) {
       return (
         <div>
           <NoResult />
         </div>
       );
-    } else if (isCommentSearchDataLoading || isCommentSearchDataFetching) {
-      return (
-        <div className="flex justify-center text-center items-center">
-          <Loader2 className="animate-spin mt-1 text-text h-12 w-12 ms-3 ..." />
-        </div>
-      );
-    } else {
-      return <InteractionsTabResult data={commentSearchData} />;
     }
+    return (
+      <InteractionsTabResult
+        data={commentSearchData}
+        isLoading={isCommentSearchDataFetching}
+      />
+    );
   };
 
   // Don't show filters section if only account name is present

@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import TimeAgo from "timeago-react";
-import { Clock, Loader2, TrendingDown, TrendingUp } from "lucide-react";
+import { Clock, TrendingDown, TrendingUp } from "lucide-react";
 
 import {
   Table,
@@ -37,6 +37,7 @@ import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import { getOperationTypeForDisplay } from "@/utils/UI";
 import { convertVestsToHP, computeVestingRatios } from "@/utils/Calculations";
 import { cn } from "@/lib/utils";
+import TablePlaceholderRows from "@/components/ui/TablePlaceholderRows";
 import {
   VESTING_COLORS,
   VestingDisplayUnit,
@@ -328,12 +329,6 @@ const PowerActivityTable: React.FC<PowerActivityTableProps> = ({
         </div>
       </div>
 
-      {isLoading && (
-        <div className="flex justify-center py-6">
-          <Loader2 className="animate-spin h-10 w-10" />
-        </div>
-      )}
-
       {!isLoading && isAccountVestingHistoryError && (
         <ErrorMessage
           message={t("common.errorLoadingData")}
@@ -345,9 +340,14 @@ const PowerActivityTable: React.FC<PowerActivityTableProps> = ({
         !isAccountVestingHistoryError &&
         operations.length === 0 && <NoResult />}
 
-      {!isLoading && !isAccountVestingHistoryError && operations.length > 0 && (
+      {(isLoading ||
+        (!isAccountVestingHistoryError && operations.length > 0)) && (
         <Table
-          className="rounded-[6px] overflow-hidden max-w-full text-sm"
+          className={cn(
+            "rounded-[6px] overflow-hidden max-w-full text-sm transition-opacity",
+            { "opacity-60": isLoading && operations.length > 0 }
+          )}
+          aria-busy={isLoading}
           enableMobileScrollArrows
           enableCompactToggle
         >
@@ -365,6 +365,9 @@ const PowerActivityTable: React.FC<PowerActivityTableProps> = ({
             </TableRow>
           </TableHeader>
           <TableBody>
+            {isLoading && operations.length === 0 && (
+              <TablePlaceholderRows columns={7} />
+            )}
             {operations.map((op, idx) => {
               const amount = formatAmountCell(op);
               const hive = formatHive(op.amount_hive);

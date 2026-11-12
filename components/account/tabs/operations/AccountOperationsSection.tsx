@@ -1,5 +1,3 @@
-import { Loader2 } from "lucide-react";
-
 import Hive from "@/types/Hive";
 import { convertOperationResultsToTableOperations } from "@/lib/utils";
 import NoResult from "@/components/NoResult";
@@ -13,11 +11,14 @@ import { useI18n } from "@/i18n/i18n";
 interface AccountOperationsSectionProps {
   accountOperations: Hive.AccountOperationsResponse | undefined;
   isAccountOperationsLoading: boolean;
+  // Showing the previous page or filter while the new results load.
+  isAccountOperationsPlaceholder?: boolean;
 }
 
 const AccountOperationsSection: React.FC<AccountOperationsSectionProps> = ({
   accountOperations,
   isAccountOperationsLoading,
+  isAccountOperationsPlaceholder = false,
 }) => {
   const { t } = useI18n();
   const { paramsState, setParams } = useURLParams(
@@ -30,16 +31,14 @@ const AccountOperationsSection: React.FC<AccountOperationsSectionProps> = ({
     accountOperations
   ) as Hive.AccountOperationsResponse;
 
-  if (!isAccountOperationsLoading && !accountOperations?.total_operations) {
+  if (
+    !isAccountOperationsLoading &&
+    !isAccountOperationsPlaceholder &&
+    !accountOperations?.total_operations
+  ) {
     return (
       <div>
         <NoResult />
-      </div>
-    );
-  } else if (isAccountOperationsLoading) {
-    return (
-      <div className="flex justify-center text-center items-center">
-        <Loader2 className="animate-spin mt-1 text-text h-12 w-12 ms-3 ..." />
       </div>
     );
   }
@@ -72,6 +71,7 @@ const AccountOperationsSection: React.FC<AccountOperationsSectionProps> = ({
           accountOperations?.operations_result || []
         )}
         referrer={t("accountOperationViewTabs.operations").toLowerCase()}
+        isLoading={isAccountOperationsLoading || isAccountOperationsPlaceholder}
         accountName={
           paramsState.accountName?.startsWith("@")
             ? paramsState.accountName.slice(1)

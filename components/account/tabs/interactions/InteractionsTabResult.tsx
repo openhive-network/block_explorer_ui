@@ -17,10 +17,13 @@ import { useI18n } from "@/i18n/i18n";
 
 interface InteractionsTabResultProps {
   data: Hive.CommentOperationResponse | null | undefined;
+  // New results are on the way: the table stays and shows placeholder or dimmed rows.
+  isLoading?: boolean;
 }
 
 const InteractionsTabResult: React.FC<InteractionsTabResultProps> = ({
   data,
+  isLoading = false,
 }) => {
   const { t } = useI18n();
   const { commentPaginationPage, setCommentPaginationPage, searchRanges } =
@@ -39,14 +42,14 @@ const InteractionsTabResult: React.FC<InteractionsTabResultProps> = ({
 
   const formattedCommentOperations = useOperationsFormatter(data);
 
-  if (!data) return;
+  if (!data && !isLoading) return;
 
   const formattedOperations = convertCommentsOperationResultToTableOperations(
-    formattedCommentOperations?.operations_result
+    formattedCommentOperations?.operations_result ?? []
   );
 
   const unformattedOperations = convertCommentsOperationResultToTableOperations(
-    data?.operations_result
+    data?.operations_result ?? []
   );
 
   const changeCommentSearchPagination = (newPageNum: number) => {
@@ -70,27 +73,30 @@ const InteractionsTabResult: React.FC<InteractionsTabResultProps> = ({
               </Button>
             </Link>
           </div>
-          <div className="flex flex-col md:flex-row items-center gap-2 flex-1 justify-center w-full">
-            <CustomPagination
-              currentPage={paramsState.pageNumber ?? commentPaginationPage}
-              totalCount={data.total_operations}
-              pageSize={config.standardPaginationSize}
-              onPageChange={changeCommentSearchPagination}
-            />
-            <JumpToPage
-              currentPage={paramsState.pageNumber ?? commentPaginationPage}
-              onPageChange={changeCommentSearchPagination}
-              totalCount={data.total_operations}
-              pageSize={config.standardPaginationSize}
-            />
-          </div>
+          {!!data?.total_operations && (
+            <div className="flex flex-col md:flex-row items-center gap-2 flex-1 justify-center w-full">
+              <CustomPagination
+                currentPage={paramsState.pageNumber ?? commentPaginationPage}
+                totalCount={data.total_operations}
+                pageSize={config.standardPaginationSize}
+                onPageChange={changeCommentSearchPagination}
+              />
+              <JumpToPage
+                currentPage={paramsState.pageNumber ?? commentPaginationPage}
+                onPageChange={changeCommentSearchPagination}
+                totalCount={data.total_operations}
+                pageSize={config.standardPaginationSize}
+              />
+            </div>
+          )}
         </div>
         <OperationsTable
-          operationCount={data.total_operations}
+          operationCount={data?.total_operations ?? 0}
           operations={formattedOperations}
           unformattedOperations={unformattedOperations}
           referrer={t("accountOperationViewTabs.interactions").toLowerCase()}
           accountName={accountName}
+          isLoading={isLoading}
         />
       </div>
     </>

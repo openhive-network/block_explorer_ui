@@ -36,6 +36,7 @@ import { safelyParseJson } from "@/utils/JsonUtils";
 import { useSettings } from "@/contexts/SettingsContext";
 import useOperation from "@/hooks/api/common/useOperation";
 import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
+import TablePlaceholderRows from "./ui/TablePlaceholderRows";
 
 interface OperationsTableProps {
   operationCount?: number;
@@ -46,6 +47,9 @@ interface OperationsTableProps {
   className?: string;
   referrer?: string;
   accountName?: string;
+  // New results are on the way: placeholder rows when there is nothing to
+  // show yet, otherwise the current rows stay, dimmed, until they arrive.
+  isLoading?: boolean;
 }
 interface ExportableOperation {
   Block: string;
@@ -130,6 +134,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
   markedOpId,
   referrer,
   accountName,
+  isLoading = false,
 }) => {
   const router = useRouter();
   const { locale: appLocale, t } = useI18n();
@@ -292,7 +297,12 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
         />
       </div>
       <div className="flex w-full overflow-auto rounded">
-        <div className="text-text w-full bg-theme">
+        <div
+          className={cn("text-text w-full bg-theme transition-opacity", {
+            "opacity-60": isLoading && operations.length > 0,
+          })}
+          aria-busy={isLoading}
+        >
           <Table enableMobileScrollArrows enableCompactToggle>
             <TableHeader>
               <TableRow rowVariant="header">
@@ -308,6 +318,9 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
               </TableRow>
             </TableHeader>
             <TableBody>
+              {isLoading && operations.length === 0 && (
+                <TablePlaceholderRows columns={7} />
+              )}
               {operations.map((operation, index, allOperations) => {
                 const op = operation.operation;
                 const isPlaceholder = op?.type === "body_placeholder_operation";

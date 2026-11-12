@@ -13,33 +13,37 @@ interface AccountCommentPermlinkSearchResultsProps {
     page: number;
   };
   setParams: Dispatch<SetStateAction<unknown>>;
+  isLoading?: boolean;
 }
 
 const AccountCommentPermlinkSearchResults: React.FC<
   AccountCommentPermlinkSearchResultsProps
-> = ({ data, accountName, paramsState, setParams }) => {
-  if (!data) return;
+> = ({ data, accountName, paramsState, setParams, isLoading = false }) => {
+  if (!data && !isLoading) return;
 
   return (
     <>
-      {data.total_permlinks ? (
+      {data?.total_permlinks || isLoading ? (
         <div>
           <div className="flex justify-center items-center text-text sticky z-20 top-[3.2rem] md:top-16">
-            <CustomPagination
-              currentPage={paramsState?.page ?? 1}
-              totalCount={data.total_permlinks}
-              pageSize={config.standardPaginationSize}
-              onPageChange={(page: number) =>
-                setParams({ ...paramsState, page: page })
-              }
-            />
+            {!!data?.total_permlinks && (
+              <CustomPagination
+                currentPage={paramsState?.page ?? 1}
+                totalCount={data.total_permlinks}
+                pageSize={config.standardPaginationSize}
+                onPageChange={(page: number) =>
+                  setParams({ ...paramsState, page: page })
+                }
+              />
+            )}
           </div>
 
           <div className="flex flex-wrap">
             <AccountCommentPermlinkResultTable
-              permlinkCount={data.total_permlinks}
-              data={data.permlinks_result}
+              permlinkCount={data?.total_permlinks ?? 0}
+              data={data?.permlinks_result ?? []}
               accountName={accountName}
+              isLoading={isLoading}
             />
           </div>
         </div>

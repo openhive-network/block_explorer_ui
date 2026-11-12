@@ -3,6 +3,7 @@ import CommentPermlinkResultTable from "../CommentPermlinkResultTable";
 import { useSearchesContext } from "@/contexts/SearchesContext";
 import CustomPagination from "@/components/CustomPagination";
 import { config } from "@/Config";
+import { cn } from "@/lib/utils";
 import NoResult from "@/components/NoResult";
 
 import useBlockNavigation from "@/hooks/common/useBlockNavigation";
@@ -20,7 +21,8 @@ const CommentPermlinkSearchResults = () => {
     setLastSearchKey,
   } = useSearchesContext();
 
-  const { permlinkSearchData } = usePermlinkSearch(permlinkSearchProps);
+  const { permlinkSearchData, permlinkSearchShowingPrevious } =
+    usePermlinkSearch(permlinkSearchProps);
 
   const accountName = permlinkSearchProps?.accountName;
 
@@ -79,7 +81,13 @@ const CommentPermlinkSearchResults = () => {
               onPageChange={changePermlinkSearchPagination}
             />
           </div>
-          <div className="flex flex-wrap">
+          {/* The rows stay while the next page loads, dimmed. */}
+          <div
+            className={cn("flex flex-wrap transition-opacity", {
+              "opacity-60": permlinkSearchShowingPrevious,
+            })}
+            aria-busy={permlinkSearchShowingPrevious}
+          >
             <CommentPermlinkResultTable
               permlinkCount={permlinkSearchData.total_permlinks}
               openCommentsSection={openCommentsSection}

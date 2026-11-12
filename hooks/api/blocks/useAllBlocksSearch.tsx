@@ -1,8 +1,9 @@
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 import Explorer from "@/types/Explorer";
 import fetchingService from "@/services/FetchingService";
 import { config } from "@/Config";
+import { keepPreviousDataFor } from "@/hooks/common/keepPreviousDataFor";
 
 const useAllBlocksSearch = (
   allBlockSearchProps?: Explorer.AllBlocksSearchProps,
@@ -24,7 +25,12 @@ const useAllBlocksSearch = (
     // Paging keeps the current rows on screen instead of blanking to a spinner.
     // This search runs on a longer timeout than the rest of the app, so the
     // wait it covers can be seconds long.
-    placeholderData: keepPreviousData,
+    // Same account only, so another account's blocks never show meanwhile.
+    placeholderData: keepPreviousDataFor(
+      (previousKey) =>
+        (previousKey[1] as Explorer.AllBlocksSearchProps | undefined)
+          ?.accountName === allBlockSearchProps?.accountName
+    ),
     // A call that outlives config.blockSearchTimeout is not a blip worth
     // doubling the wait for; surface it instead of retrying.
     retry: false,

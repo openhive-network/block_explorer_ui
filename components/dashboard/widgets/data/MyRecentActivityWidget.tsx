@@ -161,7 +161,8 @@ const MyRecentActivityWidget: React.FC = () => {
       isLoggedIn && username && isCatalogReady
         ? { accountName: username, operationTypes: operationTypesForFetch }
         : undefined,
-      settings.liveData
+      settings.liveData,
+      { keepPrevious: false }
     );
 
   const tailCount = latestData?.operations_result?.length ?? 0;
@@ -177,7 +178,8 @@ const MyRecentActivityWidget: React.FC = () => {
           pageNumber: totalPages - 1,
         }
       : undefined,
-    false
+    false,
+    { keepPrevious: false }
   );
 
   const { accountOperations: recentCountData } = useAccountOperations(
@@ -189,7 +191,8 @@ const MyRecentActivityWidget: React.FC = () => {
           pageSize: 1,
         }
       : undefined,
-    false
+    false,
+    { keepPrevious: false }
   );
 
   useEffect(() => {
