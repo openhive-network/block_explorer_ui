@@ -18,6 +18,7 @@ import {
 import { cn } from "@/lib/utils";
 import useManabars from "@/hooks/api/accountPage/useManabars";
 import useUnclaimedRewards from "@/hooks/api/common/useUnclaimedRewards";
+import ClaimRewardsButton from "@/components/account/ClaimRewardsButton";
 import { useSettings } from "@/contexts/SettingsContext";
 import RadialProgress from "@/components/RadialProgress";
 import { Progress } from "@/components/ui/progress";
@@ -48,13 +49,11 @@ const UserNavItem = ({
   title,
   closeMenu,
   shallow = false,
-  badge,
 }: {
   href: string;
   title: string;
   closeMenu: () => void;
   shallow?: boolean;
-  badge?: React.ReactNode;
 }) => (
   <Link
     href={href}
@@ -64,7 +63,6 @@ const UserNavItem = ({
     onClick={closeMenu}
   >
     <span>{title}</span>
-    {badge}
   </Link>
 );
 
@@ -366,22 +364,19 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
               title={t("auth.myProfile")}
               closeMenu={() => setIsOpen(false)}
             />
-            <UserNavItem
-              href={`/@${username}?section=wallet`}
-              title={t("auth.myWallet")}
-              closeMenu={() => setIsOpen(false)}
-              shallow={isOnOwnProfile}
-              badge={
-                hasUnclaimedRewards && (
-                  <span className="ms-auto flex items-center gap-1.5 text-[11px] font-medium text-amber-600 dark:text-amber-400">
-                    <span className="h-2 w-2 rounded-full bg-amber-500" />
-                    <span className="text-current">
-                      {t("auth.unclaimedRewards")}
-                    </span>
-                  </span>
-                )
-              }
-            />
+            {/* The claim button sits beside the link, not inside it, and drops
+                below it when a long translation doesn't fit. */}
+            <div className="flex flex-wrap items-center">
+              <div className="flex-1">
+                <UserNavItem
+                  href={`/@${username}?section=wallet`}
+                  title={t("auth.myWallet")}
+                  closeMenu={() => setIsOpen(false)}
+                  shallow={isOnOwnProfile}
+                />
+              </div>
+              <ClaimRewardsButton className="mx-2.5" />
+            </div>
             {deploySettings.proposals && (
               <UserNavItem
                 href={`/proposals?voter=${username}&status=all`}

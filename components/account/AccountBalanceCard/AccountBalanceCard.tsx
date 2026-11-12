@@ -43,6 +43,7 @@ import OpenOrdersDialog from "./OpenOrdersDialog";
 import ConversionRequestsDialog from "./ConversionRequestsDialog";
 import DataExport from "../../DataExport";
 import VestsTooltip from "../../VestsTooltip";
+import ClaimRewardsButton from "../ClaimRewardsButton";
 
 import Explorer from "@/types/Explorer";
 import useBlockChainProperties from "@/hooks/api/common/useBlockChainProperties";
@@ -58,6 +59,7 @@ import { TabKey } from "../AccountDetailsSection";
 import { PendingAssetSymbol } from "@/utils/accountPendingItems";
 import useCollapsedState from "@/hooks/common/useCollapsedState";
 import { getImageSrc } from "@/utils/PathUtils";
+import { useAuth } from "@/contexts/AuthContext";
 
 const OPEN_ORDER_FIELDS: Record<string, PendingAssetSymbol> = {
   open_orders_hive_amount: "HIVE",
@@ -912,6 +914,8 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
   onChangeTab,
 }) => {
   const { t, locale } = useI18n();
+  const { username, isLoggedIn } = useAuth();
+  const isOwnWallet = isLoggedIn && username === userDetails.name;
   const [isCardHidden, setIsCardHidden] = useCollapsedState(isInitiallyOpen);
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     hive: false,
@@ -1201,10 +1205,11 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
           </div>
 
           {/* Account's Total Value Display */}
-          <div>
-            <p className="text-3xl font-bold tracking-tight mt-3">
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+            <p className="text-3xl font-bold tracking-tight">
               {financialSummary.formatted.totalValue}
             </p>
+            {isOwnWallet && <ClaimRewardsButton />}
           </div>
 
           {/* Bar Chart Visualization */}
