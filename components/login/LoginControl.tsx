@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useAuth, LAST_USERNAME_KEY } from "@/contexts/AuthContext";
 import { SmartSigner } from "@/lib/smart-signer";
+import {
+  keychainErrorText,
+  keychainSignIn,
+} from "@/lib/smart-signer/keychainSignIn";
 import { useI18n } from "@/i18n/i18n";
 import { LogInIcon, Loader2 } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
@@ -62,59 +66,29 @@ const LoginControl: React.FC<LoginControlProps> = ({ isMobile }) => {
     setError(null);
 
     try {
-      const loginMessage = t("auth.connectSecurely");
-      const response = await SmartSigner.login(
-        method,
-        inputUsername,
-        loginMessage
-      );
+      // Hivesigner leaves the page; the callback finishes the sign-in.
+      if (method === "hivesigner") {
+        await SmartSigner.login("hivesigner");
+        return;
+      }
 
-      if (response.success) {
-        if (method === "keychain") {
-          if (response.signature && response.message) {
-            const sessionRes = await fetch("/api/auth/keychain-session", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                username: inputUsername,
-                message: response.message,
-                signature: response.signature,
-                challenge: response.challenge,
-              }),
-            }).catch((err) => {
-              console.warn("[workspace-sync] Session request failed:", err);
-              return null;
-            });
-            if (sessionRes && !sessionRes.ok) {
-              console.warn(
-                "[workspace-sync] Session establishment failed:",
-                sessionRes.status
-              );
-            }
-          }
-          const loginErr = await login(inputUsername, "keychain");
-          if (loginErr) {
-            if (loginErr.message === "NODE_TIMEOUT")
-              setError(t("auth.nodeTimeout"));
-            else if (loginErr.message === "auth.errorTooManyAttempts")
-              setError(t("auth.errorTooManyAttempts"));
-            else setError(loginErr.toString());
-          } else {
-            setModalOpen(false);
-          }
-        }
-      } else if (response.error) {
-        const errorMsg = response.error;
-        // Check if the error is a translation token or a raw string
-        if (errorMsg === "EXTENSION_NOT_FOUND")
-          setError(t("auth.errorNoKeychain"));
-        else if (errorMsg === "KEYCHAIN_TIMEOUT")
-          setError(t("auth.keyChainTimeout"));
-        else if (errorMsg === "auth.errorTooManyAttempts")
+      const signInError = await keychainSignIn(
+        inputUsername,
+        t("auth.connectSecurely")
+      );
+      if (signInError !== null) {
+        if (signInError) setError(keychainErrorText(t, signInError));
+        return;
+      }
+      const loginErr = await login(inputUsername, "keychain");
+      if (loginErr) {
+        if (loginErr.message === "NODE_TIMEOUT")
+          setError(t("auth.nodeTimeout"));
+        else if (loginErr.message === "auth.errorTooManyAttempts")
           setError(t("auth.errorTooManyAttempts"));
-        else if (errorMsg.includes("User rejected"))
-          setError(t("auth.errorUserCancelled"));
-        else setError(errorMsg);
+        else setError(loginErr.toString());
+      } else {
+        setModalOpen(false);
       }
     } catch (e: any) {
       // SmartSigner.login() errors (extension not found, network, etc.)

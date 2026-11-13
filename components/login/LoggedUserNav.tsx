@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import useManabars from "@/hooks/api/accountPage/useManabars";
 import useUnclaimedRewards from "@/hooks/api/common/useUnclaimedRewards";
 import ClaimRewardsButton from "@/components/account/ClaimRewardsButton";
+import AccountSwitcher from "./AccountSwitcher";
 import { useSettings } from "@/contexts/SettingsContext";
 import RadialProgress from "@/components/RadialProgress";
 import { Progress } from "@/components/ui/progress";
@@ -246,6 +247,8 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
               </Tooltip>
             </TooltipProvider>
           </div>
+
+          <AccountSwitcher onSwitched={() => setIsOpen(false)} />
 
           {/* Mana / RC Section */}
           {!!manabarsData && (

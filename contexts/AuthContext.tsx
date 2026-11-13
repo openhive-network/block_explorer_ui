@@ -24,6 +24,7 @@ import {
 import { getLayoutStorageKey } from "@/components/dashboard/lib/dashboard.config";
 import { deploySettings, isLoginMethodEnabled } from "@/utils/deploySettings";
 import { getAccount } from "@/utils/waxClient";
+import { rememberAccount } from "@/utils/rememberedAccounts";
 
 interface AuthContextType {
   username: string | null;
@@ -134,6 +135,7 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
               })
             );
             localStorage.setItem(LAST_USERNAME_KEY, user);
+            rememberAccount(user, authMethod);
           }
           return null;
         } else {
@@ -196,7 +198,11 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
           user !== usernameRef.current &&
           isLoginMethodEnabled(authMethod)
         )
-          login(user, authMethod);
+          // The cookies are already the other tab's account: if this tab can't
+          // follow, it must not keep acting as the previous one.
+          login(user, authMethod).then((error) => {
+            if (error) clearSessionState();
+          });
       } catch {
         // Malformed entry: leave the current session alone.
       }
@@ -267,7 +273,11 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
               } catch {
                 window.history.replaceState({}, document.title, returnTo);
               }
-              if (!loginErr) handledByHivesigner = true;
+              // The cookies now belong to data.username, so never fall back to
+              // restoring an older saved account (e.g. the one a switch left):
+              // its workspace would be encrypted under the wrong session.
+              if (loginErr) await logout();
+              handledByHivesigner = true;
             }
           }
         } catch (e) {
@@ -296,7 +306,7 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
       setIsInitializing(false);
     };
     initializeAuth();
-  }, [login]);
+  }, [login, logout]);
 
   return (
     <AuthContext.Provider
