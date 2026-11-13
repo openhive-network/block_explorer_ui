@@ -773,6 +773,16 @@ namespace Hive {
     quote!: Supply;
   }
 
+  // market_history_api.get_ticker; prices are HBD per HIVE.
+  export class MarketTicker {
+    latest!: string;
+    lowest_ask!: string;
+    highest_bid!: string;
+    percent_change!: string;
+    hive_volume!: Supply;
+    hbd_volume!: Supply;
+  }
+
   export class OpenOrder {
     id!: number;
     created!: string;

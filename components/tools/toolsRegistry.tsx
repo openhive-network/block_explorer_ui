@@ -1,4 +1,9 @@
-import { ArrowLeftRight, ShieldAlert, Download } from "lucide-react";
+import {
+  ArrowLeftRight,
+  ShieldAlert,
+  Calculator,
+  Download,
+} from "lucide-react";
 
 export interface ToolDef {
   key: string;
@@ -24,6 +29,13 @@ export const TOOLS: ToolDef[] = [
     route: "/tools/bad-actors",
     labelKey: "tools.tabs.badActors",
     icon: ShieldAlert,
+    enabled: true,
+  },
+  {
+    key: "converter",
+    route: "/tools/converter",
+    labelKey: "tools.tabs.converter",
+    icon: Calculator,
     enabled: true,
   },
   {

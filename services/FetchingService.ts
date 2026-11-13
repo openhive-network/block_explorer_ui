@@ -155,6 +155,7 @@ export type ExplorerNodeApi = {
       { bucket_seconds: number; start: string | undefined; end: string },
       Hive.MarketHistory[]
     >;
+    get_ticker: TWaxApiRequest<{}, Hive.MarketTicker>;
   };
 };
 
@@ -826,6 +827,11 @@ class FetchingService {
       "from-block": fromBlock,
       "to-block": toBlock,
     });
+  }
+
+  // Latest trade and best bid/ask on the internal HIVE/HBD market.
+  async getMarketTicker(): Promise<Hive.MarketTicker> {
+    return await this.extendedHiveChain!.api.market_history_api.get_ticker({});
   }
 
   async getMarketHistory(
