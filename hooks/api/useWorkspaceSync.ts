@@ -67,7 +67,7 @@ export function useWorkspaceSync(): UseWorkspaceSyncReturn {
         return;
       }
 
-      const stored = await encryptBundle(compressed);
+      const stored = await encryptBundle(compressed, username);
 
       // Fetch existing metadata to preserve other apps' data
       const account = await getAccount(username);

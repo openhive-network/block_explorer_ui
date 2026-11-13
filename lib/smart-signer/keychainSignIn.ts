@@ -1,18 +1,31 @@
 import { SmartSigner } from "./index";
 
+// The server session could not be swapped over (see `strict`).
+export const SESSION_FAILED = "SESSION_FAILED";
+
 // Signs the login message with Keychain, then opens the server session. Shared
 // by the login dialog and the account switcher. Returns null on success, or
-// Keychain's error ("" when it gave none; see keychainErrorText). `beforeSession` runs only once the
-// signature is in, so a cancelled prompt leaves the current session untouched.
+// Keychain's error ("" when it gave none; see keychainErrorText).
+// `beforeSession` runs only once the signature is in, so a cancelled prompt
+// leaves the current session untouched. `strict` (the switcher) returns
+// SESSION_FAILED when `beforeSession` throws or the session request fails,
+// since the cookies may then belong to another account than the one shown.
 export const keychainSignIn = async (
   username: string,
   message: string,
-  beforeSession?: () => Promise<void>
+  {
+    beforeSession,
+    strict = false,
+  }: { beforeSession?: () => Promise<void>; strict?: boolean } = {}
 ): Promise<string | null> => {
   const response = await SmartSigner.login("keychain", username, message);
   if (!response.success) return response.error ?? "";
 
-  await beforeSession?.();
+  try {
+    await beforeSession?.();
+  } catch {
+    return SESSION_FAILED;
+  }
   if (response.signature && response.message) {
     const sessionRes = await fetch("/api/auth/keychain-session", {
       method: "POST",
@@ -33,6 +46,7 @@ export const keychainSignIn = async (
         sessionRes.status
       );
     }
+    if (strict && !sessionRes?.ok) return SESSION_FAILED;
   }
   return null;
 };

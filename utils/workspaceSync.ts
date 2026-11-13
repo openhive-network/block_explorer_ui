@@ -349,14 +349,19 @@ export function consumePendingHivesignerSync(
   return "success";
 }
 
-export async function encryptBundle(compressed: string): Promise<string> {
+// `username` is the account the bundle belongs to; the server refuses when its
+// session is another account's.
+export async function encryptBundle(
+  compressed: string,
+  username: string
+): Promise<string> {
   const isDFlate = compressed.startsWith("D:");
   // Strip the compression prefix so we encrypt raw bytes, not a re-encoded base64 string
   const rawBase64 = isDFlate ? compressed.slice(2) : compressed;
   const res = await fetch("/api/workspace/encrypt", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ data: rawBase64 }),
+    body: JSON.stringify({ data: rawBase64, expectedUser: username }),
   });
   if (!res.ok) {
     // Only fall back to plaintext when the server explicitly says no key is configured.
@@ -375,7 +380,10 @@ export async function encryptBundle(compressed: string): Promise<string> {
   return (isDFlate ? "ED:" : "EL:") + result;
 }
 
-export async function decryptBundle(data: string): Promise<string> {
+export async function decryptBundle(
+  data: string,
+  username: string
+): Promise<string> {
   const isED = data.startsWith("ED:");
   const isEL = data.startsWith("EL:");
   if (!isED && !isEL) return data;
@@ -383,7 +391,7 @@ export async function decryptBundle(data: string): Promise<string> {
     const res = await fetch("/api/workspace/decrypt", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ data: data.slice(3) }),
+      body: JSON.stringify({ data: data.slice(3), expectedUser: username }),
     });
     if (!res.ok) return data;
     const { result } = await res.json();

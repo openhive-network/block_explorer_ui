@@ -26,7 +26,9 @@ export async function fetchCloudBundle(
     const compressed = meta[getInstanceMetadataKey()];
     if (!compressed) return { status: "none" };
 
-    const bundle = await decompressBundle(await decryptBundle(compressed));
+    const bundle = await decompressBundle(
+      await decryptBundle(compressed, username)
+    );
     return bundle
       ? { status: "found", bundle, compressed }
       : { status: "error" };

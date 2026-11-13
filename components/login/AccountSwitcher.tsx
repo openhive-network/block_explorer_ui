@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useI18n } from "@/i18n/i18n";
 import { SmartSigner } from "@/lib/smart-signer";
 import {
+  SESSION_FAILED,
   isKeychainSignInCancel,
   keychainErrorText,
   keychainSignIn,
@@ -26,8 +27,10 @@ const METHOD_LOGOS = {
 
 // Clears the current account's server cookies. Keychain sign-in replaces only
 // the session cookie, so a Hivesigner token would otherwise outlive the switch.
+// Throws when that may not have happened, which fails the switch.
 const clearServerSession = async () => {
-  await fetch("/api/auth/logout", { method: "POST" }).catch(() => undefined);
+  const res = await fetch("/api/auth/logout", { method: "POST" });
+  if (!res.ok) throw new Error(`logout_failed_${res.status}`);
 };
 
 // The switch in progress. Module-level, not state: closing the menu unmounts
@@ -78,8 +81,14 @@ const AccountSwitcher = ({ onSwitched }: { onSwitched: () => void }) => {
       const signInError = await keychainSignIn(
         target,
         t("auth.connectSecurely"),
-        clearServerSession
+        { beforeSession: clearServerSession, strict: true }
       );
+      if (signInError === SESSION_FAILED) {
+        // The cookies may now belong to neither account shown: sign out.
+        await logout();
+        toast.error(t("auth.switchFailed", { account: target }));
+        return;
+      }
       if (signInError !== null) {
         if (signInError && !isKeychainSignInCancel(signInError))
           toast.error(keychainErrorText(t, signInError));

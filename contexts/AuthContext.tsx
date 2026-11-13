@@ -94,7 +94,7 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
                 : undefined;
               if (cloudCompressed) {
                 const bundle = await decompressBundle(
-                  await decryptBundle(cloudCompressed)
+                  await decryptBundle(cloudCompressed, user)
                 );
                 if (bundle) {
                   const hasLocalDashboard = !!localStorage.getItem(

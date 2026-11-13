@@ -41,6 +41,13 @@ export default async function handler(
     return res.status(401).json({ error: "unauthorized" });
   }
 
+  // The client names the account it acts for. If the session cookie is
+  // another account's (a switch or another tab mid-change), refuse rather than
+  // use that account's key on this account's workspace.
+  if (req.body?.expectedUser !== username) {
+    return res.status(409).json({ error: "session_user_mismatch" });
+  }
+
   const { data } = req.body;
   if (typeof data !== "string" || !data) {
     return res.status(400).json({ error: "invalid_input" });
