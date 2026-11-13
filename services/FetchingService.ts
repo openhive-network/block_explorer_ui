@@ -38,6 +38,14 @@ export type ExplorerNodeApi = {
       { account: string },
       { orders: Hive.OpenOrder[] }
     >;
+    list_limit_orders: TWaxApiRequest<
+      {
+        start: [Hive.OpenOrder["sell_price"], number];
+        limit: number;
+        order: "by_price";
+      },
+      { orders: Hive.OpenOrder[] }
+    >;
     find_hbd_conversion_requests: TWaxApiRequest<
       { account: string },
       { requests: Hive.HbdConversionRequest[] }
@@ -345,6 +353,20 @@ class FetchingService {
     const { orders } =
       await this.extendedHiveChain!.api.database_api.find_limit_orders({
         account: accountName,
+      });
+    return orders;
+  }
+
+  // One side of the internal market, best price first (see utils/orderBook).
+  async getOrderBookSide(
+    start: Hive.OpenOrder["sell_price"],
+    limit: number
+  ): Promise<Hive.OpenOrder[]> {
+    const { orders } =
+      await this.extendedHiveChain!.api.database_api.list_limit_orders({
+        start: [start, 0],
+        limit,
+        order: "by_price",
       });
     return orders;
   }

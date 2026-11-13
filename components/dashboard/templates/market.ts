@@ -36,6 +36,7 @@ const market: BoardTemplate = {
     { type: "tvl", x: 0, y: 13.6, w: 4, h: 4 },
     { type: "transfer-volume", x: 0, y: 17.6, w: 4, h: 5 },
     { type: "fund-and-supply", x: 0, y: 22.6, w: 4, h: 1.4 },
+    { type: "order-book", x: 0, y: 24, w: 4, h: 12 },
 
     section(
       4,

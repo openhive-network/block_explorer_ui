@@ -26,6 +26,7 @@ import TopHoldersWidget from "@/components/dashboard/widgets/data/TopHoldersWidg
 import MarkdownWidget from "@/components/dashboard/widgets/layout/MarkdownWidget";
 import LiveInfoWidget from "@/components/dashboard/widgets/data/LiveInfoWidget";
 import MarketDataWidget from "@/components/dashboard/widgets/data/MarketDataWidget";
+import OrderBookWidget from "@/components/dashboard/widgets/data/OrderBookWidget";
 import SearchesSection from "@/components/home/SearchesSection";
 import TopCommunitiesCard from "@/components/home/TopCommunitiesCard";
 import TopWitnessesCard from "@/components/home/TopWitnessesCard";
@@ -193,6 +194,15 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     getProps: (data) => ({
       headBlockCardData: data.dynamicGlobalQueryData,
     }),
+  },
+  "order-book": {
+    id: "order-book",
+    name: "widgets.orderBookName",
+    category: "chain" as const,
+    component: OrderBookWidget,
+    defaultLayout: WIDGET_LAYOUT_DEFAULTS["order-book"],
+    allowMultiple: false,
+    dynamicHeight: true,
   },
   "last-blocks": {
     id: "last-blocks",

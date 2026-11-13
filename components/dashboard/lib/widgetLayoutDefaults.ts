@@ -12,6 +12,7 @@ export const WIDGET_LAYOUT_DEFAULTS: Record<string, WidgetLayoutDefault> = {
   "hive-parameters": { w: 3, h: 1.2, minW: 2, minH: 1 },
   "blockchain-dates": { w: 3, h: 1.2, minW: 2, minH: 1 },
   "market-data": { w: 4, h: 1.4, minW: 3, minH: 1 },
+  "order-book": { w: 6, h: 9, minW: 3, minH: 5 },
   "last-blocks": { w: 6, h: 8.3, minW: 6, minH: 8 },
   "top-witnesses": { w: 2.95, h: 13, minW: 2, minH: 6 },
   "top-communities": { w: 2.95, h: 5.8, minW: 2, minH: 3 },
