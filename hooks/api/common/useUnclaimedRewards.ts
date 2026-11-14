@@ -3,10 +3,14 @@ import { useQuery } from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
 import { RewardBalances, hasRewardsToClaim } from "@/utils/claimRewards";
 
-const REFRESH_MS = 5 * 60 * 1000;
-// Covers the gap after a claim, when the cache is zeroed before the node has
+// Shared with useGovernanceWeight, which reads the same account. STALE_MS
+// covers the gap after a claim, when the cache is zeroed before the node has
 // the block: a newly opened menu must not re-read the old balances.
-const STALE_MS = 10 * 1000;
+export const ACCOUNT_QUERY_OPTIONS = {
+  refetchInterval: 5 * 60 * 1000,
+  staleTime: 10 * 1000,
+  refetchOnWindowFocus: false,
+} as const;
 
 // The account's author/curation rewards waiting to be claimed.
 const useUnclaimedRewards = (accountName: string | null) => {
@@ -15,9 +19,7 @@ const useUnclaimedRewards = (accountName: string | null) => {
     queryFn: () => fetchingService.findAccounts([accountName as string]),
     select: ({ accounts }): RewardBalances | undefined => accounts[0],
     enabled: !!accountName,
-    refetchInterval: REFRESH_MS,
-    staleTime: STALE_MS,
-    refetchOnWindowFocus: false,
+    ...ACCOUNT_QUERY_OPTIONS,
   });
 
   return {

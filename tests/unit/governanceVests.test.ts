@@ -1,4 +1,4 @@
-import { governanceVests } from "@/utils/governanceVests";
+import { governanceVests, governanceWeight } from "@/utils/governanceVests";
 
 const vests = (amount: string) => ({
   amount,
@@ -64,5 +64,102 @@ describe("governanceVests", () => {
         delayed_votes: [{ val: 500 }],
       }).direct
     ).toBe(0);
+  });
+});
+
+describe("governanceWeight", () => {
+  const now = new Date("2026-11-14T12:00:00Z");
+  // 1 HP = 2000 VESTS, so 2,000,000 VESTS (raw 2e12) is 1,000 HP.
+  const hivePerVests = 1 / 2000;
+  const account = {
+    vesting_shares: vests("2000000000000"),
+    delayed_votes: [],
+    proxied_vsf_votes: [0, 0, 0, 0],
+  };
+
+  it("counts own and proxied VESTS in HP while votes are active", () => {
+    // blocktrades on 2026-11-14: a proxy for others, votes active a year out.
+    const weight = governanceWeight(
+      {
+        ...account,
+        proxied_vsf_votes: ["2000000000000", 0, 0, 0],
+        proxy: "",
+        governance_vote_expiration_ts: "2027-11-04T19:07:39",
+      },
+      hivePerVests,
+      now
+    );
+    expect(weight).toEqual({
+      status: "active",
+      hp: 2000,
+      expires: new Date("2027-11-04T19:07:39Z"),
+    });
+  });
+
+  it("is inactive when the votes expired or the account never voted", () => {
+    // hived leaves 1969-12-31T23:59:59 on an account with no governance votes.
+    for (const ts of ["1969-12-31T23:59:59", "2026-11-14T11:59:59"]) {
+      expect(
+        governanceWeight(
+          { ...account, proxy: "", governance_vote_expiration_ts: ts },
+          hivePerVests,
+          now
+        )
+      ).toEqual({ status: "inactive", hp: 1000 });
+    }
+  });
+
+  it("names the proxy, which casts the votes, whatever the expiry", () => {
+    expect(
+      governanceWeight(
+        {
+          ...account,
+          proxy: "someproxy",
+          governance_vote_expiration_ts: "1969-12-31T23:59:59",
+        },
+        hivePerVests,
+        now
+      )
+    ).toEqual({ status: "proxy", hp: 1000, proxy: "someproxy" });
+  });
+
+  it("leaves out power-ups still in their delay and reads a Date expiry", () => {
+    const expires = new Date("2027-01-01T00:00:00Z");
+    expect(
+      governanceWeight(
+        {
+          ...account,
+          delayed_votes: [{ val: "1000000000000" }],
+          proxy: "",
+          governance_vote_expiration_ts: expires,
+        },
+        hivePerVests,
+        now
+      )
+    ).toEqual({ status: "active", hp: 500, expires });
+  });
+
+  it("counts a proxy's own proxied votes, which flow on to its proxy", () => {
+    expect(
+      governanceWeight(
+        {
+          ...account,
+          proxied_vsf_votes: ["2000000000000", 0, 0, 0],
+          proxy: "someproxy",
+        },
+        hivePerVests,
+        now
+      )
+    ).toEqual({ status: "proxy", hp: 2000, proxy: "someproxy" });
+  });
+
+  it("reads VESTS at chain precision when the asset leaves it out", () => {
+    expect(
+      governanceWeight(
+        { vesting_shares: { amount: "2000000000000" } },
+        hivePerVests,
+        now
+      )
+    ).toEqual({ status: "active", hp: 1000, expires: null });
   });
 });

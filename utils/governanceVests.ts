@@ -1,3 +1,5 @@
+import { parseChainDate } from "@/utils/TimeUtils";
+
 // An account's weight in proposal and witness votes, in raw VESTS units, from
 // a database_api.find_accounts entry fetched with delayed_votes_active: true
 // (FetchingService.findAccounts' default). It matches hived's
@@ -22,4 +24,36 @@ export const governanceVests = (account: GovernanceAccount) => {
   const direct = Math.max(0, owned - delayed);
   const proxied = sum(account.proxied_vsf_votes ?? []);
   return { direct, proxied, total: direct + proxied };
+};
+
+// What the logged-in user menu shows: the weight in HP, and whether it is
+// counting. hived clears an account's votes a year after its last governance
+// action and leaves governance_vote_expiration_ts in the past (1969-12-31 for
+// an account that never voted). With a proxy set, the proxy casts the votes.
+export type GovernanceWeight =
+  | { status: "proxy"; hp: number; proxy: string }
+  | { status: "active"; hp: number; expires: Date | null }
+  | { status: "inactive"; hp: number };
+
+interface WeightAccount extends GovernanceAccount {
+  vesting_shares?: { amount?: string; precision?: number } | null;
+  proxy?: string | null;
+  governance_vote_expiration_ts?: string | Date | null;
+}
+
+const VESTS_PRECISION = 6;
+
+export const governanceWeight = (
+  account: WeightAccount,
+  hivePerVests: number,
+  now: Date = new Date()
+): GovernanceWeight => {
+  const precision = account.vesting_shares?.precision ?? VESTS_PRECISION;
+  const hp = (governanceVests(account).total / 10 ** precision) * hivePerVests;
+  if (account.proxy) return { status: "proxy", hp, proxy: account.proxy };
+  const raw = account.governance_vote_expiration_ts;
+  const expires =
+    raw instanceof Date ? raw : parseChainDate(raw ? String(raw) : null);
+  if (expires && expires <= now) return { status: "inactive", hp };
+  return { status: "active", hp, expires };
 };

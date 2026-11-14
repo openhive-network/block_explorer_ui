@@ -18,8 +18,10 @@ import {
 import { cn } from "@/lib/utils";
 import useManabars from "@/hooks/api/accountPage/useManabars";
 import useUnclaimedRewards from "@/hooks/api/common/useUnclaimedRewards";
+import useGovernanceWeight from "@/hooks/api/common/useGovernanceWeight";
 import ClaimRewardsButton from "@/components/account/ClaimRewardsButton";
 import AccountSwitcher from "./AccountSwitcher";
+import GovernanceWeightRow from "./GovernanceWeightRow";
 import { useSettings } from "@/contexts/SettingsContext";
 import RadialProgress from "@/components/RadialProgress";
 import { Progress } from "@/components/ui/progress";
@@ -89,6 +91,7 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
 
   const { manabarsData } = useManabars(username || "", true);
   const { hasUnclaimedRewards } = useUnclaimedRewards(username);
+  const { weight, isWeightError } = useGovernanceWeight(username);
   const { syncStatus, syncWorkspace, lastBundleBytes } = useWorkspaceSync();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [isUnsynced, setIsUnsynced] = useState(false);
@@ -156,7 +159,10 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node))
+      const target = e.target as Element;
+      // On touch, the menu's tooltips are popovers portalled outside it.
+      if (target.closest?.("[data-radix-popper-content-wrapper]")) return;
+      if (menuRef.current && !menuRef.current.contains(target))
         setIsOpen(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -392,6 +398,7 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
               title={t("auth.myWitnessVotes")}
               closeMenu={() => setIsOpen(false)}
             />
+            {!isWeightError && <GovernanceWeightRow weight={weight} />}
 
             <div className="my-1 border-t border-border/40 mx-1" />
 

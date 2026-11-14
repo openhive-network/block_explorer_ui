@@ -104,6 +104,10 @@ const WitnessVoteButton: React.FC<WitnessVoteButtonProps> = ({
         queryClient.invalidateQueries({
           queryKey: ["witnessVoteChain", username],
         });
+        // The menu's governance weight reads the account from this query.
+        queryClient.invalidateQueries({
+          queryKey: ["unclaimedRewards", username],
+        });
       }, 6000);
       toast.success(
         approve
