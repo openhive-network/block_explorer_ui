@@ -97,9 +97,9 @@ const buildTableBody = (
             />
           </TableCell>
           <TableCell>{operation_id}</TableCell>
-          <TableCell className="text-link text-wrap whitespace-nowrap max-w-36">
+          <TableCell className="text-link min-w-36 max-w-72">
             <Link
-              className="text-link wrap-break-word"
+              className="text-link wrap-anywhere"
               href={`/@${accountName}/${permlink}`}
               target="_blank"
               onClick={(e) => e.stopPropagation()}
@@ -115,7 +115,9 @@ const buildTableBody = (
               }}
             />
           </TableCell>
-          <TableCell>{formatAndDelocalizeTime(timestamp)}</TableCell>
+          <TableCell className="whitespace-nowrap">
+            {formatAndDelocalizeTime(timestamp)}
+          </TableCell>
           <TableCell className="text-link whitespace-nowrap">
             <Link href={`/tx/${trx_id}`} onClick={(e) => e.stopPropagation()}>
               {trx_id?.slice(0, 10)}

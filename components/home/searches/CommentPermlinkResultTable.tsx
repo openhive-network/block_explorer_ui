@@ -85,9 +85,9 @@ const buildTableBody = (
               />
             </TableCell>
             <TableCell>{operation_id}</TableCell>
-            <TableCell className="text-wrap whitespace-nowrap max-w-36">
+            <TableCell className="min-w-36 max-w-72">
               <Link
-                className="text-link wrap-break-word"
+                className="text-link wrap-anywhere"
                 target="_blank"
                 href={`/@${accountName}/${permlink}`}
                 onClick={(e) => e.stopPropagation()}
@@ -103,7 +103,7 @@ const buildTableBody = (
                 }}
               />
             </TableCell>
-            <TableCell className="text-left text-text">
+            <TableCell className="text-left text-text whitespace-nowrap">
               {formatAndDelocalizeTime(timestamp)}
             </TableCell>
             <TableCell className="text-left text-link whitespace-nowrap">
