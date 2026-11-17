@@ -24,7 +24,6 @@ import {
   Tooltip,
   TooltipContent,
   TooltipPortal,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { formatLocalePercent } from "@/utils/chartUtils";
@@ -42,6 +41,15 @@ import CompareSelectToggle from "@/components/compare/CompareSelectToggle";
 import { CompareSelection } from "@/hooks/common/useCompareSelection";
 import HiveAvatar from "@/components/ui/HiveAvatar";
 import useMediaQuery from "@/hooks/common/useMediaQuery";
+import { TooltipProvider as HybridTooltipProvider } from "@/components/ui/hybrid-tooltip";
+import {
+  RankMove,
+  signedHp,
+  VOTES_CHANGE_WINDOWS,
+  VotesChangeBadge,
+  VotesChangeSelection,
+  VotesChangeWindowKey,
+} from "./VotesChange";
 
 interface ColumnLabel {
   labelKey: string;
@@ -70,6 +78,10 @@ const COLUMNS: ColumnConfig[] = [
   {
     key: "votes",
     main: { labelKey: "witnesses.votes", sortKey: "votes" },
+    second: [
+      { labelKey: "witnesses.windowToday", sortKey: "change today" },
+      { labelKey: "witnesses.window7Days", sortKey: "change 7d" },
+    ],
     isRightAligned: true,
   },
   {
@@ -114,6 +126,8 @@ export const SORT_KEY_BY_CELL: { [objectKey: string]: string } = {
   "missed blocks": "missed_blocks",
   "missed 24h": "missed_24h",
   "missed 7d": "missed_7d",
+  "change today": "votes_change_today",
+  "change 7d": "votes_change_7d",
   apr: "hbd_interest_rate",
   "price feed": "price_feed",
   "feed age": "feed_updated_at",
@@ -123,11 +137,13 @@ export const SORT_KEY_BY_CELL: { [objectKey: string]: string } = {
 
 // Sorted in the browser: the witness list API knows nothing about them.
 export const MISSED_SORT_FIELDS = ["missed_24h", "missed_7d"];
+export const CHANGE_SORT_FIELDS = ["votes_change_today", "votes_change_7d"];
 
 // Rank and Name stay pinned while the rest scrolls; on phones only Name does.
 const RANK_COLUMN_WIDTH = 64;
 
 const RECENT_MISSED_SORT_KEYS = ["missed 24h", "missed 7d"];
+const VOTES_CHANGE_SORT_KEYS = ["change today", "change 7d"];
 
 const renderSortArrow = (
   currentSortKey: string,
@@ -210,6 +226,11 @@ interface WitnessesTableProps {
   onVoteChange: (witnessName: string, voted: boolean) => void;
   compareSelection?: CompareSelection;
   recentMissed?: RecentMissedBlocksState;
+  // Set when the node returns votes_change_breakdown; otherwise the votes cell
+  // keeps the vote-events-only daily change.
+  showVotesChange?: boolean;
+  votesChangeSelection?: VotesChangeSelection;
+  rankMoveWindow?: VotesChangeWindowKey;
 }
 
 const WitnessesTable: React.FC<WitnessesTableProps> = ({
@@ -226,6 +247,9 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
   onVoteChange,
   compareSelection,
   recentMissed,
+  showVotesChange = false,
+  votesChangeSelection = "total",
+  rankMoveWindow = "today",
 }) => {
   const { t, locale } = useI18n();
   const showRecentMissed = !!recentMissed?.isAvailable;
@@ -286,8 +310,10 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
     COLUMNS.map((column, index) => {
       const second = (column.second ?? []).filter(
         (label) =>
-          showRecentMissed ||
-          !RECENT_MISSED_SORT_KEYS.includes(label.sortKey ?? "")
+          (showRecentMissed ||
+            !RECENT_MISSED_SORT_KEYS.includes(label.sortKey ?? "")) &&
+          (showVotesChange ||
+            !VOTES_CHANGE_SORT_KEYS.includes(label.sortKey ?? ""))
       );
       return (
         <TableCell
@@ -328,7 +354,7 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
     );
 
   return (
-    <TooltipProvider>
+    <HybridTooltipProvider>
       <Table
         className="min-w-full"
         enableMobileScrollArrows
@@ -350,6 +376,8 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
             const recent = recentMissed?.getRecentMissed(
               singleWitness.witness_name
             );
+            const breakdown: Hive.WitnessVotesChangeBreakdown | null =
+              showVotesChange ? singleWitness.votes_change_breakdown : null;
             return (
               <TableRow
                 key={singleWitness.witness_id || index}
@@ -372,7 +400,16 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
                   stickyLeft={rankSticky}
                   className="w-16 min-w-16 max-w-16"
                 >
-                  {singleWitness.rank?.toLocaleString(locale)}
+                  <span className="flex flex-col items-start leading-tight">
+                    {singleWitness.rank?.toLocaleString(locale)}
+                    {breakdown && (
+                      <RankMove
+                        rank={singleWitness.rank}
+                        breakdown={breakdown}
+                        window={rankMoveWindow}
+                      />
+                    )}
+                  </span>
                 </TableCell>
 
                 <TableCell
@@ -495,30 +532,46 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
                         </p>
                       </TooltipContent>
                     </Tooltip>
-                    {singleWitness.votes_daily_change !== "0" && (
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <span
-                            className={cn(
-                              changeClass(singleWitness.votes_daily_change),
-                              "cursor-pointer"
+                    {breakdown ? (
+                      <span className="mt-1 flex items-center gap-1.5 font-normal">
+                        {VOTES_CHANGE_WINDOWS.map((window) => (
+                          <VotesChangeBadge
+                            key={window}
+                            window={window}
+                            breakdown={breakdown}
+                            selection={votesChangeSelection}
+                            toHp={toHp}
+                          />
+                        ))}
+                      </span>
+                    ) : (
+                      singleWitness.votes_daily_change !== "0" && (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span
+                              className={cn(
+                                changeClass(singleWitness.votes_daily_change),
+                                "cursor-pointer"
+                              )}
+                            >
+                              {signedHp(
+                                String(singleWitness.votes_daily_change),
+                                toHp
+                              )}
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent className="text-left">
+                            {t("common.vestsChange")}:{" "}
+                            {relocalizeAmount(
+                              formatNumber(
+                                singleWitness.votes_daily_change || 0,
+                                true
+                              ),
+                              locale
                             )}
-                          >
-                            {singleWitness.votes_daily_change > 0 ? "+" : ""}
-                            {toHp(singleWitness.votes_daily_change)}
-                          </span>
-                        </TooltipTrigger>
-                        <TooltipContent className="text-left">
-                          {t("common.vestsChange")}:{" "}
-                          {relocalizeAmount(
-                            formatNumber(
-                              singleWitness.votes_daily_change || 0,
-                              true
-                            ),
-                            locale
-                          )}
-                        </TooltipContent>
-                      </Tooltip>
+                          </TooltipContent>
+                        </Tooltip>
+                      )
                     )}
                     <MenuSquareIcon
                       className="w-4 h-4 cursor-pointer opacity-50 hover:opacity-80 transition-opacity duration-200 absolute top-1/2 end-0 transform -translate-y-1/2"
@@ -660,7 +713,7 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
           })}
         </TableBody>
       </Table>
-    </TooltipProvider>
+    </HybridTooltipProvider>
   );
 };
 

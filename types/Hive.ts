@@ -150,6 +150,32 @@ namespace Hive {
     version!: string;
     missed_blocks!: number;
     hbd_interest_rate!: number;
+    // Absent from nodes running a hafbe older than haf_block_explorer#203,
+    // null until that node's first refresh.
+    votes_change_breakdown?: WitnessVotesChangeBreakdown | null;
+  }
+
+  // VESTS amounts are strings, like `vests`.
+  export class WitnessVotesChangeWindow {
+    total!: string;
+    // Voters whose events moved the witness's votes, not a voter count change.
+    voters!: number;
+    rank_start!: number;
+    votes_cast!: string;
+    votes_removed!: string;
+    power_down!: string;
+    power_up!: string;
+    producer_reward!: string;
+    claimed_reward!: string;
+    proxy!: string;
+    expired!: string;
+    declined!: string;
+  }
+
+  export class WitnessVotesChangeBreakdown {
+    as_of_block!: number;
+    today!: WitnessVotesChangeWindow;
+    "7d"!: WitnessVotesChangeWindow;
   }
 
   export class WitnessesResponse {

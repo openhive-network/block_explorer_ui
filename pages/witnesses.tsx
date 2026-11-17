@@ -34,7 +34,27 @@ import CompareSelectionBar from "@/components/compare/CompareSelectionBar";
 import WitnessesTable, {
   SORT_KEY_BY_CELL,
   MISSED_SORT_FIELDS,
+  CHANGE_SORT_FIELDS,
 } from "@/components/Witnesses/WitnessesTable";
+import {
+  LOSS_CAUSES,
+  VOTES_CHANGE_SELECTIONS,
+  VOTES_CHANGE_WINDOWS,
+  VotesChangeSelection,
+  VotesChangeWindowKey,
+  causeLabelKey,
+  getVotesChange,
+  hasVotesChangeBreakdown,
+  splitVestsSign,
+  WINDOW_LABEL_KEY,
+} from "@/components/Witnesses/VotesChange";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import AutocompleteInput from "@/components/ui/AutoCompleteInput";
 import WitnessScheduleIcon from "@/components/WitnessScheduleIcon";
 import ScrollTopButton from "@/components/ScrollTopButton";
@@ -172,6 +192,9 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
     isOrderAscending: true,
   });
 
+  const [votesChangeSelection, setVotesChangeSelection] =
+    useState<VotesChangeSelection>("total");
+
   const [page, setPage] = useState(1);
   const pageSize = config.witnessesPerPages.witnesses;
   const initedPageFromUrl = React.useRef(false);
@@ -214,11 +237,15 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
 
   // When filtering by voter, fetch a larger window so lower-ranked
   // witnesses can still resolve.
-  // Missed 24h/7d come from another API, so for those sorts the top of the list
-  // is loaded at once and sorted and paged here.
+  // Missed 24h/7d come from another API, and the API can't sort by the votes
+  // change breakdown, so for those sorts the top of the list is loaded at once
+  // and sorted and paged here.
   const isMissedSort =
     !voterFilter && MISSED_SORT_FIELDS.includes(sort.orderBy);
-  const isClientList = !!voterFilter || isMissedSort;
+  const isChangeSort =
+    !voterFilter && CHANGE_SORT_FIELDS.includes(sort.orderBy);
+  const isClientPaged = isMissedSort || isChangeSort;
+  const isClientList = !!voterFilter || isClientPaged;
   const { witnessesData, isWitnessDataLoading, isWitnessDataPreviousData } =
     useWitnesses(
       isClientList ? config.votedWitnessesLimit : pageSize,
@@ -257,6 +284,28 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
     if (isMissedSort && (!recentMissed.isAvailable || isMissedSortFailed))
       setSort({ orderBy: SORT_KEY_BY_CELL["rank"], isOrderAscending: true });
   }, [isMissedSort, recentMissed.isAvailable, isMissedSortFailed]);
+
+  // A node without the breakdown shows the old votes cell, so there is no
+  // change column to sort by.
+  const showVotesChange = hasVotesChangeBreakdown(witnessesData?.witnesses);
+  // Checked on the sort itself, not isChangeSort: the voter view also keeps it.
+  const isChangeSortSelected = CHANGE_SORT_FIELDS.includes(sort.orderBy);
+  useEffect(() => {
+    if (
+      isChangeSortSelected &&
+      witnessesData &&
+      !isWitnessDataPreviousData &&
+      !showVotesChange
+    )
+      setSort({ orderBy: SORT_KEY_BY_CELL["rank"], isOrderAscending: true });
+  }, [
+    isChangeSortSelected,
+    witnessesData,
+    isWitnessDataPreviousData,
+    showVotesChange,
+  ]);
+  const changeSortWindow: VotesChangeWindowKey =
+    sort.orderBy === "votes_change_7d" ? "7d" : "today";
 
   useEffect(() => {
     if (!totalWitnesses || isClientList) return;
@@ -348,6 +397,14 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
         (a: any, b: any) => (missed(a) - missed(b)) * dir || a.rank - b.rank
       );
     }
+    if (CHANGE_SORT_FIELDS.includes(sort.orderBy)) {
+      const change = (w: any) =>
+        Number(getVotesChange(w, changeSortWindow, votesChangeSelection) ?? 0);
+      const dir = sort.isOrderAscending ? 1 : -1;
+      return [...filteredWitnesses].sort(
+        (a: any, b: any) => (change(a) - change(b)) * dir || a.rank - b.rank
+      );
+    }
     const apiFieldToObjField: Record<string, string> = {
       rank: "rank",
       witness: "witness_name",
@@ -377,16 +434,23 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
         String(av).localeCompare(String(bv), undefined, { numeric: true }) * dir
       );
     });
-  }, [filteredWitnesses, isClientList, sort, getRecentMissed]);
+  }, [
+    filteredWitnesses,
+    isClientList,
+    sort,
+    getRecentMissed,
+    changeSortWindow,
+    votesChangeSelection,
+  ]);
 
   const pagedWitnesses = useMemo(
     () =>
-      isMissedSort
+      isClientPaged
         ? sortedFilteredWitnesses.slice((page - 1) * pageSize, page * pageSize)
         : sortedFilteredWitnesses,
-    [isMissedSort, sortedFilteredWitnesses, page, pageSize]
+    [isClientPaged, sortedFilteredWitnesses, page, pageSize]
   );
-  const totalListed = isMissedSort
+  const totalListed = isClientPaged
     ? sortedFilteredWitnesses.length
     : witnessesData?.total_witnesses;
 
@@ -408,40 +472,78 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
         )
       : String(vests ?? "");
 
+  const signedExportHp = (vests: string | number) => {
+    const { sign, abs } = splitVestsSign(vests);
+    return `${sign === "-" ? "-" : ""}${toHp(abs)}`;
+  };
+
   const num = (value: number | string | undefined) =>
     Number(value ?? 0).toLocaleString(locale);
 
-  const prepareExportData = () =>
-    pagedWitnesses.map((witness: any) => ({
-      [t("common.rank")]: num(witness.rank),
-      [t("common.name")]: witness.witness_name,
-      [t("witnesses.votes")]: toHp(witness.vests),
-      [t("common.vests")]: relocalizeAmount(
-        formatNumber(witness.vests || 0, true),
-        locale
-      ),
-      [t("witnesses.votesChange")]: toHp(witness.votes_daily_change),
-      [t("common.vestsChange")]: relocalizeAmount(
-        formatNumber(witness.votes_daily_change || 0, true),
-        locale
-      ),
-      [t("witnesses.voters")]: num(witness.voters_num),
-      [t("witnesses.votersChange")]: num(witness.voters_num_daily_change),
-      [t("witnesses.missedblocks")]: num(witness.missed_blocks),
-      ...(recentMissed.isAvailable && {
-        [t("witnesses.missedToday")]: recentMissed.isDayUnknown
-          ? "--"
-          : num(getRecentMissed(witness.witness_name).day?.missed_count),
-        [t("witnesses.missed7Days")]: recentMissed.isWeekUnknown
-          ? "--"
-          : num(getRecentMissed(witness.witness_name).week?.missed_count),
-      }),
-      [t("witnesses.blocksize")]: num(witness.block_size),
-      [t("witnesses.apr")]: formatPercent(witness.hbd_interest_rate, locale),
-      [t("witnesses.pricefeed")]: num(witness.price_feed),
-      [t("witnesses.feedage")]: witness.feed_updated_at,
-      [t("witnesses.version")]: witness.version,
-    }));
+  // Built only when its inputs change: with the cause columns it converts about
+  // 20 amounts to HP per row.
+  const exportData = useMemo(
+    () =>
+      pagedWitnesses.map((witness: any) => ({
+        [t("common.rank")]: num(witness.rank),
+        [t("common.name")]: witness.witness_name,
+        [t("witnesses.votes")]: toHp(witness.vests),
+        [t("common.vests")]: relocalizeAmount(
+          formatNumber(witness.vests || 0, true),
+          locale
+        ),
+        [t("witnesses.votesChange")]: signedExportHp(
+          witness.votes_daily_change
+        ),
+        [t("common.vestsChange")]: relocalizeAmount(
+          formatNumber(witness.votes_daily_change || 0, true),
+          locale
+        ),
+        ...(showVotesChange &&
+          Object.fromEntries(
+            VOTES_CHANGE_WINDOWS.flatMap((window) =>
+              VOTES_CHANGE_SELECTIONS.map((cause) => [
+                `${t(causeLabelKey(cause))} (${t(WINDOW_LABEL_KEY[window])})`,
+                // A row the backend has no breakdown for has no data, not 0.
+                witness.votes_change_breakdown
+                  ? signedExportHp(
+                      getVotesChange(witness, window, cause) ?? "0"
+                    )
+                  : "",
+              ])
+            )
+          )),
+        [t("witnesses.voters")]: num(witness.voters_num),
+        [t("witnesses.votersChange")]: num(witness.voters_num_daily_change),
+        [t("witnesses.missedblocks")]: num(witness.missed_blocks),
+        ...(recentMissed.isAvailable && {
+          [t("witnesses.missedToday")]: recentMissed.isDayUnknown
+            ? "--"
+            : num(getRecentMissed(witness.witness_name).day?.missed_count),
+          [t("witnesses.missed7Days")]: recentMissed.isWeekUnknown
+            ? "--"
+            : num(getRecentMissed(witness.witness_name).week?.missed_count),
+        }),
+        [t("witnesses.blocksize")]: num(witness.block_size),
+        [t("witnesses.apr")]: formatPercent(witness.hbd_interest_rate, locale),
+        [t("witnesses.pricefeed")]: num(witness.price_feed),
+        [t("witnesses.feedage")]: witness.feed_updated_at,
+        [t("witnesses.version")]: witness.version,
+      })),
+    // toHp, num and signedExportHp are rebuilt each render from these inputs.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [
+      pagedWitnesses,
+      showVotesChange,
+      recentMissed,
+      getRecentMissed,
+      hiveChain,
+      totalVestingFundHive,
+      totalVestingShares,
+      t,
+      locale,
+    ]
+  );
 
   const handleSortBy = (clickedSortKey: string) => {
     if (!clickedSortKey || !SORT_KEY_BY_CELL[clickedSortKey]) return;
@@ -451,12 +553,27 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
     setPage(1);
     setSort((prevSort) => ({
       orderBy: apiFieldForSort,
-      // Most misses first is the useful first view.
+      // Most misses first, and the biggest gain (or loss, for a cause that
+      // only lowers votes) first, are the useful first views.
       isOrderAscending:
         apiFieldForSort === prevSort.orderBy
           ? !prevSort.isOrderAscending
-          : !MISSED_SORT_FIELDS.includes(apiFieldForSort),
+          : CHANGE_SORT_FIELDS.includes(apiFieldForSort)
+            ? LOSS_CAUSES.includes(votesChangeSelection)
+            : !MISSED_SORT_FIELDS.includes(apiFieldForSort),
     }));
+  };
+
+  const handleVotesChangeSelection = (selection: VotesChangeSelection) => {
+    setVotesChangeSelection(selection);
+    // Keep a change sort, but start it from the end that matters for the cause.
+    if (CHANGE_SORT_FIELDS.includes(sort.orderBy)) {
+      setPage(1);
+      setSort((prevSort) => ({
+        ...prevSort,
+        isOrderAscending: LOSS_CAUSES.includes(selection),
+      }));
+    }
   };
 
   if (isWitnessDataLoading) {
@@ -595,9 +712,42 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
                       dataType="witnesses.dataType"
                     />
                   )}
-                  <div className="ms-auto flex items-center gap-x-4">
+                  <div className="ms-auto flex flex-wrap items-center gap-x-4 gap-y-2">
+                    {showVotesChange && (
+                      <div className="flex items-center gap-2 text-xs">
+                        <span
+                          id="votes-change-cause-label"
+                          className="whitespace-nowrap"
+                        >
+                          {t("witnesses.votesChangeShownBy")}
+                        </span>
+                        <Select
+                          value={votesChangeSelection}
+                          onValueChange={(v) =>
+                            handleVotesChangeSelection(
+                              v as VotesChangeSelection
+                            )
+                          }
+                        >
+                          <SelectTrigger
+                            className="h-8 w-44 text-xs"
+                            data-testid="votes-change-cause"
+                            aria-labelledby="votes-change-cause-label"
+                          >
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {VOTES_CHANGE_SELECTIONS.map((cause) => (
+                              <SelectItem key={cause} value={cause}>
+                                {t(causeLabelKey(cause))}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
                     <DataExport
-                      data={prepareExportData()}
+                      data={exportData}
                       filename={`${t("witnesses.exportFileName")}_${
                         voterFilter
                           ? voterFilter
@@ -618,6 +768,9 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
                     totalVestingFundHive={totalVestingFundHive}
                     totalVestingShares={totalVestingShares}
                     recentMissed={recentMissed}
+                    showVotesChange={showVotesChange}
+                    votesChangeSelection={votesChangeSelection}
+                    rankMoveWindow={changeSortWindow}
                     onOpenVoters={(name) => {
                       setVoterAccount(name);
                       setIsVotersOpen(true);
