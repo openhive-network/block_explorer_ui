@@ -955,6 +955,37 @@ class FetchingService {
     );
   }
 
+  // The 1.28.8 release serves an older contract (`debt_ratio_pct`, no
+  // `hive_supply`) whose ratio is wrong; treat it as unsupported.
+  async getHbdStatus(
+    granularity: "daily" | "weekly" | "monthly" | "yearly",
+    direction: "asc" | "desc",
+    fromBlock?: Date | number | undefined,
+    toBlock?: Date | number | undefined
+  ): Promise<Hive.HbdStatusResponse[]> {
+    return this.withNodeSupport("hafbe-api:hbd-status", async () => {
+      const rows = await this.extendedHiveChain!.restApi["hafbe-api"].hbdStatus(
+        {
+          granularity,
+          direction,
+          "from-block": fromBlock,
+          "to-block": toBlock,
+        }
+      );
+      const sample = rows?.[0];
+      if (
+        sample &&
+        (sample.hive_supply === undefined ||
+          sample.debt_ratio_gross_pct === undefined)
+      ) {
+        throw new EndpointUnsupportedError("hafbe-api:hbd-status", {
+          transient: false,
+        });
+      }
+      return rows;
+    });
+  }
+
   async getAccountFollowCount(
     account: string
   ): Promise<Hive.AccountFollowCount> {

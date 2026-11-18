@@ -123,6 +123,12 @@ export const extendedRest = {
       responseArray: true,
       urlPath: "total_wallet_addresses",
     },
+    hbdStatus: {
+      params: Hive.HbdStatusParams,
+      result: Hive.HbdStatusResponse,
+      responseArray: true,
+      urlPath: "hbd/status",
+    },
   },
   "hafah-api": {
     block: {

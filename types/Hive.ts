@@ -1264,6 +1264,24 @@ namespace Hive {
     "to-block"?: number | Date;
   }
 
+  export class HbdStatusParams {
+    granularity!: string;
+    direction!: Hive.Direction;
+    "from-block"?: number | Date;
+    "to-block"?: number | Date;
+  }
+
+  // One row per period, sampled at `period` (the period boundary; the last row
+  // is the current state). Supplies are in milli-HBD / milli-HIVE strings.
+  export class HbdStatusResponse {
+    period!: string;
+    hbd_supply!: string;
+    hive_supply!: string;
+    virtual_supply!: string;
+    debt_ratio_gross_pct!: number;
+    hbd_interest_rate!: number;
+  }
+
   export class DailyActiveUsersParams {
     from_date?: Date | number | undefined;
     to_date?: Date | number | undefined;

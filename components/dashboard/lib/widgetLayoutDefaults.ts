@@ -21,6 +21,7 @@ export const WIDGET_LAYOUT_DEFAULTS: Record<string, WidgetLayoutDefault> = {
   "tx-stats": { w: 6, h: 5, minW: 3, minH: 4 },
   "transfer-volume": { w: 6, h: 5, minW: 3, minH: 4 },
   tvl: { w: 6, h: 3, minW: 3, minH: 3 },
+  "hbd-health": { w: 6, h: 5, minW: 3, minH: 4 },
   "network-hp-distribution": { w: 3, h: 6.7, minW: 2, minH: 5 },
   "network-growth": { w: 6, h: 3.3, minW: 3, minH: 3 },
   "hp-momentum": { w: 6, h: 5, minW: 3, minH: 4 },

@@ -15,6 +15,7 @@ import useCommunities from "@/hooks/api/communities/useCommunities";
 import TopCommunitiesCard from "@/components/home/TopCommunitiesCard";
 import TransferVolumeCard from "@/components/home/TransferVolumeCard";
 import TotalValueLockedCard from "@/components/home/TotalValueLockedCard";
+import HbdHealthCard from "@/components/home/HbdHealthCard";
 import NetworkHpDistributionCard from "@/components/home/NetworkHpDistributionCard";
 import TopHoldersWidget from "@/components/dashboard/widgets/data/TopHoldersWidget";
 import HpMomentumCard from "@/components/home/HpMomentumCard";
@@ -123,6 +124,9 @@ const StandardHome = () => {
           </NodeSupportGate>
           <NodeSupportGate widgetId="tvl">
             <TotalValueLockedCard />
+          </NodeSupportGate>
+          <NodeSupportGate widgetId="hbd-health">
+            <HbdHealthCard />
           </NodeSupportGate>
           <NodeSupportGate widgetId="hp-momentum">
             <HpMomentumCard />

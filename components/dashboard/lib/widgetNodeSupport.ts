@@ -120,6 +120,7 @@ export const WIDGET_NODE_SUPPORT: Record<string, WidgetNodeSupport> = {
     endpoint: "hafbe-api:operation-type-statistics",
   },
   "network-growth": { app: "hafbe-api", endpoint: "hafbe-api:wallet-stats" },
+  "hbd-health": { app: "hafbe-api", endpoint: "hafbe-api:hbd-status" },
   "tx-stats": {
     app: "hafbe-api",
     endpoint: "hafbe-api:transaction-statistics",

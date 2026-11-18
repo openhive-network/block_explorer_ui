@@ -35,6 +35,7 @@ import WitnessMissedBlocksCard from "@/components/home/WitnessMissedBlocksCard";
 import TransactionStatisticsCard from "@/components/home/TransactionStatisticsCard";
 import TransferVolumeCard from "@/components/home/TransferVolumeCard";
 import TotalValueLockedCard from "@/components/home/TotalValueLockedCard";
+import HbdHealthCard from "@/components/home/HbdHealthCard";
 import NetworkHpDistributionCard from "@/components/home/NetworkHpDistributionCard";
 import NetworkGrowthCard from "@/components/home/NetworkGrowthCard";
 import HpMomentumCard from "@/components/home/HpMomentumCard";
@@ -279,6 +280,14 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     category: "reports" as const,
     component: TotalValueLockedCard,
     defaultLayout: WIDGET_LAYOUT_DEFAULTS["tvl"],
+    dynamicHeight: true,
+  },
+  "hbd-health": {
+    id: "hbd-health",
+    name: "widgets.hbdHealthName",
+    category: "reports" as const,
+    component: HbdHealthCard,
+    defaultLayout: WIDGET_LAYOUT_DEFAULTS["hbd-health"],
     dynamicHeight: true,
   },
   "network-hp-distribution": {

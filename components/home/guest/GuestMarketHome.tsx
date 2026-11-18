@@ -2,6 +2,7 @@ import { LineChart } from "lucide-react";
 import TransferVolumeCard from "@/components/home/TransferVolumeCard";
 import TotalValueLockedCard from "@/components/home/TotalValueLockedCard";
 import HpMomentumCard from "@/components/home/HpMomentumCard";
+import HbdHealthCard from "@/components/home/HbdHealthCard";
 import TopHoldersWidget from "@/components/dashboard/widgets/data/TopHoldersWidget";
 import NetworkTopAccountsCard from "@/components/home/NetworkTopAccountsCard";
 import NodeSupportGate from "@/components/dashboard/ui/NodeSupportGate";
@@ -37,6 +38,9 @@ const GuestMarketHome = () => {
           </NodeSupportGate>
           <NodeSupportGate widgetId="hp-momentum">
             <HpMomentumCard />
+          </NodeSupportGate>
+          <NodeSupportGate widgetId="hbd-health">
+            <HbdHealthCard />
           </NodeSupportGate>
         </div>
 
