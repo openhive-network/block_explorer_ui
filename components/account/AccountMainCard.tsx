@@ -116,6 +116,29 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
   };
 
   const { manabarsData } = useManabars(accountName, liveDataEnabled);
+  const resourceGauges = [
+    {
+      key: "upvote",
+      label: t("accountMainCard.votingPower"),
+      data: manabarsData?.upvote,
+      barColor: "#00c040",
+      ringColor: "text-green-500",
+    },
+    {
+      key: "downvote",
+      label: t("accountMainCard.downvotePower"),
+      data: manabarsData?.downvote,
+      barColor: "#c01000",
+      ringColor: "text-red-500",
+    },
+    {
+      key: "rc",
+      label: t("accountMainCard.resourceCredits"),
+      data: manabarsData?.rc,
+      barColor: "#cecafa",
+      ringColor: "text-indigo-400",
+    },
+  ];
   const { witnessDetails } = useWitnessDetails(
     accountName,
     accountDetails.is_witness
@@ -147,7 +170,8 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
   useEffect(() => {
     setWarningDismissed(false);
   }, [accountName]);
-  const showBadActorWarning = isBadActor(badActors, accountName) && !warningDismissed;
+  const showBadActorWarning =
+    isBadActor(badActors, accountName) && !warningDismissed;
 
   const handleCloseWarning = () => {
     setWarningDismissed(true);
@@ -532,95 +556,49 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
               <h3 className="text-sm font-semibold uppercase text-gray-500 dark:text-gray-400 tracking-wider mb-4">
                 {t("accountMainCard.resourcesHeader")}
               </h3>
-              {!!manabarsData ? (
-                <>
-                  {settings.progressBarType === "linear" ? (
-                    <div className="space-y-4">
-                      <div className="text-center">
-                        <p className="mb-2 text-sm font-medium">
-                          {t("accountMainCard.votingPower")}
-                        </p>
-                        <Progress
-                          value={manabarsData.upvote.percentageValue}
-                          color="#00c040"
-                        />
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                          {manabarsData.upvote.current} /{" "}
-                          {manabarsData.upvote.max}
-                        </p>
-                      </div>
-                      <div className="text-center">
-                        <p className="mb-2 text-sm font-medium">
-                          {t("accountMainCard.downvotePower")}
-                        </p>
-                        <Progress
-                          value={manabarsData.downvote.percentageValue}
-                          color="#c01000"
-                        />
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                          {manabarsData.downvote.current} /{" "}
-                          {manabarsData.downvote.max}
-                        </p>
-                      </div>
-                      <div className="text-center">
-                        <p className="mb-2 text-sm font-medium">
-                          {t("accountMainCard.resourceCredits")}
-                        </p>
-                        <Progress
-                          value={manabarsData.rc.percentageValue}
-                          color="#cecafa"
-                        />
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                          {manabarsData.rc.current} / {manabarsData.rc.max}
-                        </p>
-                      </div>
+              {/* While the manabars load, the same gauges show empty so nothing below moves. */}
+              {settings.progressBarType === "linear" ? (
+                <div className="space-y-4">
+                  {resourceGauges.map((gauge) => (
+                    <div key={gauge.key} className="text-center">
+                      <p className="mb-2 text-sm font-medium">{gauge.label}</p>
+                      <Progress
+                        value={gauge.data?.percentageValue}
+                        color={gauge.barColor}
+                        pending={!gauge.data}
+                      />
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        {gauge.data ? (
+                          <>
+                            {gauge.data.current} / {gauge.data.max}
+                          </>
+                        ) : (
+                          " "
+                        )}
+                      </p>
                     </div>
-                  ) : (
-                    <div className="grid grid-cols-[repeat(auto-fit,minmax(80px,1fr))] justify-items-center gap-4">
-                      <RadialProgress
-                        size={70}
-                        strokeWidth={6}
-                        percentage={manabarsData.upvote.percentageValue}
-                        label={t("accountMainCard.votingPower")}
-                        color="text-green-500"
-                        tooltipContent={
-                          <p className="text-sm">
-                            {manabarsData?.upvote.current} /{" "}
-                            {manabarsData?.upvote.max}
-                          </p>
-                        }
-                      />
-                      <RadialProgress
-                        size={70}
-                        strokeWidth={6}
-                        percentage={manabarsData.downvote.percentageValue}
-                        label={t("accountMainCard.downvotePower")}
-                        color="text-red-500"
-                        tooltipContent={
-                          <p className="text-sm">
-                            {manabarsData?.downvote.current} /{" "}
-                            {manabarsData?.downvote.max}
-                          </p>
-                        }
-                      />
-                      <RadialProgress
-                        size={70}
-                        strokeWidth={6}
-                        percentage={manabarsData.rc.percentageValue}
-                        label={t("accountMainCard.resourceCredits")}
-                        color="text-indigo-400"
-                        tooltipContent={
-                          <p className="text-sm">
-                            {manabarsData?.rc.current} / {manabarsData?.rc.max}
-                          </p>
-                        }
-                      />
-                    </div>
-                  )}
-                </>
+                  ))}
+                </div>
               ) : (
-                <div className="flex justify-center items-center h-24 w-full">
-                  <Loader2 className="animate-spin h-10 w-10 text-gray-400" />
+                <div className="grid grid-cols-[repeat(auto-fit,minmax(80px,1fr))] justify-items-center gap-4">
+                  {resourceGauges.map((gauge) => (
+                    <RadialProgress
+                      key={gauge.key}
+                      size={70}
+                      strokeWidth={6}
+                      percentage={gauge.data?.percentageValue ?? 0}
+                      pending={!gauge.data}
+                      label={gauge.label}
+                      color={gauge.ringColor}
+                      tooltipContent={
+                        gauge.data && (
+                          <p className="text-sm">
+                            {gauge.data.current} / {gauge.data.max}
+                          </p>
+                        )
+                      }
+                    />
+                  ))}
                 </div>
               )}
             </div>

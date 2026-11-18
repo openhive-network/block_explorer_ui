@@ -1,5 +1,6 @@
 import React from "react";
 import { cn } from "@/lib/utils";
+import useCountUp from "@/hooks/common/useCountUp";
 import {
   TooltipProvider,
   Tooltip,
@@ -16,7 +17,12 @@ interface RadialProgressProps {
   tooltipContent?: React.ReactNode;
   labelClassName?: string;
   percentageClassName?: string;
+  // Data not loaded yet: draw the empty ring in the gauge's final size
+  // (the arcs are hidden: a zero-length round-capped arc still draws a dot).
+  pending?: boolean;
 }
+
+const GAUGE_ANIMATION_MS = 1000;
 
 const RadialProgress: React.FC<RadialProgressProps> = ({
   percentage,
@@ -27,36 +33,26 @@ const RadialProgress: React.FC<RadialProgressProps> = ({
   tooltipContent,
   labelClassName,
   percentageClassName,
+  pending = false,
 }) => {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
 
-  // Smooth fill animation
-  const [displayPercentage, setDisplayPercentage] = React.useState(0);
-  React.useEffect(() => {
-    let start = 0;
-    const duration = 1200;
-    const step = 16;
-    const increment = (percentage - start) / (duration / step);
-
-    const interval = setInterval(() => {
-      start += increment;
-      if (start >= percentage) {
-        start = percentage;
-        clearInterval(interval);
-      }
-      setDisplayPercentage(parseFloat(start.toFixed(2)));
-    }, step);
-
-    return () => clearInterval(interval);
-  }, [percentage]);
+  // One animation drives both the arc and the number. It sweeps up from 0 on
+  // first load and eases from the value shown on later refreshes.
+  const displayPercentage = useCountUp(
+    pending ? null : percentage,
+    GAUGE_ANIMATION_MS,
+    { from: "previous" }
+  );
+  const patternId = `stripes-${React.useId().replace(/[^\w-]/g, "")}`;
 
   const offset = circumference - (displayPercentage / 100) * circumference;
 
   const progressElement = (
     <div
       className={cn("flex flex-col items-center gap-1", {
-        "cursor-help": !!tooltipContent,
+        "cursor-help": !!tooltipContent && !pending,
       })}
     >
       <div className="relative" style={{ width: size, height: size }}>
@@ -74,7 +70,8 @@ const RadialProgress: React.FC<RadialProgressProps> = ({
 
           {/* Solid Progress Circle */}
           <circle
-            className={cn("transition-[stroke-dashoffset] duration-500", color)}
+            visibility={pending ? "hidden" : undefined}
+            className={color}
             stroke="currentColor"
             strokeWidth={strokeWidth}
             strokeDasharray={circumference}
@@ -89,13 +86,19 @@ const RadialProgress: React.FC<RadialProgressProps> = ({
           {/* Horizontal Striped Overlay (animated left-to-right) */}
           <defs>
             <pattern
-              id="horizontalStripesRadial"
+              id={patternId}
               width="14"
               height="8"
               patternUnits="userSpaceOnUse"
             >
               {/* Horizontal lines */}
-              <rect x="0" y="0" width="10" height="8" fill="rgba(255,255,255,0.25)" />
+              <rect
+                x="0"
+                y="0"
+                width="10"
+                height="8"
+                fill="rgba(255,255,255,0.25)"
+              />
               {/* Animate horizontally */}
               <animateTransform
                 attributeName="patternTransform"
@@ -110,7 +113,8 @@ const RadialProgress: React.FC<RadialProgressProps> = ({
 
           {/* Apply striped overlay */}
           <circle
-            stroke="url(#horizontalStripesRadial)"
+            visibility={pending ? "hidden" : undefined}
+            stroke={`url(#${patternId})`}
             strokeWidth={strokeWidth}
             strokeDasharray={circumference}
             strokeDashoffset={offset}
@@ -124,20 +128,37 @@ const RadialProgress: React.FC<RadialProgressProps> = ({
 
         {/* Center Percentage */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className={cn("text-sm font-bold text-gray-800 dark:text-white", percentageClassName)}>
-            {displayPercentage.toFixed(2)}%
-          </span>
+          {pending ? (
+            <span
+              aria-hidden
+              className="h-3 w-3/5 rounded bg-gray-200 dark:bg-gray-700 animate-pulse"
+            />
+          ) : (
+            <span
+              className={cn(
+                "text-sm font-bold text-gray-800 dark:text-white",
+                percentageClassName
+              )}
+            >
+              {displayPercentage.toFixed(2)}%
+            </span>
+          )}
         </div>
       </div>
 
       {/* Label */}
-      <p className={cn("text-xs text-center text-gray-500 dark:text-gray-400 uppercase tracking-wider", labelClassName)}>
+      <p
+        className={cn(
+          "text-xs text-center text-gray-500 dark:text-gray-400 uppercase tracking-wider",
+          labelClassName
+        )}
+      >
         {label}
       </p>
     </div>
   );
 
-  if (tooltipContent) {
+  if (tooltipContent && !pending) {
     return (
       <TooltipProvider>
         <Tooltip>
