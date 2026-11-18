@@ -123,7 +123,7 @@ const HbdHealthChart: React.FC<HbdHealthChartProps> = ({
         data={data}
         margin={{
           top: compact ? 8 : 20,
-          right: compact ? 4 : 10,
+          right: compact ? 0 : 10,
           left: compact ? 0 : 10,
           bottom: includeBrush ? 40 : 0,
         }}
@@ -152,8 +152,8 @@ const HbdHealthChart: React.FC<HbdHealthChartProps> = ({
           style={{ fontSize: compact ? "10px" : "12px" }}
           stroke={INTEREST_COLOR}
           width={compact ? 32 : 40}
-          domain={[0, (max: number) => Math.max(5, Math.ceil(max / 5) * 5)]}
-          hide={compact}
+          // A multiple of 4 splits into even ticks (0/4/8/12/16, 0/5/10/15/20).
+          domain={[0, (max: number) => Math.max(4, Math.ceil(max / 4) * 4)]}
         />
         <Tooltip content={renderTooltip} />
         {!compact && (
@@ -225,7 +225,6 @@ const HbdHealthChart: React.FC<HbdHealthChartProps> = ({
           stroke={INTEREST_COLOR}
           strokeWidth={1.5}
           dot={false}
-          hide={compact}
           isAnimationActive={animate}
         />
         {includeBrush && <ChartBrushDefs />}
