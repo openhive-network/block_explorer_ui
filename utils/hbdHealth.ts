@@ -9,9 +9,28 @@ export const TREASURY_ACCOUNT = "hive.fund";
 // HF24 (block 47,797,680), when the treasury exclusion started.
 export const HF24_TIME = Date.parse("2020-10-14T19:31:24Z");
 
-// The protocol thresholds, on the treasury-adjusted ratio only.
-export const PRINT_STOP_PCT = 20;
-export const HAIRCUT_PCT = 30;
+// The protocol's limits on the debt ratio changed twice (hived config.hpp):
+// the HBD print stop (HIVE_HBD_STOP_PERCENT_*) and the haircut, where the
+// artificial HBD price kicks in (HIVE_HBD_HARD_LIMIT*).
+export const HBD_LIMIT_ERAS = [
+  // HF26, block 68,676,505
+  {
+    from: Date.parse("2022-10-11T12:00:00Z"),
+    printStopPct: 20,
+    haircutPct: 30,
+  },
+  // HF20, block 26,256,743
+  {
+    from: Date.parse("2018-09-25T15:00:00Z"),
+    printStopPct: 10,
+    haircutPct: 10,
+  },
+  // HF14, block 5,137,542
+  { from: Date.parse("2016-09-20T15:00:00Z"), printStopPct: 5, haircutPct: 10 },
+];
+
+export const hbdLimitsAt = (ms: number) =>
+  HBD_LIMIT_ERAS.find((era) => ms >= era.from) ?? null;
 
 // balance-api has no weekly buckets. Its daily rows are sampled at midnight,
 // which is where hbd/status samples each week, so weekly joins daily rows.
@@ -36,6 +55,9 @@ export interface HbdHealthPoint {
   hiveSupply: number;
   // HIVE per HBD implied by the supplies (the median feed).
   priceHivePerHbd: number | null;
+  // The protocol's limits in force at this point (null before HF14).
+  printStopPct: number | null;
+  haircutPct: number | null;
 }
 
 // Rows are labelled with their sampling time. Both routes end with a row for
@@ -91,6 +113,7 @@ export const buildHbdHealth = (
       treasuryByKey.get(joinKey(row.period, i === status.length - 1)) ?? null;
     const sampledAtMs = toUtcMs(row.period);
     const preHf24 = sampledAtMs < HF24_TIME;
+    const limits = hbdLimitsAt(sampledAtMs);
 
     return {
       date: row.period,
@@ -116,6 +139,8 @@ export const buildHbdHealth = (
       hiveSupply,
       priceHivePerHbd:
         hbdSupply > 0 ? (virtualSupply - hiveSupply) / hbdSupply : null,
+      printStopPct: limits?.printStopPct ?? null,
+      haircutPct: limits?.haircutPct ?? null,
     };
   });
 };

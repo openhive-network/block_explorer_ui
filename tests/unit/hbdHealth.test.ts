@@ -1,6 +1,7 @@
 import Hive from "@/types/Hive";
 import {
   buildHbdHealth,
+  hbdLimitsAt,
   treasuryGranularity,
   HF24_TIME,
 } from "@/utils/hbdHealth";
@@ -142,5 +143,37 @@ describe("treasuryGranularity", () => {
     expect(treasuryGranularity("monthly")).toBe("monthly");
     expect(treasuryGranularity("daily")).toBe("daily");
     expect(treasuryGranularity("yearly")).toBe("yearly");
+  });
+});
+
+describe("hbdLimitsAt", () => {
+  // hived config.hpp: HIVE_HBD_STOP_PERCENT_HF14/HF20/HF26 and
+  // HIVE_HBD_HARD_LIMIT_PRE_HF26 / HIVE_HBD_HARD_LIMIT.
+  it("follows the hardforks that changed the print stop and haircut", () => {
+    expect(hbdLimitsAt(Date.parse("2016-06-01T00:00:00Z"))).toBeNull();
+    expect(hbdLimitsAt(Date.parse("2017-01-01T00:00:00Z"))).toMatchObject({
+      printStopPct: 5,
+      haircutPct: 10,
+    });
+    expect(hbdLimitsAt(Date.parse("2021-01-01T00:00:00Z"))).toMatchObject({
+      printStopPct: 10,
+      haircutPct: 10,
+    });
+    expect(hbdLimitsAt(Date.parse("2022-10-11T11:59:59Z"))).toMatchObject({
+      printStopPct: 10,
+    });
+    expect(hbdLimitsAt(Date.parse("2022-10-11T12:00:00Z"))).toMatchObject({
+      printStopPct: 20,
+      haircutPct: 30,
+    });
+  });
+
+  it("puts the limits in force on each point", () => {
+    const [p2021, , p2026] = buildHbdHealth(
+      [STATUS[1], STATUS[2], STATUS[3]],
+      TREASURY
+    );
+    expect([p2021.printStopPct, p2021.haircutPct]).toEqual([10, 10]);
+    expect([p2026.printStopPct, p2026.haircutPct]).toEqual([20, 30]);
   });
 });

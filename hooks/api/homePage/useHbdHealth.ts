@@ -2,7 +2,6 @@ import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import fetchingService from "@/services/FetchingService";
-import { config } from "@/Config";
 import Hive from "@/types/Hive";
 import {
   buildHbdHealth,
@@ -18,9 +17,13 @@ const useHbdHealth = (
   granularity: HbdHealthGranularity,
   fromDate?: Date | number,
   toDate?: Date | number,
-  liveDataEnabled?: boolean
+  liveDataEnabled?: boolean,
+  // The full-chart dialog's custom ranges must not mark the route unsupported
+  // and hide the home card behind it.
+  skipNodeSupportGate = false
 ) => {
-  const refetchInterval = liveDataEnabled ? config.mainRefreshInterval : false;
+  // Only the "now" row changes between refreshes; no need for the 3 s cadence.
+  const refetchInterval = liveDataEnabled ? 60_000 : false;
 
   const statusQuery = useQuery({
     queryKey: ["hbd_status", granularity, fromDate, toDate],
@@ -28,6 +31,7 @@ const useHbdHealth = (
       fetchingService.getHbdStatus(granularity, "asc", fromDate, toDate),
     refetchInterval,
     refetchOnWindowFocus: false,
+    meta: { skipNodeSupportGate },
   });
 
   const treasuryQuery = useQuery({

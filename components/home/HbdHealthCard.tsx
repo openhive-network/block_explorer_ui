@@ -55,13 +55,16 @@ const HbdHealthCard = () => {
     () => moment.utc().subtract(24, "months").startOf("month").toDate(),
     []
   );
-  const { points, isLoading, isError } = useHbdHealth(
+  const { points, isLoading, isError, isTreasuryError } = useHbdHealth(
     "monthly",
     fromDate,
     undefined,
     settings.liveData
   );
   const latest = points.length ? points[points.length - 1] : null;
+  // If the live rows didn't pair up, show the newest point that did.
+  const latestProtocol =
+    [...points].reverse().find((p) => p.protocolPct !== null) ?? null;
 
   const pct = (v: number | null | undefined, digits = 2) =>
     v === null || v === undefined
@@ -76,20 +79,25 @@ const HbdHealthCard = () => {
       key: "protocol",
       label: t("hbdHealthCard.protocolRatio"),
       info: t("hbdHealthCard.protocolRatioInfo"),
-      value: pct(latest?.protocolPct),
+      value: pct(latestProtocol?.protocolPct),
       color: PROTOCOL_COLOR,
-      note:
-        latest?.protocolPct === null
-          ? t("hbdHealthCard.protocolUnavailable")
+      note: isTreasuryError
+        ? t("hbdHealthCard.protocolUnavailable")
+        : latestProtocol && latestProtocol !== latest
+          ? t("hbdHealthCard.asOf", {
+              date: moment.utc(latestProtocol.date).format("MMM D, YYYY"),
+            })
           : undefined,
     },
     {
       key: "gross",
       label: t("hbdHealthCard.grossShare"),
-      info: t("hbdHealthCard.grossShareInfo", {
-        // About 72% when measured (Nov 2026); used until the treasury rows load.
-        pct: Math.round(latest?.treasurySharePct ?? 72),
-      }),
+      info:
+        latest?.treasurySharePct != null
+          ? t("hbdHealthCard.grossShareInfo", {
+              pct: Math.round(latest.treasurySharePct),
+            })
+          : t("hbdHealthCard.grossShareInfoNoPct"),
       value: pct(latest?.grossPct),
       color: GROSS_COLOR,
     },

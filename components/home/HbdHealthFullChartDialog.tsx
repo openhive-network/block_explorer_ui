@@ -59,7 +59,8 @@ const HbdHealthFullChartDialog: React.FC<HbdHealthFullChartDialogProps> = ({
     granularity,
     fromDate,
     toDate,
-    false
+    false,
+    true
   );
 
   const exportData = useMemo(
@@ -68,11 +69,13 @@ const HbdHealthFullChartDialog: React.FC<HbdHealthFullChartDialogProps> = ({
         [t("common.date")]: moment.utc(p.date).format("YYYY-MM-DD HH:mm"),
         [t("hbdHealthCard.protocolRatio")]: p.protocolPct?.toFixed(3) ?? "",
         [t("hbdHealthCard.grossShare")]: p.grossPct.toFixed(3),
-        [t("hbdHealthCard.interestRate")]: p.interestRatePct,
+        [t("hbdHealthCard.interestRate")]: p.interestRatePct.toFixed(2),
         [t("hbdHealthCard.hbdSupply")]: p.hbdSupply.toFixed(3),
         [t("hbdHealthCard.treasuryHbd")]: p.treasuryHbd?.toFixed(3) ?? "",
         [t("hbdHealthCard.hiveSupply")]: p.hiveSupply.toFixed(3),
         [t("hbdHealthCard.feedPrice")]: p.priceHivePerHbd?.toFixed(3) ?? "",
+        [t("hbdHealthCard.printStopLine")]: p.printStopPct ?? "",
+        [t("hbdHealthCard.haircutLine")]: p.haircutPct ?? "",
       })),
     [points, t]
   );

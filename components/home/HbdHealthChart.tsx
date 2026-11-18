@@ -9,7 +9,6 @@ import {
   ResponsiveContainer,
   Brush,
   Legend,
-  ReferenceLine,
 } from "recharts";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useI18n } from "../../i18n/i18n";
@@ -17,12 +16,7 @@ import {
   ChartBrushDefs,
   useChartBrushDefaults,
 } from "@/components/ui/ChartBrush";
-import {
-  HbdHealthGranularity,
-  HbdHealthPoint,
-  HAIRCUT_PCT,
-  PRINT_STOP_PCT,
-} from "@/utils/hbdHealth";
+import { HbdHealthGranularity, HbdHealthPoint } from "@/utils/hbdHealth";
 
 export const PROTOCOL_COLOR = "#6366f1";
 export const GROSS_COLOR = "#f59e0b";
@@ -50,6 +44,7 @@ const HbdHealthChart: React.FC<HbdHealthChartProps> = ({
   const brushDefaults = useChartBrushDefaults();
   const strokeColor = theme === "dark" ? "#FFF" : "#000";
   const hasProtocol = data.some((p) => p.protocolPct !== null);
+  const animate = !compact && data.length < 500;
 
   const pct = (v: number | null | undefined, digits = 2) =>
     v === null || v === undefined
@@ -89,6 +84,11 @@ const HbdHealthChart: React.FC<HbdHealthChartProps> = ({
       [t("hbdHealthCard.treasuryShare"), pct(p.treasurySharePct, 1)],
       [t("hbdHealthCard.hbdSupply"), amount(p.hbdSupply)],
     ];
+    if (!compact && p.printStopPct !== null && p.haircutPct !== null)
+      rows.push(
+        [t("hbdHealthCard.printStopLine"), pct(p.printStopPct, 0)],
+        [t("hbdHealthCard.haircutLine"), pct(p.haircutPct, 0)]
+      );
     return (
       <div className="bg-theme rounded shadow-xs py-1.5 px-2 text-xs max-w-[280px]">
         <p className="text-gray-400 mb-1 text-center">
@@ -164,33 +164,34 @@ const HbdHealthChart: React.FC<HbdHealthChartProps> = ({
             wrapperStyle={{ paddingTop: 8 }}
           />
         )}
-        {/* The thresholds apply to the protocol ratio only, never the gross share. */}
+        {/* The protocol's limits, as they changed by hardfork. They apply to the
+            protocol ratio only, never to the gross share. */}
         {!compact && hasProtocol && (
-          <ReferenceLine
+          <Line
             yAxisId="ratio"
-            y={PRINT_STOP_PCT}
+            name={t("hbdHealthCard.printStopLine")}
+            type="stepAfter"
+            dataKey="printStopPct"
             stroke={PROTOCOL_COLOR}
+            strokeWidth={1}
             strokeDasharray="2 4"
-            label={{
-              value: t("hbdHealthCard.printStopLine"),
-              position: "insideTopLeft",
-              fontSize: 10,
-              fill: PROTOCOL_COLOR,
-            }}
+            dot={false}
+            activeDot={false}
+            isAnimationActive={false}
           />
         )}
         {!compact && hasProtocol && (
-          <ReferenceLine
+          <Line
             yAxisId="ratio"
-            y={HAIRCUT_PCT}
-            stroke={PROTOCOL_COLOR}
+            name={t("hbdHealthCard.haircutLine")}
+            type="stepAfter"
+            dataKey="haircutPct"
+            stroke="#ef4444"
+            strokeWidth={1}
             strokeDasharray="2 4"
-            label={{
-              value: t("hbdHealthCard.haircutLine"),
-              position: "insideTopLeft",
-              fontSize: 10,
-              fill: PROTOCOL_COLOR,
-            }}
+            dot={false}
+            activeDot={false}
+            isAnimationActive={false}
           />
         )}
         {hasProtocol && (
@@ -202,8 +203,7 @@ const HbdHealthChart: React.FC<HbdHealthChartProps> = ({
             stroke={PROTOCOL_COLOR}
             strokeWidth={2}
             dot={false}
-            connectNulls
-            isAnimationActive={!compact}
+            isAnimationActive={animate}
           />
         )}
         <Line
@@ -215,7 +215,7 @@ const HbdHealthChart: React.FC<HbdHealthChartProps> = ({
           strokeWidth={1.5}
           strokeDasharray="5 3"
           dot={false}
-          isAnimationActive={!compact}
+          isAnimationActive={animate}
         />
         <Line
           yAxisId="rate"
@@ -226,7 +226,7 @@ const HbdHealthChart: React.FC<HbdHealthChartProps> = ({
           strokeWidth={1.5}
           dot={false}
           hide={compact}
-          isAnimationActive={!compact}
+          isAnimationActive={animate}
         />
         {includeBrush && <ChartBrushDefs />}
         {includeBrush && (
