@@ -126,4 +126,27 @@ describe("useCountUp", () => {
     act(() => root.render(<Probe target={null} from="previous" />));
     expect(last()).toBe(0);
   });
+
+  it("sweeps up from 0 again after going back to null", () => {
+    act(() => root.render(<Probe target={60} from="previous" />));
+    runFrame(0);
+    runFrame(1000);
+    expect(last()).toBe(60);
+    act(() => root.render(<Probe target={null} from="previous" />));
+    expect(last()).toBe(0);
+    act(() => root.render(<Probe target={60} from="previous" />));
+    runFrame(2000);
+    expect(last()).toBe(0);
+    runFrame(3000);
+    expect(last()).toBe(60);
+  });
+
+  it("recovers after a NaN target instead of staying NaN", () => {
+    act(() => root.render(<Probe target={NaN} from="previous" />));
+    expect(last()).toBe(0);
+    act(() => root.render(<Probe target={42} from="previous" />));
+    runFrame(0);
+    runFrame(1000);
+    expect(last()).toBe(42);
+  });
 });

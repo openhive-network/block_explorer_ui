@@ -17,8 +17,7 @@ interface RadialProgressProps {
   tooltipContent?: React.ReactNode;
   labelClassName?: string;
   percentageClassName?: string;
-  // Data not loaded yet: draw the empty ring in the gauge's final size
-  // (the arcs are hidden: a zero-length round-capped arc still draws a dot).
+  // Data not loaded yet: draw the empty ring in the gauge's final size.
   pending?: boolean;
 }
 
@@ -47,6 +46,8 @@ const RadialProgress: React.FC<RadialProgressProps> = ({
   );
   const patternId = `stripes-${React.useId().replace(/[^\w-]/g, "")}`;
 
+  // A zero-length round-capped arc still draws a dot.
+  const arcHidden = pending || displayPercentage <= 0;
   const offset = circumference - (displayPercentage / 100) * circumference;
 
   const progressElement = (
@@ -70,7 +71,7 @@ const RadialProgress: React.FC<RadialProgressProps> = ({
 
           {/* Solid Progress Circle */}
           <circle
-            visibility={pending ? "hidden" : undefined}
+            visibility={arcHidden ? "hidden" : undefined}
             className={color}
             stroke="currentColor"
             strokeWidth={strokeWidth}
@@ -113,7 +114,7 @@ const RadialProgress: React.FC<RadialProgressProps> = ({
 
           {/* Apply striped overlay */}
           <circle
-            visibility={pending ? "hidden" : undefined}
+            visibility={arcHidden ? "hidden" : undefined}
             stroke={`url(#${patternId})`}
             strokeWidth={strokeWidth}
             strokeDasharray={circumference}
@@ -131,7 +132,7 @@ const RadialProgress: React.FC<RadialProgressProps> = ({
           {pending ? (
             <span
               aria-hidden
-              className="h-3 w-3/5 rounded bg-gray-200 dark:bg-gray-700 animate-pulse"
+              className="h-3 w-3/5 rounded bg-gray-200 dark:bg-gray-700 motion-safe:animate-pulse"
             />
           ) : (
             <span

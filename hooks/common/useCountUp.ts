@@ -30,11 +30,17 @@ const useCountUp = (
       shownRef.current = v;
       setValue(v);
     };
-    if (target == null) {
+    // A non-finite target would otherwise stick: every later animation starts
+    // from the value shown.
+    if (target == null || !Number.isFinite(target)) {
       show(0);
       return;
     }
-    if (prefersReduced() || typeof requestAnimationFrame === "undefined") {
+    if (
+      durationMs <= 0 ||
+      prefersReduced() ||
+      typeof requestAnimationFrame === "undefined"
+    ) {
       show(target);
       return;
     }
