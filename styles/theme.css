@@ -332,10 +332,15 @@
     background-color: var(--background-start-rgb);
   }
 
-  /* Keep the page scrollbar while a modal is open so nothing shifts; wheel and
-     touch scrolling outside the modal are still blocked by the scroll lock. */
+  /* A modal's scroll lock hides the page scrollbar. Reserving its space at all
+     times keeps the page from shifting, so the lock's compensating margin is
+     dropped. The lock itself stays, so keys and the scrollbar can't scroll the
+     page behind an open modal. */
+  html {
+    scrollbar-gutter: stable;
+  }
+
   html body[data-scroll-locked] {
-    overflow: visible !important;
     margin-right: 0 !important;
   }
 

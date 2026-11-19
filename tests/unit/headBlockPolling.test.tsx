@@ -109,7 +109,11 @@ describe("head block polling", () => {
     // Same defaults as components/providers.tsx, minus retries.
     queryClient = new QueryClient({
       defaultOptions: {
-        queries: { staleTime: 10000, refetchOnWindowFocus: false, retry: false },
+        queries: {
+          staleTime: 10000,
+          refetchOnWindowFocus: false,
+          retry: false,
+        },
       },
     });
     container = document.createElement("div");
@@ -217,6 +221,7 @@ describe("head block polling", () => {
 
     await render(<Probe open={true} />);
     expect(calls("getBlockGlobalState")).toBe(1);
-    expect(explorerTime).toEqual(expect.any(Number));
+    // created_at "2026-11-09T12:00:00" is UTC whatever the test machine's zone.
+    expect(explorerTime).toBe(Date.UTC(2026, 10, 9, 12));
   });
 });

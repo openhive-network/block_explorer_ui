@@ -1,10 +1,7 @@
 import { useState } from "react";
 
 import { cn } from "@/lib/utils";
-import {
-  convertUTCDateToLocalDate,
-  formatShortDuration,
-} from "@/utils/TimeUtils";
+import { formatBlockchainTime, formatShortDuration } from "@/utils/TimeUtils";
 import useBlockchainSyncInfo from "@/hooks/common/useBlockchainSyncInfo";
 import {
   Dialog,
@@ -51,7 +48,6 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
     explorerBlockNumber,
     hiveBlockNumber,
     explorerTime,
-    hiveBlockTime,
     loading: syncLoading,
   } = useBlockchainSyncInfo(dialogOpen);
 
@@ -189,7 +185,7 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
               icon: <Clock size={15} />,
               label: t("syncInfo.lastSyncedBlock"),
               value: explorerTime
-                ? convertUTCDateToLocalDate(new Date(explorerTime))
+                ? formatBlockchainTime(new Date(explorerTime))
                 : undefined,
               accent: true,
             },

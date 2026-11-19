@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
 import fetchingService from "@/services/FetchingService";
-import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
+import { parseChainDate } from "@/utils/TimeUtils";
 import useHeadBlock from "../api/homePage/useHeadBlock";
 
 const IDLE_REFRESH_MS = 30_000;
@@ -25,12 +25,7 @@ const useBlockchainSyncInfo = (isDialogOpen = false) => {
     queryKey: ["blockchainNodeHead"],
     queryFn: async () => {
       const globals = await fetchingService.getDynamicGlobalProperties();
-      return {
-        hiveBlockNumber: globals.head_block_number,
-        hiveBlockTime: new Date(
-          formatAndDelocalizeTime(globals.time)
-        ).getTime(),
-      };
+      return { hiveBlockNumber: globals.head_block_number };
     },
     refetchInterval: isDialogOpen ? OPEN_REFRESH_MS : IDLE_REFRESH_MS,
     refetchOnWindowFocus: true,
@@ -40,15 +35,13 @@ const useBlockchainSyncInfo = (isDialogOpen = false) => {
     if (isDialogOpen) refetch();
   }, [isDialogOpen, refetch]);
 
-  const explorerTime = headBlockData?.created_at
-    ? new Date(headBlockData.created_at).getTime()
-    : undefined;
+  // The chain's zoneless timestamp is UTC; new Date() alone reads it as local.
+  const explorerTime = parseChainDate(headBlockData?.created_at)?.getTime();
 
   return {
     explorerBlockNumber,
     hiveBlockNumber: nodeHead?.hiveBlockNumber,
     explorerTime,
-    hiveBlockTime: nodeHead?.hiveBlockTime,
     loading: !nodeHead || typeof explorerBlockNumber !== "number",
   };
 };
