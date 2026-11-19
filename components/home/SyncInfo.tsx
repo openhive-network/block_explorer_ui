@@ -87,6 +87,7 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
             className
           )}
           onClick={() => setDialogOpen(true)}
+          data-testid="sync-info-trigger"
         >
           <div className=" h-[30px] w-[30px] relative p-1 flex items-center justify-center">
             {blockDifference < 10 ? (

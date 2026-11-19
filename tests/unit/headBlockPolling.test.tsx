@@ -1,6 +1,6 @@
 /**
- * @jest-environment jsdom
- * @jest-environment-options {"customExportConditions": ["node", "require", "default"]}
+ * @jest-environment ./tests/unit/support/timeZoneJsdomEnvironment.js
+ * @jest-environment-options {"customExportConditions": ["node", "require", "default"], "timeZone": "America/New_York"}
  */
 import React, { act } from "react";
 import { createRoot, Root } from "react-dom/client";
@@ -221,7 +221,8 @@ describe("head block polling", () => {
 
     await render(<Probe open={true} />);
     expect(calls("getBlockGlobalState")).toBe(1);
-    // created_at "2026-11-09T12:00:00" is UTC whatever the test machine's zone.
+    // created_at "2026-11-09T12:00:00" is UTC. The file runs in New York time,
+    // so reading it as local time would be off by five hours, even on UTC CI.
     expect(explorerTime).toBe(Date.UTC(2026, 10, 9, 12));
   });
 });
