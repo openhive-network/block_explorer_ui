@@ -65,16 +65,16 @@ const CardHeaderWithLink: React.FC<CardHeaderWithLinkProps> = ({
     >
       <CardTitle className="w-auto max-w-full shrink-0 wrap-break-word text-start text-base font-semibold">
         {title}
+        {/* Inside the heading, so jumping between headings reads the period too. */}
+        {period && (
+          <span
+            className="ms-2 inline-block rounded-full border border-gray-300 px-2 py-0.5 align-middle text-[10px] font-medium uppercase tracking-wide text-gray-500 dark:border-gray-600 dark:text-gray-400"
+            data-testid="card-period"
+          >
+            {period}
+          </span>
+        )}
       </CardTitle>
-
-      {period && (
-        <span
-          className="shrink-0 rounded-full border border-gray-300 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-gray-500 dark:border-gray-600 dark:text-gray-400"
-          data-testid="card-period"
-        >
-          {period}
-        </span>
-      )}
 
       {(actions || seeMore) && (
         <div className="ms-auto flex shrink-0 items-center gap-2">

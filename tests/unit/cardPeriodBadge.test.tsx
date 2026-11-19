@@ -47,6 +47,8 @@ describe("CardHeaderWithLink period", () => {
     });
     const badge = container.querySelector('[data-testid="card-period"]');
     expect(badge?.textContent).toBe("Last 30 days");
+    // Inside the heading, so screen readers read it with the title.
+    expect(badge?.closest("h3")).not.toBeNull();
   });
 
   it("shows no badge when the card has no period", () => {
@@ -66,4 +68,19 @@ describe("period translations", () => {
     expect(messages["common.last30Days"]).toEqual(expect.any(String));
     expect(messages["common.last30Days"].trim()).not.toBe("");
   });
+});
+
+// Both cards cover the last 30 days in every figure, so each must say so. Rendering
+// them needs their data hooks; the prop is what matters, so the source is checked.
+describe("cards that show a period", () => {
+  it.each(["NetworkOpMixCard.tsx", "NetworkRcUtilizationCard.tsx"])(
+    "%s passes the 30-day period to its header",
+    (file) => {
+      const source = fs.readFileSync(
+        path.join(__dirname, "../../components/home", file),
+        "utf8"
+      );
+      expect(source).toMatch(/period=\{t\("common\.last30Days"\)\}/);
+    }
+  );
 });
