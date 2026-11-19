@@ -13,6 +13,8 @@ interface CardHeaderWithLinkProps {
   linkTestId?: string;
   className?: string;
   actions?: React.ReactNode;
+  // The time window the card's figures cover, e.g. "Last 30 days".
+  period?: string;
 }
 
 const CardHeaderWithLink: React.FC<CardHeaderWithLinkProps> = ({
@@ -23,6 +25,7 @@ const CardHeaderWithLink: React.FC<CardHeaderWithLinkProps> = ({
   linkTestId = "see-more-link",
   className,
   actions,
+  period,
 }) => {
   const { t, dir } = useI18n();
   const SeeMoreIcon = dir === "rtl" ? MoveLeft : MoveRight;
@@ -63,6 +66,15 @@ const CardHeaderWithLink: React.FC<CardHeaderWithLinkProps> = ({
       <CardTitle className="w-auto max-w-full shrink-0 wrap-break-word text-start text-base font-semibold">
         {title}
       </CardTitle>
+
+      {period && (
+        <span
+          className="shrink-0 rounded-full border border-gray-300 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-gray-500 dark:border-gray-600 dark:text-gray-400"
+          data-testid="card-period"
+        >
+          {period}
+        </span>
+      )}
 
       {(actions || seeMore) && (
         <div className="ms-auto flex shrink-0 items-center gap-2">

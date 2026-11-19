@@ -209,6 +209,7 @@ const NetworkOpMixCard: React.FC = () => {
     <div className="bg-theme rounded mb-2 shadow-md overflow-hidden">
       <CardHeaderWithLink
         title={t("networkOpMixCard.title")}
+        period={t("common.last30Days")}
         actions={
           <>
             <button

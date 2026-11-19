@@ -132,7 +132,7 @@ const NetworkRcUtilizationCard = () => {
       labelKey: "networkRcUtilizationCard.totalRc",
       Icon: Cpu,
       value: stats.total !== null ? formatRc(stats.total, locale) : null,
-      sub: t("networkRcUtilizationCard.last30d"),
+      sub: null,
       trend: stats.trend,
     },
     {
@@ -187,6 +187,7 @@ const NetworkRcUtilizationCard = () => {
     <div className="bg-theme rounded mb-2 shadow-md overflow-hidden">
       <CardHeaderWithLink
         title={t("widgets.networkRcUtilizationName")}
+        period={t("common.last30Days")}
         actions={
           <button
             onClick={() => setIsModalOpen(true)}
