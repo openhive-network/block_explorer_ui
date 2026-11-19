@@ -39,14 +39,13 @@ import WitnessesTable, {
 import {
   LOSS_CAUSES,
   VOTES_CHANGE_SELECTIONS,
-  VOTES_CHANGE_WINDOWS,
   VotesChangeSelection,
   VotesChangeWindowKey,
   causeLabelKey,
   getVotesChange,
   hasVotesChangeBreakdown,
   splitVestsSign,
-  WINDOW_LABEL_KEY,
+  votesChangeExportColumns,
 } from "@/components/Witnesses/VotesChange";
 import {
   Select,
@@ -492,27 +491,13 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
           formatNumber(witness.vests || 0, true),
           locale
         ),
-        [t("witnesses.votesChange")]: signedExportHp(
-          witness.votes_daily_change
+        ...votesChangeExportColumns(
+          witness,
+          showVotesChange,
+          t,
+          signedExportHp,
+          (vests) => relocalizeAmount(formatNumber(vests || 0, true), locale)
         ),
-        [t("common.vestsChange")]: relocalizeAmount(
-          formatNumber(witness.votes_daily_change || 0, true),
-          locale
-        ),
-        ...(showVotesChange &&
-          Object.fromEntries(
-            VOTES_CHANGE_WINDOWS.flatMap((window) =>
-              VOTES_CHANGE_SELECTIONS.map((cause) => [
-                `${t(causeLabelKey(cause))} (${t(WINDOW_LABEL_KEY[window])})`,
-                // A row the backend has no breakdown for has no data, not 0.
-                witness.votes_change_breakdown
-                  ? signedExportHp(
-                      getVotesChange(witness, window, cause) ?? "0"
-                    )
-                  : "",
-              ])
-            )
-          )),
         [t("witnesses.voters")]: num(witness.voters_num),
         [t("witnesses.votersChange")]: num(witness.voters_num_daily_change),
         [t("witnesses.missedblocks")]: num(witness.missed_blocks),

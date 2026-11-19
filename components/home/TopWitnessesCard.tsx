@@ -12,6 +12,7 @@ import { grabNumericValue } from "@/utils/StringUtils";
 import { Card, CardContent } from "@/components/ui/card";
 import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
 import HiveAvatar from "@/components/ui/HiveAvatar";
+import { todayVotesChange } from "@/components/Witnesses/VotesChange";
 
 interface TopWitnessesCardProps {
   witnessesData?: { witnesses: Hive.Witness[] };
@@ -67,13 +68,13 @@ const TopWitnessesCard = ({
       return formatted ? grabNumericValue(formatted) : 0;
     };
     return witnesses.map((witness) => {
-      const changeSign = Number(witness.votes_daily_change) || 0;
+      const change = todayVotesChange(witness);
+      const changeSign = Number(change) || 0;
       return {
         witness,
         hp: toHp(witness.vests),
         changeSign,
-        changeHp:
-          changeSign !== 0 ? Math.abs(toHp(witness.votes_daily_change)) : 0,
+        changeHp: changeSign !== 0 ? toHp(change.replace(/^-/, "")) : 0,
         isInactive: witness.signing_key === config.inactiveWitnessKey,
       };
     });

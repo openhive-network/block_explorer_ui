@@ -8,6 +8,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/hybrid-tooltip";
 import Hive from "@/types/Hive";
+import useBlockData from "@/hooks/api/blockPage/useBlockData";
+import { parseChainDate } from "@/utils/TimeUtils";
 
 export const VOTES_CHANGE_WINDOWS = ["today", "7d"] as const;
 export type VotesChangeWindowKey = (typeof VOTES_CHANGE_WINDOWS)[number];
@@ -60,6 +62,47 @@ export const getVotesChange = (
   (
     witness?.votes_change_breakdown as Hive.WitnessVotesChangeBreakdown | null
   )?.[window]?.[selection];
+
+// The breakdown's total covers every cause. votes_daily_change only adds up
+// the vote and unvote rows, so it misses weight changes and proxy moves.
+export const todayVotesChange = (witness: any): string =>
+  String(
+    (witness?.votes_change_breakdown as Hive.WitnessVotesChangeBreakdown | null)
+      ?.today?.total ??
+      witness?.votes_daily_change ??
+      "0"
+  );
+
+// The CSV's votes change columns. With the breakdown, its per-cause columns
+// replace the old change columns; a witness the node has not refreshed yet
+// keeps its old figure under All causes (Today), as the table shows it.
+export const votesChangeExportColumns = (
+  witness: any,
+  showVotesChange: boolean,
+  t: (key: string) => string,
+  hp: (vests: string) => string,
+  vests: (vests: string) => string
+): Record<string, string> => {
+  if (!showVotesChange) {
+    const change = String(witness?.votes_daily_change ?? "0");
+    return {
+      [t("witnesses.votesChange")]: hp(change),
+      [t("common.vestsChange")]: vests(change),
+    };
+  }
+  return Object.fromEntries(
+    VOTES_CHANGE_WINDOWS.flatMap((window) =>
+      VOTES_CHANGE_SELECTIONS.map((cause) => [
+        `${t(causeLabelKey(cause))} (${t(WINDOW_LABEL_KEY[window])})`,
+        witness?.votes_change_breakdown
+          ? hp(getVotesChange(witness, window, cause) ?? "0")
+          : window === "today" && cause === "total"
+            ? hp(todayVotesChange(witness))
+            : "",
+      ])
+    )
+  );
+};
 
 const signClass = (value: number) =>
   value > 0
@@ -203,17 +246,49 @@ export const VotesChangeBadge: React.FC<VotesChangeBadgeProps> = ({
               })}
             </p>
           )}
+          {/* The votes history lists proxy, expiry and declined-rights drops as
+              plain removals, even when a proxy move nets to 0 here. */}
+          {data.voters > 0 && (
+            <p className="mt-1 opacity-75" data-testid="votes-change-drops">
+              {t("witnesses.votesChangeDropsNote")}
+            </p>
+          )}
           <p className="mt-1 opacity-75">
             {t("witnesses.votesChangeDelegations")}
           </p>
-          <p className="opacity-75">
-            {t("witnesses.votesChangeAsOf", {
-              block: breakdown.as_of_block?.toLocaleString(locale),
-            })}
-          </p>
+          <VotesChangeAsOf block={breakdown.as_of_block} />
         </TooltipContent>
       </TooltipPortal>
     </Tooltip>
+  );
+};
+
+// "HH:mm UTC" for a time today (UTC), with the date otherwise.
+export const formatAsOfTime = (date: Date, now: Date = new Date()): string => {
+  const iso = date.toISOString();
+  const time = `${iso.slice(11, 16)} UTC`;
+  return iso.slice(0, 10) === now.toISOString().slice(0, 10)
+    ? time
+    : `${iso.slice(0, 10).replaceAll("-", "/")} ${time}`;
+};
+
+// When the breakdown was computed. The block's time is looked up when the
+// tooltip opens (every witness shares the block, so it is fetched once): a
+// block number alone doesn't show that votes newer than it are not counted yet.
+const VotesChangeAsOf: React.FC<{ block: number }> = ({ block }) => {
+  const { t, locale } = useI18n();
+  const { blockDetails } = useBlockData(block);
+  const date = parseChainDate(blockDetails?.created_at);
+  const blockText = block?.toLocaleString(locale);
+  return (
+    <p className="opacity-75" data-testid="votes-change-as-of">
+      {date
+        ? t("witnesses.votesChangeAsOfTime", {
+            time: formatAsOfTime(date),
+            block: blockText,
+          })
+        : t("witnesses.votesChangeAsOf", { block: blockText })}
+    </p>
   );
 };
 
