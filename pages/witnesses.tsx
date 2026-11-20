@@ -28,6 +28,7 @@ import { Card } from "@/components/ui/card";
 import useWitnessVoteChain from "@/hooks/api/common/useWitnessVoteChain";
 import useRecentMissedBlocks from "@/hooks/api/common/useRecentMissedBlocks";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSettings } from "@/contexts/SettingsContext";
 import VoterFilterBanner from "@/components/Witnesses/VoterFilterBanner";
 import useCompareSelection from "@/hooks/common/useCompareSelection";
 import CompareSelectionBar from "@/components/compare/CompareSelectionBar";
@@ -340,6 +341,7 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
   } = useWitnessVoteChain(voterFilter || "");
 
   const { username, isLoggedIn } = useAuth();
+  const { settings } = useSettings();
 
   // Logged-in user's proxy chain — drives the proxy banner.
   const { proxyChain: userProxyChain } = useWitnessVoteChain(
@@ -475,6 +477,13 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
     const { sign, abs } = splitVestsSign(vests);
     return `${sign === "-" ? "-" : ""}${toHp(abs)}`;
   };
+  const signedExportVests = (vests: string | number) => {
+    const { sign, abs } = splitVestsSign(vests);
+    return `${sign === "-" ? "-" : ""}${relocalizeAmount(formatNumber(abs || 0, true), locale)} ${t("common.vests")}`;
+  };
+  // The per-cause columns follow the HP / VESTS display setting, like the
+  // table; without the breakdown the export already gives both units.
+  const exportVests = showVotesChange && settings.displayVestHpMode === "vests";
 
   const num = (value: number | string | undefined) =>
     Number(value ?? 0).toLocaleString(locale);
@@ -495,7 +504,7 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
           witness,
           showVotesChange,
           t,
-          signedExportHp,
+          exportVests ? signedExportVests : signedExportHp,
           (vests) => relocalizeAmount(formatNumber(vests || 0, true), locale)
         ),
         [t("witnesses.voters")]: num(witness.voters_num),
@@ -515,11 +524,12 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
         [t("witnesses.feedage")]: witness.feed_updated_at,
         [t("witnesses.version")]: witness.version,
       })),
-    // toHp, num and signedExportHp are rebuilt each render from these inputs.
+    // toHp, num and the signed formatters are rebuilt each render from these inputs.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       pagedWitnesses,
       showVotesChange,
+      exportVests,
       recentMissed,
       getRecentMissed,
       hiveChain,
