@@ -41,6 +41,8 @@ import Hive from "@/types/Hive";
 import VotesHistoryWidget from "./VotesHistoryChart";
 import { useSettings } from "@/contexts/SettingsContext";
 import HiveAvatar from "@/components/ui/HiveAvatar";
+import { TooltipProvider } from "@/components/ui/hybrid-tooltip";
+import VoteRemovalCause, { voteExportLabel } from "./VoteRemovalCause";
 
 type VotesHistoryDialogProps = {
   accountName: string;
@@ -176,9 +178,7 @@ const VotesHistoryDialog: React.FC<VotesHistoryDialogProps> = ({
     return votesHistory.votes_history.map((vote: Hive.WitnessVotesHistory) => ({
       [t("votesHistoryDialog.date")]: formatAndDelocalizeTime(vote.timestamp),
       [t("votersDialog.voter")]: vote.voter_name,
-      [t("votesHistoryDialog.vote")]: vote.approve
-        ? t("votesHistoryDialog.approve", "Approve")
-        : t("votesHistoryDialog.disapprove", "Disapprove"),
+      [t("votesHistoryDialog.vote")]: voteExportLabel(vote, t),
       [t("votesHistoryDialog.currentVoterPower")]: fetchHivePower(
         vote.vests.toString(),
         isHP
@@ -293,65 +293,75 @@ const VotesHistoryDialog: React.FC<VotesHistoryDialogProps> = ({
 
                 <div className="flex-1 min-h-0">
                   <div className="text-text w-full rounded bg-theme overflow-auto relative">
-                    <Table
-                      enableMobileScrollArrows
-                      isDialog
-                      className="min-w-max"
-                    >
-                      <TableHeader>
-                        <TableRow rowVariant="header">
-                          <TableHead stickyLeft>
-                            {t("votesHistoryDialog.date")}
-                          </TableHead>
-                          <TableHead>{t("votersDialog.voter")}</TableHead>
-                          <TableHead>{t("votesHistoryDialog.vote")}</TableHead>
-                          <TableHead className="text-right">
-                            {t("votesHistoryDialog.currentVoterPower")}
-                          </TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody data-testid="votes-history-dialog-table-body">
-                        {votesHistory.votes_history.map(
-                          (vote: Hive.WitnessVotesHistory) => (
-                            <TableRow
-                              key={`${vote.voter_name}-${vote.timestamp}`}
-                            >
-                              <TableCell stickyLeft>
-                                {formatAndDelocalizeTime(vote.timestamp)}
-                              </TableCell>
-                              <TableCell>
-                                <div className="flex items-center space-x-2">
-                                  <HiveAvatar
-                                    accountName={vote.voter_name}
-                                    size={30}
-                                    alt={`${vote.voter_name}'s profile`}
-                                    className="rounded-full"
-                                  />
-                                  <Link
-                                    className="text-link"
-                                    href={`/@${vote.voter_name}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                  >
-                                    {vote.voter_name}
-                                  </Link>
-                                </div>
-                              </TableCell>
-                              <TableCell>
-                                {vote.approve ? (
-                                  <ArrowUpCircleIcon color="#17e405" />
-                                ) : (
-                                  <ArrowDownCircleIcon color="#f71b1b" />
-                                )}
-                              </TableCell>
-                              <TableCell className="text-right">
-                                {fetchHivePower(vote.vests.toString(), isHP)}
-                              </TableCell>
-                            </TableRow>
-                          )
-                        )}
-                      </TableBody>
-                    </Table>
+                    <TooltipProvider>
+                      <Table
+                        enableMobileScrollArrows
+                        isDialog
+                        className="min-w-max"
+                      >
+                        <TableHeader>
+                          <TableRow rowVariant="header">
+                            <TableHead stickyLeft>
+                              {t("votesHistoryDialog.date")}
+                            </TableHead>
+                            <TableHead>{t("votersDialog.voter")}</TableHead>
+                            <TableHead>
+                              {t("votesHistoryDialog.vote")}
+                            </TableHead>
+                            <TableHead className="text-right">
+                              {t("votesHistoryDialog.currentVoterPower")}
+                            </TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody data-testid="votes-history-dialog-table-body">
+                          {votesHistory.votes_history.map(
+                            (vote: Hive.WitnessVotesHistory) => (
+                              <TableRow
+                                key={`${vote.voter_name}-${vote.timestamp}`}
+                              >
+                                <TableCell stickyLeft>
+                                  {formatAndDelocalizeTime(vote.timestamp)}
+                                </TableCell>
+                                <TableCell>
+                                  <div className="flex items-center space-x-2">
+                                    <HiveAvatar
+                                      accountName={vote.voter_name}
+                                      size={30}
+                                      alt={`${vote.voter_name}'s profile`}
+                                      className="rounded-full"
+                                    />
+                                    <Link
+                                      className="text-link"
+                                      href={`/@${vote.voter_name}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                    >
+                                      {vote.voter_name}
+                                    </Link>
+                                  </div>
+                                </TableCell>
+                                <TableCell>
+                                  <div className="flex items-center gap-2">
+                                    {vote.approve ? (
+                                      <ArrowUpCircleIcon color="#17e405" />
+                                    ) : (
+                                      <ArrowDownCircleIcon color="#f71b1b" />
+                                    )}
+                                    <VoteRemovalCause
+                                      vote={vote}
+                                      witness={accountName}
+                                    />
+                                  </div>
+                                </TableCell>
+                                <TableCell className="text-right">
+                                  {fetchHivePower(vote.vests.toString(), isHP)}
+                                </TableCell>
+                              </TableRow>
+                            )
+                          )}
+                        </TableBody>
+                      </Table>
+                    </TooltipProvider>
                   </div>
                 </div>
               </div>

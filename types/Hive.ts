@@ -384,9 +384,20 @@ namespace Hive {
     "voter-name"!: string | undefined;
   }
 
+  // What a votes-history row did, from its source operation (hafbe #214);
+  // absent on nodes that predate it, null when the operation isn't found.
+  export type WitnessVoteCause =
+    | "votes_cast"
+    | "votes_removed"
+    | "proxy"
+    | "expired"
+    | "declined";
+
   export class WitnessVotesHistory {
     voter_name!: string;
     approve!: boolean;
+    cause?: WitnessVoteCause | null;
+    proxy_name?: string | null;
     vests!: number;
     account_vests!: number;
     proxied_vests!: number;
