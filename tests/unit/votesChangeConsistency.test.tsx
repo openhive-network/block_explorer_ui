@@ -31,6 +31,7 @@ jest.mock("@/components/ui/hybrid-tooltip", () => {
     Tooltip: Pass,
     TooltipTrigger: Pass,
     TooltipPortal: Pass,
+    TooltipProvider: Pass,
     TooltipContent: Pass,
   };
 });
@@ -240,10 +241,14 @@ describe("votes change: one figure everywhere", () => {
         />
       );
     });
-    // -52,826,894 HP at 1 HP per 1M VESTS, not the old -36.5M.
-    expect(container.querySelector("span[title]")?.getAttribute("title")).toBe(
-      "-52.8M HP"
+    // -52,826,894 HP at 1 HP per 1M VESTS, not the old -36.5M. The figure is
+    // a focusable button, so it reads without a mouse, and it says "today".
+    const label = 'home.votesChangeToday {"change":"-52.8M HP"}';
+    const change = container.querySelector(
+      'button[data-testid="top-witness-votes-change"]'
     );
+    expect(change?.getAttribute("aria-label")).toBe(label);
+    expect(container.textContent).toContain(label);
   });
 
   describe("CSV columns", () => {

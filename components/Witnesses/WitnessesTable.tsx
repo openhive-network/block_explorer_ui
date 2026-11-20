@@ -41,7 +41,12 @@ import CompareSelectToggle from "@/components/compare/CompareSelectToggle";
 import { CompareSelection } from "@/hooks/common/useCompareSelection";
 import HiveAvatar from "@/components/ui/HiveAvatar";
 import useMediaQuery from "@/hooks/common/useMediaQuery";
-import { TooltipProvider as HybridTooltipProvider } from "@/components/ui/hybrid-tooltip";
+import {
+  Tooltip as HybridTooltip,
+  TooltipContent as HybridTooltipContent,
+  TooltipProvider as HybridTooltipProvider,
+  TooltipTrigger as HybridTooltipTrigger,
+} from "@/components/ui/hybrid-tooltip";
 import {
   RankMove,
   signedHp,
@@ -588,16 +593,30 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
                       {singleWitness.voters_num.toLocaleString(locale)}
                     </span>
                     {singleWitness.voters_num_daily_change !== 0 && (
-                      <span
-                        className={changeClass(
-                          singleWitness.voters_num_daily_change
-                        )}
-                      >
-                        {singleWitness.voters_num_daily_change > 0 ? "+" : ""}
-                        {singleWitness.voters_num_daily_change.toLocaleString(
-                          locale
-                        )}
-                      </span>
+                      <HybridTooltip>
+                        <HybridTooltipTrigger asChild>
+                          <button
+                            type="button"
+                            className={cn(
+                              changeClass(
+                                singleWitness.voters_num_daily_change
+                              ),
+                              "cursor-help"
+                            )}
+                            data-testid="witness-voters-change"
+                          >
+                            {singleWitness.voters_num_daily_change > 0
+                              ? "+"
+                              : ""}
+                            {singleWitness.voters_num_daily_change.toLocaleString(
+                              locale
+                            )}
+                          </button>
+                        </HybridTooltipTrigger>
+                        <HybridTooltipContent className="bg-theme text-text text-xs max-w-xs text-left">
+                          {t("witnesses.votersChangeTooltip")}
+                        </HybridTooltipContent>
+                      </HybridTooltip>
                     )}
                     <MenuSquareIcon
                       className="w-4 h-4 cursor-pointer opacity-50 hover:opacity-80 transition-opacity duration-200 absolute top-1/2 end-0 transform -translate-y-1/2"

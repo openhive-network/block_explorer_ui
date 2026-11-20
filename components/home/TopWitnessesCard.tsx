@@ -13,6 +13,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
 import HiveAvatar from "@/components/ui/HiveAvatar";
 import { todayVotesChange } from "@/components/Witnesses/VotesChange";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipPortal,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/hybrid-tooltip";
 
 interface TopWitnessesCardProps {
   witnessesData?: { witnesses: Hive.Witness[] };
@@ -80,6 +87,11 @@ const TopWitnessesCard = ({
     });
   }, [witnessesData, hiveChain, dynamicGlobalData]);
 
+  const changeLabel = (sign: number, hp: number) =>
+    t("home.votesChangeToday", {
+      change: `${sign > 0 ? "+" : "-"}${formatHpCompact(hp, locale)}`,
+    });
+
   return (
     <Card
       className="col-span-12 md:col-span-11 lg:col-span-3 overflow-hidden flex flex-col mb-2"
@@ -91,71 +103,87 @@ const TopWitnessesCard = ({
         linkTestId="see-witnesses-link"
       />
       <CardContent className="px-2 py-2 overflow-y-auto grow">
-        <div className="flex flex-col gap-1">
-          {isLoading
-            ? Array.from({ length: 10 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="h-8 rounded-lg bg-explorer-extra-light-gray animate-pulse"
-                />
-              ))
-            : rows.map(({ witness, hp, changeSign, changeHp, isInactive }) => {
-                const name = witness.witness_name;
-                return (
+        <TooltipProvider>
+          <div className="flex flex-col gap-1">
+            {isLoading
+              ? Array.from({ length: 10 }).map((_, i) => (
                   <div
-                    key={name}
-                    data-testid="witnesses-name"
-                    className="flex items-center gap-2 px-2 py-1.5 rounded-lg bg-explorer-extra-light-gray transition-colors hover:bg-rowHover"
-                  >
-                    <span className="w-4 text-center text-xs text-gray-500 shrink-0 tabular-nums">
-                      {witness.rank}
-                    </span>
-                    <Link href={`/@${name}`} className="shrink-0">
-                      <HiveAvatar
-                        accountName={name}
-                        size={22}
-                        alt={name}
-                        className="rounded-full border border-link/60"
-                      />
-                    </Link>
-                    <Link
-                      href={`/@${name}`}
-                      title={name}
-                      className={cn(
-                        "text-sm truncate grow min-w-0 text-link",
-                        isInactive && "opacity-50 line-through"
-                      )}
-                    >
-                      {name}
-                    </Link>
-                    <div className="flex items-center gap-1 shrink-0">
-                      {changeSign !== 0 && (
-                        <span
-                          title={`${changeSign > 0 ? "+" : "-"}${formatHpCompact(changeHp, locale)}`}
-                        >
-                          {changeSign > 0 ? (
-                            <ChevronUp
-                              className="h-3.5 w-3.5"
-                              color="#22c55e"
-                              strokeWidth={6}
-                            />
-                          ) : (
-                            <ChevronDown
-                              className="h-3.5 w-3.5"
-                              color="#ef4444"
-                              strokeWidth={6}
-                            />
-                          )}
+                    key={i}
+                    className="h-8 rounded-lg bg-explorer-extra-light-gray animate-pulse"
+                  />
+                ))
+              : rows.map(
+                  ({ witness, hp, changeSign, changeHp, isInactive }) => {
+                    const name = witness.witness_name;
+                    return (
+                      <div
+                        key={name}
+                        data-testid="witnesses-name"
+                        className="flex items-center gap-2 px-2 py-1.5 rounded-lg bg-explorer-extra-light-gray transition-colors hover:bg-rowHover"
+                      >
+                        <span className="w-4 text-center text-xs text-gray-500 shrink-0 tabular-nums">
+                          {witness.rank}
                         </span>
-                      )}
-                      <span className="text-xs font-semibold text-explorer-dark-gray dark:text-text tabular-nums">
-                        {hp > 0 ? formatHpCompact(hp, locale) : "--"}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
-        </div>
+                        <Link href={`/@${name}`} className="shrink-0">
+                          <HiveAvatar
+                            accountName={name}
+                            size={22}
+                            alt={name}
+                            className="rounded-full border border-link/60"
+                          />
+                        </Link>
+                        <Link
+                          href={`/@${name}`}
+                          title={name}
+                          className={cn(
+                            "text-sm truncate grow min-w-0 text-link",
+                            isInactive && "opacity-50 line-through"
+                          )}
+                        >
+                          {name}
+                        </Link>
+                        <div className="flex items-center gap-1 shrink-0">
+                          {changeSign !== 0 && (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <button
+                                  type="button"
+                                  className="cursor-help rounded"
+                                  aria-label={changeLabel(changeSign, changeHp)}
+                                  data-testid="top-witness-votes-change"
+                                >
+                                  {changeSign > 0 ? (
+                                    <ChevronUp
+                                      className="h-3.5 w-3.5"
+                                      color="#22c55e"
+                                      strokeWidth={6}
+                                    />
+                                  ) : (
+                                    <ChevronDown
+                                      className="h-3.5 w-3.5"
+                                      color="#ef4444"
+                                      strokeWidth={6}
+                                    />
+                                  )}
+                                </button>
+                              </TooltipTrigger>
+                              <TooltipPortal>
+                                <TooltipContent className="bg-theme text-text text-xs">
+                                  {changeLabel(changeSign, changeHp)}
+                                </TooltipContent>
+                              </TooltipPortal>
+                            </Tooltip>
+                          )}
+                          <span className="text-xs font-semibold text-explorer-dark-gray dark:text-text tabular-nums">
+                            {hp > 0 ? formatHpCompact(hp, locale) : "--"}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  }
+                )}
+          </div>
+        </TooltipProvider>
       </CardContent>
     </Card>
   );
