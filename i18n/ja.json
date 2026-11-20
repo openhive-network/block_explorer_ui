@@ -1439,7 +1439,7 @@
   "votesHistoryDialog.cause.declined": "投票権の放棄",
   "votesHistoryDialog.causeTooltip.votes_removed": "投票者がこの証人への投票を取り消しました。",
   "votesHistoryDialog.causeTooltip.proxy": "証人プロキシを設定すると、そのアカウント自身の証人投票は消去されます。",
-  "votesHistoryDialog.causeTooltip.expired": "このアカウントは1年間ガバナンス投票を行わなかったため、証人投票が失効しました。",
+  "votesHistoryDialog.causeTooltip.expired": "このアカウントは1年間、証人や提案への投票もプロキシの変更も行わなかったため、証人投票が失効しました。",
   "votesHistoryDialog.causeTooltip.declined": "このアカウントは投票権を放棄したため、すべての証人投票が削除されました。",
   "votesHistoryDialog.causeTooltip.proxyStillCounts": "{{proxy}} は {{witness}} に投票しているため、{{voter}} の投票力は {{proxy}} を通じて引き続き {{witness}} に反映されます。",
   "common.vestsChange": "VESTSの変更",

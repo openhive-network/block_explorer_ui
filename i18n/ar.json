@@ -1439,7 +1439,7 @@
   "votesHistoryDialog.cause.declined": "التنازل عن حق التصويت",
   "votesHistoryDialog.causeTooltip.votes_removed": "سحب المصوّت صوته لهذا الشاهد.",
   "votesHistoryDialog.causeTooltip.proxy": "تعيين وكيل لأصوات الشهود يمسح أصوات الحساب الخاصة للشهود.",
-  "votesHistoryDialog.causeTooltip.expired": "لم يُدلِ الحساب بأي صوت حوكمة لمدة عام، لذلك انتهت أصواته للشهود.",
+  "votesHistoryDialog.causeTooltip.expired": "لم يصوّت الحساب لأي شاهد أو مقترح ولم يغيّر وكيله لمدة عام، لذلك انتهت أصواته للشهود.",
   "votesHistoryDialog.causeTooltip.declined": "تنازل الحساب عن حقه في التصويت، مما يزيل جميع أصواته للشهود.",
   "votesHistoryDialog.causeTooltip.proxyStillCounts": "يصوّت {{proxy}} لـ {{witness}}، لذا يظل وزن {{voter}} محسوبًا لـ {{witness}} عبر {{proxy}}.",
   "common.vestsChange": "تغيير VESTS",

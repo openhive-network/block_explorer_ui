@@ -1439,7 +1439,7 @@
   "votesHistoryDialog.cause.declined": "Verzicht auf Stimmrecht",
   "votesHistoryDialog.causeTooltip.votes_removed": "Der Wähler hat seine Stimme für diesen Zeugen entzogen.",
   "votesHistoryDialog.causeTooltip.proxy": "Wer einen Zeugen-Proxy setzt, verliert seine eigenen Zeugenstimmen.",
-  "votesHistoryDialog.causeTooltip.expired": "Das Konto hat ein Jahr lang an keiner Governance-Abstimmung teilgenommen, daher sind seine Zeugenstimmen abgelaufen.",
+  "votesHistoryDialog.causeTooltip.expired": "Das Konto hat ein Jahr lang weder für Zeugen noch für Vorschläge gestimmt und keinen Proxy geändert, daher sind seine Zeugenstimmen abgelaufen.",
   "votesHistoryDialog.causeTooltip.declined": "Das Konto hat auf sein Stimmrecht verzichtet; damit entfallen alle seine Zeugenstimmen.",
   "votesHistoryDialog.causeTooltip.proxyStillCounts": "{{proxy}} stimmt für {{witness}}, daher zählt das Gewicht von {{voter}} über {{proxy}} weiterhin für {{witness}}.",
   "common.vestsChange": "VESTS-Änderung",

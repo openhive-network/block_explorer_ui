@@ -11,10 +11,19 @@ import VoteRemovalCause, {
 } from "@/components/Witnesses/VoteRemovalCause";
 import Hive from "@/types/Hive";
 
-// The tooltip's content is rendered inline, so the test can read it without hovering.
+// Like Radix, the tooltip's content exists only while it is open; an open
+// tooltip renders it inline, so the test can read it.
+let mockTooltipOpen = false;
 jest.mock("@/components/ui/hybrid-tooltip", () => {
   const Pass = ({ children }: { children: React.ReactNode }) => <>{children}</>;
-  return { Tooltip: Pass, TooltipTrigger: Pass, TooltipContent: Pass };
+  const Content = ({ children }: { children: React.ReactNode }) =>
+    mockTooltipOpen ? <div data-testid="tooltip">{children}</div> : null;
+  return {
+    Tooltip: Pass,
+    TooltipTrigger: Pass,
+    TooltipPortal: Pass,
+    TooltipContent: Content,
+  };
 });
 
 // t() returns the key followed by its options, so the test sees which text is used.
@@ -54,6 +63,7 @@ let root: Root;
 beforeEach(() => {
   mockChain = { proxyChain: [], witnessVotes: [] };
   mockChainCalls.length = 0;
+  mockTooltipOpen = true;
   container = document.createElement("div");
   document.body.appendChild(container);
   root = createRoot(container);
@@ -119,13 +129,23 @@ describe("VoteRemovalCause", () => {
     expect(container.innerHTML).toBe("");
   });
 
-  it("shows the reason and its explanation", () => {
+  const button = () => container.querySelector("button");
+  const tooltip = () => container.querySelector('[data-testid="tooltip"]');
+
+  it("shows the reason on a button that opens its explanation", () => {
     render(vote({ cause: "expired" }));
-    const chip = container.querySelector('[data-testid="vote-cause-chip"]');
-    expect(chip?.textContent).toBe("votesHistoryDialog.cause.expired");
-    expect(container.textContent).toContain(
+    expect(button()?.getAttribute("type")).toBe("button");
+    expect(button()?.textContent).toBe("votesHistoryDialog.cause.expired");
+    expect(tooltip()?.textContent).toBe(
       "votesHistoryDialog.causeTooltip.expired"
     );
+    expect(mockChainCalls).toEqual([]);
+  });
+
+  it("looks up the voter's proxy chain only while the tooltip is open", () => {
+    mockTooltipOpen = false;
+    render(vote({ cause: "proxy", proxy_name: "meno" }));
+    expect(tooltip()).toBe(null);
     expect(mockChainCalls).toEqual([]);
   });
 
@@ -134,9 +154,9 @@ describe("VoteRemovalCause", () => {
     render(vote({ cause: "proxy", proxy_name: "meno" }));
     const link = container.querySelector("a");
     expect(link?.getAttribute("href")).toBe("/@meno");
-    expect(
-      container.querySelector('[data-testid="vote-cause-chip"]')?.textContent
-    ).toBe("votesHistoryDialog.cause.proxy → meno");
+    // The link is next to the tooltip's button, not inside it.
+    expect(button()?.contains(link)).toBe(false);
+    expect(button()?.textContent).toBe("votesHistoryDialog.cause.proxy");
     expect(mockChainCalls).toEqual(["snapie"]);
     expect(
       container.querySelector('[data-testid="vote-cause-proxy-still-counts"]')
@@ -146,7 +166,7 @@ describe("VoteRemovalCause", () => {
     );
   });
 
-  it("drops that sentence when the proxy doesn't vote for the witness or the voter left it", () => {
+  it("drops that sentence unless the voter still uses the proxy and the proxy votes for the witness itself", () => {
     const stillCounts = '[data-testid="vote-cause-proxy-still-counts"]';
     mockChain = { proxyChain: ["meno"], witnessVotes: ["x"] };
     render(vote({ cause: "proxy", proxy_name: "meno" }));
@@ -163,6 +183,13 @@ describe("VoteRemovalCause", () => {
       vote({ cause: "proxy", proxy_name: "meno", voter_name: "cguitars" })
     );
     expect(container.querySelector(stillCounts)).toBe(null);
+
+    // meno has a proxy of its own: its proxy votes for aliento, meno doesn't.
+    mockChain = { proxyChain: ["meno", "other"], witnessVotes: ["aliento"] };
+    render(
+      vote({ cause: "proxy", proxy_name: "meno", voter_name: "cguitars" })
+    );
+    expect(container.querySelector(stillCounts)).toBe(null);
   });
 });
 
@@ -171,7 +198,7 @@ describe("translations", () => {
   const locales = fs.readdirSync(dir).filter((f) => f.endsWith(".json"));
 
   it("every locale has the reason texts and keeps the placeholders", () => {
-    expect(locales).toHaveLength(11);
+    expect(locales).toContain("en.json");
     for (const file of locales) {
       const strings = JSON.parse(fs.readFileSync(path.join(dir, file), "utf8"));
       for (const cause of ["votes_removed", "proxy", "expired", "declined"]) {

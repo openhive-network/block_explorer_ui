@@ -1439,7 +1439,7 @@
   "votesHistoryDialog.cause.declined": "Rinuncia al diritto di voto",
   "votesHistoryDialog.causeTooltip.votes_removed": "Il votante ha ritirato il suo voto per questo testimone.",
   "votesHistoryDialog.causeTooltip.proxy": "Impostare un proxy per i testimoni cancella i voti ai testimoni dell'account.",
-  "votesHistoryDialog.causeTooltip.expired": "L'account non ha espresso alcun voto di governance per un anno, quindi i suoi voti ai testimoni sono scaduti.",
+  "votesHistoryDialog.causeTooltip.expired": "L'account non ha votato alcun testimone o proposta né cambiato proxy per un anno, quindi i suoi voti ai testimoni sono scaduti.",
   "votesHistoryDialog.causeTooltip.declined": "L'account ha rinunciato al diritto di voto, il che rimuove tutti i suoi voti ai testimoni.",
   "votesHistoryDialog.causeTooltip.proxyStillCounts": "{{proxy}} vota per {{witness}}, quindi il peso di {{voter}} conta ancora per {{witness}}, tramite {{proxy}}.",
   "common.vestsChange": "Variazione VESTS",

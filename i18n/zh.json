@@ -1439,7 +1439,7 @@
   "votesHistoryDialog.cause.declined": "放弃投票权",
   "votesHistoryDialog.causeTooltip.votes_removed": "投票人撤销了对该见证人的投票。",
   "votesHistoryDialog.causeTooltip.proxy": "设置见证人代理会清除该账户自己的见证人投票。",
-  "votesHistoryDialog.causeTooltip.expired": "该账户一年内未进行任何治理投票，因此其见证人投票已过期。",
+  "votesHistoryDialog.causeTooltip.expired": "该账户一年内既未给见证人或提案投票，也未更改代理，因此其见证人投票已过期。",
   "votesHistoryDialog.causeTooltip.declined": "该账户放弃了投票权，这会移除其所有见证人投票。",
   "votesHistoryDialog.causeTooltip.proxyStillCounts": "{{proxy}} 投票给 {{witness}}，因此 {{voter}} 的权重仍通过 {{proxy}} 计入 {{witness}}。",
   "common.vestsChange": "VESTS 变动",

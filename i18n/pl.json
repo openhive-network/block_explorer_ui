@@ -1439,7 +1439,7 @@
   "votesHistoryDialog.cause.declined": "Zrzeczenie się prawa głosu",
   "votesHistoryDialog.causeTooltip.votes_removed": "Głosujący wycofał swój głos na tego świadka.",
   "votesHistoryDialog.causeTooltip.proxy": "Ustawienie proxy dla świadków usuwa własne głosy konta na świadków.",
-  "votesHistoryDialog.causeTooltip.expired": "Konto przez rok nie oddało żadnego głosu w zarządzaniu, więc jego głosy na świadków wygasły.",
+  "votesHistoryDialog.causeTooltip.expired": "Konto przez rok nie głosowało na żadnego świadka ani propozycję i nie zmieniło proxy, więc jego głosy na świadków wygasły.",
   "votesHistoryDialog.causeTooltip.declined": "Konto zrzekło się prawa głosu, co usuwa wszystkie jego głosy na świadków.",
   "votesHistoryDialog.causeTooltip.proxyStillCounts": "{{proxy}} głosuje na {{witness}}, więc waga {{voter}} nadal liczy się dla {{witness}}, przez {{proxy}}.",
   "common.vestsChange": "Zmiana VESTS",

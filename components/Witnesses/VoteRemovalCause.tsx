@@ -7,6 +7,7 @@ import useWitnessVoteChain from "@/hooks/api/common/useWitnessVoteChain";
 import {
   Tooltip,
   TooltipContent,
+  TooltipPortal,
   TooltipTrigger,
 } from "@/components/ui/hybrid-tooltip";
 
@@ -62,8 +63,13 @@ const ProxyStillCounts = ({
 }) => {
   const { t } = useI18n();
   const { witnessVotes, proxyChain } = useWitnessVoteChain(voter);
-  // Only while the voter still uses this proxy and the chain votes for the witness.
-  if (proxyChain[0] !== proxy || !witnessVotes.includes(witness)) return null;
+  // Only while the voter still uses this proxy and the proxy itself votes for
+  // the witness: if the proxy has a proxy too, "{{proxy}} votes for" is untrue.
+  const stillCounts =
+    proxyChain.length === 1 &&
+    proxyChain[0] === proxy &&
+    witnessVotes.includes(witness);
+  if (!stillCounts) return null;
   return (
     <p className="mt-1" data-testid="vote-cause-proxy-still-counts">
       {t("votesHistoryDialog.causeTooltip.proxyStillCounts", {
@@ -87,43 +93,52 @@ const VoteRemovalCause = ({
   if (!cause) return null;
   const proxy = cause === "proxy" ? vote.proxy_name : null;
 
+  // The button opens the explanation (keyboard and touch too); the proxy's
+  // link sits next to it in the chip, outside the tooltip trigger.
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <span
-          className={cn(
-            "cursor-pointer whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-semibold",
-            CHIP_CLASS[cause]
-          )}
-          data-testid="vote-cause-chip"
-        >
-          {t(`votesHistoryDialog.cause.${cause}`)}
-          {proxy && (
-            <>
-              {" → "}
-              <Link
-                href={`/@${proxy}`}
-                className="underline underline-offset-2"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {proxy}
-              </Link>
-            </>
-          )}
-        </span>
-      </TooltipTrigger>
-      <TooltipContent className="max-w-xs bg-theme text-text text-xs text-left">
-        <p>{t(`votesHistoryDialog.causeTooltip.${cause}`)}</p>
-        {proxy && (
-          <ProxyStillCounts
-            voter={vote.voter_name}
-            proxy={proxy}
-            witness={witness}
-          />
-        )}
-      </TooltipContent>
-    </Tooltip>
+    <span
+      className={cn(
+        "whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-semibold",
+        CHIP_CLASS[cause]
+      )}
+      data-testid="vote-cause-chip"
+    >
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button type="button" className="cursor-help">
+            {t(`votesHistoryDialog.cause.${cause}`)}
+          </button>
+        </TooltipTrigger>
+        <TooltipPortal>
+          <TooltipContent className="max-w-xs bg-theme text-text text-xs text-left">
+            <p>{t(`votesHistoryDialog.causeTooltip.${cause}`)}</p>
+            {proxy && (
+              <ProxyStillCounts
+                voter={vote.voter_name}
+                proxy={proxy}
+                witness={witness}
+              />
+            )}
+          </TooltipContent>
+        </TooltipPortal>
+      </Tooltip>
+      {proxy && (
+        <>
+          {/* U+2192 doesn't mirror in right-to-left text, so flip it there. */}
+          <span className="mx-1 inline-block rtl:rotate-180" aria-hidden>
+            →
+          </span>
+          <Link
+            href={`/@${proxy}`}
+            className="underline underline-offset-2"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {proxy}
+          </Link>
+        </>
+      )}
+    </span>
   );
 };
 

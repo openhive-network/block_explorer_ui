@@ -1439,7 +1439,7 @@
   "votesHistoryDialog.cause.declined": "Renúncia ao direito de voto",
   "votesHistoryDialog.causeTooltip.votes_removed": "O votante retirou o voto nesta testemunha.",
   "votesHistoryDialog.causeTooltip.proxy": "Definir um proxy de testemunhas apaga os votos em testemunhas da própria conta.",
-  "votesHistoryDialog.causeTooltip.expired": "A conta não fez nenhum voto de governança durante um ano, por isso os seus votos em testemunhas expiraram.",
+  "votesHistoryDialog.causeTooltip.expired": "A conta não votou em nenhuma testemunha ou proposta nem alterou o proxy durante um ano, por isso os seus votos em testemunhas expiraram.",
   "votesHistoryDialog.causeTooltip.declined": "A conta renunciou ao direito de voto, o que remove todos os seus votos em testemunhas.",
   "votesHistoryDialog.causeTooltip.proxyStillCounts": "{{proxy}} vota em {{witness}}, por isso o peso de {{voter}} continua a contar para {{witness}}, através de {{proxy}}.",
   "common.vestsChange": "Alteração de VESTS",

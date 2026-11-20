@@ -1439,7 +1439,7 @@
   "votesHistoryDialog.cause.declined": "Renonciation au droit de vote",
   "votesHistoryDialog.causeTooltip.votes_removed": "Le votant a retiré son vote pour ce témoin.",
   "votesHistoryDialog.causeTooltip.proxy": "Définir un proxy de témoins efface les votes de témoin propres au compte.",
-  "votesHistoryDialog.causeTooltip.expired": "Le compte n'a émis aucun vote de gouvernance pendant un an, ses votes de témoin ont donc expiré.",
+  "votesHistoryDialog.causeTooltip.expired": "Le compte n'a voté pour aucun témoin ni aucune proposition et n'a changé aucun proxy pendant un an, ses votes de témoin ont donc expiré.",
   "votesHistoryDialog.causeTooltip.declined": "Le compte a renoncé à son droit de vote, ce qui supprime tous ses votes de témoin.",
   "votesHistoryDialog.causeTooltip.proxyStillCounts": "{{proxy}} vote pour {{witness}}, donc le poids de {{voter}} compte toujours pour {{witness}}, via {{proxy}}.",
   "common.vestsChange": "Changement de VESTS",

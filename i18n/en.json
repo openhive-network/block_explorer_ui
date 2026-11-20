@@ -1439,7 +1439,7 @@
   "votesHistoryDialog.cause.declined": "Declined voting rights",
   "votesHistoryDialog.causeTooltip.votes_removed": "The voter removed their vote for this witness.",
   "votesHistoryDialog.causeTooltip.proxy": "Setting a witness proxy clears an account's own witness votes.",
-  "votesHistoryDialog.causeTooltip.expired": "The account made no governance vote for a year, so its witness votes expired.",
+  "votesHistoryDialog.causeTooltip.expired": "The account cast no witness or proposal vote and changed no proxy for a year, so its witness votes expired.",
   "votesHistoryDialog.causeTooltip.declined": "The account declined its voting rights, which removes all its witness votes.",
   "votesHistoryDialog.causeTooltip.proxyStillCounts": "{{proxy}} votes for {{witness}}, so {{voter}}'s weight still counts for {{witness}}, through {{proxy}}.",
   "common.vestsChange": "VESTS Change",

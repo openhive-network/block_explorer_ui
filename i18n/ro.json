@@ -1439,7 +1439,7 @@
   "votesHistoryDialog.cause.declined": "Renunțare la dreptul de vot",
   "votesHistoryDialog.causeTooltip.votes_removed": "Votantul și-a retras votul pentru acest martor.",
   "votesHistoryDialog.causeTooltip.proxy": "Setarea unui proxy pentru martori șterge voturile proprii ale contului pentru martori.",
-  "votesHistoryDialog.causeTooltip.expired": "Contul nu a dat niciun vot de guvernanță timp de un an, așa că voturile sale pentru martori au expirat.",
+  "votesHistoryDialog.causeTooltip.expired": "Contul nu a votat niciun martor sau propunere și nu și-a schimbat proxy-ul timp de un an, așa că voturile sale pentru martori au expirat.",
   "votesHistoryDialog.causeTooltip.declined": "Contul a renunțat la dreptul de vot, ceea ce elimină toate voturile sale pentru martori.",
   "votesHistoryDialog.causeTooltip.proxyStillCounts": "{{proxy}} votează pentru {{witness}}, deci ponderea lui {{voter}} contează în continuare pentru {{witness}}, prin {{proxy}}.",
   "common.vestsChange": "Modificare VESTS",

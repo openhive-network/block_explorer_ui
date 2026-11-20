@@ -1439,7 +1439,7 @@
   "votesHistoryDialog.cause.declined": "Renuncia al derecho de voto",
   "votesHistoryDialog.causeTooltip.votes_removed": "El votante retiró su voto para este testigo.",
   "votesHistoryDialog.causeTooltip.proxy": "Establecer un proxy de testigos borra los votos de testigo propios de la cuenta.",
-  "votesHistoryDialog.causeTooltip.expired": "La cuenta no emitió ningún voto de gobernanza durante un año, por lo que sus votos de testigo caducaron.",
+  "votesHistoryDialog.causeTooltip.expired": "La cuenta no votó por ningún testigo ni propuesta ni cambió su proxy durante un año, por lo que sus votos de testigo caducaron.",
   "votesHistoryDialog.causeTooltip.declined": "La cuenta renunció a su derecho de voto, lo que elimina todos sus votos de testigo.",
   "votesHistoryDialog.causeTooltip.proxyStillCounts": "{{proxy}} vota por {{witness}}, así que el peso de {{voter}} sigue contando para {{witness}}, a través de {{proxy}}.",
   "common.vestsChange": "Cambio de VESTS",
