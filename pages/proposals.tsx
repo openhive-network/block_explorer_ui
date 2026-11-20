@@ -42,6 +42,9 @@ import PageNotFound from "@/components/PageNotFound";
 import { deploySettings } from "@/utils/deploySettings";
 import { notFoundProps } from "@/utils/seo/notFoundProps";
 
+// How long typing must pause before the list is filtered.
+const SEARCH_PAUSE_MS = 300;
+
 export type MatchDetails = {
   isCreatorMatch: boolean;
   isVoterMatch: boolean;
@@ -59,6 +62,10 @@ const ProposalsPage = ({ meta }: { meta: SeoMeta }) => {
   const [sortDirection, setSortDirection] =
     useState<ProposalSortDirection>("descending");
   const [searchQuery, setSearchQuery] = useState("");
+  // What the list is filtered by: the box's text once typing pauses. Each
+  // change re-renders hundreds of cards and may look up a voter's votes, so
+  // it must not happen on every key (#876).
+  const [appliedQuery, setAppliedQuery] = useState("");
   const [voterFilter, setVoterFilter] = useState("");
   const [favoritesOnly, setFavoritesOnly] = useState(false);
   const [votedOnly, setVotedOnly] = useState(false);
@@ -88,6 +95,7 @@ const ProposalsPage = ({ meta }: { meta: SeoMeta }) => {
 
     setStatusFilter(newStatus);
     setSearchQuery(queryId || querySearch || "");
+    setAppliedQuery(queryId || querySearch || "");
   }, [
     router.isReady,
     router.query.status,
@@ -140,6 +148,16 @@ const ProposalsPage = ({ meta }: { meta: SeoMeta }) => {
     debouncedUpdateUrl(query);
   };
 
+  useEffect(() => {
+    if (searchQuery === appliedQuery) return;
+    // Clearing the box shows the full list at once.
+    const timer = setTimeout(
+      () => setAppliedQuery(searchQuery),
+      searchQuery ? SEARCH_PAUSE_MS : 0
+    );
+    return () => clearTimeout(timer);
+  }, [searchQuery, appliedQuery]);
+
   const handleStatusChange = (status: ProposalStatusFilter) => {
     const newQuery = { ...router.query, status: status };
     router.push({ pathname: router.pathname, query: newQuery }, undefined, {
@@ -160,9 +178,9 @@ const ProposalsPage = ({ meta }: { meta: SeoMeta }) => {
   }, [router]);
 
   const proposalIdSearch = useMemo(() => {
-    const num = parseInt(searchQuery.trim(), 10);
-    return !isNaN(num) && num.toString() === searchQuery.trim() ? num : null;
-  }, [searchQuery]);
+    const num = parseInt(appliedQuery.trim(), 10);
+    return !isNaN(num) && num.toString() === appliedQuery.trim() ? num : null;
+  }, [appliedQuery]);
 
   const { accountsData } = useGetAccounts(["hive.fund"]) as any;
 
@@ -199,7 +217,7 @@ const ProposalsPage = ({ meta }: { meta: SeoMeta }) => {
   }, [scrollTargetId, isProposalsLoading]);
 
   const voterSearchQuery =
-    voterFilter || (isHiveAccountName(searchQuery) ? searchQuery : "");
+    voterFilter || (isHiveAccountName(appliedQuery) ? appliedQuery : "");
   const isSelfSearch = !!username && voterSearchQuery === username;
   const { votedProposalIds, isLoading: isVoterListLoading } =
     useVoterProposals(voterSearchQuery);
@@ -296,7 +314,7 @@ const ProposalsPage = ({ meta }: { meta: SeoMeta }) => {
         const voted = preFilteredProposals.filter((p) =>
           votedIdsSet.has(p.proposal_id)
         );
-        if (searchQuery.length < 3) {
+        if (appliedQuery.length < 3) {
           result = voted.map((p) => ({
             ...p,
             matchDetails: {
@@ -306,7 +324,7 @@ const ProposalsPage = ({ meta }: { meta: SeoMeta }) => {
             },
           }));
         } else {
-          const lowerQuery = searchQuery.toLowerCase();
+          const lowerQuery = appliedQuery.toLowerCase();
           result = voted
             .filter(
               (p) =>
@@ -322,10 +340,10 @@ const ProposalsPage = ({ meta }: { meta: SeoMeta }) => {
               },
             }));
         }
-      } else if (searchQuery.length < 3) {
+      } else if (appliedQuery.length < 3) {
         result = preFilteredProposals;
       } else {
-        const lowerQuery = searchQuery.toLowerCase();
+        const lowerQuery = appliedQuery.toLowerCase();
         const votedIdsSet = new Set(votedProposalIds || []);
         result = preFilteredProposals.reduce(
           (accumulator, proposal) => {
@@ -362,7 +380,7 @@ const ProposalsPage = ({ meta }: { meta: SeoMeta }) => {
   }, [
     enrichedProposals,
     statusFilter,
-    searchQuery,
+    appliedQuery,
     votedProposalIds,
     voterSearchQuery,
     proposalIdSearch,

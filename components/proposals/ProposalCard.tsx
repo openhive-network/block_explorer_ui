@@ -33,7 +33,7 @@ import {
   XCircle,
 } from "lucide-react";
 import Link from "next/link";
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import { ProposalVotesDialog } from "./ProposalVotesDialog";
 import { ProposalVotesHistoryDialog } from "./ProposalVotesHistoryDialog";
 import ImpactSimulator from "./ImpactSimulator";
@@ -235,10 +235,13 @@ interface ProposalCardProps {
   fundingThreshold?: number;
 }
 
-export const ProposalCard = ({
+// Memoized: the proposals page lists hundreds of these, and its search
+// re-renders the page while typing (#876). A card re-renders only when its
+// proposal object or the funding threshold changes.
+export const ProposalCard = memo(function ProposalCard({
   proposal,
   fundingThreshold,
-}: ProposalCardProps) => {
+}: ProposalCardProps) {
   const { t, locale } = useI18n();
   const proposalInternalUrl = `/proposal/@${proposal.creator}/${proposal.permlink}`;
 
@@ -607,7 +610,7 @@ export const ProposalCard = ({
       </div>
     </TooltipProvider>
   );
-};
+});
 
 // --- SKELETON COMPONENT ---
 
