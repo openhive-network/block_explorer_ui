@@ -592,7 +592,7 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
                     <span>
                       {singleWitness.voters_num.toLocaleString(locale)}
                     </span>
-                    {singleWitness.voters_num_daily_change !== 0 && (
+                    {!!singleWitness.voters_num_daily_change && (
                       <HybridTooltip>
                         <HybridTooltipTrigger asChild>
                           <button
