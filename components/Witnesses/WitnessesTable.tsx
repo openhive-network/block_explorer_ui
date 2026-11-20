@@ -8,6 +8,7 @@ import {
   ChevronsUpDown,
 } from "lucide-react";
 import { useI18n } from "@/i18n/i18n";
+import { useSettings } from "@/contexts/SettingsContext";
 import { cn, formatNumber, formatPercent, formatHp } from "@/lib/utils";
 import {
   formatAndDelocalizeFromTime,
@@ -257,6 +258,9 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
   rankMoveWindow = "today",
 }) => {
   const { t, locale } = useI18n();
+  const { settings } = useSettings();
+  // Amounts follow the HP / VESTS display setting; hovers give the other unit.
+  const showVests = settings.displayVestHpMode === "vests";
   const showRecentMissed = !!recentMissed?.isAvailable;
   const isMobile = useMediaQuery("(max-width: 768px)");
   const rankSticky = isMobile ? undefined : true;
@@ -283,6 +287,9 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
     ) : (
       <Loader2 className="dark:text-white animate-spin mt-1 h-2 w-2" />
     );
+  const toVests = (vests: string | number) =>
+    `${relocalizeAmount(formatNumber(vests || 0, true), locale)} ${t("common.vests")}`;
+  const toAmount = showVests ? toVests : toHp;
 
   const renderLabel = (label: ColumnLabel, isMain: boolean) => {
     const text = t(label.labelKey);
@@ -524,15 +531,21 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <span className="cursor-pointer">
-                          {toHp(singleWitness.vests)}
+                          {toAmount(singleWitness.vests)}
                         </span>
                       </TooltipTrigger>
                       <TooltipContent className="text-left">
                         <p>
-                          {t("common.vests")}:{" "}
-                          {relocalizeAmount(
-                            formatNumber(singleWitness.vests || 0, true),
-                            locale
+                          {showVests ? (
+                            toHp(singleWitness.vests)
+                          ) : (
+                            <>
+                              {t("common.vests")}:{" "}
+                              {relocalizeAmount(
+                                formatNumber(singleWitness.vests || 0, true),
+                                locale
+                              )}
+                            </>
                           )}
                         </p>
                       </TooltipContent>
@@ -545,7 +558,7 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
                             window={window}
                             breakdown={breakdown}
                             selection={votesChangeSelection}
-                            toHp={toHp}
+                            toHp={toAmount}
                           />
                         ))}
                       </span>
@@ -561,18 +574,27 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
                             >
                               {signedHp(
                                 String(singleWitness.votes_daily_change),
-                                toHp
+                                toAmount
                               )}
                             </span>
                           </TooltipTrigger>
                           <TooltipContent className="text-left">
-                            {t("common.vestsChange")}:{" "}
-                            {relocalizeAmount(
-                              formatNumber(
-                                singleWitness.votes_daily_change || 0,
-                                true
-                              ),
-                              locale
+                            {showVests ? (
+                              signedHp(
+                                String(singleWitness.votes_daily_change),
+                                toHp
+                              )
+                            ) : (
+                              <>
+                                {t("common.vestsChange")}:{" "}
+                                {relocalizeAmount(
+                                  formatNumber(
+                                    singleWitness.votes_daily_change || 0,
+                                    true
+                                  ),
+                                  locale
+                                )}
+                              </>
                             )}
                           </TooltipContent>
                         </Tooltip>
