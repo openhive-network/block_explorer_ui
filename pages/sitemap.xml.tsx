@@ -22,6 +22,7 @@ const STATIC_ROUTES: { path: string; changefreq: string; priority: string }[] =
     { path: "/tools/compare", changefreq: "weekly", priority: "0.6" },
     { path: "/tools/bad-actors", changefreq: "weekly", priority: "0.5" },
     { path: "/tools/converter", changefreq: "weekly", priority: "0.5" },
+    { path: "/tools/voting-power", changefreq: "weekly", priority: "0.5" },
   ];
 
 const SiteMap = () => null;

@@ -3,6 +3,7 @@ import {
   ShieldAlert,
   Calculator,
   Download,
+  Gauge,
 } from "lucide-react";
 
 export interface ToolDef {
@@ -36,6 +37,13 @@ export const TOOLS: ToolDef[] = [
     route: "/tools/converter",
     labelKey: "tools.tabs.converter",
     icon: Calculator,
+    enabled: true,
+  },
+  {
+    key: "voting-power",
+    route: "/tools/voting-power",
+    labelKey: "tools.tabs.votingPower",
+    icon: Gauge,
     enabled: true,
   },
   {

@@ -762,6 +762,15 @@ class FetchingService {
   // on the chain that carries the configured node. The context's base chain
   // keeps wax's default endpoint: setting endpointUrl on an extended copy only
   // reaches its direct parent.
+  // The account's upvote manabar now, regenerated to the head block; its
+  // current value is VESTS with 6 implied decimals. Throws for an unknown account.
+  async getUpvoteManabar(accountName: string) {
+    return await this.extendedHiveChain!.calculateCurrentManabarValueForAccount(
+      accountName,
+      0
+    );
+  }
+
   async getManabars(accountName: string): Promise<Hive.Manabars | null> {
     try {
       const chain = this.extendedHiveChain!;
