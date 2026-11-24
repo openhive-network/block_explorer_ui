@@ -22,6 +22,10 @@ const withBrowserLocale = (
   ) {
     return new RealNumberFormat(locales ?? browserLocale, options);
   } as unknown as typeof Intl.NumberFormat;
+  Object.assign(Patched, {
+    supportedLocalesOf: RealNumberFormat.supportedLocalesOf,
+    prototype: RealNumberFormat.prototype,
+  });
   Intl.NumberFormat = Patched;
   Number.prototype.toLocaleString = function (
     this: number,
@@ -77,6 +81,16 @@ describe("formatNumber with long amounts (#878)", () => {
         "165,944,126,347.597857 VESTS"
       );
     });
+  });
+
+  it("reads negatives back in locales with their own minus sign", () => {
+    for (const browser of ["sv-SE", "fi-FI", "ar-EG"])
+      withBrowserLocale(browser, ({ formatNumber, relocalizeAmount }) => {
+        const vests = (raw: string) =>
+          relocalizeAmount(`${formatNumber(raw, true)} VESTS`, "en");
+        expect(vests("-4838055429259156")).toBe("-4,838,055,429.259156 VESTS");
+        expect(vests("-52826894153469")).toBe("-52,826,894.153469 VESTS");
+      });
   });
 
   it("is unchanged in an English browser", () => {

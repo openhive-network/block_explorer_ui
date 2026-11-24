@@ -89,6 +89,11 @@ export const relocalizeAmount = (formatted: string, locale: string): string => {
   if (source.group) normalized = normalized.split(source.group).join("");
   // Strip the separators Intl omits from formatToParts but browsers still emit.
   normalized = normalized.replace(/[\u00a0\u202f\u2009]/g, "");
+  // Some locales sign negatives with their own minus (U+2212 in sv, fi, nb)
+  // or add a direction mark before it (ar-EG); read them as "-".
+  normalized = normalized.replace(/[\u061c\u200e\u200f]/g, "");
+  if (source.minus && source.minus !== "-")
+    normalized = normalized.split(source.minus).join("-");
   if (source.decimal && source.decimal !== ".")
     normalized = normalized.split(source.decimal).join(".");
 
