@@ -4,6 +4,7 @@ import Long from "long";
 import Explorer from "@/types/Explorer";
 import { config } from "@/Config";
 import { grabNumericValue } from "@/utils/StringUtils";
+import { renderExactDecimal } from "@/utils/localeAmount";
 import Hive from "@/types/Hive";
 
 export function cn(...inputs: ClassValue[]) {
@@ -86,8 +87,14 @@ export const formatNumber = (
     const intLength = valueStr.length - precision;
     const intPart = valueStr.substring(0, intLength) || "0";
     const decPart = valueStr.substring(intLength).padEnd(precision, "0");
+    const formattedDec = decPart.slice(0, precision);
+    // Too long for a Number to stay exact, so it is split as a string. It is
+    // rendered in the browser locale like the shorter values below, which
+    // relocalizeAmount expects; hand-written "," and "." could not be read in
+    // a decimal-comma locale and stayed in English format (#878).
+    if (/^-?\d+$/.test(valueStr))
+      return renderExactDecimal(intPart, formattedDec);
     const intWithCommas = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    const formattedDec = decPart.slice(0, precision); // Force only 2 decimals
     return `${intWithCommas}.${formattedDec}`;
   } else {
     const num =

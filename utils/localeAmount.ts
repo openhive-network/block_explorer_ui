@@ -46,6 +46,32 @@ const probe = (locale?: string): LocaleNumbers => {
 };
 
 /**
+ * Render a decimal given as digit strings in `locale` (the browser's when
+ * omitted), exactly: `integer` may carry a leading "-" and any number of
+ * digits, `fraction` is kept digit for digit (no rounding, no trimming).
+ */
+export const renderExactDecimal = (
+  integer: string,
+  fraction: string,
+  locale?: string
+): string => {
+  const target = probe(locale);
+  // The integer part goes through BigInt to stay exact: Number() drops digits
+  // past 2^53, which a network total of ~3.8e14 VESTS at six decimals is
+  // well beyond.
+  const signed = BigInt(integer);
+  const grouped =
+    integer.startsWith("-") && signed === BigInt(0)
+      ? target.minus + target.format.format(signed)
+      : target.format.format(signed);
+  const rendered = fraction
+    .split("")
+    .map((digit) => target.fromAscii[Number(digit)] ?? digit)
+    .join("");
+  return grouped + (fraction ? target.decimal + rendered : "");
+};
+
+/**
  * Re-render an amount Wax formatted in the browser locale using `locale`.
  * The unit suffix ("HP", "HBD", ...) is preserved untouched.
  * Returns the input unchanged when the numeric part cannot be read.
@@ -70,23 +96,7 @@ export const relocalizeAmount = (formatted: string, locale: string): string => {
   if (!parsed) return formatted;
 
   const [, sign, integer, fraction = ""] = parsed;
-  const target = probe(locale);
-
-  // Wax formats the integer part through BigInt to stay exact, so the digits
-  // are regrouped as a string: Number() drops them past 2^53, which a network
-  // total of ~3.8e14 VESTS at six decimals is well beyond.
-  const signed = BigInt(sign + integer);
-  const grouped =
-    sign && signed === BigInt(0)
-      ? target.minus + target.format.format(signed)
-      : target.format.format(signed);
-
-  const rendered = fraction
-    .split("")
-    .map((digit) => target.fromAscii[Number(digit)] ?? digit)
-    .join("");
-
-  return [grouped + (fraction ? target.decimal + rendered : ""), ...unit].join(
+  return [renderExactDecimal(sign + integer, fraction, locale), ...unit].join(
     " "
   );
 };
