@@ -147,6 +147,19 @@ describe("VotingPowerTool", () => {
     );
     expect(container.querySelector('a[href="/@bob"]')).not.toBe(null);
 
+    mockResult = found({
+      governance: {
+        status: "proxy",
+        hp: 10,
+        proxy: "bob",
+        expires: new Date("2027-07-09T00:00:00Z"),
+      },
+    });
+    render();
+    expect(text("voting-power-governance")).toContain(
+      "tools.votingPower.governanceProxyUntil"
+    );
+
     mockResult = found({ governance: { status: "inactive", hp: 10 } });
     render();
     expect(text("voting-power-governance")).toContain(
@@ -163,6 +176,75 @@ describe("VotingPowerTool", () => {
     expect(text("voting-power-upvote")).toContain(
       "tools.votingPower.upvoteDust"
     );
+  });
+
+  it("says so when the account has no Hive Power, not that the vote is too small", () => {
+    mockQuery = { account: "alice" };
+    mockResult = found({
+      mana: { current: BigInt(0), max: BigInt(0), percent: 0 },
+    });
+    render();
+    expect(text("voting-power-upvote")).toContain(
+      "tools.votingPower.upvoteNoPower"
+    );
+    expect(text("voting-power-upvote")).not.toContain(
+      "tools.votingPower.upvoteDust"
+    );
+  });
+
+  it("reads a name typed or linked in capitals as the lower-case account", () => {
+    mockQuery = { account: "Alice" };
+    render();
+    expect(mockLookups).toContain("alice");
+    expect(mockLookups).not.toContain("Alice");
+  });
+
+  it("doesn't flip back to the old account while the address is updating", () => {
+    jest.useFakeTimers();
+    try {
+      mockQuery = { account: "alice" };
+      render();
+      const input = container.querySelector<HTMLInputElement>(
+        "#voting-power-account"
+      )!;
+      act(() => {
+        Object.getOwnPropertyDescriptor(
+          HTMLInputElement.prototype,
+          "value"
+        )!.set!.call(input, "bob");
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+      });
+      act(() => {
+        container
+          .querySelector("form")!
+          .dispatchEvent(
+            new Event("submit", { bubbles: true, cancelable: true })
+          );
+      });
+      act(() => {
+        jest.advanceTimersByTime(500);
+      });
+      expect(mockReplace).toHaveBeenCalledTimes(1);
+      expect(mockReplace.mock.calls[0][0].query).toEqual({ account: "bob" });
+
+      // A render while router.query still says alice (the replace hasn't
+      // landed yet) must keep bob.
+      mockLookups.length = 0;
+      render();
+      expect(mockLookups.every((name) => name === "bob")).toBe(true);
+      expect(input.value).toBe("bob");
+
+      // The replace lands: nothing changes and nothing is written again.
+      mockQuery = { account: "bob" };
+      render();
+      act(() => {
+        jest.advanceTimersByTime(500);
+      });
+      expect(input.value).toBe("bob");
+      expect(mockReplace).toHaveBeenCalledTimes(1);
+    } finally {
+      jest.useRealTimers();
+    }
   });
 
   it("reports an unknown account and an invalid name", () => {

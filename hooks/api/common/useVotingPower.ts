@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
 import { naiAssetToFloat } from "@/utils/Calculations";
 import { governanceWeight } from "@/utils/governanceVests";
+import { isHiveAccountName } from "@/utils/StringUtils";
 import { parseChainDate } from "@/utils/TimeUtils";
 import { RewardFundFigures } from "@/utils/voteValue";
 
@@ -55,11 +56,15 @@ export const useVoteValueRates = () =>
 // One account's governance weight and voting mana. `account` is null when
 // the node has no such account.
 const useVotingPower = (accountName: string) => {
+  // An impossible name (too short, upper case…) isn't sent to the node.
+  const valid = isHiveAccountName(accountName);
   const accountQuery = useQuery({
     queryKey: ["votingPowerAccount", accountName],
     queryFn: async () =>
       (await fetchingService.findAccounts([accountName])).accounts[0] ?? null,
-    enabled: !!accountName,
+    enabled: valid,
+    // Delayed votes, the proxy and the expiry change too, if rarely.
+    refetchInterval: REFRESH_MS,
     refetchOnWindowFocus: false,
     meta: { suppressErrorToast: true },
   });
@@ -84,13 +89,15 @@ const useVotingPower = (accountName: string) => {
     mana: manaQuery.data ?? null,
     rates,
     isLoading:
-      !!accountName &&
+      valid &&
       (accountQuery.isPending ||
         (!!account && (manaQuery.isPending || ratesQuery.isPending))),
     isError:
       (accountQuery.isError && account === undefined) ||
       (manaQuery.isError && !manaQuery.data) ||
-      (ratesQuery.isError && !rates),
+      (ratesQuery.isError && !rates) ||
+      // A node reply without vesting totals can't be turned into HP.
+      (!!rates && !(rates.hivePerVests > 0)),
   };
 };
 

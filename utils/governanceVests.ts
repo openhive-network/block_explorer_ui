@@ -30,8 +30,10 @@ export const governanceVests = (account: GovernanceAccount) => {
 // counting. hived clears an account's votes a year after its last governance
 // action and leaves governance_vote_expiration_ts in the past (1969-12-31 for
 // an account that never voted). With a proxy set, the proxy casts the votes.
+// A proxy setting lapses like the account's own votes (HF25), so it carries
+// the same expiry.
 export type GovernanceWeight =
-  | { status: "proxy"; hp: number; proxy: string }
+  | { status: "proxy"; hp: number; proxy: string; expires: Date | null }
   | { status: "active"; hp: number; expires: Date | null }
   | { status: "inactive"; hp: number };
 
@@ -50,10 +52,16 @@ export const governanceWeight = (
 ): GovernanceWeight => {
   const precision = account.vesting_shares?.precision ?? VESTS_PRECISION;
   const hp = (governanceVests(account).total / 10 ** precision) * hivePerVests;
-  if (account.proxy) return { status: "proxy", hp, proxy: account.proxy };
   const raw = account.governance_vote_expiration_ts;
   const expires =
     raw instanceof Date ? raw : parseChainDate(raw ? String(raw) : null);
+  if (account.proxy)
+    return {
+      status: "proxy",
+      hp,
+      proxy: account.proxy,
+      expires: expires && expires > now ? expires : null,
+    };
   if (expires && expires <= now) return { status: "inactive", hp };
   return { status: "active", hp, expires };
 };

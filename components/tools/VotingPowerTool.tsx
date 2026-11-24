@@ -13,6 +13,9 @@ const DEFAULT_WEIGHT = 100;
 // Wait for the slider to settle before rewriting the URL.
 const URL_DELAY_MS = 400;
 
+// Account names are lower case on chain; a pasted "Alice" means alice.
+const accountName = (raw: string) => trimAccountName(raw).toLowerCase();
+
 const weightFromQuery = (raw: unknown): number => {
   const n = Math.round(Number(raw));
   return n >= 1 && n <= 100 ? n : DEFAULT_WEIGHT;
@@ -26,8 +29,10 @@ const VotingPowerTool: React.FC = () => {
   const router = useRouter();
   const queryAccount =
     typeof router.query.account === "string"
-      ? trimAccountName(router.query.account)
+      ? accountName(router.query.account)
       : "";
+  // The address's account and weight, to tell a new link from our own writes.
+  const queryKey = `${queryAccount}|${router.query.weight ?? ""}`;
   const [input, setInput] = useState(queryAccount);
   const [account, setAccount] = useState(queryAccount);
   const [weight, setWeight] = useState(() =>
@@ -35,9 +40,11 @@ const VotingPowerTool: React.FC = () => {
   );
 
   // A shared link, or the tab link, sets the account after the first render.
-  const [syncedQuery, setSyncedQuery] = useState(queryAccount);
-  if (queryAccount !== syncedQuery) {
-    setSyncedQuery(queryAccount);
+  // The URL effect below writes the same values, so this also runs once its
+  // replace lands, without changing anything.
+  const [syncedKey, setSyncedKey] = useState(queryKey);
+  if (queryKey !== syncedKey) {
+    setSyncedKey(queryKey);
     setInput(queryAccount);
     setAccount(queryAccount);
     setWeight(weightFromQuery(router.query.weight));
@@ -56,7 +63,6 @@ const VotingPowerTool: React.FC = () => {
         (current.weight ?? "") === (query.weight ?? "")
       )
         return;
-      setSyncedQuery(account);
       router.replace({ pathname: router.pathname, query }, undefined, {
         shallow: true,
         scroll: false,
@@ -77,7 +83,7 @@ const VotingPowerTool: React.FC = () => {
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    setAccount(trimAccountName(input));
+    setAccount(accountName(input));
   };
   const invalid = !!account && !isHiveAccountName(account);
 
@@ -89,10 +95,11 @@ const VotingPowerTool: React.FC = () => {
       })} ${unit}`
     );
   const hp = (value: number) => amount(value, "HP");
+  // A value in HBD at the median price, not necessarily paid in HBD.
   const hbd = (value: number) =>
     value > 0 && value < 0.001
       ? ltr(`< ${(0.001).toLocaleString(locale)} HBD`)
-      : amount(value, "HBD");
+      : `≈ ${amount(value, "HBD")}`;
   const percent = (value: number) =>
     `${value.toLocaleString(locale, { maximumFractionDigits: 2 })}%`;
   const date = (value: Date) =>
@@ -116,7 +123,7 @@ const VotingPowerTool: React.FC = () => {
           <Gauge className="h-5 w-5 text-indigo-500" />
           {t("tools.votingPower.title")}
         </h2>
-        <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
           {t("tools.votingPower.subtitle")}
         </p>
       </div>
@@ -157,8 +164,9 @@ const VotingPowerTool: React.FC = () => {
         </p>
       )}
       {account && !invalid && isLoading && (
-        <div className="flex justify-center py-8">
+        <div className="flex justify-center py-8" role="status">
           <Loader2 className="h-6 w-6 animate-spin text-slate-400" />
+          <span className="sr-only">{t("tools.votingPower.loading")}</span>
         </div>
       )}
       {account && !invalid && !isLoading && isError && (
@@ -189,7 +197,11 @@ const VotingPowerTool: React.FC = () => {
               <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
                 {governance.status === "proxy" ? (
                   <>
-                    {t("tools.votingPower.governanceProxy")}{" "}
+                    {governance.expires
+                      ? t("tools.votingPower.governanceProxyUntil", {
+                          date: date(governance.expires),
+                        })
+                      : t("tools.votingPower.governanceProxy")}{" "}
                     <Link href={`/@${governance.proxy}`} className="text-link">
                       @{governance.proxy}
                     </Link>
@@ -220,10 +232,14 @@ const VotingPowerTool: React.FC = () => {
               <p
                 className="mt-2 text-2xl font-bold tabular-nums text-slate-900 dark:text-white"
                 data-testid="voting-power-upvote-value"
+                aria-live="polite"
               >
                 {hbd(now)}
               </p>
-              <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
+              <p
+                className="mt-1 text-sm text-slate-600 dark:text-slate-300"
+                aria-live="polite"
+              >
                 {t("tools.votingPower.upvoteAt", {
                   weight: percent(weight),
                   power: percent(mana.percent),
@@ -251,10 +267,17 @@ const VotingPowerTool: React.FC = () => {
               <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
                 {t("tools.votingPower.upvoteFull", { value: hbd(full) })}
               </p>
-              {now === 0 && (
+              {mana.max <= BigInt(0) ? (
                 <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">
-                  {t("tools.votingPower.upvoteDust")}
+                  {t("tools.votingPower.upvoteNoPower")}
                 </p>
+              ) : (
+                now === 0 &&
+                mana.current > BigInt(0) && (
+                  <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">
+                    {t("tools.votingPower.upvoteDust")}
+                  </p>
+                )
               )}
               <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">
                 {t("tools.votingPower.upvoteSplit")}

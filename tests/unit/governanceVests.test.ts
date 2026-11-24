@@ -120,7 +120,27 @@ describe("governanceWeight", () => {
         hivePerVests,
         now
       )
-    ).toEqual({ status: "proxy", hp: 1000, proxy: "someproxy" });
+    ).toEqual({
+      status: "proxy",
+      hp: 1000,
+      proxy: "someproxy",
+      expires: null,
+    });
+  });
+
+  it("gives a proxy setting's own expiry while it is in the future", () => {
+    const expires = new Date("2027-07-09T00:00:00Z");
+    expect(
+      governanceWeight(
+        {
+          ...account,
+          proxy: "someproxy",
+          governance_vote_expiration_ts: expires,
+        },
+        hivePerVests,
+        now
+      )
+    ).toEqual({ status: "proxy", hp: 1000, proxy: "someproxy", expires });
   });
 
   it("leaves out power-ups still in their delay and reads a Date expiry", () => {
@@ -150,7 +170,7 @@ describe("governanceWeight", () => {
         hivePerVests,
         now
       )
-    ).toEqual({ status: "proxy", hp: 2000, proxy: "someproxy" });
+    ).toMatchObject({ status: "proxy", hp: 2000, proxy: "someproxy" });
   });
 
   it("reads VESTS at chain precision when the asset leaves it out", () => {
