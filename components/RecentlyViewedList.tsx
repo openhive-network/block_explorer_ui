@@ -6,18 +6,11 @@ import HiveAvatar from "@/components/ui/HiveAvatar";
 import { useRecentlyViewed } from "@/hooks/common/useRecentlyViewed";
 import { useI18n } from "@/i18n/i18n";
 import { deploySettings } from "@/utils/deploySettings";
-import { RecentEntry } from "@/utils/recentlyViewed";
+import { recentEntryHref, recentEntryLabel } from "@/utils/recentlyViewed";
 
 interface RecentlyViewedListProps {
   onNavigate: () => void;
 }
-
-const hrefFor = ({ kind, id }: RecentEntry) =>
-  kind === "account"
-    ? `/@${id}`
-    : kind === "block"
-      ? `/block/${id}`
-      : `/tx/${id}`;
 
 const RecentlyViewedList: React.FC<RecentlyViewedListProps> = ({
   onNavigate,
@@ -26,13 +19,6 @@ const RecentlyViewedList: React.FC<RecentlyViewedListProps> = ({
   const { entries, clear } = useRecentlyViewed();
 
   if (!deploySettings.recentVisits || !entries.length) return null;
-
-  const label = ({ kind, id }: RecentEntry) =>
-    kind === "account"
-      ? id
-      : kind === "block"
-        ? `#${Number(id).toLocaleString(locale)}`
-        : `${id.slice(0, 10)}…`;
 
   return (
     <div className="mb-1 border-b border-slate-200 pb-1 dark:border-slate-700">
@@ -51,7 +37,7 @@ const RecentlyViewedList: React.FC<RecentlyViewedListProps> = ({
       {entries.map((entry) => (
         <Link
           key={`${entry.kind}-${entry.id}`}
-          href={hrefFor(entry)}
+          href={recentEntryHref(entry)}
           onClick={onNavigate}
           className="flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm font-medium transition-colors hover:bg-slate-100 dark:hover:bg-slate-800"
         >
@@ -67,7 +53,9 @@ const RecentlyViewedList: React.FC<RecentlyViewedListProps> = ({
           ) : (
             <ArrowLeftRight className="h-4 w-4 shrink-0 text-slate-500 dark:text-slate-400" />
           )}
-          <span className="min-w-0 truncate tabular-nums">{label(entry)}</span>
+          <span className="min-w-0 truncate tabular-nums">
+            {recentEntryLabel(entry, locale)}
+          </span>
         </Link>
       ))}
     </div>

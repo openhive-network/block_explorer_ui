@@ -23,6 +23,20 @@ export const pathToRecentEntry = (asPath: string): RecentEntry | null => {
   return null;
 };
 
+export const recentEntryHref = ({ kind, id }: RecentEntry) =>
+  kind === "account"
+    ? `/@${id}`
+    : kind === "block"
+      ? `/block/${id}`
+      : `/tx/${id}`;
+
+export const recentEntryLabel = ({ kind, id }: RecentEntry, locale: string) =>
+  kind === "account"
+    ? id
+    : kind === "block"
+      ? `#${Number(id).toLocaleString(locale)}`
+      : `${id.slice(0, 10)}…`;
+
 export const addRecentEntry = (
   entries: RecentEntry[],
   entry: RecentEntry
