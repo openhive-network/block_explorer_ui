@@ -4,6 +4,7 @@ import {
   Calculator,
   Download,
   Gauge,
+  ListChecks,
 } from "lucide-react";
 
 export interface ToolDef {
@@ -23,6 +24,13 @@ export const TOOLS: ToolDef[] = [
     route: "/tools/compare",
     labelKey: "tools.tabs.compare",
     icon: ArrowLeftRight,
+    enabled: true,
+  },
+  {
+    key: "bulk-lookup",
+    route: "/tools/bulk-lookup",
+    labelKey: "tools.tabs.bulkLookup",
+    icon: ListChecks,
     enabled: true,
   },
   {

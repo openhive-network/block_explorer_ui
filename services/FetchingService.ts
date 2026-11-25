@@ -12,6 +12,7 @@ import {
   FindAccountsResponse,
 } from "@hiveio/wax";
 import { extendedRest } from "@/types/Rest";
+import type { BulkProfile } from "@/utils/bulkAccounts";
 import { createPathFilterString } from "@/lib/utils";
 import { isHafAppEnabled } from "@/utils/deploySettings";
 import {
@@ -148,6 +149,10 @@ export type ExplorerNodeApi = {
     account_notifications: TWaxApiRequest<
       { account: string; limit: number; last_id?: number },
       Hive.AccountNotification[]
+    >;
+    get_profiles: TWaxApiRequest<
+      { accounts: string[]; observer?: string },
+      BulkProfile[]
     >;
   };
   market_history_api: {
@@ -499,6 +504,14 @@ class FetchingService {
     return await this.extendedHiveChain!.api.condenser_api.get_witnesses_by_vote(
       params
     );
+  }
+
+  // Hivemind's reputation and last activity for many accounts in one request.
+  // It fails the whole request if any name has no hivemind account.
+  async getProfiles(accounts: string[]): Promise<BulkProfile[]> {
+    return await this.extendedHiveChain!.api.bridge.get_profiles({
+      accounts,
+    });
   }
 
   async getAccounts(accounts: string[]): Promise<FindAccountsResponse[]> {
