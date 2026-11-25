@@ -115,6 +115,9 @@ const VotingPowerTool: React.FC = () => {
       : 0;
   const now = mana ? worth(mana.current) : 0;
   const full = mana ? worth(mana.max) : 0;
+  // The manabar's maximum is the HP the account votes with, in raw VESTS.
+  const votingHp =
+    mana && rates ? (Number(mana.max) / 1e6) * rates.hivePerVests : 0;
 
   return (
     <div className="w-full space-y-5">
@@ -237,6 +240,12 @@ const VotingPowerTool: React.FC = () => {
                 {hbd(now)}
               </p>
               <p
+                className="mt-1 text-sm font-semibold tabular-nums text-slate-700 dark:text-slate-200"
+                data-testid="voting-power-upvote-hp"
+              >
+                {t("tools.votingPower.upvoteHp", { hp: hp(votingHp) })}
+              </p>
+              <p
                 className="mt-1 text-sm text-slate-600 dark:text-slate-300"
                 aria-live="polite"
               >
@@ -280,6 +289,7 @@ const VotingPowerTool: React.FC = () => {
                 )
               )}
               <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">
+                {t("tools.votingPower.upvoteHpExplain")}{" "}
                 {t("tools.votingPower.upvoteSplit")}
               </p>
             </section>

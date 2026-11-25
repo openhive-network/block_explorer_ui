@@ -157,6 +157,8 @@
   "tools.votingPower.governanceExplain": "L'Hive Power dell'account più l'Hive Power affidatogli tramite proxy, meno i power-up ancora nell'attesa di 30 giorni. Le deleghe non lo cambiano.",
   "tools.votingPower.upvoteTitle": "Valore di un voto positivo",
   "tools.votingPower.upvoteAt": "Un voto positivo al {{weight}} con l'attuale potere di voto dell'account, {{power}}.",
+  "tools.votingPower.upvoteHp": "Vota i post con {{hp}}",
+  "tools.votingPower.upvoteHpExplain": "È l'Hive Power dell'account più le deleghe ricevute, meno le deleghe concesse e il power-down di questa settimana.",
   "tools.votingPower.weightLabel": "Peso del voto",
   "tools.votingPower.upvoteFull": "Con il potere di voto pieno: {{value}}",
   "tools.votingPower.upvoteDust": "Non aggiunge nulla: la chain toglie un minimo fisso da ogni voto, e questo voto è più piccolo.",

@@ -157,6 +157,8 @@
   "tools.votingPower.governanceExplain": "The account's own Hive Power plus the Hive Power proxied to it, minus power-ups still in their 30-day wait. Delegations don't change it.",
   "tools.votingPower.upvoteTitle": "Upvote value",
   "tools.votingPower.upvoteAt": "A {{weight}} upvote at the account's current voting power of {{power}}.",
+  "tools.votingPower.upvoteHp": "Votes on posts with {{hp}}",
+  "tools.votingPower.upvoteHpExplain": "That is the account's own Hive Power plus delegations it receives, minus delegations it makes and this week's power-down.",
   "tools.votingPower.weightLabel": "Vote weight",
   "tools.votingPower.upvoteFull": "At full voting power: {{value}}",
   "tools.votingPower.upvoteDust": "Adds nothing: the chain takes a fixed minimum off every vote, and this vote is smaller than that.",

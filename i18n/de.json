@@ -157,6 +157,8 @@
   "tools.votingPower.governanceExplain": "Die eigene Hive Power des Kontos plus die ihm per Proxy übertragene Hive Power, abzüglich Power-ups, die noch in ihrer 30-tägigen Wartezeit sind. Delegationen ändern es nicht.",
   "tools.votingPower.upvoteTitle": "Wert einer Upvote",
   "tools.votingPower.upvoteAt": "Eine Upvote mit {{weight}} bei der aktuellen Stimmkraft des Kontos von {{power}}.",
+  "tools.votingPower.upvoteHp": "Stimmt bei Beiträgen mit {{hp}} ab",
+  "tools.votingPower.upvoteHpExplain": "Das ist die eigene Hive Power des Kontos plus erhaltene Delegationen, minus vergebene Delegationen und das Power-down dieser Woche.",
   "tools.votingPower.weightLabel": "Stimmgewicht",
   "tools.votingPower.upvoteFull": "Bei voller Stimmkraft: {{value}}",
   "tools.votingPower.upvoteDust": "Bringt nichts: Die Chain zieht von jeder Stimme einen festen Mindestbetrag ab, und diese Stimme ist kleiner.",

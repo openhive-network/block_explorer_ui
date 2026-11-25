@@ -157,6 +157,8 @@
   "tools.votingPower.governanceExplain": "Le Hive Power propre du compte plus le Hive Power qui lui est confié par proxy, moins les power-ups encore dans leur délai de 30 jours. Les délégations ne le changent pas.",
   "tools.votingPower.upvoteTitle": "Valeur d'un vote positif",
   "tools.votingPower.upvoteAt": "Un vote positif à {{weight}} avec le pouvoir de vote actuel du compte, {{power}}.",
+  "tools.votingPower.upvoteHp": "Vote sur les publications avec {{hp}}",
+  "tools.votingPower.upvoteHpExplain": "C'est le Hive Power propre du compte, plus les délégations reçues, moins les délégations accordées et le power-down de cette semaine.",
   "tools.votingPower.weightLabel": "Poids du vote",
   "tools.votingPower.upvoteFull": "Avec un pouvoir de vote plein : {{value}}",
   "tools.votingPower.upvoteDust": "N'apporte rien : la chaîne retire un minimum fixe de chaque vote, et ce vote est plus petit que ce minimum.",

@@ -157,6 +157,8 @@
   "tools.votingPower.governanceExplain": "قوة Hive الخاصة بالحساب مضافًا إليها قوة Hive الموكلة إليه، مطروحًا منها عمليات الشحن التي ما زالت في فترة الانتظار البالغة 30 يومًا. التفويضات لا تغيّره.",
   "tools.votingPower.upvoteTitle": "قيمة التصويت الإيجابي",
   "tools.votingPower.upvoteAt": "تصويت إيجابي بنسبة {{weight}} بقوة التصويت الحالية للحساب البالغة {{power}}.",
+  "tools.votingPower.upvoteHp": "يصوّت على المنشورات بـ {{hp}}",
+  "tools.votingPower.upvoteHpExplain": "أي قوة Hive الخاصة بالحساب مضافًا إليها التفويضات التي يتلقاها، مطروحًا منها التفويضات التي يمنحها ودفعة خفض القوة لهذا الأسبوع.",
   "tools.votingPower.weightLabel": "وزن التصويت",
   "tools.votingPower.upvoteFull": "بقوة تصويت كاملة: {{value}}",
   "tools.votingPower.upvoteDust": "لا يضيف شيئًا: تخصم السلسلة حدًّا أدنى ثابتًا من كل تصويت، وهذا التصويت أصغر منه.",

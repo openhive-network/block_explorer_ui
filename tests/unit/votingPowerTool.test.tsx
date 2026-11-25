@@ -111,6 +111,8 @@ describe("VotingPowerTool", () => {
     );
     // Half the mana of 1e9 VESTS: 1e13 - 5e7 rshares -> about 0.492 HBD.
     expect(text("voting-power-upvote-value")).toContain("0.492 HBD");
+    // The HP it votes with: 1e9 VESTS of max mana at 0.0006 HP per VESTS.
+    expect(text("voting-power-upvote-hp")).toContain("600,000.000 HP");
     expect(text("voting-power-upvote")).toContain('"power":"50%"');
     // At full power the same vote is worth about twice as much.
     expect(text("voting-power-upvote")).toContain("0.984 HBD");

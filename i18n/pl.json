@@ -157,6 +157,8 @@
   "tools.votingPower.governanceExplain": "Własna Hive Power konta plus Hive Power przekazana mu przez proxy, minus power-upy, które wciąż czekają 30 dni. Delegacje jej nie zmieniają.",
   "tools.votingPower.upvoteTitle": "Wartość głosu za",
   "tools.votingPower.upvoteAt": "Głos za o wadze {{weight}} przy obecnej mocy głosu konta: {{power}}.",
+  "tools.votingPower.upvoteHp": "Głosuje na posty z {{hp}}",
+  "tools.votingPower.upvoteHpExplain": "To własna Hive Power konta plus otrzymane delegacje, minus przekazane delegacje i tegotygodniowy power-down.",
   "tools.votingPower.weightLabel": "Waga głosu",
   "tools.votingPower.upvoteFull": "Przy pełnej mocy głosu: {{value}}",
   "tools.votingPower.upvoteDust": "Nic nie dodaje: łańcuch odejmuje od każdego głosu stałe minimum, a ten głos jest od niego mniejszy.",

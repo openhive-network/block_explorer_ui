@@ -157,6 +157,8 @@
   "tools.votingPower.governanceExplain": "アカウント自身の Hive Power に、プロキシとして託された Hive Power を加え、30日間の待機中のパワーアップを除いたものです。委任では変わりません。",
   "tools.votingPower.upvoteTitle": "アップボートの価値",
   "tools.votingPower.upvoteAt": "現在の投票パワー {{power}} での {{weight}} のアップボート。",
+  "tools.votingPower.upvoteHp": "{{hp}} で投稿に投票します",
+  "tools.votingPower.upvoteHpExplain": "アカウント自身の Hive Power に受け取った委任を加え、行った委任と今週のパワーダウン分を差し引いたものです。",
   "tools.votingPower.weightLabel": "投票の重み",
   "tools.votingPower.upvoteFull": "投票パワーが満タンの場合：{{value}}",
   "tools.votingPower.upvoteDust": "何も加わりません：チェーンはすべての投票から一定の最小値を差し引き、この投票はそれより小さいためです。",

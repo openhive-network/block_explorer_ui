@@ -157,6 +157,8 @@
   "tools.votingPower.governanceExplain": "账户自身的 Hive Power，加上其他账户将其设为代理而交给它的 Hive Power，减去仍在30天等待期内的充值。委托（delegation）不影响它。",
   "tools.votingPower.upvoteTitle": "点赞价值",
   "tools.votingPower.upvoteAt": "以该账户当前的投票权 {{power}} 进行 {{weight}} 的点赞。",
+  "tools.votingPower.upvoteHp": "以 {{hp}} 为帖子投票",
+  "tools.votingPower.upvoteHpExplain": "即账户自身的 Hive Power 加上收到的委托，减去委托出去的部分和本周的 power-down。",
   "tools.votingPower.weightLabel": "投票权重",
   "tools.votingPower.upvoteFull": "投票权满格时：{{value}}",
   "tools.votingPower.upvoteDust": "没有增加任何收益：链会从每次投票中扣除固定的最小值，而这次投票小于该值。",
