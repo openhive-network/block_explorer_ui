@@ -130,10 +130,23 @@ const type = (text: string) =>
     input().dispatchEvent(new Event("input", { bubbles: true }));
   });
 
-const press = (key: string) =>
+// Returns whether the box took the key (prevented its default).
+const press = (key: string) => {
+  const event = new KeyboardEvent("keydown", {
+    key,
+    bubbles: true,
+    cancelable: true,
+  });
   act(() => {
-    input().dispatchEvent(
-      new KeyboardEvent("keydown", { key, bubbles: true, cancelable: true })
+    input().dispatchEvent(event);
+  });
+  return event.defaultPrevented;
+};
+
+const click = (el: Element, init: MouseEventInit = {}) =>
+  act(() => {
+    el.dispatchEvent(
+      new MouseEvent("click", { bubbles: true, cancelable: true, ...init })
     );
   });
 
@@ -193,6 +206,16 @@ describe("search box actions", () => {
     );
   });
 
+  it("keeps the highlight when the witness list arrives late", () => {
+    render();
+    type("gtg");
+    for (let i = 0; i < 5; i++) press("ArrowDown");
+    expect(active()?.textContent).toBe(ACTION("proposals"));
+    mockWitnesses = new Set(["gtg"]);
+    render();
+    expect(active()?.textContent).toBe(ACTION("proposals"));
+  });
+
   it("still opens the direct match on Enter", () => {
     render();
     type("gtg");
@@ -243,8 +266,77 @@ describe("search box actions", () => {
     type("110298000");
     expect(optionTexts()).toEqual([
       "110298000",
-      ACTION("blocksUpTo", "110298000"),
+      ACTION("blocksUpTo", "110,298,000"),
     ]);
+  });
+
+  it("does nothing on Enter or Tab once Escape has closed the list", () => {
+    render();
+    type("gtg");
+    press("ArrowDown");
+    press("Escape");
+    expect(press("Enter")).toBe(false);
+    // Tab moves focus on, as in any field.
+    expect(press("Tab")).toBe(false);
+    expect(mockPush).not.toHaveBeenCalled();
+  });
+
+  it("opens the list again on ArrowDown or a click", () => {
+    render();
+    type("gtg");
+    press("Escape");
+    press("ArrowDown");
+    expect(options().length).toBeGreaterThan(0);
+    press("Escape");
+    click(input());
+    expect(options().length).toBeGreaterThan(0);
+  });
+
+  it("starts over when the text changes", () => {
+    render();
+    type("gtg");
+    for (let i = 0; i < 6; i++) press("ArrowDown");
+    expect(active()?.textContent).toBe("gtg2");
+    // A shorter list: the old highlight (the second row) is gone.
+    mockInputType = { input_type: "account_name_array", input_value: ["gtgx"] };
+    type("gtgx");
+    expect(active()?.textContent).toBe("gtgx");
+    press("Enter");
+    expect(mockPush).toHaveBeenCalledWith("/@gtgx");
+  });
+
+  it("dismisses the invalid-input note on Escape", () => {
+    mockInputType = { input_type: "invalid_input", input_value: "!!" };
+    render();
+    type("!!");
+    expect(container.textContent).toContain("autocompleteInput.invalidInput");
+    press("Escape");
+    expect(container.textContent).not.toContain(
+      "autocompleteInput.invalidInput"
+    );
+  });
+
+  it("opens a search on click, but leaves a Ctrl-click to the browser", () => {
+    render();
+    type("gtg");
+    const transfers = options().find((o) =>
+      o.textContent?.startsWith(ACTION("transfers"))
+    )!;
+    click(transfers, { ctrlKey: true });
+    expect(mockPush).not.toHaveBeenCalled();
+    click(transfers);
+    expect(mockPush).toHaveBeenCalledWith(
+      expect.stringMatching(/^\/@gtg\?filters=/)
+    );
+  });
+
+  it("keeps a form field's Enter and Tab as they were", () => {
+    render({ linkResult: false });
+    type("gtg");
+    press("Escape");
+    // The form field still picks on Enter after the list closes.
+    expect(press("Enter")).toBe(true);
+    expect(mockPush).not.toHaveBeenCalled();
   });
 
   it("adds nothing for a transaction", () => {

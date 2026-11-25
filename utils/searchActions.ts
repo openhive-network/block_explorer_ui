@@ -3,8 +3,12 @@ import moment from "moment";
 import { convertIdsToBooleanArray } from "@/lib/utils";
 import { dataToURL } from "@/utils/URLutils";
 
-// transfer_operation's type id.
+// Operation type ids (fixed by the protocol).
 const TRANSFER_OP_ID = 2;
+// Paid to the witness that produced the block, and to nobody else. The
+// blocks page's account filter alone also matches blocks the account only
+// appears in.
+const PRODUCER_REWARD_OP_ID = 64;
 const RECENT_DAYS = 7;
 
 export type SearchActionKey =
@@ -77,25 +81,29 @@ export const accountActions = (
       href: withQuery(profile, { activeTab: "balance-history" }),
     },
   ];
-  if (isWitness)
-    actions.push({
-      key: "blocksProduced",
-      href: withQuery("/blocks", {
-        accountName: account,
-        ...lastDays(now, "startDate"),
-      }),
-      recent: true,
-    });
   if (proposals)
     actions.push({
       key: "proposals",
       href: withQuery("/proposals", { q: account }),
     });
+  // Last: the witness list can arrive after the others are on screen, and
+  // adding a row above a highlighted one would move the highlight.
+  if (isWitness)
+    actions.push({
+      key: "blocksProduced",
+      href: withQuery("/blocks", {
+        accountName: account,
+        filters: dataToURL(convertIdsToBooleanArray([PRODUCER_REWARD_OP_ID])),
+        ...lastDays(now, "startDate"),
+      }),
+      recent: true,
+    });
   return actions;
 };
 
-// A block number also reads as a proposal id while it's in proposal range.
-const MAX_PROPOSAL_ID = 100000;
+// A block number also reads as a proposal id while it's in proposal range
+// (ids are in the hundreds and grow by a few dozen a year).
+const MAX_PROPOSAL_ID = 2000;
 
 export const blockNumberActions = (
   blockNum: string,

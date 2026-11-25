@@ -250,7 +250,9 @@ const AutoCompleteInput: React.FC<Props> = ({
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputFocus(true);
-    if (!e.target.value) resetHighlight();
+    // Any edit starts the list over: an index from the old list (or the
+    // recent list) means nothing in the new one.
+    resetHighlight();
     onChange(e.target.value);
     setSearchTerm(e.target.value);
 
@@ -264,6 +266,18 @@ const AutoCompleteInput: React.FC<Props> = ({
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Escape") {
       setInputFocus(false);
+      return;
+    }
+
+    if (isInputDisabled) return;
+
+    // The navbar box acts only on a list it shows: once closed, Tab moves
+    // on and Enter does nothing; ArrowDown opens it again.
+    if (linkResult && !isOpen && !showRecent) {
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setInputFocus(true);
+      }
       return;
     }
 
@@ -308,7 +322,7 @@ const AutoCompleteInput: React.FC<Props> = ({
       e.preventDefault();
       if (actionIndex !== null && actions[actionIndex])
         go(actions[actionIndex].href);
-      else pick(results.length === 1 ? results[0] : results[selected]);
+      else pick(results[selected] ?? results[0]);
       return;
     }
   };
@@ -317,11 +331,13 @@ const AutoCompleteInput: React.FC<Props> = ({
     setInputFocus(false)
   );
 
+  // Clamped: the list can shrink under the highlight (another tab clearing
+  // the recent list, a shorter result list).
   const activeId = showRecent
-    ? recentId(selected)
+    ? recentId(Math.min(selected, recentEntries.length - 1))
     : actionIndex !== null
       ? actionId(actionIndex)
-      : optionId(selected);
+      : optionId(selected < results.length ? selected : 0);
 
   useEffect(() => {
     document
@@ -399,7 +415,10 @@ const AutoCompleteInput: React.FC<Props> = ({
                       nested
                       icon={<Icon className="h-3.5 w-3.5" />}
                       label={t(`autocompleteInput.action.${action.key}`, {
-                        value: acc,
+                        value:
+                          action.key === "blocksUpTo"
+                            ? Number(acc).toLocaleString(locale)
+                            : acc,
                       })}
                       hint={
                         action.recent
@@ -482,13 +501,17 @@ const AutoCompleteInput: React.FC<Props> = ({
           placeholder={required ? `${placeholder} *` : placeholder}
           value={value ?? ""}
           onChange={handleInput}
-          onClick={!isInputDisabled ? onClick : undefined}
+          onClick={(e) => {
+            // Clicking the box after Escape shows the list again.
+            setInputFocus(true);
+            if (!isInputDisabled) onClick?.(e);
+          }}
           onBlur={onBlur}
           onFocus={() => {
             setInputFocus(true);
             if (!value) resetHighlight();
           }}
-          onKeyDown={!isInputDisabled ? handleKeyDown : undefined}
+          onKeyDown={handleKeyDown}
           role="combobox"
           aria-expanded={isOpen || showRecent}
           aria-autocomplete="list"

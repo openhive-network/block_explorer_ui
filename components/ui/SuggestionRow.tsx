@@ -17,6 +17,10 @@ interface Props {
   onHover: () => void;
 }
 
+// A click the browser sends to a new tab or window.
+const opensElsewhere = (e: React.MouseEvent) =>
+  e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0;
+
 // A search-box option that opens a page: a ready-made search under a result,
 // or a recent lookup.
 const SuggestionRow = forwardRef<HTMLDivElement, Props>(
@@ -29,7 +33,9 @@ const SuggestionRow = forwardRef<HTMLDivElement, Props>(
       id={id}
       role="option"
       aria-selected={selected}
-      onClick={onSelect}
+      onClick={(e) => {
+        if (!opensElsewhere(e)) onSelect();
+      }}
       onMouseEnter={onHover}
       className={cn(
         "flex cursor-pointer items-center gap-2 rounded-lg border-s-2 px-2 py-1 text-sm transition-colors",
@@ -42,10 +48,13 @@ const SuggestionRow = forwardRef<HTMLDivElement, Props>(
       <span className="flex h-5 w-5 shrink-0 items-center justify-center text-slate-500 dark:text-slate-400">
         {icon}
       </span>
-      {/* A real link, so a middle click or "open in new tab" still works. */}
+      {/* A real link, so a middle or Ctrl/Cmd click, or "open in new tab",
+          still works; a plain click is the row's. */}
       <Link
         href={href}
-        onClick={(e) => e.preventDefault()}
+        onClick={(e) => {
+          if (!opensElsewhere(e)) e.preventDefault();
+        }}
         className="min-w-0 flex-1 truncate"
         tabIndex={-1}
       >

@@ -1221,7 +1221,7 @@
   "autocompleteInput.action.operations": "Operațiuni",
   "autocompleteInput.action.transfers": "Transferuri",
   "autocompleteInput.action.comments": "Postări și comentarii",
-  "autocompleteInput.action.balanceHistory": "Istoricul soldului",
+  "autocompleteInput.action.balanceHistory": "Istoric sold",
   "autocompleteInput.action.blocksProduced": "Blocuri produse",
   "autocompleteInput.action.proposals": "Propuneri care corespund cu {{value}}",
   "autocompleteInput.action.blocksUpTo": "Blocuri până la #{{value}}",

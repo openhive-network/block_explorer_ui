@@ -37,8 +37,9 @@ describe("accountActions", () => {
       "transfers",
       "comments",
       "balanceHistory",
-      "blocksProduced",
       "proposals",
+      // Last, so the witness list arriving late can't shift a highlight.
+      "blocksProduced",
     ]);
   });
 
@@ -68,7 +69,7 @@ describe("accountActions", () => {
     expect(actions[3].href).toBe("/@gtg?activeTab=balance-history");
   });
 
-  it("searches the blocks page by producer with the blocks page's date key", () => {
+  it("lists the blocks the account produced, with the blocks page's date key", () => {
     const produced = accountActions("gtg", { now: NOW, isWitness: true })[4];
     const { path, query } = queryOf(produced.href);
     expect(path).toBe("/blocks");
@@ -77,6 +78,9 @@ describe("accountActions", () => {
       rangeSelectKey: "lastTime",
       startDate: WEEK_AGO,
     });
+    // The account filter alone also matches blocks gtg only appears in;
+    // producer_reward_operation is the producer's alone.
+    expect(convertBooleanArrayToIds(query.filters as boolean[])).toEqual([64]);
   });
 
   it("searches proposals by the name", () => {
@@ -102,6 +106,9 @@ describe("blockNumberActions", () => {
     expect(blockNumberActions("123", { proposals: true })[1].href).toBe(
       "/proposals?q=123"
     );
+    expect(keysOf(blockNumberActions("5000", { proposals: true }))).toEqual([
+      "blocksUpTo",
+    ]);
     expect(
       keysOf(blockNumberActions("110298000", { proposals: true }))
     ).toEqual(["blocksUpTo"]);

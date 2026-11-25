@@ -1221,7 +1221,7 @@
   "autocompleteInput.action.operations": "Operationen",
   "autocompleteInput.action.transfers": "Überweisungen",
   "autocompleteInput.action.comments": "Beiträge & Kommentare",
-  "autocompleteInput.action.balanceHistory": "Saldoverlauf",
+  "autocompleteInput.action.balanceHistory": "Kontoverlauf",
   "autocompleteInput.action.blocksProduced": "Produzierte Blöcke",
   "autocompleteInput.action.proposals": "Vorschläge zu {{value}}",
   "autocompleteInput.action.blocksUpTo": "Blöcke bis #{{value}}",
