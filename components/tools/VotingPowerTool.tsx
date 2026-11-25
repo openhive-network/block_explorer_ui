@@ -245,6 +245,9 @@ const VotingPowerTool: React.FC = () => {
               >
                 {t("tools.votingPower.upvoteHp", { hp: hp(votingHp) })}
               </p>
+              <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+                {t("tools.votingPower.upvoteHpExplain")}
+              </p>
               <p
                 className="mt-1 text-sm text-slate-600 dark:text-slate-300"
                 aria-live="polite"
@@ -289,7 +292,6 @@ const VotingPowerTool: React.FC = () => {
                 )
               )}
               <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">
-                {t("tools.votingPower.upvoteHpExplain")}{" "}
                 {t("tools.votingPower.upvoteSplit")}
               </p>
             </section>

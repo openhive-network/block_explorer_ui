@@ -158,7 +158,7 @@
   "tools.votingPower.upvoteTitle": "Valoarea unui vot pozitiv",
   "tools.votingPower.upvoteAt": "Un vot pozitiv de {{weight}} la puterea de vot actuală a contului, {{power}}.",
   "tools.votingPower.upvoteHp": "Votează postări cu {{hp}}",
-  "tools.votingPower.upvoteHpExplain": "Este Hive Power propriu al contului plus delegările primite, minus delegările făcute și power-down-ul din această săptămână.",
+  "tools.votingPower.upvoteHpExplain": "Este Hive Power-ul propriu al contului plus delegările primite, minus delegările făcute și power-down-ul din această săptămână.",
   "tools.votingPower.weightLabel": "Ponderea votului",
   "tools.votingPower.upvoteFull": "La putere de vot completă: {{value}}",
   "tools.votingPower.upvoteDust": "Nu adaugă nimic: lanțul scade un minim fix din fiecare vot, iar acest vot este mai mic decât el.",

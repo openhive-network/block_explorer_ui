@@ -113,6 +113,9 @@ describe("VotingPowerTool", () => {
     expect(text("voting-power-upvote-value")).toContain("0.492 HBD");
     // The HP it votes with: 1e9 VESTS of max mana at 0.0006 HP per VESTS.
     expect(text("voting-power-upvote-hp")).toContain("600,000.000 HP");
+    expect(text("voting-power-upvote")).toContain(
+      "tools.votingPower.upvoteHpExplain"
+    );
     expect(text("voting-power-upvote")).toContain('"power":"50%"');
     // At full power the same vote is worth about twice as much.
     expect(text("voting-power-upvote")).toContain("0.984 HBD");
@@ -189,6 +192,7 @@ describe("VotingPowerTool", () => {
     expect(text("voting-power-upvote")).toContain(
       "tools.votingPower.upvoteNoPower"
     );
+    expect(text("voting-power-upvote-hp")).toContain("0.000 HP");
     expect(text("voting-power-upvote")).not.toContain(
       "tools.votingPower.upvoteDust"
     );
