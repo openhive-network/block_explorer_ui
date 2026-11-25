@@ -173,7 +173,7 @@
   "tools.bulkLookup.inputPlaceholder": "Uno por línea, o separados por comas o espacios. La @ es opcional.",
   "tools.bulkLookup.lookupButton": "Consultar",
   "tools.bulkLookup.uploadButton": "Subir un archivo",
-  "tools.bulkLookup.nameCount": "{{count}} nombres",
+  "tools.bulkLookup.nameCount": "Nombres: {{count}}",
   "tools.bulkLookup.fileError": "Ese archivo no se puede leer como lista de nombres (un archivo de texto o CSV de menos de 1 MB).",
   "tools.bulkLookup.overLimit": "Solo se consultan los primeros {{max}} nombres; quedan fuera {{count}} más.",
   "tools.bulkLookup.progress": "Consultando {{done}} de {{total}} cuentas…",

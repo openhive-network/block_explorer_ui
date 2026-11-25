@@ -45,7 +45,18 @@ jest.mock("@/utils/badActors", () => ({
   isBadActor: (list: Set<string>, name: string) => list.has(name),
 }));
 
-const mockDownload = jest.fn();
+const mockDownload = jest.fn<Promise<void>, unknown[]>(() => Promise.resolve());
+
+// jsdom has no File.text().
+if (!File.prototype.text)
+  File.prototype.text = function (this: File) {
+    return new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result));
+      reader.onerror = () => reject(reader.error);
+      reader.readAsText(this);
+    });
+  };
 jest.mock("@/utils/csvDownload", () => ({
   downloadCsv: (...args: unknown[]) => mockDownload(...args),
 }));
@@ -65,6 +76,7 @@ const row = (account: string, over: Partial<BulkAccountRow> = {}) => ({
 });
 
 const mockLookups: string[][] = [];
+const mockRefetch = jest.fn();
 jest.mock("@/hooks/api/common/useBulkAccounts", () => ({
   __esModule: true,
   default: (names: string[]) => {
@@ -86,7 +98,7 @@ jest.mock("@/hooks/api/common/useBulkAccounts", () => ({
       isFetching: false,
       isError: false,
       progress: names.length,
-      refetch: jest.fn(),
+      refetch: mockRefetch,
     };
   },
 }));
@@ -101,6 +113,7 @@ beforeEach(() => {
   mockVestsMode = false;
   mockLookups.length = 0;
   mockDownload.mockClear();
+  mockRefetch.mockClear();
   container = document.createElement("div");
   document.body.appendChild(container);
   root = createRoot(container);
@@ -201,7 +214,11 @@ describe("BulkLookupTool", () => {
     )!;
     act(() => download.click());
     expect(mockDownload).toHaveBeenCalledTimes(1);
-    const [filename, rows, columns] = mockDownload.mock.calls[0];
+    const [filename, rows, columns] = mockDownload.mock.calls[0] as [
+      string,
+      Record<string, unknown>[],
+      string[],
+    ];
     expect(filename).toMatch(/^hive-accounts-\d{4}-\d{2}-\d{2}\.csv$/);
     expect(columns).not.toContain("tools.bulkLookup.column.hbd");
     expect(columns[0]).toBe("tools.bulkLookup.column.account");
@@ -231,6 +248,50 @@ describe("BulkLookupTool", () => {
     expect(text("bulk-lookup-count")).toContain('"count":"1,000"');
     expect(container.textContent).toContain(
       'tools.bulkLookup.overLimit {"max":"1,000","count":"3"}'
+    );
+  });
+
+  it("looks the same names up again, however they were retyped", () => {
+    lookUp("alice bob");
+    expect(mockRefetch).not.toHaveBeenCalled();
+    lookUp("@Alice\nbob\n");
+    expect(mockRefetch).toHaveBeenCalledTimes(1);
+    lookUp("alice carol");
+    expect(mockRefetch).toHaveBeenCalledTimes(1);
+  });
+
+  const upload = async (file: File) => {
+    const input = byTestId("bulk-lookup-file") as HTMLInputElement;
+    Object.defineProperty(input, "files", {
+      value: [file],
+      configurable: true,
+    });
+    await act(async () => {
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+    // Let the file reader finish.
+    await act(() => new Promise((resolve) => setTimeout(resolve, 20)));
+  };
+
+  it("reads an uploaded CSV's first column into the box", async () => {
+    await upload(
+      new File(
+        ['tools.bulkLookup.column.account,HIVE\nalice,1\n"bob",2\n'],
+        "accounts.csv",
+        { type: "text/csv" }
+      )
+    );
+    expect(
+      container.querySelector<HTMLTextAreaElement>("#bulk-lookup-names")!.value
+    ).toBe("alice\nbob");
+  });
+
+  it("refuses a file too big to be a list of names", async () => {
+    const big = new File(["x"], "big.txt");
+    Object.defineProperty(big, "size", { value: 2 * 1024 * 1024 });
+    await upload(big);
+    expect(container.querySelector('[role="alert"]')?.textContent).toBe(
+      "tools.bulkLookup.fileError"
     );
   });
 });

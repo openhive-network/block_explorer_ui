@@ -173,7 +173,7 @@
   "tools.bulkLookup.inputPlaceholder": "One per line, or separated by commas or spaces. The @ is optional.",
   "tools.bulkLookup.lookupButton": "Look up",
   "tools.bulkLookup.uploadButton": "Upload a file",
-  "tools.bulkLookup.nameCount": "{{count}} names",
+  "tools.bulkLookup.nameCount": "Names: {{count}}",
   "tools.bulkLookup.fileError": "That file can't be read as a list of names (a text or CSV file under 1 MB).",
   "tools.bulkLookup.overLimit": "Only the first {{max}} names are looked up; {{count}} more are left out.",
   "tools.bulkLookup.progress": "Looking up {{done}} of {{total}} accounts…",

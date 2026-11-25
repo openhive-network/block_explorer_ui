@@ -15,6 +15,7 @@ import useBulkAccounts from "@/hooks/api/common/useBulkAccounts";
 import {
   BulkAccountRow,
   MAX_NAMES,
+  namesFromFile,
   parseAccountList,
 } from "@/utils/bulkAccounts";
 import { isBadActor, useBadActorsState } from "@/utils/badActors";
@@ -54,32 +55,22 @@ type Cell = number | string | Date | boolean | null;
 // Numbers with units stay left-to-right inside an Arabic sentence.
 const ltr = (text: string) => `⁦${text}⁩`;
 
-const BulkLookupTool: React.FC = () => {
+interface NamesFormProps {
+  busy: boolean;
+  onLookUp: (text: string) => void;
+}
+
+// The list being typed lives here, so typing doesn't redraw a long table.
+const NamesForm: React.FC<NamesFormProps> = ({ busy, onLookUp }) => {
   const { t, locale } = useI18n();
-  const { settings } = useSettings();
-  const showVests = settings.displayVestHpMode === "vests";
-  const { list: badActors, failed: badActorsFailed } = useBadActorsState();
-
   const [text, setText] = useState("");
-  const [submitted, setSubmitted] = useState("");
   const [fileError, setFileError] = useState(false);
-  const [hidden, setHidden] = useState<Set<ColumnKey>>(() => new Set());
-  const [sort, setSort] = useState<{ key: SortKey; desc: boolean } | null>(
-    null
-  );
   const fileRef = useRef<HTMLInputElement>(null);
-
   const typed = useMemo(() => parseAccountList(text), [text]);
-  const parsed = useMemo(() => parseAccountList(submitted), [submitted]);
-  const { data, isFetching, isError, progress, refetch } = useBulkAccounts(
-    parsed.names
-  );
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(text);
-    // The same list again means "look it up again".
-    if (text === submitted && parsed.names.length) refetch();
+    onLookUp(text);
   };
 
   const readFile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -91,7 +82,112 @@ const BulkLookupTool: React.FC = () => {
       return;
     }
     setFileError(false);
-    file.text().then(setText, () => setFileError(true));
+    file.text().then(
+      (content) =>
+        setText(
+          namesFromFile(
+            content,
+            /\.csv$/i.test(file.name),
+            t("tools.bulkLookup.column.account")
+          )
+        ),
+      () => setFileError(true)
+    );
+  };
+
+  return (
+    <form
+      onSubmit={submit}
+      className="rounded-xl border border-slate-200 bg-theme p-4 shadow-xs dark:border-slate-700"
+    >
+      <label
+        htmlFor="bulk-lookup-names"
+        className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400"
+      >
+        {t("tools.bulkLookup.inputLabel")}
+      </label>
+      <textarea
+        id="bulk-lookup-names"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder={t("tools.bulkLookup.inputPlaceholder")}
+        rows={6}
+        autoCapitalize="none"
+        autoCorrect="off"
+        spellCheck={false}
+        className="w-full rounded-lg border border-slate-300 bg-theme p-2 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:border-slate-600"
+      />
+      <div className="mt-2 flex flex-wrap items-center gap-2">
+        <Button type="submit" disabled={!typed.names.length || busy}>
+          {t("tools.bulkLookup.lookupButton")}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => fileRef.current?.click()}
+        >
+          <Upload className="me-1.5 h-4 w-4" />
+          {t("tools.bulkLookup.uploadButton")}
+        </Button>
+        <input
+          ref={fileRef}
+          type="file"
+          accept=".txt,.csv,text/plain,text/csv"
+          onChange={readFile}
+          className="hidden"
+          data-testid="bulk-lookup-file"
+        />
+        <span
+          className="text-xs text-slate-500 dark:text-slate-400"
+          data-testid="bulk-lookup-count"
+        >
+          {t("tools.bulkLookup.nameCount", {
+            count: typed.names.length.toLocaleString(locale),
+          })}
+        </span>
+      </div>
+      {fileError && (
+        <p
+          className="mt-2 text-sm text-rose-600 dark:text-rose-400"
+          role="alert"
+        >
+          {t("tools.bulkLookup.fileError")}
+        </p>
+      )}
+      {typed.overLimit > 0 && (
+        <p className="mt-2 text-sm text-amber-600 dark:text-amber-400">
+          {t("tools.bulkLookup.overLimit", {
+            max: MAX_NAMES.toLocaleString(locale),
+            count: typed.overLimit.toLocaleString(locale),
+          })}
+        </p>
+      )}
+    </form>
+  );
+};
+
+const BulkLookupTool: React.FC = () => {
+  const { t, locale } = useI18n();
+  const { settings } = useSettings();
+  const showVests = settings.displayVestHpMode === "vests";
+  const { list: badActors, failed: badActorsFailed } = useBadActorsState();
+
+  const [submitted, setSubmitted] = useState("");
+  const [hidden, setHidden] = useState<Set<ColumnKey>>(() => new Set());
+  const [sort, setSort] = useState<{ key: SortKey; desc: boolean } | null>(
+    null
+  );
+  const parsed = useMemo(() => parseAccountList(submitted), [submitted]);
+  const { data, isFetching, isError, progress, refetch } = useBulkAccounts(
+    parsed.names
+  );
+
+  const lookUpText = (text: string) => {
+    // The same names again (however they were typed) means "look them up
+    // again": the query key doesn't change, so ask for it.
+    const again = parseAccountList(text).names;
+    if (again.length && again.join() === parsed.names.join()) refetch();
+    setSubmitted(text);
   };
 
   const hivePerVests = data?.hivePerVests ?? 0;
@@ -116,13 +212,24 @@ const BulkLookupTool: React.FC = () => {
     }
   };
 
-  const number = (n: number, digits: number) =>
-    n.toLocaleString(locale, {
-      minimumFractionDigits: digits,
-      maximumFractionDigits: digits,
-    });
-  const date = (d: Date) =>
-    d.toLocaleDateString(locale, { dateStyle: "medium", timeZone: "UTC" });
+  // One formatter each, not one per cell: a thousand rows make thousands
+  // of cells.
+  const formats = useMemo(() => {
+    const fixed = (digits: number) =>
+      new Intl.NumberFormat(locale, {
+        minimumFractionDigits: digits,
+        maximumFractionDigits: digits,
+      });
+    return {
+      three: fixed(3),
+      six: fixed(6),
+      whole: new Intl.NumberFormat(locale),
+      date: new Intl.DateTimeFormat(locale, {
+        dateStyle: "medium",
+        timeZone: "UTC",
+      }),
+    };
+  }, [locale]);
 
   const display = (row: BulkAccountRow, key: ColumnKey): React.ReactNode => {
     const cell = value(row, key);
@@ -137,15 +244,12 @@ const BulkLookupTool: React.FC = () => {
           {t("tools.bulkLookup.flaggedNo")}
         </span>
       );
-    if (cell instanceof Date) return date(cell);
+    if (cell instanceof Date) return formats.date.format(cell);
     if (typeof cell !== "number") return String(cell);
-    if (key === "reputation") return cell.toLocaleString(locale);
-    return ltr(
-      number(
-        cell,
-        (key === "ownPower" || key === "effectivePower") && showVests ? 6 : 3
-      )
-    );
+    if (key === "reputation") return formats.whole.format(cell);
+    const vestsCell =
+      showVests && (key === "ownPower" || key === "effectivePower");
+    return ltr((vestsCell ? formats.six : formats.three).format(cell));
   };
 
   const header = (key: SortKey) => {
@@ -222,7 +326,9 @@ const BulkLookupTool: React.FC = () => {
       return out;
     });
     const day = new Date().toISOString().slice(0, 10);
-    downloadCsv(`hive-accounts-${day}.csv`, csvRows, columns);
+    downloadCsv(`hive-accounts-${day}.csv`, csvRows, columns).catch((error) =>
+      console.warn("[bulkLookup] CSV export failed:", error)
+    );
   };
 
   const done = !!data && !isFetching;
@@ -241,85 +347,25 @@ const BulkLookupTool: React.FC = () => {
         </p>
       </div>
 
-      <form
-        onSubmit={submit}
-        className="rounded-xl border border-slate-200 bg-theme p-4 shadow-xs dark:border-slate-700"
-      >
-        <label
-          htmlFor="bulk-lookup-names"
-          className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400"
-        >
-          {t("tools.bulkLookup.inputLabel")}
-        </label>
-        <textarea
-          id="bulk-lookup-names"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder={t("tools.bulkLookup.inputPlaceholder")}
-          rows={6}
-          autoCapitalize="none"
-          autoCorrect="off"
-          spellCheck={false}
-          className="w-full rounded-lg border border-slate-300 bg-theme p-2 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:border-slate-600"
-        />
-        <div className="mt-2 flex flex-wrap items-center gap-2">
-          <Button type="submit" disabled={!typed.names.length || isFetching}>
-            {t("tools.bulkLookup.lookupButton")}
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => fileRef.current?.click()}
-          >
-            <Upload className="me-1.5 h-4 w-4" />
-            {t("tools.bulkLookup.uploadButton")}
-          </Button>
-          <input
-            ref={fileRef}
-            type="file"
-            accept=".txt,.csv,text/plain,text/csv"
-            onChange={readFile}
-            className="hidden"
-            data-testid="bulk-lookup-file"
-          />
-          <span
-            className="text-xs text-slate-500 dark:text-slate-400"
-            data-testid="bulk-lookup-count"
-          >
-            {t("tools.bulkLookup.nameCount", {
-              count: typed.names.length.toLocaleString(locale),
-            })}
-          </span>
-        </div>
-        {fileError && (
-          <p className="mt-2 text-sm text-rose-600 dark:text-rose-400">
-            {t("tools.bulkLookup.fileError")}
-          </p>
-        )}
-        {typed.overLimit > 0 && (
-          <p className="mt-2 text-sm text-amber-600 dark:text-amber-400">
-            {t("tools.bulkLookup.overLimit", {
-              max: MAX_NAMES.toLocaleString(locale),
-              count: typed.overLimit.toLocaleString(locale),
-            })}
-          </p>
-        )}
-      </form>
+      <NamesForm busy={isFetching} onLookUp={lookUpText} />
 
-      {isFetching && (
-        <div
-          className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300"
-          role="status"
-        >
-          <Loader2 className="h-4 w-4 animate-spin text-slate-400" />
-          {t("tools.bulkLookup.progress", {
-            done: progress.toLocaleString(locale),
-            total: parsed.names.length.toLocaleString(locale),
-          })}
-        </div>
-      )}
+      <div
+        className="flex items-center gap-2 text-sm text-slate-600 empty:hidden dark:text-slate-300"
+        role="status"
+        aria-live="polite"
+      >
+        {isFetching && (
+          <>
+            <Loader2 className="h-4 w-4 animate-spin text-slate-400" />
+            {t("tools.bulkLookup.progress", {
+              done: progress.toLocaleString(locale),
+              total: parsed.names.length.toLocaleString(locale),
+            })}
+          </>
+        )}
+      </div>
       {isError && !isFetching && (
-        <p className="text-sm text-rose-600 dark:text-rose-400">
+        <p className="text-sm text-rose-600 dark:text-rose-400" role="alert">
           {t("tools.bulkLookup.loadError")}
         </p>
       )}

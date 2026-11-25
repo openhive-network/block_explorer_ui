@@ -173,7 +173,7 @@
   "tools.bulkLookup.inputPlaceholder": "Câte unul pe rând sau separate prin virgule ori spații. @ este opțional.",
   "tools.bulkLookup.lookupButton": "Caută",
   "tools.bulkLookup.uploadButton": "Încarcă un fișier",
-  "tools.bulkLookup.nameCount": "{{count}} nume",
+  "tools.bulkLookup.nameCount": "Nume: {{count}}",
   "tools.bulkLookup.fileError": "Fișierul nu poate fi citit ca listă de nume (un fișier text sau CSV sub 1 MB).",
   "tools.bulkLookup.overLimit": "Sunt căutate doar primele {{max}} nume; alte {{count}} sunt lăsate deoparte.",
   "tools.bulkLookup.progress": "Se caută {{done}} din {{total}} conturi…",

@@ -173,7 +173,7 @@
   "tools.bulkLookup.inputPlaceholder": "Un par ligne, ou séparés par des virgules ou des espaces. Le @ est facultatif.",
   "tools.bulkLookup.lookupButton": "Rechercher",
   "tools.bulkLookup.uploadButton": "Importer un fichier",
-  "tools.bulkLookup.nameCount": "{{count}} noms",
+  "tools.bulkLookup.nameCount": "Noms : {{count}}",
   "tools.bulkLookup.fileError": "Ce fichier ne peut pas être lu comme une liste de noms (fichier texte ou CSV de moins de 1 Mo).",
   "tools.bulkLookup.overLimit": "Seuls les {{max}} premiers noms sont recherchés ; {{count}} autres sont ignorés.",
   "tools.bulkLookup.progress": "Recherche de {{done}} comptes sur {{total}}…",

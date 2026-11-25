@@ -173,7 +173,7 @@
   "tools.bulkLookup.inputPlaceholder": "1 行に 1 つ、またはカンマかスペースで区切ってください。@ は省略できます。",
   "tools.bulkLookup.lookupButton": "検索",
   "tools.bulkLookup.uploadButton": "ファイルをアップロード",
-  "tools.bulkLookup.nameCount": "{{count}} 件の名前",
+  "tools.bulkLookup.nameCount": "名前: {{count}} 件",
   "tools.bulkLookup.fileError": "このファイルは名前のリストとして読み込めません (1 MB 未満のテキストまたは CSV ファイル)。",
   "tools.bulkLookup.overLimit": "最初の {{max}} 件だけを検索します。残りの {{count}} 件は対象外です。",
   "tools.bulkLookup.progress": "{{total}} 件中 {{done}} 件のアカウントを検索中…",

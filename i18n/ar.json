@@ -173,7 +173,7 @@
   "tools.bulkLookup.inputPlaceholder": "اسم في كل سطر، أو مفصولة بفواصل أو مسافات. الرمز @ اختياري.",
   "tools.bulkLookup.lookupButton": "بحث",
   "tools.bulkLookup.uploadButton": "رفع ملف",
-  "tools.bulkLookup.nameCount": "{{count}} اسم",
+  "tools.bulkLookup.nameCount": "الأسماء: {{count}}",
   "tools.bulkLookup.fileError": "تعذّرت قراءة هذا الملف كقائمة أسماء (ملف نصي أو CSV أقل من 1 ميغابايت).",
   "tools.bulkLookup.overLimit": "يُبحث عن أول {{max}} اسم فقط؛ وتُستبعد {{count}} أسماء أخرى.",
   "tools.bulkLookup.progress": "جارٍ البحث عن {{done}} من {{total}} حساب…",

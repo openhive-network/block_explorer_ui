@@ -173,7 +173,7 @@
   "tools.bulkLookup.inputPlaceholder": "Einer pro Zeile oder durch Kommas oder Leerzeichen getrennt. Das @ ist optional.",
   "tools.bulkLookup.lookupButton": "Abfragen",
   "tools.bulkLookup.uploadButton": "Datei hochladen",
-  "tools.bulkLookup.nameCount": "{{count}} Namen",
+  "tools.bulkLookup.nameCount": "Namen: {{count}}",
   "tools.bulkLookup.fileError": "Diese Datei kann nicht als Namensliste gelesen werden (Text- oder CSV-Datei unter 1 MB).",
   "tools.bulkLookup.overLimit": "Nur die ersten {{max}} Namen werden abgefragt; {{count}} weitere werden ausgelassen.",
   "tools.bulkLookup.progress": "Frage {{done}} von {{total}} Konten ab…",

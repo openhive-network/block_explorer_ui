@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import fetchingService from "@/services/FetchingService";
@@ -17,24 +17,37 @@ import {
 // leaning on a public node.
 const PARALLEL = 3;
 
-// wax's message is generic ("Chain API returned an error"); the node's own
-// reason is in the error's response.
-export const missingAccount = (error: unknown) => {
+// The text of a node error. wax's message can be generic ("Chain API returned
+// an error"), with the node's own reason in the error's response.
+const errorText = (error: unknown) => {
   let text = String(error ?? "");
   try {
     text += JSON.stringify((error as { response?: unknown })?.response ?? "");
   } catch {
     // An unserialisable response: the message alone decides.
   }
-  return /does not exist/i.test(text);
+  return text;
 };
 
+// The names hivemind says it has no account for, from an error like
+// [{"newbie": "account does not exist"}]. Empty when the error is something
+// else.
+export const missingAccounts = (error: unknown): string[] =>
+  Array.from(
+    errorText(error).matchAll(
+      /\\?"([a-z0-9.-]+)\\?":\s*\\?"account does not exist/g
+    ),
+    (match) => match[1]
+  );
+
 // bridge.get_profiles rejects the whole batch when one name has no hivemind
-// account (a brand-new account hivemind hasn't caught up with). Split the
-// batch until the missing names are on their own. Any other error leaves the
-// batch without profiles and says so.
+// account (a brand-new account hivemind hasn't caught up with). The error
+// names them, so ask again without those. If it can't be told which names are
+// missing, split the batch, one half after the other. Any other error leaves
+// the batch without profiles and says so.
 export const fetchProfiles = async (
-  names: string[]
+  names: string[],
+  retried = false
 ): Promise<{ profiles: BulkProfile[]; failed: boolean }> => {
   try {
     return {
@@ -42,13 +55,18 @@ export const fetchProfiles = async (
       failed: false,
     };
   } catch (error) {
-    if (!missingAccount(error)) return { profiles: [], failed: true };
+    if (!/does not exist/i.test(errorText(error)))
+      return { profiles: [], failed: true };
+    const missing = new Set(missingAccounts(error));
+    const rest = names.filter((name) => !missing.has(name));
+    if (!retried && missing.size && rest.length < names.length)
+      return rest.length
+        ? fetchProfiles(rest, true)
+        : { profiles: [], failed: false };
     if (names.length === 1) return { profiles: [], failed: false };
     const middle = Math.ceil(names.length / 2);
-    const [a, b] = await Promise.all([
-      fetchProfiles(names.slice(0, middle)),
-      fetchProfiles(names.slice(middle)),
-    ]);
+    const a = await fetchProfiles(names.slice(0, middle), true);
+    const b = await fetchProfiles(names.slice(middle), true);
     return {
       profiles: [...a.profiles, ...b.profiles],
       failed: a.failed || b.failed,
@@ -65,9 +83,10 @@ export interface BulkAccountsResult {
   profilesFailed: boolean;
 }
 
-const lookUp = async (
+export const lookUp = async (
   names: string[],
-  onProgress: (done: number) => void
+  onProgress: (done: number) => void,
+  signal?: AbortSignal
 ): Promise<BulkAccountsResult> => {
   let done = 0;
   const [globals, batches] = await Promise.all([
@@ -80,10 +99,11 @@ const lookUp = async (
           ? await fetchProfiles(found.map((account) => account.name))
           : { profiles: [], failed: false };
         done += batch.length;
-        onProgress(done);
+        if (!signal?.aborted) onProgress(done);
         return { found, profiles, failed };
       }),
-      PARALLEL
+      PARALLEL,
+      signal
     ),
   ]);
 
@@ -113,14 +133,22 @@ const lookUp = async (
 };
 
 // Looks up a list of account names in batches. `progress` counts the names
-// done so far, for a long list.
+// done so far in the current run, for a long list.
 const useBulkAccounts = (names: string[]) => {
   const [progress, setProgress] = useState(0);
+  const run = useRef(0);
   const query = useQuery({
     queryKey: ["bulkAccounts", names],
-    queryFn: () => {
+    queryFn: ({ signal }) => {
+      // A retry or a new list starts a new run; an older one's late
+      // batches don't move the counter.
+      const id = ++run.current;
       setProgress(0);
-      return lookUp(names, setProgress);
+      return lookUp(
+        names,
+        (done) => id === run.current && setProgress(done),
+        signal
+      );
     },
     enabled: names.length > 0,
     staleTime: 60 * 1000,

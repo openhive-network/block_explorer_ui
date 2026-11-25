@@ -16,6 +16,9 @@ export interface ParsedNames {
   overLimit: number;
 }
 
+// Spreadsheets quote their cells: "alice" is alice.
+const unquote = (entry: string) => entry.trim().replace(/^["']+|["']+$/g, "");
+
 // One name per line, or separated by commas, semicolons or spaces, with or
 // without the @. Account names are lower case on chain, so "Alice" is alice.
 export const parseAccountList = (text: string): ParsedNames => {
@@ -24,7 +27,7 @@ export const parseAccountList = (text: string): ParsedNames => {
   const invalid: string[] = [];
   let overLimit = 0;
   for (const entry of text.split(/[\s,;]+/)) {
-    const name = trimAccountName(entry).toLowerCase();
+    const name = trimAccountName(unquote(entry)).toLowerCase();
     if (!name || seen.has(name)) continue;
     seen.add(name);
     if (!isHiveAccountName(name)) invalid.push(entry.trim());
@@ -32,6 +35,33 @@ export const parseAccountList = (text: string): ParsedNames => {
     else overLimit++;
   }
   return { names, invalid, overLimit };
+};
+
+// Header cells a names column is likely to carry, besides our own export's.
+const HEADER_WORDS = new Set([
+  "account",
+  "accounts",
+  "name",
+  "names",
+  "user",
+  "username",
+]);
+
+// The names in an uploaded file. A CSV with more than one column (a
+// spreadsheet export, or this tool's own CSV) gives its first column, without
+// a header row; plain text is read as it is typed.
+export const namesFromFile = (
+  content: string,
+  isCsv: boolean,
+  accountHeader = ""
+): string => {
+  const lines = content.replace(/^﻿/, "").split(/\r?\n/);
+  if (!isCsv || !lines.some((line) => /[,;\t]/.test(line))) return content;
+  const firstCells = lines.map((line) => unquote(line.split(/[,;\t]/)[0]));
+  const head = firstCells[0]?.toLowerCase() ?? "";
+  if (HEADER_WORDS.has(head) || head === accountHeader.toLowerCase())
+    firstCells.shift();
+  return firstCells.filter(Boolean).join("\n");
 };
 
 export const chunk = <T>(items: T[], size: number): T[][] => {
@@ -105,20 +135,30 @@ export const buildRow = (
 };
 
 // Runs the tasks with at most `limit` in flight, keeping the results in order.
+// Once a task fails, or the signal aborts, no further task starts.
 export const runLimited = async <T>(
   tasks: (() => Promise<T>)[],
-  limit: number
+  limit: number,
+  signal?: AbortSignal
 ): Promise<T[]> => {
   const results: T[] = new Array(tasks.length);
   let next = 0;
+  let stopped = false;
   const worker = async () => {
-    while (next < tasks.length) {
+    while (next < tasks.length && !stopped && !signal?.aborted) {
       const index = next++;
-      results[index] = await tasks[index]();
+      try {
+        results[index] = await tasks[index]();
+      } catch (error) {
+        stopped = true;
+        throw error;
+      }
     }
   };
   await Promise.all(
     Array.from({ length: Math.min(limit, tasks.length) }, worker)
   );
+  // An abandoned run has gaps; nobody waits for its result.
+  if (signal?.aborted) throw signal.reason ?? new Error("Aborted");
   return results;
 };

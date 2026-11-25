@@ -173,7 +173,7 @@
   "tools.bulkLookup.inputPlaceholder": "每行一个，或用逗号、空格分隔。@ 可省略。",
   "tools.bulkLookup.lookupButton": "查询",
   "tools.bulkLookup.uploadButton": "上传文件",
-  "tools.bulkLookup.nameCount": "{{count}} 个名称",
+  "tools.bulkLookup.nameCount": "名称：{{count}} 个",
   "tools.bulkLookup.fileError": "无法将该文件读取为名称列表（需为小于 1 MB 的文本或 CSV 文件）。",
   "tools.bulkLookup.overLimit": "只查询前 {{max}} 个名称；另有 {{count}} 个未包含。",
   "tools.bulkLookup.progress": "正在查询第 {{done}} / {{total}} 个账户…",
